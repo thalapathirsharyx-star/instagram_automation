@@ -10,7 +10,7 @@ export class country extends BaseTable {
   @JoinColumn({ name: "currency_id" })
   currency: currency;
 
-  @Column()
+  @Column({ type: 'uuid' })
   @Index()
   currency_id: string;
 

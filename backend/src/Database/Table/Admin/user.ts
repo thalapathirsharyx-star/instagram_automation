@@ -12,7 +12,7 @@ export class user extends BaseTable {
   @JoinColumn({ name: 'user_role_id' })
   user_role: user_role;
 
-  @Column()
+  @Column({ type: 'uuid' })
   @Index()
   user_role_id: string;
 
@@ -27,7 +27,7 @@ export class user extends BaseTable {
   email: string;
 
   @AuditLogTableRemoveColumns()
-  @Column({ type: 'mediumtext' })
+  @Column({ type: 'text' })
   password: string;
 
   @Column({ nullable: true })

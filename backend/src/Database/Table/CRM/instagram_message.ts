@@ -8,7 +8,7 @@ export class instagram_message extends BaseTable {
   @JoinColumn({ name: 'lead_id' })
   lead: instagram_lead;
 
-  @Column()
+  @Column({ type: 'uuid' })
   @Index()
   lead_id: string;
 

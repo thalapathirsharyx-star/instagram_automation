@@ -10,7 +10,7 @@ export class BaseTable extends BaseEntity {
   @Generated('uuid')
   id: string;
 
-  @Column({ type: 'boolean', default: 1 })
+  @Column({ type: 'boolean', default: true })
   status: boolean;
 
   @AuditLogRemoveColumn()
@@ -18,7 +18,7 @@ export class BaseTable extends BaseEntity {
   created_by_id: string;
 
   @AuditLogRemoveColumn()
-  @Column({ type: 'datetime', select: false })
+  @Column({ type: 'timestamp', select: false })
   created_on: Date;
 
   @AuditLogRemoveColumn()
@@ -26,7 +26,7 @@ export class BaseTable extends BaseEntity {
   updated_by_id?: string;
 
   @AuditLogRemoveColumn()
-  @Column({ type: 'datetime', nullable: true, select: false })
+  @Column({ type: 'timestamp', nullable: true, select: false })
   updated_on?: Date;
 
 }

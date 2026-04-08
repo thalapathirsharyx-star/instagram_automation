@@ -18,7 +18,7 @@ export class company extends BaseTable {
   @JoinColumn({ name: "country_id" })
   country: country;
 
-  @Column()
+  @Column({ type: 'uuid' })
   @Index()
   country_id: string;
 
@@ -26,7 +26,7 @@ export class company extends BaseTable {
   @JoinColumn({ name: "currency_id" })
   currency: currency;
 
-  @Column()
+  @Column({ type: 'uuid' })
   @Index()
   currency_id: string;
 

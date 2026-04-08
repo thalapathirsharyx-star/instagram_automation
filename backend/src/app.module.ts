@@ -46,12 +46,12 @@ import { InstagramService } from '@Service/Instagram.service';
       exclude: ['/api/*', 'swagger'],
     }),
     EventEmitterModule.forRoot({ maxListeners: 0 }),
-    ConfigModule.forRoot({ isGlobal: true, load: [Configuration] }),
+    ConfigModule.forRoot({ isGlobal: true, load: [Configuration], envFilePath: '.env' }),
     MulterModule.register(),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (_ConfigService: ConfigService) => ({
-        type: 'mysql',
+        type: 'postgres',
         host: _ConfigService.get("Database.Host"),
         port: _ConfigService.get("Database.Port"),
         username: _ConfigService.get("Database.User"),

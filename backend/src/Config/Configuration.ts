@@ -2,7 +2,7 @@ export default () => ({
   Port: parseInt(process.env.PORT) || 8000,
   Database: {
     Host: process.env.DB_HOST,
-    Port: 3306,
+    Port: parseInt(process.env.DB_PORT) || 5432,
     User: process.env.DB_USER,
     Password: process.env.DB_PASS,
     Name: process.env.DB_NAME,

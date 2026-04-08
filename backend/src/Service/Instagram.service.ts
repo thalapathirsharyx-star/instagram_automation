@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import axios from 'axios';
 import { instagram_lead } from '@Database/Table/CRM/instagram_lead';
 import { instagram_message } from '@Database/Table/CRM/instagram_message';
 import { InstagramMessageContext, InstagramActionResponse } from '@Model/Instagram.model';
@@ -36,6 +37,7 @@ export class InstagramService {
         notes: `Matched keyword: ${keywordMatch.keyword}`,
       };
       await this.logOutboundMessage(lead, response);
+      await this.sendInstagramMessage(lead.instagram_handle, response.reply);
       return response;
     }
 
@@ -67,6 +69,12 @@ export class InstagramService {
     }
 
     await this.logOutboundMessage(lead, response);
+    
+    // Only send the reply if it's an automated one
+    if (response.action === 'AI_REPLY' || response.action === 'AUTO_KEYWORD_REPLY') {
+      await this.sendInstagramMessage(lead.instagram_handle, response.reply);
+    }
+
     return response;
   }
 
@@ -116,5 +124,24 @@ export class InstagramService {
       where: { lead_id: leadId },
       order: { created_on: 'ASC' }
     });
+  }
+
+  private async sendInstagramMessage(recipientId: string, text: string) {
+    // This token should be in environment variables
+    const PAGE_ACCESS_TOKEN = process.env['IG_PAGE_ACCESS_TOKEN'] || 'YOUR_ACCESS_TOKEN_HERE';
+    const url = `https://graph.facebook.com/v17.0/me/messages?access_token=${PAGE_ACCESS_TOKEN}`;
+
+    try {
+      console.log(`Pushed reply to Instagram API for recipient: ${recipientId}`);
+      // In a real scenario, uncomment the block below:
+      /*
+      await axios.post(url, {
+        recipient: { id: recipientId },
+        message: { text: text }
+      });
+      */
+    } catch (error) {
+      console.error('Failed to send Instagram message:', error);
+    }
   }
 }

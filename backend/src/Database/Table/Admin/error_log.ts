@@ -12,7 +12,7 @@ export class error_log extends BaseTable {
   @Column()
   ipaddress: string;
 
-  @Column({ type: "mediumtext" })
+  @Column({ type: "text" })
   message: string;
 
   @Column({ nullable: true })

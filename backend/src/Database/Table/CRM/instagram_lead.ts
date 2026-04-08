@@ -13,7 +13,7 @@ export class instagram_lead extends BaseTable {
   @Column({ default: 'New' })
   lead_status: string; // New | Hot | Buyer | Lost | Needs_Human
 
-  @Column({ type: 'datetime', nullable: true })
+  @Column({ type: 'timestamp', nullable: true })
   last_message_time: Date;
 
   @Column({ type: 'simple-array', nullable: true })

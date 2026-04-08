@@ -1,0 +1,143 @@
+import React, { useState, useEffect, useRef } from 'react';
+import { getLeads, getMessages } from '../api/crm.api';
+import type { Lead, Message } from '../models/crm.models';
+import { Send } from 'lucide-react';
+
+const Inbox: React.FC = () => {
+  const [leads, setLeads] = useState<Lead[]>([]);
+  const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const chatHistoryRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    fetchLeads();
+  }, []);
+
+  const fetchLeads = async () => {
+    try {
+      const res = await getLeads();
+      setLeads(res.Data);
+      if (res.Data.length > 0) {
+        handleSelectLead(res.Data[0]);
+      }
+    } catch (error) {
+      console.error('Error fetching leads:', error);
+    }
+  };
+
+  const handleSelectLead = async (lead: Lead) => {
+    setSelectedLead(lead);
+    try {
+      const res = await getMessages(lead.id);
+      setMessages(res.Data);
+      setTimeout(scrollToBottom, 100);
+    } catch (error) {
+      console.error('Error fetching messages:', error);
+    }
+  };
+
+  const scrollToBottom = () => {
+    if (chatHistoryRef.current) {
+      chatHistoryRef.current.scrollTop = chatHistoryRef.current.scrollHeight;
+    }
+  };
+
+  return (
+    <div className="inbox-container" style={{ display: 'flex', gap: '16px', height: '100%' }}>
+      {/* Lead Sidebar */}
+      <div className="lead-sidebar glass-card" style={{ width: '320px', display: 'flex', flexDirection: 'column' }}>
+        <div className="sidebar-header" style={{ padding: '16px', borderBottom: '1px solid var(--glass-border)' }}>
+          <h2 style={{ fontSize: '1.1rem' }}>Conversations</h2>
+        </div>
+        <div className="lead-list premium-scroll" style={{ flexGrow: 1, overflowY: 'auto' }}>
+          {leads.map((lead) => (
+            <div 
+              key={lead.id} 
+              className={`lead-item ${selectedLead?.id === lead.id ? 'active' : ''}`}
+              onClick={() => handleSelectLead(lead)}
+              style={{
+                display: 'flex', gap: '12px', padding: '16px', cursor: 'pointer',
+                borderBottom: '1px solid var(--glass-border)', transition: 'background 0.3s',
+                backgroundColor: selectedLead?.id === lead.id ? 'rgba(138, 43, 226, 0.1)' : 'transparent',
+                borderLeft: selectedLead?.id === lead.id ? '4px solid var(--primary)' : 'none'
+              }}
+            >
+              <div className="lead-avatar" style={{
+                background: 'var(--primary)', width: '40px', height: '40px', borderRadius: '50%',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 600
+              }}>
+                {lead.customer_name[0]}
+              </div>
+              <div className="lead-info" style={{ flexGrow: 1, overflow: 'hidden' }}>
+                <div className="top" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span className="name" style={{ fontWeight: 500, fontSize: '0.95rem' }}>{lead.customer_name}</span>
+                  <span className="status-badge" style={{
+                    fontSize: '0.7rem', padding: '2px 6px', borderRadius: '4px',
+                    border: '1px solid var(--glass-border)', color: lead.lead_status === 'Hot' ? 'var(--hot)' : 'inherit'
+                  }}>{lead.lead_status}</span>
+                </div>
+                <div className="handle" style={{ fontSize: '0.8rem', color: 'var(--text-dim)' }}>@{lead.instagram_handle}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Chat Area */}
+      <div className="chat-area glass-card" style={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
+        {selectedLead ? (
+          <>
+            <div className="chat-header" style={{ padding: '16px 24px', borderBottom: '1px solid var(--glass-border)', display: 'flex', justifyContent: 'space-between' }}>
+              <div>
+                <h3 style={{ margin: 0 }}>{selectedLead.customer_name}</h3>
+                <p style={{ margin: '4px 0 0', fontSize: '0.85rem', color: 'var(--text-dim)' }}>@{selectedLead.instagram_handle}</p>
+              </div>
+              <button className="action-btn" style={{ background: 'var(--glass)', border: '1px solid var(--glass-border)', color: '#fff', padding: '8px 16px', borderRadius: '8px', cursor: 'pointer' }}>Human Handoff</button>
+            </div>
+
+            <div className="chat-history premium-scroll" ref={chatHistoryRef} style={{ flexGrow: 1, padding: '24px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              {messages.map((msg) => (
+                <div key={msg.id} className={`message-wrapper ${msg.direction === 'Outbound' ? 'outbound' : ''}`} style={{
+                  maxWidth: '70%', alignSelf: msg.direction === 'Outbound' ? 'flex-end' : 'flex-start'
+                }}>
+                  <div className="message-bubble" style={{
+                    padding: '12px 16px', borderRadius: '12px', background: msg.direction === 'Outbound' ? 'var(--primary)' : 'var(--glass)'
+                  }}>
+                    <p className="text" style={{ margin: 0, lineHeight: 1.5 }}>{msg.message_text}</p>
+                    <span className="time" style={{ fontSize: '0.7rem', color: 'var(--text-dim)', display: 'block', marginTop: 4, textAlign: 'right' }}>
+                      {new Date(msg.created_on).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </span>
+                  </div>
+                  {msg.ai_notes && (
+                    <div className="ai-logic" style={{ marginTop: '8px', fontSize: '0.75rem', color: 'var(--text-dim)', borderLeft: '2px solid var(--primary)', paddingLeft: '8px' }}>
+                      <span className="logic-tag" style={{ color: 'var(--primary)', fontWeight: 500, display: 'block' }}>AI Concept: {msg.action_taken}</span>
+                      <p className="logic-detail">{msg.ai_notes}</p>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            <div className="chat-input" style={{ padding: '16px 24px', display: 'flex', gap: '12px', borderTop: '1px solid var(--glass-border)' }}>
+              <input 
+                type="text" 
+                placeholder="Type a message (Manual override)..." 
+                disabled 
+                style={{ flexGrow: 1, background: 'rgba(0,0,0,0.2)', border: '1px solid var(--glass-border)', borderRadius: '20px', padding: '8px 16px', color: '#fff', outline: 'none' }}
+              />
+              <button className="send-btn" style={{ background: 'var(--primary)', border: 'none', borderRadius: '50%', width: '40px', height: '40px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Send size={18} />
+              </button>
+            </div>
+          </>
+        ) : (
+          <div className="no-selection" style={{ flexGrow: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-dim)' }}>
+            <p>Select a conversation to view DMs</p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default Inbox;

@@ -9,7 +9,7 @@ export class email_config extends BaseTable {
   @Column()
   email_id: string;
 
-  @Column({ type: "mediumtext" })
+  @Column({ type: "text" })
   password: string;
 
   @Column({ nullable: true, default: "JewelStock" })
