@@ -1,0 +1,56 @@
+<div class="inbox-container">
+  <div class="lead-sidebar glass-card">
+    <div class="sidebar-header">
+      <h2>Conversations</h2>
+    </div>
+    <div class="lead-list premium-scroll">
+      <div *ngFor="let lead of leads" 
+           class="lead-item" 
+           [class.active]="selectedLead?.id === lead.id"
+           (click)="selectLead(lead)">
+        <div class="lead-avatar">{{ lead.customer_name[0] }}</div>
+        <div class="lead-info">
+          <div class="top">
+            <span class="name">{{ lead.customer_name }}</span>
+            <span class="status-badge" [attr.data-status]="lead.lead_status">{{ lead.lead_status }}</span>
+          </div>
+          <div class="handle">@{{ lead.instagram_handle }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="chat-area glass-card" *ngIf="selectedLead">
+    <div class="chat-header">
+      <div class="user-meta">
+        <h3>{{ selectedLead.customer_name }}</h3>
+        <p>@{{ selectedLead.instagram_handle }}</p>
+      </div>
+      <div class="chat-actions">
+        <button class="action-btn">Human Handoff</button>
+      </div>
+    </div>
+
+    <div class="chat-history premium-scroll">
+      <div *ngFor="let msg of messages" class="message-wrapper" [class.outbound]="msg.direction === 'Outbound'">
+        <div class="message-bubble">
+          <p class="text">{{ msg.message_text }}</p>
+          <span class="time">{{ msg.created_on | date:'shortTime' }}</span>
+        </div>
+        <div class="ai-logic" *ngIf="msg.ai_notes">
+          <span class="logic-tag">AI Concept: {{ msg.action_taken }}</span>
+          <p class="logic-detail">{{ msg.ai_notes }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="chat-input">
+      <input type="text" placeholder="Type a message (Manual override)..." disabled>
+      <button class="send-btn">🚀</button>
+    </div>
+  </div>
+
+  <div class="no-selection glass-card" *ngIf="!selectedLead">
+    <p>Select a conversation to view DMs</p>
+  </div>
+</div>

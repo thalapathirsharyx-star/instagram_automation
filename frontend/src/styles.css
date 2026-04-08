@@ -1,0 +1,43 @@
+:root {
+  --primary: #8a2be2;
+  --primary-hover: #7b27cc;
+  --bg-dark: #0f111a;
+  --bg-card: #1a1c2c;
+  --text-main: #e0e0e0;
+  --text-dim: #a0a0b0;
+  --glass: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --success: #00c853;
+  --warning: #ffd600;
+  --danger: #ff1744;
+  --hot: #ff4081;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg-dark);
+  color: var(--text-main);
+  font-family: 'Outfit', sans-serif;
+  height: 100vh;
+  overflow: hidden;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.glass-card {
+  background: var(--glass);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+}
+
+.premium-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+.premium-scroll::-webkit-scrollbar-thumb {
+  background: var(--glass-border);
+  border-radius: 10px;
+}

@@ -1,0 +1,51 @@
+version: "3.8"
+services:
+  app:
+    image: node:20.9
+    container_name: jewelstock-api
+    working_dir: /workspace
+    environment:
+      - NODE_ENV=development
+    ports:
+      - "8000:8000"
+    command: tail -f /dev/null
+    volumes:
+      - ../:/workspace
+    networks:
+      - default
+    depends_on:
+      - mysql
+
+  mysql:
+    image: mysql:8.0
+    container_name: jewelstock-mysql-container
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_ROOT_PASSWORD: L0gin@321!#.
+      MYSQL_DATABASE: jewelstock
+    ports:
+      - "3377:3306"
+    volumes:
+      - ./mysql-data:/var/lib/mysql
+    networks:
+      - default
+
+  redis:
+    image: redis:7.2.2-alpine
+    container_name: jewelstock-redis-container
+    ports:
+      - "6381:6379"
+
+  influxdb:
+    image: influxdb:2.7.3-alpine
+    container_name: jewelstock-influxdb-container
+    volumes:
+      - ./influxdb-data:/var/lib/influxdb2
+    ports:
+      - "8087:8086"
+    environment:
+      INFLUXDB_INIT_MODE: setup
+      INFLUXDB_INIT_USERNAME: jewelstock
+      INFLUXDB_INIT_PASSWORD: L0gin@321!#.
+      INFLUXDB_INIT_ORG: jewelstock
+      INFLUXDB_INIT_BUCKET: jewelstock
