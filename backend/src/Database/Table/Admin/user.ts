@@ -8,13 +8,13 @@ import { user_role } from './user_role';
 
 @Entity()
 export class user extends BaseTable {
-  @ManyToOne(() => user_role, { onDelete: 'RESTRICT' })
-  @JoinColumn({ name: 'user_role_id' })
-  user_role: user_role;
-
   @Column({ type: 'uuid' })
   @Index()
   user_role_id: string;
+
+  @ManyToOne(() => user_role, { onDelete: 'RESTRICT' })
+  @JoinColumn({ name: 'user_role_id' })
+  user_role: user_role;
 
   @Column({ type: "text", nullable: true })
   first_name: string;

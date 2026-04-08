@@ -5,14 +5,13 @@ import { currency } from "./currency";
 
 @Entity()
 export class country extends BaseTable {
+  @Column({ type: 'uuid' })
+  @Index()
+  currency_id: string;
 
   @ManyToOne(() => currency, { onDelete: "RESTRICT" })
   @JoinColumn({ name: "currency_id" })
   currency: currency;
-
-  @Column({ type: 'uuid' })
-  @Index()
-  currency_id: string;
 
   @AuditLogIdentity()
   @Column({ unique: true })

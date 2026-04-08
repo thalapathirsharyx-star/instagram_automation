@@ -5,7 +5,7 @@ import { AuditLogRemoveColumn } from '@Helper/AuditLog.decorators';
 import { Column, BaseEntity, Index, PrimaryColumn, Generated } from 'typeorm';
 
 export class BaseTable extends BaseEntity {
-  @PrimaryColumn()
+  @PrimaryColumn({ type: 'uuid' })
   @Index()
   @Generated('uuid')
   id: string;

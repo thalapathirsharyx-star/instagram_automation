@@ -14,21 +14,21 @@ export class company extends BaseTable {
   @Column()
   address: string;
 
+  @Column({ type: 'uuid' })
+  @Index()
+  country_id: string;
+
   @ManyToOne(() => country, { onDelete: "RESTRICT" })
   @JoinColumn({ name: "country_id" })
   country: country;
 
   @Column({ type: 'uuid' })
   @Index()
-  country_id: string;
+  currency_id: string;
 
-  @ManyToOne(type => currency, { onDelete: "RESTRICT" })
+  @ManyToOne(() => currency, { onDelete: "RESTRICT" })
   @JoinColumn({ name: "currency_id" })
   currency: currency;
-
-  @Column({ type: 'uuid' })
-  @Index()
-  currency_id: string;
 
   @Column()
   postal_code: string;

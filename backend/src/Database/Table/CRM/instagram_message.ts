@@ -4,13 +4,13 @@ import { instagram_lead } from './instagram_lead';
 
 @Entity()
 export class instagram_message extends BaseTable {
-  @ManyToOne(() => instagram_lead, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'lead_id' })
-  lead: instagram_lead;
-
   @Column({ type: 'uuid' })
   @Index()
   lead_id: string;
+
+  @ManyToOne(() => instagram_lead, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'lead_id' })
+  lead: instagram_lead;
 
   @Column({ type: 'text' })
   message_text: string;
