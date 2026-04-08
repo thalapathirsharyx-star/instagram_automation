@@ -1,43 +1,25 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-
-export interface Lead {
-  id: string;
-  customer_name: string;
-  instagram_handle: string;
-  lead_status: string;
-  last_message_time: string;
-  tags?: string[];
-}
-
-export interface Message {
-  id: string;
-  lead_id: string;
-  message_text: string;
-  direction: string;
-  action_taken?: string;
-  ai_notes?: string;
-  created_on: string;
-}
+import { ApiResponse, Lead, Message } from './models/crm.models';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CrmService {
-  private apiUrl = 'http://localhost:8000/api/v1/Instagram'; // Adjust port if needed
+  private apiUrl = 'http://localhost:8000/v1/Instagram';
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
-  getLeads(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/Leads`);
+  getLeads(): Observable<ApiResponse<Lead[]>> {
+    return this.http.get<ApiResponse<Lead[]>>(`${this.apiUrl}/Leads`);
   }
 
-  getMessages(leadId: string): Observable<any> {
-    return this.http.get(`${this.apiUrl}/Messages/${leadId}`);
+  getMessages(leadId: string): Observable<ApiResponse<Message[]>> {
+    return this.http.get<ApiResponse<Message[]>>(`${this.apiUrl}/Messages/${leadId}`);
   }
 
-  processMessage(context: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/Process`, context);
+  processMessage(context: any): Observable<ApiResponse<any>> {
+    return this.http.post<ApiResponse<any>>(`${this.apiUrl}/Process`, context);
   }
 }

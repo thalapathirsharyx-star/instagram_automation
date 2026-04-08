@@ -1,26 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { instagram_lead } from '@Database/Table/CRM/instagram_lead';
 import { instagram_message } from '@Database/Table/CRM/instagram_message';
-
-export interface InstagramMessageContext {
-  customer_name: string;
-  instagram_handle: string;
-  message_text: string;
-  conversation_history: string[];
-  tags: string[];
-  lead_status: string;
-  last_message_time: Date;
-  product_context: any;
-  auto_reply_settings: any;
-}
-
-export interface InstagramActionResponse {
-  action: 'AUTO_KEYWORD_REPLY' | 'AI_REPLY' | 'HUMAN_HANDOFF' | 'FOLLOW_UP' | 'TRACKING_UPDATE';
-  reply: string;
-  status_update: 'New' | 'Hot' | 'Buyer' | 'Lost' | 'Needs_Human';
-  tags?: string[];
-  notes: string;
-}
+import { InstagramMessageContext, InstagramActionResponse } from '@Model/Instagram.model';
 
 @Injectable()
 export class InstagramService {
@@ -48,10 +29,10 @@ export class InstagramService {
     // 3. Decision Logic - Step 1: Keyword Matching
     const keywordMatch = this.checkKeywords(context.message_text);
     if (keywordMatch) {
-      const response = {
-        action: 'AUTO_KEYWORD_REPLY' as const,
+      const response: InstagramActionResponse = {
+        action: 'AUTO_KEYWORD_REPLY',
         reply: keywordMatch.reply.replace('{name}', context.customer_name),
-        status_update: lead.lead_status as any,
+        status_update: lead.lead_status as 'New' | 'Hot' | 'Buyer' | 'Lost' | 'Needs_Human',
         notes: `Matched keyword: ${keywordMatch.keyword}`,
       };
       await this.logOutboundMessage(lead, response);
@@ -60,10 +41,10 @@ export class InstagramService {
 
     // 4. Decision Logic - Step 3: Human Handoff (checking for complaints/anger)
     if (this.isNeedsHuman(context.message_text)) {
-      const response = {
-        action: 'HUMAN_HANDOFF' as const,
+      const response: InstagramActionResponse = {
+        action: 'HUMAN_HANDOFF',
         reply: '',
-        status_update: 'Needs_Human' as const,
+        status_update: 'Needs_Human',
         notes: 'Detected complaint or technical query requiring human intervention',
       };
       lead.lead_status = 'Needs_Human';
@@ -73,10 +54,10 @@ export class InstagramService {
 
     // 5. Decision Logic - Step 2: AI Smart Reply (Mocked for now)
     const aiResponse = this.generateMockAiReply(context.message_text);
-    const response = {
-      action: 'AI_REPLY' as const,
+    const response: InstagramActionResponse = {
+      action: 'AI_REPLY',
       reply: aiResponse.reply,
-      status_update: aiResponse.intent === 'buying' ? 'Hot' : (lead.lead_status as any),
+      status_update: aiResponse.intent === 'buying' ? 'Hot' : (lead.lead_status as 'New' | 'Hot' | 'Buyer' | 'Lost' | 'Needs_Human'),
       notes: 'Generated AI Smart Reply (Mocked)',
     };
     

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CrmService, Lead, Message } from '../crm.service';
+import { CrmService } from '../crm.service';
+import { Lead, Message, ApiResponse } from '../models/crm.models';
 
 @Component({
   selector: 'app-inbox',
@@ -20,8 +21,8 @@ export class InboxComponent implements OnInit {
     this.loadLeads();
   }
 
-  loadLeads() {
-    this.crmService.getLeads().subscribe(res => {
+  loadLeads(): void {
+    this.crmService.getLeads().subscribe((res: ApiResponse<Lead[]>) => {
       this.leads = res.Data;
       if (this.leads.length > 0) {
         this.selectLead(this.leads[0]);
@@ -29,9 +30,9 @@ export class InboxComponent implements OnInit {
     });
   }
 
-  selectLead(lead: Lead) {
+  selectLead(lead: Lead): void {
     this.selectedLead = lead;
-    this.crmService.getMessages(lead.id).subscribe(res => {
+    this.crmService.getMessages(lead.id).subscribe((res: ApiResponse<Message[]>) => {
       this.messages = res.Data;
       setTimeout(() => this.scrollToBottom(), 100);
     });

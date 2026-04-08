@@ -1,6 +1,7 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { InstagramService, InstagramMessageContext } from '@Service/Instagram.service';
+import { InstagramService } from '@Service/Instagram.service';
+import { InstagramMessageContext } from '@Model/Instagram.model';
 import { ResponseEnum } from '@Helper/Enum/ResponseEnum';
 import { AuthBaseController } from './AuthBase.controller';
 
