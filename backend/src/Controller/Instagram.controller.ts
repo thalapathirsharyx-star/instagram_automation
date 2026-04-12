@@ -47,20 +47,30 @@ export class InstagramController extends AuthBaseController {
             
             // Extract text, mid, and senderId safely
             const text = messaging.message?.text;
-            const mid = messaging.message?.mid || messaging.message_edit?.mid;
+            const mid = messaging.message?.mid;
             const senderId = messaging.sender?.id;
 
-            if (messaging.message && !messaging.message.is_echo && senderId) {
-              console.log(`Message detected: "${text}" from sender: ${senderId}`);
-              await this._InstagramService.processIncomingMessage(senderId, text, mid);
-            } else if (messaging.message_edit && mid) {
-              console.log('Message edit event received. Attempting fallback recovery...');
-              // If senderId is missing, the service's fetch-fallback will need to handle it
-              await this._InstagramService.processIncomingMessage(senderId || 'FETCH_PENDING', text, mid);
+            if (messaging.message_edit) {
+              const editMid = messaging.message_edit.mid;
+              const numEdit = messaging.message_edit.num_edit ?? 0;
+              if (numEdit === 0) {
+                // In Instagram Graph API v25.0, NEW messages in existing threads arrive as
+                // message_edit with num_edit: 0 (the "0th version" = original send).
+                // We attempt to fetch the content and process as a new inbound message.
+                console.log(`[NEW DM via message_edit] num_edit=0, MID: ${editMid}. Attempting content fetch...`);
+                await this._InstagramService.processIncomingMessage('FETCH_PENDING', undefined, editMid, entry.id);
+              } else {
+                // num_edit > 0 means a user genuinely edited an existing message — skip it.
+                console.log(`[SKIP] message_edit event (num_edit=${numEdit}, MID: ${editMid}). Actual edit — skipping.`);
+              }
+            } else if (messaging.message && !messaging.message.is_echo && senderId && text) {
+              // This is a real new inbound message with all required data
+              console.log(`[NEW MESSAGE] "${text}" from sender: ${senderId}`);
+              await this._InstagramService.processIncomingMessage(senderId, text, mid, entry.id);
             } else if (messaging.message && messaging.message.is_echo) {
-              console.log('Ignored Echo (Message sent by us)');
+              console.log('[SKIP] Echo (message sent by the page itself)');
             } else {
-              console.log('Non-message event or missing ID (e.g. read/delivery receipt)');
+              console.log('[SKIP] Non-message event (read receipt, delivery receipt, etc.)');
             }
           }
         }
@@ -71,7 +81,7 @@ export class InstagramController extends AuthBaseController {
             console.log('Change event received:', JSON.stringify(change));
             if (change.field === 'messages' && change.value && change.value.message) {
               console.log(`Message detected in changes: "${change.value.message.text}" from sender: ${change.value.sender.id}`);
-              await this._InstagramService.processIncomingMessage(change.value.sender.id, change.value.message.text, change.value.message.mid);
+              await this._InstagramService.processIncomingMessage(change.value.sender.id, change.value.message.text, change.value.message.mid, entry.id);
             }
           }
         }

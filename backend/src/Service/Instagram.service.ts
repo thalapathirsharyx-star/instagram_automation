@@ -11,36 +11,43 @@ export class InstagramService {
   
   constructor(private readonly instagramGateway: InstagramGateway) {}
 
-  async processIncomingMessage(input: InstagramMessageContext | string, text?: string, messageId?: string): Promise<InstagramActionResponse | void> {
+  async processIncomingMessage(input: InstagramMessageContext | string, text?: string, messageId?: string, igBusinessId?: string): Promise<InstagramActionResponse | void> {
     let context: InstagramMessageContext;
 
     if (typeof input === 'string') {
-      let messageText = text;
-      let senderId = input;
+      const messageText = text;
+      const senderId = input;
 
-      // Fallback: If text or sender is missing, fetch full details from Meta
-      if ((!messageText || senderId === 'FETCH_PENDING') && messageId) {
+      // If called with FETCH_PENDING (from a message_edit event), attempt to retrieve
+      // the message content from the Graph API using the correct Instagram field names.
+      if (senderId === 'FETCH_PENDING' && messageId) {
         try {
-          const response = await axios.get(`https://graph.facebook.com/v25.0/${messageId}`, {
-            params: {
-              fields: 'text,from',
-              access_token: process.env.IG_PAGE_ACCESS_TOKEN?.trim()
-            }
-          });
-          
-          if (!messageText) messageText = response.data.text;
-          if (senderId === 'FETCH_PENDING') senderId = response.data.from?.id;
-          
-          console.log(`Deep Match Success! Text: "${messageText}", Sender: ${senderId}`);
-        } catch (error) {
-          console.error('Deep Match Failed:', error.response?.data || error.message);
-        }
-      }
+          await new Promise(resolve => setTimeout(resolve, 2000));
+          const rawToken = (process.env.IG_PAGE_ACCESS_TOKEN || '').trim();
+          console.log(`[FETCH] Attempting to retrieve message content: MID=${messageId} | TokenLen=${rawToken.length}`);
 
-      if (!messageText || !senderId || senderId === 'FETCH_PENDING') {
-        console.log('Skipping message: Missing critical data after recovery attempt.');
+          const response = await axios.get(`https://graph.facebook.com/v20.0/${messageId}`, {
+            params: { fields: 'message,from,created_time' },
+            headers: { 'Authorization': `Bearer ${rawToken}` }
+          });
+
+          const fetchedText = response.data?.message;
+          const fetchedSender = response.data?.from?.id;
+
+          if (fetchedText && fetchedSender) {
+            console.log(`[FETCH SUCCESS] text="${fetchedText}" sender=${fetchedSender}`);
+            await this.processIncomingMessage(fetchedSender, fetchedText, messageId, igBusinessId);
+          } else {
+            console.log('[FETCH] Message exists but has no text content (e.g. reaction, sticker). Skipping.');
+          }
+        } catch (err) {
+          const apiError = err.response?.data?.error;
+          console.error('[FETCH FAILED]', JSON.stringify(apiError || err.message));
+          console.log('[FETCH FAILED] Cannot retrieve message text. This requires instagram_manage_messages permission approved via Meta App Review.');
+        }
         return;
       }
+
 
       context = {
         customer_name: 'IG User',
@@ -200,12 +207,17 @@ export class InstagramService {
 
 
   private async sendInstagramMessage(recipientId: string, text: string) {
-    // This token should be in environment variables
-    const PAGE_ACCESS_TOKEN = process.env['IG_PAGE_ACCESS_TOKEN']?.trim() || 'YOUR_ACCESS_TOKEN_HERE';
-    const url = `https://graph.facebook.com/v25.0/me/messages?access_token=${PAGE_ACCESS_TOKEN}`;
+    const PAGE_ACCESS_TOKEN = (process.env['IG_PAGE_ACCESS_TOKEN'] || '').trim();
+    const url = `https://graph.facebook.com/v20.0/me/messages`;
 
     try {
-      console.log(`Pushed reply to Instagram API for recipient: ${recipientId}`);
+      console.log(`Pushing reply to Instagram API for recipient: ${recipientId}`);
+      // await axios.post(url, {
+      //   recipient: { id: recipientId },
+      //   message: { text: text }
+      // }, {
+      //   headers: { 'Authorization': `Bearer ${PAGE_ACCESS_TOKEN}` }
+      // });
       // In a real scenario, uncomment the block below:
       /*
       await axios.post(url, {
