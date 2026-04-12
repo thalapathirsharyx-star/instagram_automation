@@ -54,6 +54,9 @@ export class company extends BaseTable {
   @Column({ nullable: true })
   fax_no: string;
 
+  @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
+  wallet_balance: number;
+
   @Column({ nullable: true })
   invoice_footer: string;
 

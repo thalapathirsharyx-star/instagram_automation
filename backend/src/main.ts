@@ -35,7 +35,7 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('swagger', app, document, { swaggerOptions: { tagsSorter: 'alpha', enableSearch: true } });
   const _ConfigService = app.get(ConfigService);
-  await app.listen(_ConfigService.get("Port"));
+  await app.listen(_ConfigService.get("Port"), '0.0.0.0');
   if (_ConfigService.get("Database.Seed") == "true") {
     const _CommonSeederService = app.get(CommonSeederService);
     await _CommonSeederService.Run();

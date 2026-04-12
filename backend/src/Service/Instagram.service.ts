@@ -2,19 +2,25 @@ import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { instagram_lead } from '@Database/Table/CRM/instagram_lead';
 import { instagram_message } from '@Database/Table/CRM/instagram_message';
+import { company } from '@Database/Table/Admin/company';
 import { InstagramMessageContext, InstagramActionResponse } from '@Model/Instagram.model';
+import { InstagramGateway } from '../Gateway/Instagram.gateway';
 
 @Injectable()
 export class InstagramService {
   
+  constructor(private readonly instagramGateway: InstagramGateway) {}
+
   async processIncomingMessage(context: InstagramMessageContext): Promise<InstagramActionResponse> {
     // 1. Get or Create Lead
+    const SYSTEM_ID = '00000000-0000-0000-0000-000000000000';
     let lead = await instagram_lead.findOne({ where: { instagram_handle: context.instagram_handle } });
     if (!lead) {
       lead = new instagram_lead();
       lead.customer_name = context.customer_name;
       lead.instagram_handle = context.instagram_handle;
       lead.lead_status = 'New';
+      lead.created_by_id = SYSTEM_ID;
       lead.created_on = new Date();
       await lead.save();
     }
@@ -24,8 +30,20 @@ export class InstagramService {
     inboundMsg.lead_id = lead.id;
     inboundMsg.message_text = context.message_text;
     inboundMsg.direction = 'Inbound';
+    inboundMsg.created_by_id = SYSTEM_ID;
     inboundMsg.created_on = new Date();
     await inboundMsg.save();
+
+    // Notify real-time clients
+    this.instagramGateway.emitNewMessage({ ...inboundMsg, lead });
+
+    // 2.5 Deduct credits (example: $0.10 per message)
+    const company = await this.getCompany(); // Placeholder for actual company lookup
+    if (company && company.wallet_balance > 0) {
+      company.wallet_balance = Number(company.wallet_balance) - 0.10;
+      await company.save();
+      this.instagramGateway.emitBalanceUpdate(company.wallet_balance);
+    }
 
     // 3. Decision Logic - Step 1: Keyword Matching
     const keywordMatch = this.checkKeywords(context.message_text);
@@ -108,8 +126,12 @@ export class InstagramService {
     outboundMsg.direction = 'Outbound';
     outboundMsg.action_taken = response.action;
     outboundMsg.ai_notes = response.notes;
+    outboundMsg.created_by_id = '00000000-0000-0000-0000-000000000000';
     outboundMsg.created_on = new Date();
     await outboundMsg.save();
+
+    // Notify real-time clients
+    this.instagramGateway.emitNewMessage({ ...outboundMsg, lead });
 
     lead.last_message_time = new Date();
     await lead.save();
@@ -143,5 +165,14 @@ export class InstagramService {
     } catch (error) {
       console.error('Failed to send Instagram message:', error);
     }
+  }
+
+  async getWalletBalance() {
+    const companyData = await this.getCompany();
+    return companyData?.wallet_balance || 0;
+  }
+
+  private async getCompany() {
+    return await company.findOne({ where: {} }); // For now, just gets the first company
   }
 }

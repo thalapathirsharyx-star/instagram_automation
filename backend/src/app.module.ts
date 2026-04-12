@@ -3,7 +3,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_FILTER } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
-import { ServeStaticModule } from '@nestjs/serve-static';
+// import { ServeStaticModule } from '@nestjs/serve-static';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserController } from '@Controller/Admin/User.controller';
 import { UserRoleController } from '@Controller/Admin/UserRole.controller';
@@ -38,13 +38,16 @@ import { Redis } from 'ioredis';
 import { CacheService } from '@Service/Cache.service';
 import { InstagramController } from '@Controller/Instagram.controller';
 import { InstagramService } from '@Service/Instagram.service';
+import { InstagramGateway } from './Gateway/Instagram.gateway';
 
 @Module({
   imports: [
+    /*
     ServeStaticModule.forRoot({
       rootPath: __dirname + '/client',
       exclude: ['/api/*', 'swagger'],
     }),
+    */
     EventEmitterModule.forRoot({ maxListeners: 0 }),
     ConfigModule.forRoot({ isGlobal: true, load: [Configuration], envFilePath: '.env' }),
     MulterModule.register(),
@@ -118,7 +121,9 @@ import { InstagramService } from '@Service/Instagram.service';
     CommonSeederService,
     AuditLogService,
     CacheService,
+    CacheService,
     InstagramService,
+    InstagramGateway,
     {
       provide: "REDIS_CLIENT",
       useFactory: () => {

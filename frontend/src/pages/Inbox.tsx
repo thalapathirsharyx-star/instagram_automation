@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { getLeads, getMessages } from '../api/crm.api';
 import type { Lead, Message } from '../models/crm.models';
 import { Send } from 'lucide-react';
+import { io } from 'socket.io-client';
 
 const Inbox: React.FC = () => {
   const [leads, setLeads] = useState<Lead[]>([]);
@@ -11,28 +12,62 @@ const Inbox: React.FC = () => {
 
   useEffect(() => {
     fetchLeads();
+
+    // Set up WebSocket connection
+    const socket = io('http://localhost:8000'); // Update with your backend URL
+    
+    socket.on('connect', () => {
+      console.log('Connected to WebSocket server');
+    });
+
+    socket.on('new_message', (data: any) => {
+      console.log('New message received via WebSocket:', data);
+      
+      // Update messages list if this lead is currently selected
+      const currentLead = selectedLeadRef.current;
+      if (currentLead && (currentLead.id === data.lead_id || currentLead.instagram_handle === data.lead?.instagram_handle)) {
+        setMessages(prev => [...prev, data]);
+        setTimeout(scrollToBottom, 100);
+      }
+
+      // Always refresh leads list to show new leads or update existing ones
+      fetchLeads();
+    });
+
+    return () => {
+      socket.disconnect();
+    };
   }, []);
+
+  const selectedLeadRef = useRef<Lead | null>(null);
+  useEffect(() => {
+    selectedLeadRef.current = selectedLead;
+  }, [selectedLead]);
 
   const fetchLeads = async () => {
     try {
       const res = await getLeads();
-      setLeads(res.Data);
-      if (res.Data.length > 0) {
-        handleSelectLead(res.Data[0]);
+      const data = res?.Data || [];
+      setLeads(data);
+      if (data.length > 0 && !selectedLead) {
+        handleSelectLead(data[0]);
       }
     } catch (error) {
       console.error('Error fetching leads:', error);
+      setLeads([]);
     }
   };
 
   const handleSelectLead = async (lead: Lead) => {
+    if (!lead) return;
     setSelectedLead(lead);
     try {
       const res = await getMessages(lead.id);
-      setMessages(res.Data);
+      setMessages(res?.Data || []);
       setTimeout(scrollToBottom, 100);
     } catch (error) {
       console.error('Error fetching messages:', error);
+      setMessages([]);
     }
   };
 
@@ -105,7 +140,10 @@ const Inbox: React.FC = () => {
                   }}>
                     <p className="text" style={{ margin: 0, lineHeight: 1.5 }}>{msg.message_text}</p>
                     <span className="time" style={{ fontSize: '0.7rem', color: 'var(--text-dim)', display: 'block', marginTop: 4, textAlign: 'right' }}>
-                      {new Date(msg.created_on).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      {(() => {
+                        const d = new Date(msg.created_on);
+                        return isNaN(d.getTime()) ? 'Just now' : d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                      })()}
                     </span>
                   </div>
                   {msg.ai_notes && (
