@@ -1,17 +1,67 @@
 import { Injectable } from '@nestjs/common';
-import axios from 'axios';
 import { instagram_lead } from '@Database/Table/CRM/instagram_lead';
 import { instagram_message } from '@Database/Table/CRM/instagram_message';
-import { company } from '@Database/Table/Admin/company';
+import { company as CompanyTable } from '@Database/Table/Admin/company';
 import { InstagramMessageContext, InstagramActionResponse } from '@Model/Instagram.model';
 import { InstagramGateway } from '../Gateway/Instagram.gateway';
+import axios from 'axios';
 
 @Injectable()
 export class InstagramService {
   
   constructor(private readonly instagramGateway: InstagramGateway) {}
 
-  async processIncomingMessage(context: InstagramMessageContext): Promise<InstagramActionResponse> {
+  async processIncomingMessage(input: InstagramMessageContext | string, text?: string, messageId?: string): Promise<InstagramActionResponse | void> {
+    let context: InstagramMessageContext;
+
+    if (typeof input === 'string') {
+      let messageText = text;
+      let senderId = input;
+
+      // Fallback: If text or sender is missing, fetch full details from Meta
+      if ((!messageText || senderId === 'FETCH_PENDING') && messageId) {
+        try {
+          const response = await axios.get(`https://graph.facebook.com/v25.0/${messageId}`, {
+            params: {
+              fields: 'text,from',
+              access_token: process.env.IG_PAGE_ACCESS_TOKEN?.trim()
+            }
+          });
+          
+          if (!messageText) messageText = response.data.text;
+          if (senderId === 'FETCH_PENDING') senderId = response.data.from?.id;
+          
+          console.log(`Deep Match Success! Text: "${messageText}", Sender: ${senderId}`);
+        } catch (error) {
+          console.error('Deep Match Failed:', error.response?.data || error.message);
+        }
+      }
+
+      if (!messageText || !senderId || senderId === 'FETCH_PENDING') {
+        console.log('Skipping message: Missing critical data after recovery attempt.');
+        return;
+      }
+
+      context = {
+        customer_name: 'IG User',
+        instagram_handle: senderId,
+        message_text: messageText,
+        conversation_history: [],
+        tags: [],
+        lead_status: 'New',
+        last_message_time: new Date(),
+        product_context: [],
+        auto_reply_settings: {
+          is_enabled: true,
+          min_delay_ms: 1000,
+          max_delay_ms: 3000,
+          allow_ai_override: true
+        }
+      };
+    } else {
+      context = input;
+    }
+
     // 1. Get or Create Lead
     const SYSTEM_ID = '00000000-0000-0000-0000-000000000000';
     let lead = await instagram_lead.findOne({ where: { instagram_handle: context.instagram_handle } });
@@ -148,10 +198,11 @@ export class InstagramService {
     });
   }
 
+
   private async sendInstagramMessage(recipientId: string, text: string) {
     // This token should be in environment variables
-    const PAGE_ACCESS_TOKEN = process.env['IG_PAGE_ACCESS_TOKEN'] || 'YOUR_ACCESS_TOKEN_HERE';
-    const url = `https://graph.facebook.com/v17.0/me/messages?access_token=${PAGE_ACCESS_TOKEN}`;
+    const PAGE_ACCESS_TOKEN = process.env['IG_PAGE_ACCESS_TOKEN']?.trim() || 'YOUR_ACCESS_TOKEN_HERE';
+    const url = `https://graph.facebook.com/v25.0/me/messages?access_token=${PAGE_ACCESS_TOKEN}`;
 
     try {
       console.log(`Pushed reply to Instagram API for recipient: ${recipientId}`);
@@ -173,6 +224,6 @@ export class InstagramService {
   }
 
   private async getCompany() {
-    return await company.findOne({ where: {} }); // For now, just gets the first company
+    return await CompanyTable.findOne({ where: {} }); // For now, just gets the first company
   }
 }

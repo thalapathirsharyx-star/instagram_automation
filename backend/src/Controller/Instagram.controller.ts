@@ -44,13 +44,23 @@ export class InstagramController extends AuthBaseController {
         if (entry.messaging && Array.isArray(entry.messaging)) {
           for (const messaging of entry.messaging) {
             console.log('Messaging event received:', JSON.stringify(messaging));
-            if (messaging.message && !messaging.message.is_echo) {
-              console.log(`Message detected: "${messaging.message.text}" from sender: ${messaging.sender.id}`);
-              await this.processMessage(messaging.sender.id, messaging.message.text);
+            
+            // Extract text, mid, and senderId safely
+            const text = messaging.message?.text;
+            const mid = messaging.message?.mid || messaging.message_edit?.mid;
+            const senderId = messaging.sender?.id;
+
+            if (messaging.message && !messaging.message.is_echo && senderId) {
+              console.log(`Message detected: "${text}" from sender: ${senderId}`);
+              await this._InstagramService.processIncomingMessage(senderId, text, mid);
+            } else if (messaging.message_edit && mid) {
+              console.log('Message edit event received. Attempting fallback recovery...');
+              // If senderId is missing, the service's fetch-fallback will need to handle it
+              await this._InstagramService.processIncomingMessage(senderId || 'FETCH_PENDING', text, mid);
             } else if (messaging.message && messaging.message.is_echo) {
               console.log('Ignored Echo (Message sent by us)');
             } else {
-              console.log('Non-message event in messaging array (e.g. read/delivery receipt)');
+              console.log('Non-message event or missing ID (e.g. read/delivery receipt)');
             }
           }
         }
@@ -61,35 +71,13 @@ export class InstagramController extends AuthBaseController {
             console.log('Change event received:', JSON.stringify(change));
             if (change.field === 'messages' && change.value && change.value.message) {
               console.log(`Message detected in changes: "${change.value.message.text}" from sender: ${change.value.sender.id}`);
-              await this.processMessage(change.value.sender.id, change.value.message.text);
+              await this._InstagramService.processIncomingMessage(change.value.sender.id, change.value.message.text, change.value.message.mid);
             }
           }
         }
       }
     }
     return { status: 'EVENT_RECEIVED' };
-  }
-
-  private async processMessage(senderId: string, text: string) {
-    const context: InstagramMessageContext = {
-      customer_name: 'IG User', // We can fetch full name later with Profile API
-      instagram_handle: senderId, // Using Sender ID as handle for now
-      message_text: text,
-      conversation_history: [],
-      tags: [],
-      lead_status: 'New',
-      last_message_time: new Date(),
-      product_context: [], // Default empty context
-      auto_reply_settings: {
-        is_enabled: true,
-        min_delay_ms: 1000,
-        max_delay_ms: 3000,
-        allow_ai_override: true
-      }
-    };
-
-    // Real-time processing through our decision engine
-    await this._InstagramService.processIncomingMessage(context);
   }
 
   @Post('Process')
