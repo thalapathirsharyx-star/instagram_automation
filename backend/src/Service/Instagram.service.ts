@@ -8,8 +8,8 @@ import axios from 'axios';
 
 @Injectable()
 export class InstagramService {
-  
-  constructor(private readonly instagramGateway: InstagramGateway) {}
+
+  constructor(private readonly instagramGateway: InstagramGateway) { }
 
   async processIncomingMessage(input: InstagramMessageContext | string, text?: string, messageId?: string, igBusinessId?: string): Promise<InstagramActionResponse | void> {
     let context: InstagramMessageContext;
@@ -24,26 +24,82 @@ export class InstagramService {
         try {
           await new Promise(resolve => setTimeout(resolve, 2000));
           const rawToken = (process.env.IG_PAGE_ACCESS_TOKEN || '').trim();
-          console.log(`[FETCH] Attempting to retrieve message content: MID=${messageId} | TokenLen=${rawToken.length}`);
+          
+          // Mask token for safe logging
+          const maskedToken = rawToken.length > 10 
+            ? `${rawToken.substring(0, 6)}...${rawToken.substring(rawToken.length - 4)}`
+            : 'INVALID_TOKEN_LENGTH';
+          
+          console.log(`[FETCH] Executing message content fetch. MID: ${messageId} | Token: ${maskedToken}`);
 
-          const response = await axios.get(`https://graph.facebook.com/v20.0/${messageId}`, {
-            params: { fields: 'message,from,created_time' },
-            headers: { 'Authorization': `Bearer ${rawToken}` }
-          });
+          let response;
+          const fetchParams = {
+            fields: 'id,message,from,created_time'
+          };
+          const fetchHeaders = {
+            'Authorization': `Bearer ${rawToken}`
+          };
 
-          const fetchedText = response.data?.message;
-          const fetchedSender = response.data?.from?.id;
+          // Diagnostic: Facebook Page Tokens for Instagram DMs MUST start with EAA... 
+          // and be 'Page' type. User tokens (even with correct scopes) often fail fetching.
+          if (rawToken.startsWith('EAANk')) {
+             console.log('[DIAGNOSTIC] Token starts with EAANk... (Likely a User Token). If fetch fails, please switch to a PAGE token.');
+          }
 
-          if (fetchedText && fetchedSender) {
-            console.log(`[FETCH SUCCESS] text="${fetchedText}" sender=${fetchedSender}`);
-            await this.processIncomingMessage(fetchedSender, fetchedText, messageId, igBusinessId);
+          // Retry logic for Code 1 (Transient Meta errors / Privacy blocks)
+          let retries = 2;
+          let lastError = null;
+          
+          while (retries >= 0) {
+            try {
+              // graph.facebook.com is the only host that works for Page-linked Instagram DMs
+              response = await axios.get(`https://graph.facebook.com/v21.0/${messageId}`, {
+                params: fetchParams,
+                headers: fetchHeaders
+              });
+              lastError = null;
+              break; 
+            } catch (err) {
+              lastError = err.response?.data?.error;
+              if (lastError?.code === 1 && retries > 0) {
+                console.warn(`[FETCH RETRY] Meta Code 1 (Unknown Error). Retrying... (${retries} left)`);
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                retries--;
+              } else {
+                break;
+              }
+            }
+          }
+
+          if (lastError) {
+            console.error('[FETCH FAILED] Meta rejected the request.');
+            console.error(`Error Code: ${lastError.code} | Message: ${lastError.message}`);
+            
+            if (lastError.code === 1) {
+              console.error('--- IMPORTANT ACTION REQUIRED ---');
+              console.error('1. Ensure "Allow Access to Messages" is ON in your Instagram App settings.');
+              console.error('2. Ensure you are using a PAGE Access Token (starts with EAA...) from the Graph API Explorer dropdown.');
+              console.error('---------------------------------');
+            }
+            return;
+          }
+
+          const msgData = response.data;
+          const content = msgData.message;
+          
+          if (content) {
+            console.log(`[FETCH SUCCESS] Received content: "${content}"`);
+            return await this.processIncomingMessage(msgData.from?.id, content, messageId, igBusinessId);
           } else {
-            console.log('[FETCH] Message exists but has no text content (e.g. reaction, sticker). Skipping.');
+            console.error('[FETCH FAILED] Response received but no message content found:', JSON.stringify(msgData));
           }
         } catch (err) {
           const apiError = err.response?.data?.error;
-          console.error('[FETCH FAILED]', JSON.stringify(apiError || err.message));
-          console.log('[FETCH FAILED] Cannot retrieve message text. This requires instagram_manage_messages permission approved via Meta App Review.');
+          console.error('[FETCH ERROR]', JSON.stringify(apiError || err.message));
+
+          if (apiError?.code === 10 || apiError?.code === 230 || apiError?.code === 298) {
+            console.error('[PERMISSION ERROR] Missing scope: instagram_manage_messages or account linking issue.');
+          }
         }
         return;
       }
@@ -137,14 +193,14 @@ export class InstagramService {
       status_update: aiResponse.intent === 'buying' ? 'Hot' : (lead.lead_status as 'New' | 'Hot' | 'Buyer' | 'Lost' | 'Needs_Human'),
       notes: 'Generated AI Smart Reply (Mocked)',
     };
-    
+
     if (aiResponse.intent === 'buying') {
       lead.lead_status = 'Hot';
       await lead.save();
     }
 
     await this.logOutboundMessage(lead, response);
-    
+
     // Only send the reply if it's an automated one
     if (response.action === 'AI_REPLY' || response.action === 'AUTO_KEYWORD_REPLY') {
       await this.sendInstagramMessage(lead.instagram_handle, response.reply);
