@@ -8,10 +8,28 @@ import axios from 'axios';
 
 @Injectable()
 export class InstagramService {
+  // Simple in-memory cache to prevent duplicate processing of the same message
+  private processedMids = new Set<string>();
+  private readonly CACHE_LIMIT = 500;
 
   constructor(private readonly instagramGateway: InstagramGateway) { }
 
-  async processIncomingMessage(input: InstagramMessageContext | string, text?: string, messageId?: string, igBusinessId?: string): Promise<InstagramActionResponse | void> {
+  async processIncomingMessage(input: InstagramMessageContext | string, text?: string, messageId?: string, igBusinessId?: string, skipDedupe = false): Promise<InstagramActionResponse | void> {
+    // Deduplication check - only skip if not an internal recursive call
+    if (!skipDedupe && messageId && this.processedMids.has(messageId)) {
+      console.log(`[SKIP] Duplicate message detected. MID: ${messageId}`);
+      return;
+    }
+
+    // Track this message ID
+    if (messageId) {
+      if (this.processedMids.size >= this.CACHE_LIMIT) {
+        // Clear old entries to prevent memory leak
+        const iterator = this.processedMids.values();
+        for (let i = 0; i < 100; i++) this.processedMids.delete(iterator.next().value);
+      }
+      this.processedMids.add(messageId);
+    }
     let context: InstagramMessageContext;
 
     if (typeof input === 'string') {
@@ -86,10 +104,18 @@ export class InstagramService {
 
           const msgData = response.data;
           const content = msgData.message;
+          const actualSenderId = msgData.from?.id;
+
+          // CRITICAL: Filter out messages sent by the bot/page itself to prevent loops
+          if (actualSenderId === igBusinessId) {
+            console.log(`[SKIP] Ignoring message sent by the bot itself (ID: ${actualSenderId})`);
+            return;
+          }
           
           if (content) {
-            console.log(`[FETCH SUCCESS] Received content: "${content}"`);
-            return await this.processIncomingMessage(msgData.from?.id, content, messageId, igBusinessId);
+            console.log(`[FETCH SUCCESS] Received content: "${content}" from ${actualSenderId}`);
+            // Pass skipDedupe = true so we don't get blocked by our own cache
+            return await this.processIncomingMessage(actualSenderId, content, messageId, igBusinessId, true);
           } else {
             console.error('[FETCH FAILED] Response received but no message content found:', JSON.stringify(msgData));
           }
@@ -264,25 +290,20 @@ export class InstagramService {
 
   private async sendInstagramMessage(recipientId: string, text: string) {
     const PAGE_ACCESS_TOKEN = (process.env['IG_PAGE_ACCESS_TOKEN'] || '').trim();
-    const url = `https://graph.facebook.com/v20.0/me/messages`;
+    // Using v21.0 to match our successful fetch endpoint
+    const url = `https://graph.facebook.com/v21.0/me/messages`;
 
     try {
-      console.log(`Pushing reply to Instagram API for recipient: ${recipientId}`);
-      // await axios.post(url, {
-      //   recipient: { id: recipientId },
-      //   message: { text: text }
-      // }, {
-      //   headers: { 'Authorization': `Bearer ${PAGE_ACCESS_TOKEN}` }
-      // });
-      // In a real scenario, uncomment the block below:
-      /*
+      console.log(`[REPLY] Sending response to: ${recipientId}`);
       await axios.post(url, {
         recipient: { id: recipientId },
         message: { text: text }
+      }, {
+        headers: { 'Authorization': `Bearer ${PAGE_ACCESS_TOKEN}` }
       });
-      */
+      console.log(`[REPLY SUCCESS] Message sent to ${recipientId}`);
     } catch (error) {
-      console.error('Failed to send Instagram message:', error);
+      console.error('[REPLY FAILED] Meta rejected the outbound message:', JSON.stringify(error.response?.data?.error || error.message));
     }
   }
 

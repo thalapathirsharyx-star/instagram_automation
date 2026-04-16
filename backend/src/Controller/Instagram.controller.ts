@@ -37,57 +37,59 @@ export class InstagramController extends AuthBaseController {
 
     if (body.object === 'instagram') {
       for (const entry of body.entry) {
-        // Log individual entry for debugging
         console.log(`Processing Entry ID: ${entry.id}`);
 
-        // Handle 'messaging' structure
         if (entry.messaging && Array.isArray(entry.messaging)) {
           for (const messaging of entry.messaging) {
-            console.log('Messaging event received:', JSON.stringify(messaging));
-            
-            // Extract text, mid, and senderId safely
-            const text = messaging.message?.text;
-            const mid = messaging.message?.mid;
-            const senderId = messaging.sender?.id;
-
-            if (messaging.message_edit) {
-              const editMid = messaging.message_edit.mid;
-              const numEdit = messaging.message_edit.num_edit ?? 0;
-              if (numEdit === 0) {
-                // In Instagram Graph API v25.0, NEW messages in existing threads arrive as
-                // message_edit with num_edit: 0 (the "0th version" = original send).
-                // We attempt to fetch the content and process as a new inbound message.
-                console.log(`[NEW DM via message_edit] num_edit=0, MID: ${editMid}. Attempting content fetch...`);
-                await this._InstagramService.processIncomingMessage('FETCH_PENDING', undefined, editMid, entry.id);
-              } else {
-                // num_edit > 0 means a user genuinely edited an existing message — skip it.
-                console.log(`[SKIP] message_edit event (num_edit=${numEdit}, MID: ${editMid}). Actual edit — skipping.`);
-              }
-            } else if (messaging.message && !messaging.message.is_echo && senderId && text) {
-              // This is a real new inbound message with all required data
-              console.log(`[NEW MESSAGE] "${text}" from sender: ${senderId}`);
-              await this._InstagramService.processIncomingMessage(senderId, text, mid, entry.id);
-            } else if (messaging.message && messaging.message.is_echo) {
-              console.log('[SKIP] Echo (message sent by the page itself)');
-            } else {
-              console.log('[SKIP] Non-message event (read receipt, delivery receipt, etc.)');
-            }
+            // FIRE AND FORGET: Do not 'await' so we can respond to Meta immediately
+            this.processMessagingEvent(messaging, entry.id);
           }
         }
         
-        // Handle 'changes' structure
         if (entry.changes && Array.isArray(entry.changes)) {
           for (const change of entry.changes) {
-            console.log('Change event received:', JSON.stringify(change));
-            if (change.field === 'messages' && change.value && change.value.message) {
-              console.log(`Message detected in changes: "${change.value.message.text}" from sender: ${change.value.sender.id}`);
-              await this._InstagramService.processIncomingMessage(change.value.sender.id, change.value.message.text, change.value.message.mid, entry.id);
-            }
+            this.processChangeEvent(change, entry.id);
           }
         }
       }
     }
+    // Meta requires a fast 200 OK response to prevent retries
     return { status: 'EVENT_RECEIVED' };
+  }
+
+  private async processMessagingEvent(messaging: any, igBusinessId: string) {
+    console.log('Messaging event received:', JSON.stringify(messaging));
+    
+    // Extract text, mid, and senderId safely
+    const text = messaging.message?.text;
+    const mid = messaging.message?.mid;
+    const senderId = messaging.sender?.id;
+
+    if (messaging.message_edit) {
+      const editMid = messaging.message_edit.mid;
+      const numEdit = messaging.message_edit.num_edit ?? 0;
+      if (numEdit === 0) {
+        console.log(`[NEW DM via message_edit] num_edit=0, MID: ${editMid}. Attempting content fetch...`);
+        await this._InstagramService.processIncomingMessage('FETCH_PENDING', undefined, editMid, igBusinessId);
+      } else {
+        console.log(`[SKIP] message_edit event (num_edit=${numEdit}, MID: ${editMid}). Actual edit — skipping.`);
+      }
+    } else if (messaging.message && !messaging.message.is_echo && senderId && text) {
+      console.log(`[NEW MESSAGE] "${text}" from sender: ${senderId}`);
+      await this._InstagramService.processIncomingMessage(senderId, text, mid, igBusinessId);
+    } else if (messaging.message && messaging.message.is_echo) {
+      console.log('[SKIP] Echo (message sent by the page itself)');
+    } else {
+      console.log('[SKIP] Non-message event (read receipt, delivery receipt, etc.)');
+    }
+  }
+
+  private async processChangeEvent(change: any, igBusinessId: string) {
+    console.log('Change event received:', JSON.stringify(change));
+    if (change.field === 'messages' && change.value && change.value.message) {
+      console.log(`Message detected in changes: "${change.value.message.text}" from sender: ${change.value.sender.id}`);
+      await this._InstagramService.processIncomingMessage(change.value.sender.id, change.value.message.text, change.value.message.mid, igBusinessId);
+    }
   }
 
   @Post('Process')
