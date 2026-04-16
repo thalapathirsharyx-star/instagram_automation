@@ -39,6 +39,7 @@ import { CacheService } from '@Service/Cache.service';
 import { InstagramController } from '@Controller/Instagram.controller';
 import { InstagramService } from '@Service/Instagram.service';
 import { InstagramGateway } from './Gateway/Instagram.gateway';
+import { LegalController } from '@Controller/Legal.controller';
 
 @Module({
   imports: [
@@ -99,6 +100,7 @@ import { InstagramGateway } from './Gateway/Instagram.gateway';
     AuditLogController,
     AutoNumberController,
     InstagramController,
+    LegalController,
   ],
   providers: [
     AuthService,

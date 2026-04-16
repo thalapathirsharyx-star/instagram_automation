@@ -6,8 +6,8 @@ const Sidebar: React.FC = () => {
   return (
     <aside className="sidebar glass-card">
       <div className="logo">
-        <div className="logo-icon">IG</div>
-        <span>CRM Assistant</span>
+        <div className="logo-icon">RZ</div>
+        <span>ReplyZens</span>
       </div>
       
       <nav className="nav-links">

@@ -1,44 +1,71 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
 import Dashboard from './pages/Dashboard';
 import Inbox from './pages/Inbox';
+import Login from './pages/Login';
+import Landing from './pages/Landing';
+import { PrivacyPolicy, TermsOfService, DataDeletion } from './pages/Legal';
 import { Search, Bell } from 'lucide-react';
+
+function AppContent() {
+  const location = useLocation();
+  const publicRoutes = ['/', '/login', '/privacy', '/terms', '/data-deletion'];
+  const isPublicPage = publicRoutes.includes(location.pathname);
+
+  if (isPublicPage) {
+    return (
+      <Routes>
+        <Route path="/" element={<Landing />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/privacy" element={<PrivacyPolicy />} />
+        <Route path="/terms" element={<TermsOfService />} />
+        <Route path="/data-deletion" element={<DataDeletion />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    );
+  }
+
+  return (
+    <div className="crm-layout">
+      <Sidebar />
+
+      <main className="content-area">
+        <header className="top-header glass-card">
+          <div className="search-bar">
+            <Search size={18} color="var(--text-dim)" />
+            <input type="text" placeholder="Search leads or messages..." />
+          </div>
+          <div className="notifications" style={{ position: 'relative', cursor: 'pointer' }}>
+            <Bell size={20} />
+            <span className="badge" style={{
+              position: 'absolute', top: '-5px', right: '-5px',
+              background: 'var(--hot)', fontSize: '0.65rem',
+              padding: '2px 5px', borderRadius: '50%'
+            }}>3</span>
+          </div>
+        </header>
+
+        <div className="router-container">
+          <Routes>
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/leads" element={<Inbox />} />
+            <Route path="/inbox" element={<Inbox />} />
+            <Route path="/settings" element={<Dashboard />} />
+            <Route path="*" element={<Navigate to="/dashboard" replace />} />
+          </Routes>
+        </div>
+      </main>
+    </div>
+  );
+}
 
 function App() {
   return (
     <Router>
-      <div className="crm-layout">
-        <Sidebar />
-
-        <main className="content-area">
-          <header className="top-header glass-card">
-            <div className="search-bar">
-              <Search size={18} color="var(--text-dim)" />
-              <input type="text" placeholder="Search leads or messages..." />
-            </div>
-            <div className="notifications" style={{ position: 'relative', cursor: 'pointer' }}>
-              <Bell size={20} />
-              <span className="badge" style={{
-                position: 'absolute', top: '-5px', right: '-5px',
-                background: 'var(--hot)', fontSize: '0.65rem',
-                padding: '2px 5px', borderRadius: '50%'
-              }}>3</span>
-            </div>
-          </header>
-
-          <div className="router-container">
-            <Routes>
-              <Route path="/" element={<Navigate to="/dashboard" replace />} />
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/leads" element={<Inbox />} />
-              <Route path="/inbox" element={<Inbox />} />
-              <Route path="/settings" element={<Dashboard />} />
-            </Routes>
-          </div>
-        </main>
-      </div>
+      <AppContent />
     </Router>
   );
 }
 
 export default App;
+

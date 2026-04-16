@@ -154,14 +154,22 @@ export class InstagramService {
     // 1. Get or Create Lead
     const SYSTEM_ID = '00000000-0000-0000-0000-000000000000';
     let lead = await instagram_lead.findOne({ where: { instagram_handle: context.instagram_handle } });
+    
     if (!lead) {
+      console.log(`[NEW LEAD] Creating record for: ${context.instagram_handle}`);
+      
+      // Attempt to fetch real name from Instagram Profile
+      const realProfile = await this.fetchUserProfile(context.instagram_handle);
+      
       lead = new instagram_lead();
-      lead.customer_name = context.customer_name;
+      lead.customer_name = realProfile?.name || context.customer_name;
       lead.instagram_handle = context.instagram_handle;
       lead.lead_status = 'New';
       lead.created_by_id = SYSTEM_ID;
       lead.created_on = new Date();
       await lead.save();
+      
+      console.log(`[LEAD CREATED] Name: ${lead.customer_name} | Handle: ${lead.instagram_handle}`);
     }
 
     // 2. Log Inbound Message
@@ -314,5 +322,39 @@ export class InstagramService {
 
   private async getCompany() {
     return await CompanyTable.findOne({ where: {} }); // For now, just gets the first company
+  }
+
+  /**
+   * Fetches the real name of an Instagram user using their ID.
+   * Requires 'instagram_basic' permission and a Page Access Token.
+   */
+  private async fetchUserProfile(instagramId: string): Promise<{ name: string } | null> {
+    const rawToken = (process.env.IG_PAGE_ACCESS_TOKEN || '').trim();
+    if (!rawToken || instagramId === 'FETCH_PENDING') return null;
+
+    try {
+      console.log(`[PROFILE_FETCH] Attempting to get name for: ${instagramId}`);
+      
+      const response = await axios.get(`https://graph.facebook.com/v21.0/${instagramId}`, {
+        params: {
+          fields: 'name',
+          access_token: rawToken
+        }
+      });
+
+      if (response.data && response.data.name) {
+        console.log(`[PROFILE_FETCH] Found real name: ${response.data.name}`);
+        return { name: response.data.name };
+      }
+    } catch (err) {
+      const apiError = err.response?.data?.error;
+      console.warn(`[PROFILE_FETCH_FAILED] Could not get real name for ${instagramId}. Falling back to default.`);
+      console.warn(`Error: ${apiError?.message || err.message}`);
+      
+      if (apiError?.code === 10 || apiError?.code === 200) {
+        console.warn('NOTE: This often happens in Development Mode or if "instagram_basic" permission is not yet approved.');
+      }
+    }
+    return null;
   }
 }
