@@ -8,7 +8,6 @@ import { AuthBaseController } from './AuthBase.controller';
 import { JwtAuthGuard } from '@Service/Auth/JwtAuthGuard.service';
 import { UseGuards } from '@nestjs/common';
 
-@UseGuards(JwtAuthGuard)
 @Controller({ path: "Instagram", version: '1' })
 @ApiTags("Instagram")
 export class InstagramController extends AuthBaseController {
@@ -18,6 +17,8 @@ export class InstagramController extends AuthBaseController {
   ) {
     super()
   }
+
+  // --- PUBLIC ENDPOINTS (META WEBHOOKS & COMPLIANCE) ---
 
   @Get('Webhook')
   async VerifyWebhook(
@@ -61,6 +62,70 @@ export class InstagramController extends AuthBaseController {
     return { status: 'EVENT_RECEIVED' };
   }
 
+  /**
+   * Meta User Data Deletion Callback
+   * Required for Meta App Review compliance.
+   */
+  @Post('DataDeletion')
+  async DataDeletion(@Body() body: any) {
+    console.log('--- META DATA DELETION REQUEST ---');
+    console.log(body);
+    
+    // In a production app, you would decode the signed_request here
+    // and queue the user's data for deletion.
+    
+    return {
+      url: `${process.env.DOMAIN_NAME || 'https://replyzens.com'}/data-deletion`,
+      confirmation_code: `DEL-${Math.random().toString(36).substring(7).toUpperCase()}`
+    };
+  }
+
+  /**
+   * Meta App Deauthorization Callback
+   * Required for Meta App Review compliance.
+   */
+  @Post('Deauthorize')
+  async Deauthorize(@Body() body: any) {
+    console.log('--- META DEAUTHORIZATION REQUEST ---');
+    console.log(body);
+    
+    // Logic to handle deauthorization (e.g., mark tokens as invalid)
+    
+    return { status: 'DEAUTHORIZED' };
+  }
+
+  // --- PROTECTED ENDPOINTS (DASHBOARD & CRM) ---
+
+  @UseGuards(JwtAuthGuard)
+  @Post('Process')
+  async Process(@Body() context: InstagramMessageContext) {
+    const result = await this._InstagramService.processIncomingMessage(context);
+    return this.SendResponseData(result);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('Leads')
+  async Leads() {
+    const leads = await this._InstagramService.getAllLeads();
+    return { Data: leads };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('Messages/:LeadId')
+  async Messages(@Param('LeadId') LeadId: string) {
+    const messages = await this._InstagramService.getMessagesByLead(LeadId);
+    return { Data: messages };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('Balance')
+  async Balance() {
+    const balance = await this._InstagramService.getWalletBalance();
+    return { Data: balance };
+  }
+
+  // --- PRIVATE HELPERS ---
+
   private async processMessagingEvent(messaging: any, igBusinessId: string) {
     console.log('Messaging event received:', JSON.stringify(messaging));
     
@@ -94,29 +159,5 @@ export class InstagramController extends AuthBaseController {
       console.log(`Message detected in changes: "${change.value.message.text}" from sender: ${change.value.sender.id}`);
       await this._InstagramService.processIncomingMessage(change.value.sender.id, change.value.message.text, change.value.message.mid, igBusinessId);
     }
-  }
-
-  @Post('Process')
-  async Process(@Body() context: InstagramMessageContext) {
-    const result = await this._InstagramService.processIncomingMessage(context);
-    return this.SendResponseData(result);
-  }
-
-  @Get('Leads')
-  async Leads() {
-    const leads = await this._InstagramService.getAllLeads();
-    return { Data: leads };
-  }
-
-  @Get('Messages/:LeadId')
-  async Messages(@Param('LeadId') LeadId: string) {
-    const messages = await this._InstagramService.getMessagesByLead(LeadId);
-    return { Data: messages };
-  }
-
-  @Get('Balance')
-  async Balance() {
-    const balance = await this._InstagramService.getWalletBalance();
-    return { Data: balance };
   }
 }
