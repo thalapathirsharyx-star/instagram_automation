@@ -3,10 +3,15 @@ import { JwtService } from '@nestjs/jwt';
 import { company } from '@Database/Table/Admin/company';
 import { user } from '@Database/Table/Admin/user';
 import { EncryptionService } from '../Encryption.service';
+import { HashingService } from '../Hashing.service';
 
 @Injectable()
 export class AuthService {
-  constructor(private _JwtService: JwtService, private _EncryptionService: EncryptionService) { }
+  constructor(
+    private _JwtService: JwtService,
+    private _EncryptionService: EncryptionService,
+    private _HashingService: HashingService
+  ) { }
 
   async ValidateUser(username: string, password: string): Promise<any> {
     const UserData = await user.findOne({ where: { email: username }, relations: ['user_role'] });
@@ -17,7 +22,8 @@ export class AuthService {
     if (UserData.status == false) {
       throw new Error('User suspended, contanct administration');
     }
-    if (this._EncryptionService.Decrypt(UserData.password) != password) {
+    const isPasswordValid = await this._HashingService.Compare(password, UserData.password);
+    if (!isPasswordValid) {
       throw new Error('Invalid password');
     }
     const payload = {
@@ -28,7 +34,7 @@ export class AuthService {
       company: CompanyData[0]
     };
     const api_token = this._JwtService.sign(payload);
-    return { api_token };
+    return { api_token, user: payload };
   }
 
 }

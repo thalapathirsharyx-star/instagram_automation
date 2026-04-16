@@ -6,11 +6,20 @@ import Login from './pages/Login';
 import Landing from './pages/Landing';
 import { PrivacyPolicy, TermsOfService, DataDeletion } from './pages/Legal';
 import { Search, Bell } from 'lucide-react';
+import { AuthProvider, useAuth } from './context/AuthContext';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function AppContent() {
   const location = useLocation();
+  const { isAuthenticated } = useAuth();
+  
   const publicRoutes = ['/', '/login', '/privacy', '/terms', '/data-deletion'];
   const isPublicPage = publicRoutes.includes(location.pathname);
+
+  // If user is logged in and tries to access login or landing, redirect to dashboard
+  if (isAuthenticated && (location.pathname === '/login' || location.pathname === '/')) {
+    return <Navigate to="/dashboard" replace />;
+  }
 
   if (isPublicPage) {
     return (
@@ -47,10 +56,10 @@ function AppContent() {
 
         <div className="router-container">
           <Routes>
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/leads" element={<Inbox />} />
-            <Route path="/inbox" element={<Inbox />} />
-            <Route path="/settings" element={<Dashboard />} />
+            <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+            <Route path="/leads" element={<ProtectedRoute><Inbox /></ProtectedRoute>} />
+            <Route path="/inbox" element={<ProtectedRoute><Inbox /></ProtectedRoute>} />
+            <Route path="/settings" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
             <Route path="*" element={<Navigate to="/dashboard" replace />} />
           </Routes>
         </div>
@@ -62,7 +71,9 @@ function AppContent() {
 function App() {
   return (
     <Router>
-      <AppContent />
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
     </Router>
   );
 }

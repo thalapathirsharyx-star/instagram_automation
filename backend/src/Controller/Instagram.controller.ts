@@ -5,6 +5,10 @@ import { InstagramMessageContext } from '@Model/Instagram.model';
 import { ResponseEnum } from '@Helper/Enum/ResponseEnum';
 import { AuthBaseController } from './AuthBase.controller';
 
+import { JwtAuthGuard } from '@Service/Auth/JwtAuthGuard.service';
+import { UseGuards } from '@nestjs/common';
+
+@UseGuards(JwtAuthGuard)
 @Controller({ path: "Instagram", version: '1' })
 @ApiTags("Instagram")
 export class InstagramController extends AuthBaseController {

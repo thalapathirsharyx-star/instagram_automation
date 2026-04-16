@@ -5,6 +5,7 @@ import { ChangePasswordModel, ResetPasswordModel, UserModel } from '@Model/Admin
 import { Not } from 'typeorm';
 import { EmailService } from '../Email.service';
 import { EncryptionService } from '../Encryption.service';
+import { HashingService } from '../Hashing.service';
 import { AuditLogService } from './AuditLog.service';
 import { LogActionEnum } from '@Helper/Enum/AuditLogEnum';
 @Injectable()
@@ -12,6 +13,7 @@ export class UserService {
   constructor(
     private _EmailService: EmailService,
     private _EncryptionService: EncryptionService,
+    private _HashingService: HashingService,
     private _AuditLogService: AuditLogService
   ) {
   }
@@ -34,7 +36,7 @@ export class UserService {
     _UserData.mobile = UserData.mobile;
     _UserData.created_by_id = UserId;
     _UserData.created_on = new Date();
-    _UserData.password = this._EncryptionService.Encrypt(UserData.password);
+    _UserData.password = await this._HashingService.Hash(UserData.password);
     await user.insert(_UserData);
     this._AuditLogService.AuditEmitEvent({ PerformedType: user.name, ActionType: LogActionEnum.Insert, PrimaryId: [_UserData.id] });
     return _UserData;
@@ -97,7 +99,7 @@ export class UserService {
     if (UserData.reset_otp != ResetPasswordData.reset_otp) {
       throw new Error("Invalid Reset OTP");
     }
-    UserData.password = this._EncryptionService.Encrypt(ResetPasswordData.password);
+    UserData.password = await this._HashingService.Hash(ResetPasswordData.password);
     UserData.reset_otp = null;
     UserData.updated_by_id = UserData.id;
     UserData.updated_on = new Date()
@@ -110,10 +112,11 @@ export class UserService {
     if (!UserData) {
       throw new Error("User not found");
     }
-    if (this._EncryptionService.Decrypt(UserData.password) != ChangePasswordData.old_password) {
+    const isOldPasswordMatch = await this._HashingService.Compare(ChangePasswordData.old_password, UserData.password);
+    if (!isOldPasswordMatch) {
       throw new Error("Old password not matched");
     }
-    UserData.password = this._EncryptionService.Encrypt(ChangePasswordData.password);
+    UserData.password = await this._HashingService.Hash(ChangePasswordData.password);
     UserData.updated_by_id = UserId;
     UserData.updated_on = new Date();
     await UserData.save();
@@ -123,7 +126,7 @@ export class UserService {
   async UserResetPassword(Id: string, UserData: UserModel, UserId: string) {
     UserData.updated_by_id = UserId;
     UserData.updated_on = new Date();
-    UserData.password = this._EncryptionService.Encrypt(UserData.password);
+    UserData.password = await this._HashingService.Hash(UserData.password);
     await user.update(Id, UserData as any);
     this._AuditLogService.AuditEmitEvent({ PerformedType: user.name, ActionType: LogActionEnum.ResetPassword, PrimaryId: [UserData.id] });
     return UserData as user;

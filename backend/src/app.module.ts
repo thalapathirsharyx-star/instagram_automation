@@ -40,6 +40,7 @@ import { InstagramController } from '@Controller/Instagram.controller';
 import { InstagramService } from '@Service/Instagram.service';
 import { InstagramGateway } from './Gateway/Instagram.gateway';
 import { LegalController } from '@Controller/Legal.controller';
+import { HashingService } from '@Service/Hashing.service';
 
 @Module({
   imports: [
@@ -120,6 +121,7 @@ import { LegalController } from '@Controller/Legal.controller';
     },
     MailerService,
     EncryptionService,
+    HashingService,
     CommonSeederService,
     AuditLogService,
     CacheService,
@@ -137,7 +139,7 @@ import { LegalController } from '@Controller/Legal.controller';
     },
     CacheService
   ],
-  exports: [AuthService, EncryptionService],
+  exports: [AuthService, EncryptionService, HashingService],
 })
 export class AppModule {
 }

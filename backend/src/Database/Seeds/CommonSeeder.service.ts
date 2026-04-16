@@ -6,11 +6,13 @@ import { country } from '../Table/Admin/country';
 import { company } from '../Table/Admin/company';
 import { Injectable } from '@nestjs/common';
 import { EncryptionService } from '@Service/Encryption.service';
+import { HashingService } from '@Service/Hashing.service';
 
 @Injectable()
 export class CommonSeederService {
   constructor(
     private readonly _EncryptionService: EncryptionService,
+    private readonly _HashingService: HashingService,
     private _DataSource: DataSource
   ) {
   }
@@ -54,30 +56,39 @@ export class CommonSeederService {
 
 
   UserRoleSeed = async () => {
-    await this._DataSource.manager.createQueryBuilder()
-      .insert()
-      .into(user_role)
-      .values([
-        { name: 'Super Admin', code: '', created_by_id: "0", created_on: new Date() }
-      ])
-      .execute()
+    const existingRole = await user_role.findOne({ where: { name: "Super Admin" } });
+    if (!existingRole) {
+      await this._DataSource.manager.createQueryBuilder()
+        .insert()
+        .into(user_role)
+        .values([
+          { name: 'Super Admin', code: 'SUPER_ADMIN', created_by_id: "0", created_on: new Date() }
+        ])
+        .execute()
+    }
   }
 
   UserSeed = async () => {
-    const UserRoleData = await user_role.findOne({ where: { name: "Super Admin" } });
-    await this._DataSource.manager.createQueryBuilder()
-      .insert()
-      .into(user)
-      .values([
-        {
-          user_role_id: UserRoleData.id,
-          email: 'admin@user.com',
-          password: this._EncryptionService.Encrypt('Login123!!'),
-          created_by_id: "0",
-          created_on: new Date()
-        }
-      ])
-      .execute()
+    const existingUser = await user.findOne({ where: { email: 'admin@user.com' } });
+    if (!existingUser) {
+      const UserRoleData = await user_role.findOne({ where: { name: "Super Admin" } });
+      if (UserRoleData) {
+        const hashedPassword = await this._HashingService.Hash('Login123!!');
+        await this._DataSource.manager.createQueryBuilder()
+          .insert()
+          .into(user)
+          .values([
+            {
+              user_role_id: UserRoleData.id,
+              email: 'admin@user.com',
+              password: hashedPassword,
+              created_by_id: "0",
+              created_on: new Date()
+            }
+          ])
+          .execute()
+      }
+    }
   }
 
   CurrencySeed = async () => {

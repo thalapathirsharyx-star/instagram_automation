@@ -1,8 +1,11 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, Users, MessageSquare, Settings } from 'lucide-react';
+import { LayoutDashboard, Users, MessageSquare, Settings, LogOut } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 const Sidebar: React.FC = () => {
+  const { user, logout } = useAuth();
+
   return (
     <aside className="sidebar glass-card">
       <div className="logo">
@@ -25,12 +28,18 @@ const Sidebar: React.FC = () => {
         </NavLink>
       </nav>
 
-      <div className="user-info">
-        <div className="avatar">Admin</div>
-        <div className="details">
-          <p className="name">Varun Anand</p>
-          <p className="role">System Owner</p>
+      <div className="sidebar-footer">
+        <div className="user-info">
+          <div className="avatar">{user?.email?.[0].toUpperCase() || 'U'}</div>
+          <div className="details">
+            <p className="name">{user?.email?.split('@')[0] || 'User'}</p>
+            <p className="role">{user?.role || 'Member'}</p>
+          </div>
         </div>
+        
+        <button onClick={logout} className="nav-item logout-btn" style={{ width: '100%', marginTop: '16px', border: 'none', background: 'transparent' }}>
+          <LogOut size={20} /> Logout
+        </button>
       </div>
     </aside>
   );
