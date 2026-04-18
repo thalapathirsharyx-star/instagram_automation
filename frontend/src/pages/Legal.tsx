@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { ChevronLeft } from 'lucide-react';
 
 const LegalLayout: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => {

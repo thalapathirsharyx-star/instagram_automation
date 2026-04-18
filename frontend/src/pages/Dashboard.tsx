@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { getBalance, getLeads } from '../api/crm.api';
 import { 
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, 
+  XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, 
   AreaChart, Area, PieChart, Pie, Cell 
 } from 'recharts';
 import { 
@@ -166,8 +166,8 @@ const Dashboard: React.FC = () => {
                   paddingAngle={8}
                   dataKey="value"
                 >
-                  {funnelData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} cornerRadius={4} />
+                  {funnelData.map((_, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
                 <Tooltip />

@@ -2,12 +2,8 @@ import React from 'react';
 import { useAuth } from '../context/AuthContext';
 import { 
   Shield, 
-  Settings as SettingsIcon, 
-  Key, 
-  Bot, 
+  Bot,
   User, 
-  Bell, 
-  Globe,
   Database
 } from 'lucide-react';
 
