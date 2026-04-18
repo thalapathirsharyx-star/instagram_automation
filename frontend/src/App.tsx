@@ -2,6 +2,8 @@ import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'r
 import Sidebar from './components/Sidebar';
 import Dashboard from './pages/Dashboard';
 import Inbox from './pages/Inbox';
+import Leads from './pages/Leads';
+import Settings from './pages/Settings';
 import Login from './pages/Login';
 import Landing from './pages/Landing';
 import { PrivacyPolicy, TermsOfService, DataDeletion } from './pages/Legal';
@@ -16,8 +18,8 @@ function AppContent() {
   const publicRoutes = ['/', '/login', '/privacy', '/terms', '/data-deletion'];
   const isPublicPage = publicRoutes.includes(location.pathname);
 
-  // If user is logged in and tries to access login or landing, redirect to dashboard
-  if (isAuthenticated && (location.pathname === '/login' || location.pathname === '/')) {
+  // If user is logged in and tries to access login, redirect to dashboard
+  if (isAuthenticated && location.pathname === '/login') {
     return <Navigate to="/dashboard" replace />;
   }
 
@@ -57,9 +59,9 @@ function AppContent() {
         <div className="router-container">
           <Routes>
             <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-            <Route path="/leads" element={<ProtectedRoute><Inbox /></ProtectedRoute>} />
+            <Route path="/leads" element={<ProtectedRoute><Leads /></ProtectedRoute>} />
             <Route path="/inbox" element={<ProtectedRoute><Inbox /></ProtectedRoute>} />
-            <Route path="/settings" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+            <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
             <Route path="*" element={<Navigate to="/dashboard" replace />} />
           </Routes>
         </div>

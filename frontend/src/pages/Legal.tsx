@@ -1,25 +1,33 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { ChevronLeft } from 'lucide-react';
 
-const LegalLayout: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => (
-  <div className="legal-page">
-    <div className="background-decor">
-      <div className="blob blob-1"></div>
-      <div className="blob blob-2"></div>
-    </div>
-    
-    <div className="legal-container glass-card">
-      <Link to="/" className="back-link">
-        <ChevronLeft size={18} /> Back to Home
-      </Link>
-      <h1>{title}</h1>
-      <div className="legal-content premium-scroll">
-        {children}
+const LegalLayout: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => {
+  const navigate = useNavigate();
+
+  return (
+    <div className="legal-page">
+      <div className="background-decor">
+        <div className="blob blob-1"></div>
+        <div className="blob blob-2"></div>
+      </div>
+
+      <div className="legal-container glass-card">
+        <button
+          onClick={() => navigate('/')}
+          className="back-link"
+          style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', font: 'inherit' }}
+        >
+          <ChevronLeft size={18} /> Back to Home
+        </button>
+        <h1>{title}</h1>
+        <div className="legal-content premium-scroll">
+          {children}
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 export const PrivacyPolicy: React.FC = () => (
   <LegalLayout title="Privacy Policy">
@@ -74,7 +82,7 @@ export const DataDeletion: React.FC = () => (
       <p>1. Go to your Facebook Profile's "Settings & Privacy" {' > '} "Settings".</p>
       <p>2. Look for "Apps and Websites" and search for "ReplyZens".</p>
       <p>3. Click "Remove".</p>
-      
+
       <h3>Option 2: Direct Request</h3>
       <p>You can request your data to be deleted from our database by sending an email to <strong>support@replyzens.com</strong> with the subject "Data Deletion Request". Please include your Instagram handle and the email associated with your account. We will process your request within 48 hours.</p>
     </section>

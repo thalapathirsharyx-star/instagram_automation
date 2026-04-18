@@ -88,7 +88,86 @@
     /* Legacy compatibility for CRM */
     --bg-dark: #030712;
     --text-dim: #a0a0a0;
+    --hot: #ff4757;
   }
+}
+
+/* New UI Utilities */
+.icon-btn-glass {
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  color: var(--text-dim);
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.icon-btn-glass:hover {
+  background: var(--glass-highlight);
+  color: #fff;
+  border-color: var(--primary);
+}
+
+.table-row-hover:hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.toggle {
+  width: 44px;
+  height: 22px;
+  background: var(--glass-border);
+  border-radius: 20px;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.toggle::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 16px;
+  height: 16px;
+  background: #fff;
+  border-radius: 50%;
+  transition: all 0.3s;
+}
+
+.toggle.active {
+  background: var(--primary);
+}
+
+.toggle.active::after {
+  left: 25px;
+}
+
+.glass-btn-secondary {
+  transition: all 0.3s;
+}
+
+.glass-btn-secondary:hover {
+  background: var(--glass-highlight) !important;
+  border-color: #fff !important;
+}
+
+.text-btn:hover {
+  text-decoration: underline;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.dashboard-page, .leads-page, .settings-page {
+  animation: fadeIn 0.5s ease-out;
 }
 
 @layer utilities {
