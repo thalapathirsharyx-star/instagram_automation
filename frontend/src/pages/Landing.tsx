@@ -780,23 +780,84 @@ const Landing: React.FC = () => {
       </main>
 
       {/* FOOTER */}
-      <footer className="bg-[#FAFAFA] border-t border-slate-200/60 py-10 px-6">
-        <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white">
-              <Zap className="w-4 h-4 text-current" fill="currentColor" />
+      <footer className="bg-slate-50 border-t border-slate-200/60 pt-20 pb-10 px-6">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-12 mb-16">
+            
+            {/* Brand Column */}
+            <div className="col-span-2 lg:col-span-2">
+              <Link to="/" className="flex items-center gap-2.5 mb-6 group">
+                <div className="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-lg shadow-indigo-600/20 group-hover:scale-105 transition-transform">
+                  <Zap className="w-5 h-5 text-current" fill="currentColor" />
+                </div>
+                <span className="text-2xl font-bold tracking-tight text-slate-900 font-outfit uppercase">
+                  Reply<span className="text-indigo-600">Zens</span>
+                </span>
+              </Link>
+              <p className="text-slate-500 font-medium text-sm leading-relaxed max-w-xs mb-8">
+                The world's most advanced Instagram CRM for professional brands. Scale your DMs, qualify your leads, and grow your revenue without the manual workload.
+              </p>
+              <div className="flex items-center gap-3">
+                {/* Twitter */}
+                <a href="#" className="w-10 h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-400 hover:text-[#1DA1F2] hover:border-[#1DA1F2]/30 hover:shadow-sm transition-all group/social">
+                  <svg className="w-5 h-5 fill-current group-hover/social:scale-110 transition-transform" viewBox="0 0 24 24">
+                    <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.84 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+                  </svg>
+                </a>
+                {/* Instagram */}
+                <a href="#" className="w-10 h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-400 hover:text-[#E4405F] hover:border-[#E4405F]/30 hover:shadow-sm transition-all group/social">
+                  <svg className="w-5 h-5 fill-current group-hover/social:scale-110 transition-transform" viewBox="0 0 24 24">
+                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12s.014 3.667.072 4.947c.2 4.352 2.622 6.774 7.052 6.974 1.28.058 1.688.072 4.947.072 3.259 0 3.667-.014 4.947-.072 4.351-.2 6.772-2.622 6.972-7.052.058-1.28.072-1.688.072-4.947s-.014-3.667-.072-4.947c-.2-4.352-2.622-6.774-7.052-6.974C15.667.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>
+                  </svg>
+                </a>
+                {/* LinkedIn */}
+                <a href="#" className="w-10 h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-400 hover:text-[#0077B5] hover:border-[#0077B5]/30 hover:shadow-sm transition-all group/social">
+                  <svg className="w-5 h-5 fill-current group-hover/social:scale-110 transition-transform" viewBox="0 0 24 24">
+                    <path d="M4.98 3.5c0 1.381-1.11 2.5-2.48 2.5s-2.48-1.119-2.48-2.5c0-1.38 1.11-2.5 2.48-2.5s2.48 1.12 2.48 2.5zm.02 4.5h-5v16h5v-16zm7.982 0h-4.968v16h4.969v-8.399c0-4.67 6.029-5.052 6.029 0v8.399h4.988v-10.131c0-7.88-8.922-7.593-11.018-3.714v-2.155z"/>
+                  </svg>
+                </a>
+              </div>
             </div>
-            <span className="font-bold tracking-tight text-slate-900">ReplyZens</span>
+
+            {/* Product Links */}
+            <div>
+              <h4 className="text-slate-900 font-bold text-sm uppercase tracking-wider mb-6">Product</h4>
+              <ul className="space-y-4">
+                <li><a href="#story" className="text-slate-500 hover:text-indigo-600 font-medium text-sm transition-colors">Features</a></li>
+                <li><a href="#how-it-works" className="text-slate-500 hover:text-indigo-600 font-medium text-sm transition-colors">How it works</a></li>
+                <li><button onClick={() => navigate('/login')} className="text-slate-500 hover:text-indigo-600 font-medium text-sm transition-colors">Live Demo</button></li>
+                <li><a href="#" className="text-slate-500 hover:text-indigo-600 font-medium text-sm transition-colors">Pricing</a></li>
+              </ul>
+            </div>
+
+            {/* Resources Links */}
+            <div>
+              <h4 className="text-slate-900 font-bold text-sm uppercase tracking-wider mb-6">Resources</h4>
+              <ul className="space-y-4">
+                <li><a href="#" className="text-slate-500 hover:text-indigo-600 font-medium text-sm transition-colors">Documentation</a></li>
+                <li><a href="#" className="text-slate-500 hover:text-indigo-600 font-medium text-sm transition-colors">Help Center</a></li>
+                <li><a href="#" className="text-slate-500 hover:text-indigo-600 font-medium text-sm transition-colors">Community</a></li>
+                <li><a href="#" className="text-slate-500 hover:text-indigo-600 font-medium text-sm transition-colors">API Status</a></li>
+              </ul>
+            </div>
+
+            {/* Legal Links */}
+            <div>
+              <h4 className="text-slate-900 font-bold text-sm uppercase tracking-wider mb-6">Legal</h4>
+              <ul className="space-y-4">
+                <li><Link to="/privacy" className="text-slate-500 hover:text-indigo-600 font-medium text-sm transition-colors">Privacy Policy</Link></li>
+                <li><Link to="/terms" className="text-slate-500 hover:text-indigo-600 font-medium text-sm transition-colors">Terms of Service</Link></li>
+                <li><a href="#" className="text-slate-500 hover:text-indigo-600 font-medium text-sm transition-colors">Cookie Policy</a></li>
+              </ul>
+            </div>
           </div>
 
-          <div className="flex items-center gap-8 text-sm font-medium text-slate-500">
-            <Link to="/privacy" className="hover:text-slate-900 transition-colors">Privacy</Link>
-            <Link to="/terms" className="hover:text-slate-900 transition-colors">Terms</Link>
+          {/* Bottom Bar */}
+          <div className="pt-10 border-t border-slate-200/60 flex flex-col md:flex-row items-center justify-between gap-6">
+            <p className="text-slate-400 font-medium text-sm">
+              © 2026 ReplyZens Inc. All rights reserved. Built for professional Instagram businesses.
+            </p>
           </div>
-
-          <p className="text-sm font-medium text-slate-400">
-            © 2026 ReplyZens Inc.
-          </p>
         </div>
       </footer>
     </div>
