@@ -4,7 +4,14 @@ import {
   Shield, 
   Bot,
   User, 
-  Database
+  Database,
+  ExternalLink,
+  Info,
+  CheckCircle2,
+  X,
+  Smartphone,
+  ToggleRight,
+  Link2
 } from 'lucide-react';
 
 const SettingsCard: React.FC<{ icon: any, title: string, subtitle: string, children: React.ReactNode }> = ({ icon: Icon, title, subtitle, children }) => (
@@ -24,20 +31,20 @@ const SettingsCard: React.FC<{ icon: any, title: string, subtitle: string, child
   </div>
 );
 
-import { connectInstagram } from '../api/crm.api';
+import { connectInstagram, getInstagramSettings, updateInstagramSettings } from '../api/crm.api';
 
 const Settings: React.FC = () => {
   const { user } = useAuth();
   const [isConnecting, setIsConnecting] = React.useState(false);
   const [isConnected, setIsConnected] = React.useState(false);
+  const [showGuide, setShowGuide] = React.useState(false);
   const [connectionDetails, setConnectionDetails] = React.useState<{ name: string, id: string } | null>(null);
 
   React.useEffect(() => {
-    // Check if SDK already exists
+    const fbAppId = import.meta.env.VITE_FB_APP_ID || '955338716906984';
+
+    // Load Facebook SDK
     if (!(window as any).FB) {
-      const fbAppId = import.meta.env.VITE_FB_APP_ID || '955338716906984';
-      
-      // Load Facebook SDK
       (window as any).fbAsyncInit = function() {
         (window as any).FB.init({
           appId      : fbAppId,
@@ -54,6 +61,13 @@ const Settings: React.FC = () => {
         js.src = "https://connect.facebook.net/en_US/sdk.js";
         fjs.parentNode.insertBefore(js, fjs);
       }(document, 'script', 'facebook-jssdk'));
+    } else {
+      (window as any).FB.init({
+        appId      : fbAppId,
+        cookie     : true,
+        xfbml      : true,
+        version    : 'v21.0'
+      });
     }
   }, []);
 
@@ -77,7 +91,14 @@ const Settings: React.FC = () => {
                 });
                 alert('Instagram Account Linked Successfully!');
               } else {
-                alert('Connection Failed: ' + (res.Message || 'Unknown Error'));
+                const message = (res.Message || '').toUpperCase();
+                if (message.includes('META_NO_INSTAGRAM_LINKED')) {
+                  setShowGuide(true);
+                } else if (message.includes('META_APP_RESTRICTED')) {
+                  alert(res.Message); // Display the detailed restriction message
+                } else {
+                  alert('Connection Failed: ' + (res.Message || 'Unknown Error'));
+                }
               }
             })
             .finally(() => setIsConnecting(false));
@@ -118,7 +139,7 @@ const Settings: React.FC = () => {
               </div>
               <div className="account-details" style={{ padding: '12px', background: 'var(--glass-border)', borderRadius: '12px', display: 'flex', alignItems: 'center', gap: '12px' }}>
                  <div style={{ background: 'var(--primary)', width: '32px', height: '32px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 600 }}>
-                   {connectionDetails?.name[0]}
+                   {connectionDetails?.name?.[0]}
                  </div>
                  <div>
                    <div style={{ fontSize: '0.9rem', fontWeight: 500 }}>{connectionDetails?.name}</div>
@@ -139,9 +160,101 @@ const Settings: React.FC = () => {
               >
                 {isConnecting ? 'Establishing Connection...' : 'Connect Instagram Account'}
               </button>
+              <button 
+                onClick={() => setShowGuide(true)}
+                style={{ background: 'transparent', border: 'none', color: 'var(--color-primary)', fontSize: '0.8rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px', margin: '8px auto 0' }}
+              >
+                <Info size={14} /> Need help linking your account?
+              </button>
             </>
           )}
         </SettingsCard>
+
+        {/* --- ONBOARDING GUIDE MODAL --- */}
+        {showGuide && (
+          <div className="modal-overlay" style={{
+            position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+            background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(8px)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '20px'
+          }}>
+            <div className="guide-modal glass-card" style={{
+              maxWidth: '550px', width: '100%', padding: '32px', position: 'relative',
+              background: 'var(--bg-card)', color: 'var(--color-foreground)', borderRadius: '24px',
+              border: '1px solid var(--color-glass-border)', boxShadow: '0 20px 40px rgba(0,0,0,0.2)'
+            }}>
+              <button 
+                onClick={() => setShowGuide(false)}
+                style={{ position: 'absolute', top: '24px', right: '24px', background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--text-dim)' }}
+              >
+                <X size={20} />
+              </button>
+
+              <div style={{ marginBottom: '24px' }}>
+                <h2 style={{ fontSize: '1.5rem', marginBottom: '8px' }}>Let's Link Your Account</h2>
+                <p style={{ color: 'var(--text-dim)', fontSize: '0.9rem' }}>Meta requires a few specific settings to be enabled before we can automate your DMs.</p>
+              </div>
+
+              <div className="steps-container" style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                
+                {/* Step 1 */}
+                <div style={{ display: 'flex', gap: '16px' }}>
+                  <div style={{ padding: '8px', background: 'rgba(99, 102, 241, 0.1)', borderRadius: '12px', height: 'fit-content' }}>
+                    <Smartphone size={20} style={{ color: 'var(--color-primary)' }} />
+                  </div>
+                  <div>
+                    <h4 style={{ margin: '0 0 4px 0' }}>Step 1: Switch to Professional</h4>
+                    <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-dim)', lineHeight: 1.5 }}>
+                      Open Instagram App &gt; Settings &gt; Account Type. Switch to **Business** or **Creator**.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Step 2 */}
+                <div style={{ display: 'flex', gap: '16px' }}>
+                  <div style={{ padding: '8px', background: 'rgba(99, 102, 241, 0.1)', borderRadius: '12px', height: 'fit-content' }}>
+                    <Link2 size={20} style={{ color: 'var(--color-primary)' }} />
+                  </div>
+                  <div>
+                    <h4 style={{ margin: '0 0 4px 0' }}>Step 2: Link to Facebook Page</h4>
+                    <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-dim)', lineHeight: 1.5 }}>
+                      Edit Profile &gt; Public Business Information &gt; **Page**. Select or create a Facebook Page.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Step 3 */}
+                <div style={{ display: 'flex', gap: '16px' }}>
+                  <div style={{ padding: '8px', background: 'rgba(99, 102, 241, 0.1)', borderRadius: '12px', height: 'fit-content' }}>
+                    <ToggleRight size={20} style={{ color: 'var(--color-primary)' }} />
+                  </div>
+                  <div>
+                    <h4 style={{ margin: '0 0 4px 0' }}>Step 3: Allow Message Access</h4>
+                    <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-dim)', lineHeight: 1.5 }}>
+                      Settings &gt; Privacy &gt; Messages. Turn **ON** "Allow Access to Messages" at the bottom.
+                    </p>
+                  </div>
+                </div>
+
+              </div>
+
+              <div style={{ marginTop: '32px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                <button 
+                  onClick={handleConnect}
+                  className="gradient-btn"
+                  style={{ width: '100%', padding: '14px', borderRadius: '12px', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
+                >
+                  <CheckCircle2 size={18} /> I've Done These Steps
+                </button>
+                <button 
+                   onClick={() => setShowGuide(false)}
+                   style={{ width: '100%', padding: '10px', background: 'transparent', border: 'none', color: 'var(--text-dim)', fontSize: '0.85rem', cursor: 'pointer' }}
+                >
+                  Maybe Later
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* AI & Automation */}
         <SettingsCard 

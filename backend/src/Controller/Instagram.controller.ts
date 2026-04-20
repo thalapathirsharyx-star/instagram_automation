@@ -104,6 +104,20 @@ export class InstagramController extends AuthBaseController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Post('Settings')
+  async UpdateSettings(@Body() data: any, @Req() req: any) {
+    const result = await this._InstagramService.updateIntegrationSettings(req.user?.company_id, data);
+    return this.SendResponseData(result);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('Settings')
+  async GetSettings(@Req() req: any) {
+    const result = await this._InstagramService.getIntegrationSettings(req.user?.company_id);
+    return this.SendResponseData(result);
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Post('Process')
   async Process(@Body() context: InstagramMessageContext) {
     const result = await this._InstagramService.processIncomingMessage(context);

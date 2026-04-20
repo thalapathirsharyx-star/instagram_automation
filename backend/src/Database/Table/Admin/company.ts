@@ -69,4 +69,15 @@ export class company extends BaseTable {
   @Column({ type: 'text', nullable: true })
   instagram_access_token: string;
 
+  @Column({ nullable: true })
+  instagram_app_id: string;
+
+  @Column({ nullable: true })
+  instagram_app_secret: string;
+
+  @Column({ nullable: true })
+  instagram_username: string;
+
+  @Column({ type: 'text', nullable: true })
+  instagram_profile_picture_url: string;
 }

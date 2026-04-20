@@ -25,3 +25,13 @@ export const connectInstagram = async (token: string): Promise<ApiResponse<any>>
   const response = await api.post<ApiResponse<any>>('/Instagram/Connect', { token });
   return response.data;
 };
+
+export const getInstagramSettings = async (): Promise<ApiResponse<any>> => {
+  const response = await api.get<ApiResponse<any>>('/Instagram/Settings');
+  return response.data;
+};
+
+export const updateInstagramSettings = async (data: { appId: string, appSecret: string }): Promise<ApiResponse<any>> => {
+  const response = await api.post<ApiResponse<any>>('/Instagram/Settings', data);
+  return response.data;
+};

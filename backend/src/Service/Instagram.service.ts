@@ -25,19 +25,34 @@ export class InstagramService {
     const APP_SECRET = process.env.FB_APP_SECRET;
 
     if (!APP_ID || !APP_SECRET) {
-      throw new Error('FB_APP_ID or FB_APP_SECRET missing in .env');
+      throw new Error('PLATFORM_CONFIG_MISSING: The server is not configured with a Meta App ID/Secret.');
     }
 
     try {
       // 1. Exchange for Long-Lived User Token
-      const exchangeRes = await axios.get(`https://graph.facebook.com/v21.0/oauth/access_token`, {
-        params: {
-          grant_type: 'fb_exchange_token',
-          client_id: APP_ID,
-          client_secret: APP_SECRET,
-          fb_exchange_token: userToken
+      let exchangeRes;
+      try {
+        exchangeRes = await axios.get(`https://graph.facebook.com/v21.0/oauth/access_token`, {
+          params: {
+            grant_type: 'fb_exchange_token',
+            client_id: APP_ID,
+            client_secret: APP_SECRET,
+            fb_exchange_token: userToken
+          }
+        });
+      } catch (err: any) {
+        const errorData = err.response?.data?.error || {};
+        const errorMsg = errorData.message || err.message;
+        const metaError = JSON.stringify(errorData, null, 2);
+        
+        console.error('[TOKEN EXCHANGE FAILED]', metaError);
+
+        if (errorMsg.includes('App Not Active') || errorMsg.includes('paused') || errorMsg.includes('restricted')) {
+          throw new Error(`META_APP_RESTRICTED: Your Facebook App is currently 'Paused' or 'Not Active' in the Meta Dashboard. Please ensure it is set to 'Development' or 'Live' mode.`);
         }
-      });
+        throw new Error(`META_TOKEN_EXCHANGE_FAILED: ${errorMsg}`);
+      }
+      
       const longLivedUserToken = exchangeRes.data.access_token;
       console.log('[CONNECT] Obtained long-lived user token');
 
@@ -53,7 +68,7 @@ export class InstagramService {
       const targetPage = pages.find((p: any) => p.instagram_business_account);
 
       if (!targetPage) {
-        throw new Error('No Instagram Business Account linked to any of your Facebook Pages.');
+        throw new Error('META_NO_INSTAGRAM_LINKED: No Instagram Business Account linked to any of your Facebook Pages.');
       }
 
       const igBusinessId = targetPage.instagram_business_account.id;
@@ -604,5 +619,26 @@ Rules:
       }
     }
     return null;
+  }
+
+  async updateIntegrationSettings(companyId: string, data: { appId: string, appSecret: string }) {
+    const company = await CompanyTable.findOneBy({ id: companyId as any });
+    if (!company) throw new Error('Company not found');
+
+    company.instagram_app_id = data.appId;
+    company.instagram_app_secret = data.appSecret;
+    await company.save();
+
+    return { Success: true };
+  }
+
+  async getIntegrationSettings(companyId: string) {
+    const company = await CompanyTable.findOneBy({ id: companyId as any });
+    if (!company) throw new Error('Company not found');
+
+    return {
+      appId: company.instagram_app_id,
+      appSecret: company.instagram_app_secret ? '********' : '' // Hide secret for security
+    };
   }
 }
