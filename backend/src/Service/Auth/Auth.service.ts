@@ -46,7 +46,8 @@ export class AuthService {
       email: UserData.email,
       user_id: UserData.id,
       user_role_id: UserData.user_role_id,
-      user_role_name: UserData.user_role?.name || 'CLIENT',
+      user_role_code: UserData.user_role?.code || 'CLIENT',
+      user_role_name: UserData.user_role?.name || 'Client',
       company: companyData,
       company_id: companyData?.id
     };

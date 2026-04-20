@@ -4,6 +4,7 @@ interface User {
   id: string;
   email: string;
   role: string;
+  roleCode: string;
   roleId: string;
   companyId?: string;
   company?: any;
@@ -46,6 +47,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       id: userData.user_id,
       email: userData.email,
       role: userData.user_role_name,
+      roleCode: userData.user_role_code,
       roleId: userData.user_role_id,
       companyId: userData.company_id,
       company: userData.company

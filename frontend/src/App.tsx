@@ -9,6 +9,7 @@ import Signup from './pages/Signup';
 import Landing from './pages/Landing';
 import { PrivacyPolicy, TermsOfService, DataDeletion } from './pages/Legal';
 import SuperAdminDashboard from './pages/SuperAdminDashboard';
+import ClientManagement from './pages/ClientManagement';
 import { Search, Bell } from 'lucide-react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -22,7 +23,7 @@ function AppContent() {
 
   // If user is logged in and tries to access login, redirect to appropriate dashboard
   if (isAuthenticated && location.pathname === '/login') {
-    return <Navigate to={user?.role === 'SUPER_ADMIN' ? "/admin/dashboard" : "/dashboard"} replace />;
+    return <Navigate to={user?.roleCode === 'SUPER_ADMIN' ? "/admin/dashboard" : "/dashboard"} replace />;
   }
 
   if (isPublicPage) {
@@ -68,13 +69,13 @@ function AppContent() {
             
             {/* Admin Routes */}
             <Route path="/admin/dashboard" element={<ProtectedRoute><SuperAdminDashboard /></ProtectedRoute>} />
-            <Route path="/admin/clients" element={<ProtectedRoute><div>Client Management (Coming Soon)</div></ProtectedRoute>} />
+            <Route path="/admin/clients" element={<ProtectedRoute><ClientManagement /></ProtectedRoute>} />
             
             <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
             
             {/* Redirect logic */}
-            <Route path="/" element={<Navigate to={user?.role === 'SUPER_ADMIN' ? "/admin/dashboard" : "/dashboard"} replace />} />
-            <Route path="*" element={<Navigate to={user?.role === 'SUPER_ADMIN' ? "/admin/dashboard" : "/dashboard"} replace />} />
+            <Route path="/" element={<Navigate to={user?.roleCode === 'SUPER_ADMIN' ? "/admin/dashboard" : "/dashboard"} replace />} />
+            <Route path="*" element={<Navigate to={user?.roleCode === 'SUPER_ADMIN' ? "/admin/dashboard" : "/dashboard"} replace />} />
           </Routes>
         </div>
       </main>

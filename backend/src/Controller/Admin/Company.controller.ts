@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Patch } from '@nestjs/common';
+import { Body, Controller, Get, Patch, Req, Param, ForbiddenException } from '@nestjs/common';
 import { CompanyModel } from '@Model/Admin/Company.model';
 import { CurrentUser } from '@Helper/Common.helper';
 import { ApiTags } from '@nestjs/swagger';
@@ -29,6 +29,24 @@ export class CompanyController extends JWTAuthController {
       await this._CompanyService.Insert(CompanyData, UserId);
     }
     return this.SendResponse(ResponseEnum.Success, ResponseEnum.Updated);
+  }
+
+
+  @Get('Admin/All')
+  async GetAllForAdmin(@Req() req: any) {
+    if (req.user.user_role_code !== 'SUPER_ADMIN') {
+      throw new ForbiddenException('Only Super Admins can access this list');
+    }
+    return await this._CompanyService.GetAllForAdmin();
+  }
+
+  @Patch('Admin/ToggleStatus/:id')
+  async ToggleStatus(@Param('id') id: string, @CurrentUser() UserId: string, @Req() req: any) {
+    if (req.user.user_role_code !== 'SUPER_ADMIN') {
+      throw new ForbiddenException('Only Super Admins can manage client status');
+    }
+    await this._CompanyService.ToggleStatus(id, UserId);
+    return this.SendResponse(ResponseEnum.Success, 'Client status updated');
   }
 
 }

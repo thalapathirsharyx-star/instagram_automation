@@ -12,9 +12,9 @@ const Sidebar: React.FC = () => {
         <div className="logo-icon">RZ</div>
         <span>ReplyZens</span>
       </div>
-      
+
       <nav className="nav-links">
-        {user?.role === 'SUPER_ADMIN' ? (
+        {user?.roleCode === 'SUPER_ADMIN' ? (
           <>
             <NavLink to="/admin/dashboard" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
               <LayoutDashboard size={20} /> Platform Admin
@@ -52,7 +52,7 @@ const Sidebar: React.FC = () => {
             <p className="role">{user?.role || 'Member'}</p>
           </div>
         </div>
-        
+
         <button onClick={logout} className="nav-item logout-btn" style={{ width: '100%', marginTop: '16px', border: 'none', background: 'transparent' }}>
           <LogOut size={20} /> Logout
         </button>

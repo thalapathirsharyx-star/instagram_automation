@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { company } from '@Database/Table/Admin/company';
+import { instagram_lead } from '@Database/Table/CRM/instagram_lead';
+import { user } from '@Database/Table/Admin/user';
 import { LogActionEnum } from '@Helper/Enum/AuditLogEnum';
 import { CompanyModel } from '@Model/Admin/Company.model';
 import { DataSource } from 'typeorm';
@@ -77,5 +79,47 @@ export class CompanyService {
     return _CompanyData;
   }
 
-}
 
+  async GetAllForAdmin() {
+    const companies = await company.createQueryBuilder('c')
+      .leftJoinAndSelect('c.country', 'country')
+      .leftJoinAndSelect('c.currency', 'currency')
+      .addSelect('c.created_on')
+      .getMany();
+
+    // Add stats per company
+    const companiesWithStats = await Promise.all(companies.map(async (c) => {
+      const [userCount, leadCount] = await Promise.all([
+        user.count({ where: { company_id: c.id } }),
+        instagram_lead.count({ where: { company_id: c.id } })
+      ]);
+      return {
+        ...c,
+        userCount,
+        leadCount
+      };
+    }));
+
+    return companiesWithStats;
+  }
+
+  async ToggleStatus(Id: string, UserId: string) {
+    const CompanyData = await company.findOne({ where: { id: Id } });
+    if (!CompanyData) {
+      throw new Error('Company not found');
+    }
+    CompanyData.status = !CompanyData.status;
+    CompanyData.updated_by_id = UserId;
+    CompanyData.updated_on = new Date();
+    await company.update(Id, { status: CompanyData.status, updated_by_id: UserId, updated_on: new Date() });
+
+    this._AuditLogService.AuditEmitEvent({
+      PerformedType: company.name,
+      ActionType: CompanyData.status ? LogActionEnum.Active : LogActionEnum.Suspend,
+      PrimaryId: [CompanyData.id]
+    });
+
+    await this._CacheService.Remove(`${CacheEnum.Company}:*`, CompanyData);
+    return CompanyData;
+  }
+}
