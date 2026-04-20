@@ -94,7 +94,7 @@ const Landing: React.FC = () => {
                 Log in
               </button>
               <button
-                onClick={() => navigate('/login')}
+                onClick={() => navigate('/signup')}
                 className="bg-slate-900 hover:bg-slate-800 text-sm font-semibold text-white px-5 py-2.5 rounded-lg shadow-sm shadow-slate-900/10 active:scale-95 transition-all"
               >
                 Start Free Trial
@@ -121,7 +121,7 @@ const Landing: React.FC = () => {
                 <a href="#faq" className="text-base font-semibold text-slate-700" onClick={() => setMobileOpen(false)}>FAQ</a>
                 <div className="h-px bg-slate-100 my-2" />
                 <button
-                  onClick={() => { navigate('/login'); setMobileOpen(false); }}
+                  onClick={() => { navigate('/signup'); setMobileOpen(false); }}
                   className="bg-slate-900 text-white font-semibold py-3.5 rounded-xl w-full"
                 >
                   Start Free Trial
@@ -161,7 +161,7 @@ const Landing: React.FC = () => {
 
               <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto justify-center mb-8">
                 <button
-                  onClick={() => navigate('/login')}
+                  onClick={() => navigate('/signup')}
                   className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-4 rounded-xl text-base font-semibold flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/20 active:scale-95 transition-all w-full sm:w-auto min-w-[200px] group"
                 >
                   Get Started Free
@@ -636,7 +636,7 @@ const Landing: React.FC = () => {
 
             <div className="flex flex-col items-center">
               <button
-                onClick={() => navigate('/login')}
+                onClick={() => navigate('/signup')}
                 className="bg-indigo-600 hover:bg-indigo-700 text-white px-10 py-5 rounded-xl font-semibold text-lg shadow-lg shadow-indigo-600/20 active:scale-95 transition-all inline-flex items-center gap-3 group mb-6"
               >
                 Start Your Free Trial

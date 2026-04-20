@@ -5,6 +5,7 @@ import Inbox from './pages/Inbox';
 import Leads from './pages/Leads';
 import Settings from './pages/Settings';
 import Login from './pages/Login';
+import Signup from './pages/Signup';
 import Landing from './pages/Landing';
 import { PrivacyPolicy, TermsOfService, DataDeletion } from './pages/Legal';
 import SuperAdminDashboard from './pages/SuperAdminDashboard';
@@ -16,7 +17,7 @@ function AppContent() {
   const location = useLocation();
   const { isAuthenticated, user } = useAuth();
   
-  const publicRoutes = ['/', '/login', '/privacy', '/terms', '/data-deletion'];
+  const publicRoutes = ['/', '/login', '/signup', '/privacy', '/terms', '/data-deletion'];
   const isPublicPage = publicRoutes.includes(location.pathname);
 
   // If user is logged in and tries to access login, redirect to appropriate dashboard
@@ -29,6 +30,7 @@ function AppContent() {
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
         <Route path="/privacy" element={<PrivacyPolicy />} />
         <Route path="/terms" element={<TermsOfService />} />
         <Route path="/data-deletion" element={<DataDeletion />} />

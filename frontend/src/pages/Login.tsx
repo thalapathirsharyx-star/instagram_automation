@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { Mail, Lock, LogIn, AlertCircle, Loader2, Zap } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import api from '../lib/axios';
@@ -129,6 +129,15 @@ const Login: React.FC = () => {
             )}
           </button>
         </form>
+
+        <div className="text-center mt-8">
+          <p className="text-slate-500 text-sm">
+            Don't have an account?{' '}
+            <Link to="/signup" className="text-indigo-600 font-bold hover:underline">
+              Create one for free
+            </Link>
+          </p>
+        </div>
         {/* 
         <div className="divider">
           <span>Or continue with</span>

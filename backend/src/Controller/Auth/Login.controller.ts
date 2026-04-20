@@ -1,7 +1,7 @@
 import { Controller, Post, Body } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ResponseEnum } from '@Helper/Enum/ResponseEnum';
-import { ForgotPasswordModel, ResetPasswordModel } from '@Model/Admin/User.model';
+import { ForgotPasswordModel, ResetPasswordModel, RegisterModel } from '@Model/Admin/User.model';
 import { UserLoginModel } from '@Model/Admin/UserLogin.model';
 import { UserService } from '@Service/Admin/User.service';
 import { AuthService } from '@Service/Auth/Auth.service';
@@ -21,6 +21,12 @@ export class LoginController extends AuthBaseController {
   async UserLogin(@Body() UserLogin: UserLoginModel) {
     const result = await this._AuthService.ValidateUser(UserLogin.email, UserLogin.password);
     return { Type: ResponseEnum.Success, Message: 'Login Successfully', result };
+  }
+
+  @Post('Register')
+  async Register(@Body() RegisterData: RegisterModel) {
+    const result = await this._AuthService.Register(RegisterData);
+    return { Type: ResponseEnum.Success, Message: 'Registered Successfully', result };
   }
 
   @Post('ForgotPassword')

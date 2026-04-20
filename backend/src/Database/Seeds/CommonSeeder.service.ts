@@ -92,60 +92,74 @@ export class CommonSeederService {
   }
 
   CurrencySeed = async () => {
-    await this._DataSource.manager.createQueryBuilder()
-      .insert()
-      .into(currency)
-      .values([
-        {
-          name: 'Pound sterling',
-          code: 'GBP',
-          symbol: '£',
-          created_by_id: "0",
-          created_on: new Date()
-        }
-      ])
-      .execute()
+    const existingCurrency = await currency.findOne({ where: { name: "Pound sterling" } });
+    if (!existingCurrency) {
+      await this._DataSource.manager.createQueryBuilder()
+        .insert()
+        .into(currency)
+        .values([
+          {
+            name: 'Pound sterling',
+            code: 'GBP',
+            symbol: '£',
+            created_by_id: "0",
+            created_on: new Date()
+          }
+        ])
+        .execute()
+    }
   }
 
   CountrySeed = async () => {
-    const CurrencyData = await currency.findOne({ where: { name: "Pound sterling" } });
-    await this._DataSource.manager.createQueryBuilder()
-      .insert()
-      .into(country)
-      .values([
-        {
-          name: 'United Kingdom',
-          code: 'UK',
-          currency_id: CurrencyData.id,
-          created_by_id: "0",
-          created_on: new Date()
-        }
-      ])
-      .execute()
+    const existingCountry = await country.findOne({ where: { name: "United Kingdom" } });
+    if (!existingCountry) {
+      const CurrencyData = await currency.findOne({ where: { name: "Pound sterling" } });
+      if (CurrencyData) {
+        await this._DataSource.manager.createQueryBuilder()
+          .insert()
+          .into(country)
+          .values([
+            {
+              name: 'United Kingdom',
+              code: 'UK',
+              currency_id: CurrencyData.id,
+              created_by_id: "0",
+              created_on: new Date()
+            }
+          ])
+          .execute()
+      }
+    }
   }
 
   CompanySeed = async () => {
-    const CurrencyData = await currency.findOne({ where: { name: "Pound sterling" } });
-    const CountryData = await country.findOne({ where: { name: "United Kingdom" } });
-    await this._DataSource.manager.createQueryBuilder()
-      .insert()
-      .into(company)
-      .values([
-        {
-          name: "Jewel Stock",
-          address: "Jewel Stock",
-          postal_code: "Jewel Stock",
-          country_id: CountryData.id,
-          currency_id: CurrencyData.id,
-          email: "Demo",
-          website: "Demo",
-          invoice_footer: "jewelstock",
-          created_by_id: "0",
-          created_on: new Date()
-        }
-      ])
-      .execute()
+    const existingCompany = await company.findOne({ where: { name: "Jewel Stock" } });
+    if (!existingCompany) {
+      const CurrencyData = await currency.findOne({ where: { name: "Pound sterling" } });
+      const CountryData = await country.findOne({ where: { name: "United Kingdom" } });
+      if (CurrencyData && CountryData) {
+        await this._DataSource.manager.createQueryBuilder()
+          .insert()
+          .into(company)
+          .values([
+            {
+              name: "Jewel Stock",
+              address: "Jewel Stock",
+              postal_code: "Jewel Stock",
+              country_id: CountryData.id,
+              currency_id: CurrencyData.id,
+              email: "Demo",
+              website: "Demo",
+              invoice_footer: "jewelstock",
+              created_by_id: "0",
+              created_on: new Date()
+            }
+          ])
+          .execute()
+      }
+    }
   }
+
 
 }
 

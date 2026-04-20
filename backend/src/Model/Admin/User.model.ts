@@ -83,3 +83,30 @@ export class ChangePasswordModel {
   password: string;
 }
 
+export class RegisterModel {
+  @IsNotEmpty({ message: 'Full name required' })
+  @ApiProperty({ required: true })
+  @Type(() => String)
+  first_name: string;
+
+  @IsNotEmpty({ message: 'Company name required' })
+  @ApiProperty({ required: true })
+  @Type(() => String)
+  company_name: string;
+
+  @IsEmail({}, { message: 'Invalid Email format' })
+  @IsNotEmpty({ message: 'Email required' })
+  @ApiProperty({ required: true })
+  @Type(() => String)
+  email: string;
+
+  @IsNotEmpty({ message: 'Password required' })
+  @MinLength(6, {
+    message: 'Password length mininum 6 characters',
+  })
+  @ApiProperty({ required: true })
+  @Type(() => String)
+  password: string;
+}
+
+
