@@ -219,24 +219,36 @@ export class InstagramService {
       return response;
     }
 
-    // 5. Decision Logic - Step 2: AI Smart Reply (Mocked for now)
-    const aiResponse = this.generateMockAiReply(context.message_text);
+    // 5. Decision Logic - Step 2: AI Smart Reply (Powered by LLM)
+    const chatHistory = await this.getMessagesByLead(lead.id);
+    const historyStrings = chatHistory.slice(-10).map(msg => `${msg.direction === 'Inbound' ? 'Customer' : 'Assistant'}: ${msg.message_text}`);
+
+    const aiResponse = await this.generateAiReply(context.message_text, historyStrings);
+    const score = aiResponse.lead_score || 0;
+    
+    let nextStatus = lead.lead_status;
+    if (score >= 70) {
+      nextStatus = 'Hot';
+    } else if (score >= 30) {
+      nextStatus = 'Buyer';
+    }
+
     const response: InstagramActionResponse = {
-      action: 'AI_REPLY',
+      action: aiResponse.action,
       reply: aiResponse.reply,
-      status_update: aiResponse.intent === 'buying' ? 'Hot' : (lead.lead_status as 'New' | 'Hot' | 'Buyer' | 'Lost' | 'Needs_Human'),
-      notes: 'Generated AI Smart Reply (Mocked)',
+      status_update: nextStatus as 'New' | 'Hot' | 'Buyer' | 'Lost' | 'Needs_Human',
+      notes: `Intent: ${aiResponse.intent} | Score: ${score} | Entities: ${JSON.stringify(aiResponse.entities || {})}`,
     };
 
-    if (aiResponse.intent === 'buying') {
-      lead.lead_status = 'Hot';
+    if (nextStatus !== lead.lead_status) {
+      lead.lead_status = nextStatus;
       await lead.save();
     }
 
     await this.logOutboundMessage(lead, response);
 
     // Only send the reply if it's an automated one
-    if (response.action === 'AI_REPLY' || response.action === 'AUTO_KEYWORD_REPLY') {
+    if (response.reply && response.action !== 'HUMAN_HANDOFF') {
       await this.sendInstagramMessage(lead.instagram_handle, response.reply);
     }
 
@@ -259,11 +271,163 @@ export class InstagramService {
     return triggers.some(t => text.toLowerCase().includes(t));
   }
 
-  private generateMockAiReply(text: string) {
-    if (text.toLowerCase().includes('want') || text.toLowerCase().includes('buy')) {
-      return { reply: 'That sounds great! I can help you with your order. Which size are you looking for?', intent: 'buying' };
+  private async generateAiReply(messageText: string, history: string[]): Promise<any> {
+    const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+    if (!GEMINI_API_KEY) {
+      console.warn('[AI] No GEMINI_API_KEY found, falling back to basic response.');
+      return { 
+        reply: "Thanks for reaching out! A human agent will be with you shortly.", 
+        intent: "general_inquiry",
+        lead_score: 10,
+        action: "followup",
+        entities: {}
+      };
     }
-    return { reply: 'Thanks for reaching out! Let me know if you have any other questions. 🙂', intent: 'neutral' };
+
+    const businessType = 'clothing'; // Mock or load from config
+    const goal = 'sell_products';
+    const tone = 'friendly and professional';
+    const language = 'english';
+
+    const systemPrompt = `You are a dynamic AI assistant inside a CRM system.
+You handle customer conversations for multiple types of businesses (e.g., clothing, real estate, clinics, services).
+
+Your behavior MUST adapt based on the provided business configuration.
+
+---
+
+### INPUT CONTEXT:
+
+Business Profile:
+* business_type: ${businessType}
+* business_goal: ${goal}
+* tone: ${tone}
+* language: ${language}
+
+Product / Service Data:
+We offer custom and premium apparel.
+
+Custom Rules:
+Be polite and helpful.
+
+---
+
+### YOUR OBJECTIVES:
+1. Understand customer intent
+2. Extract useful information
+3. Qualify the lead
+4. Respond like a human sales agent
+5. Move the conversation toward the business goal
+
+---
+
+### STEP 1: DETECT INTENT
+Classify the message into the most relevant intent depending on business_type.
+Examples:
+For "clothing": product_inquiry, price_check, size_check, color_check, purchase_intent
+If unclear -> use "general_inquiry"
+
+---
+
+### STEP 2: EXTRACT ENTITIES
+Extract relevant structured data based on business_type:
+For clothing: product_name, size, color, quantity
+Return null if not found.
+
+---
+
+### STEP 3: LEAD SCORING (0-100)
+Score based on buying intent:
+* low intent (greeting, browsing) -> 5-30
+* medium intent (questions, interest) -> 30-70
+* high intent (ready to act) -> 70-95
+
+---
+
+### STEP 4: DECIDE NEXT ACTION
+Based on business_goal:
+IF goal = sell_products: Guide toward purchase. Ask size, confirm product, move to order.
+
+---
+
+### STEP 5: GENERATE RESPONSE
+Rules:
+* Keep response short (1-3 lines)
+* Sound human, not robotic
+* Use tone provided
+* Ask at most ONE follow-up question
+* Use available context_data (product/service info)
+* If data missing -> ask instead of assuming
+
+---
+
+### STEP 6: OUTPUT FORMAT (STRICT JSON)
+{
+"intent": "...",
+"lead_score": 0,
+"entities": {
+"key": "value"
+},
+"reply": "...",
+"action": "none" | "lead" | "order" | "book" | "followup"
+}
+
+---
+
+### ACTION RULES:
+* lead_score >= 70 -> "lead"
+* purchase intent -> "order"
+* missing info -> "followup"
+* otherwise -> "none"
+
+---
+
+### IMPORTANT RULES:
+* Adapt behavior based on business_type
+* Do NOT assume missing data
+* Do NOT generate long responses
+* Always prioritize clarity and conversion
+* Use chat history to avoid repeating questions
+* If user already provided info, do not ask again`;
+
+    const userMessage = `Customer Message:\n${messageText}\n\nChat History:\n${history.join('\n')}`;
+
+    try {
+      console.log(`[AI] Generating reply for message: "${messageText}"`);
+      const response = await axios.post(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`,
+        {
+          system_instruction: {
+            parts: { text: systemPrompt }
+          },
+          contents: [
+            {
+              parts: [{ text: userMessage }]
+            }
+          ],
+          generationConfig: {
+            responseMimeType: "application/json"
+          }
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+
+      const responseContent = response.data.candidates[0].content.parts[0].text;
+      return JSON.parse(responseContent);
+    } catch (e) {
+      console.error("[AI] Gemini API error", e.response?.data || e.message);
+      return { 
+        reply: "I'm having a little trouble connecting to my network. Give me a moment please.", 
+        intent: "error",
+        lead_score: 10,
+        action: "none",
+        entities: {}
+      };
+    }
   }
 
   private async logOutboundMessage(lead: instagram_lead, response: InstagramActionResponse) {

@@ -28,9 +28,9 @@ export interface InstagramMessageContext {
 }
 
 export interface InstagramActionResponse {
-  action: 'AUTO_KEYWORD_REPLY' | 'AI_REPLY' | 'HUMAN_HANDOFF' | 'FOLLOW_UP' | 'TRACKING_UPDATE';
+  action: 'AUTO_KEYWORD_REPLY' | 'AI_REPLY' | 'HUMAN_HANDOFF' | 'FOLLOW_UP' | 'TRACKING_UPDATE' | string;
   reply: string;
-  status_update: 'New' | 'Hot' | 'Buyer' | 'Lost' | 'Needs_Human';
+  status_update: 'New' | 'Hot' | 'Buyer' | 'Lost' | 'Needs_Human' | string;
   tags?: string[];
   notes: string;
 }
