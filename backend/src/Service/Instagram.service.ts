@@ -65,6 +65,12 @@ export class InstagramService {
       });
 
       const pages = pagesRes.data.data;
+      console.log(`[CONNECT] Found ${pages.length} Pages. Checking for linked Instagram accounts...`);
+      
+      pages.forEach((p: any) => {
+        console.log(`  - Page: "${p.name}" | ID: ${p.id} | Has IG Link: ${!!p.instagram_business_account}`);
+      });
+
       const targetPage = pages.find((p: any) => p.instagram_business_account);
 
       if (!targetPage) {

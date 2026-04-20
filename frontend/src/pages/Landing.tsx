@@ -63,6 +63,121 @@ const AlertCircle = (props: any) => (
   </svg>
 );
 
+const PhoneMockup: React.FC = () => {
+  return (
+    <motion.div 
+      initial={{ opacity: 0, scale: 0.9, rotateY: -10 }}
+      animate={{ opacity: 1, scale: 1, rotateY: 5 }}
+      transition={{ duration: 1, ease: "easeOut" }}
+      className="relative hidden lg:block perspective-1000"
+    >
+      {/* Chassis */}
+      <div className="relative w-[300px] h-[610px] mx-auto bg-slate-900 rounded-[3.5rem] p-3 shadow-2xl border-[6px] border-slate-800 ring-1 ring-slate-100/10">
+        {/* Dynamic Island */}
+        <div className="absolute top-7 left-1/2 -translate-x-1/2 w-24 h-7 bg-black rounded-full z-20 flex items-center justify-center">
+           <div className="w-1.5 h-1.5 rounded-full bg-slate-800 ml-auto mr-4" />
+        </div>
+
+        {/* Screen Content */}
+        <div className="w-full h-full bg-white rounded-[2.8rem] overflow-hidden relative flex flex-col font-sans">
+          {/* Mock Instagram Header */}
+          <div className="h-14 border-b border-slate-100 px-5 flex items-center justify-between pt-6">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-yellow-400 via-red-500 to-purple-600 p-0.5">
+                <div className="w-full h-full rounded-full bg-white border-2 border-white overflow-hidden">
+                  <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=user1" alt="user" />
+                </div>
+              </div>
+              <div className="flex flex-col">
+                <span className="text-[10px] font-bold text-slate-900 leading-tight">Sarah Jordan</span>
+                <span className="text-[8px] text-green-500 font-medium leading-none">Active now</span>
+              </div>
+            </div>
+            <div className="flex gap-2.5">
+              <div className="w-1.5 h-1.5 rounded-full bg-slate-200" />
+              <div className="w-1.5 h-1.5 rounded-full bg-slate-200" />
+              <div className="w-1.5 h-1.5 rounded-full bg-slate-200" />
+            </div>
+          </div>
+
+          {/* Chat Messages */}
+          <div className="flex-1 p-4 space-y-4 overflow-y-auto">
+             <div className="flex justify-start">
+               <div className="max-w-[80%] bg-slate-100 p-2.5 rounded-2xl rounded-tl-none text-[11px] text-slate-800 leading-relaxed">
+                 Hi! Do you have the blue dress in size M back in stock? 👗
+               </div>
+             </div>
+             
+             <motion.div 
+               initial={{ opacity: 0, y: 5 }}
+               animate={{ opacity: 1, y: 0 }}
+               transition={{ delay: 1 }}
+               className="flex justify-end"
+             >
+               <div className="max-w-[80%] bg-indigo-600 p-2.5 rounded-2xl rounded-tr-none text-[11px] text-white leading-relaxed shadow-sm">
+                 <div className="flex items-center gap-1.5 mb-1 opacity-80 text-[8px] font-bold uppercase tracking-wider">
+                   <Zap size={8} fill="currentColor" /> AI Assistant
+                 </div>
+                 Yes, Sarah! We just restocked 5 units this morning. Would you like me to hold one for you? ✨
+               </div>
+             </motion.div>
+
+             <motion.div 
+               initial={{ opacity: 0, y: 5 }}
+               animate={{ opacity: 1, y: 0 }}
+               transition={{ delay: 2.5 }}
+               className="flex justify-start"
+             >
+               <div className="max-w-[80%] bg-slate-100 p-2.5 rounded-2xl rounded-tl-none text-[11px] text-slate-800 leading-relaxed">
+                 OMG yes please! Can you send a payment link?
+               </div>
+             </motion.div>
+          </div>
+
+          {/* Footer Input */}
+          <div className="h-16 border-t border-slate-50 px-4 flex items-center gap-3 pb-2">
+            <div className="w-8 h-8 rounded-full bg-indigo-50 border border-indigo-100/50 flex items-center justify-center text-indigo-500">
+               <Zap size={14} fill="currentColor" />
+            </div>
+            <div className="flex-1 h-9 bg-slate-50 border border-slate-100 rounded-full px-4 flex items-center text-[10px] text-slate-400">
+               Auto-reply enabled...
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Floating Indicators */}
+      <motion.div 
+        animate={{ y: [0, -10, 0] }}
+        transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
+        className="absolute -top-10 -right-16 bg-white p-3 rounded-2xl shadow-xl border border-slate-100 flex items-center gap-3 w-48 z-30"
+      >
+        <div className="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center text-green-500 shrink-0 border border-green-100">
+          <Check size={14}/>
+        </div>
+        <div>
+          <div className="text-[10px] font-bold text-slate-900 uppercase tracking-tight">Lead Qualified</div>
+          <div className="text-[9px] text-slate-500">High Purchase Intent</div>
+        </div>
+      </motion.div>
+
+      <motion.div 
+        animate={{ y: [0, 10, 0] }}
+        transition={{ repeat: Infinity, duration: 5, ease: "easeInOut", delay: 0.5 }}
+        className="absolute bottom-20 -left-16 bg-white p-3 rounded-2xl shadow-xl border border-slate-100 flex items-center gap-3 w-48 z-30"
+      >
+        <div className="w-8 h-8 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-500 shrink-0 border border-indigo-100">
+          <Zap size={14} fill="currentColor"/>
+        </div>
+        <div>
+          <div className="text-[10px] font-bold text-slate-900 uppercase tracking-tight">Auto-Filtered</div>
+          <div className="text-[9px] text-slate-500">Reduced Workload by 85%</div>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+};
+
 const Landing: React.FC = () => {
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -138,46 +253,56 @@ const Landing: React.FC = () => {
         <section className="relative pt-20 lg:pt-32 pb-24 z-10 overflow-hidden bg-white">
           <div className="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px] opacity-30 pointer-events-none" />
           
-          <div className="max-w-5xl mx-auto px-6 w-full text-center relative z-10">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, ease: "easeOut" }}
-              className="flex flex-col items-center justify-center mx-auto"
-            >
-              {/* Product Badge */}
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-indigo-50 border border-indigo-100 mb-8">
-                <span className="w-2 h-2 rounded-full bg-indigo-600 animate-pulse" />
-                <span className="text-xs font-semibold text-indigo-700">Instagram CRM Automation</span>
+          <div className="max-w-7xl mx-auto px-6 w-full relative z-10">
+            <div className="grid lg:grid-cols-[1.1fr_0.9fr] gap-16 items-center">
+              
+              {/* Text Content */}
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6, ease: "easeOut" }}
+                className="text-left"
+              >
+                {/* Product Badge */}
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-indigo-50 border border-indigo-100 mb-8">
+                  <span className="w-2 h-2 rounded-full bg-indigo-600 animate-pulse" />
+                  <span className="text-xs font-semibold text-indigo-700">Instagram CRM Automation</span>
+                </div>
+
+                <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-8 text-slate-900 leading-[1.05]">
+                  Scale your Instagram DMs without <span className="text-indigo-600">scaling yourself</span>
+                </h1>
+
+                <p className="text-lg md:text-xl text-slate-500 font-medium leading-relaxed mb-10 max-w-2xl">
+                  Our CRM filters noise, categorizes leads, and automates common replies—so you can focus on building relationships and closing deals.
+                </p>
+
+                <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto mb-8">
+                  <button
+                    onClick={() => navigate('/signup')}
+                    className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-4 rounded-xl text-base font-semibold flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/20 active:scale-95 transition-all w-full sm:w-auto min-w-[200px] group"
+                  >
+                    Start Free Trial
+                    <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                  </button>
+                  <button className="px-8 py-4 rounded-xl text-base font-semibold bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all w-full sm:w-auto min-w-[200px] shadow-sm">
+                    Watch Demo
+                  </button>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-5 text-sm font-medium text-slate-500">
+                  <span className="flex items-center gap-1.5"><Check size={16} className="text-indigo-500"/> No credit card</span>
+                  <span className="flex items-center gap-1.5"><Check size={16} className="text-indigo-500"/> 14-day free trial</span>
+                  <span className="flex items-center gap-1.5"><Check size={16} className="text-indigo-500"/> Cancel anytime</span>
+                </div>
+              </motion.div>
+
+              {/* iPhone Mockup */}
+              <div className="flex items-center justify-center lg:justify-end">
+                <PhoneMockup />
               </div>
 
-              <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-8 text-slate-900 text-balance leading-[1.1]">
-                Scale your Instagram DMs without <span className="text-indigo-600">scaling your workload</span>
-              </h1>
-
-              <p className="text-lg md:text-xl text-slate-500 font-medium leading-relaxed mb-10 max-w-3xl text-balance">
-                Our CRM automatically filters all incoming messages, organizes them into a streamlined inbox, and turns them into qualified leads—so you don't have to manually reply to every customer.
-              </p>
-
-              <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto justify-center mb-8">
-                <button
-                  onClick={() => navigate('/signup')}
-                  className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-4 rounded-xl text-base font-semibold flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/20 active:scale-95 transition-all w-full sm:w-auto min-w-[200px] group"
-                >
-                  Get Started Free
-                  <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
-                </button>
-                <button className="px-8 py-4 rounded-xl text-base font-semibold bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all w-full sm:w-auto min-w-[200px] shadow-sm">
-                  Watch Demo
-                </button>
-              </div>
-
-              <div className="flex flex-wrap justify-center items-center gap-5 text-sm font-medium text-slate-500">
-                <span className="flex items-center gap-1.5"><Check size={16} className="text-indigo-500"/> No credit card</span>
-                <span className="flex items-center gap-1.5"><Check size={16} className="text-indigo-500"/> 14-day free trial</span>
-                <span className="flex items-center gap-1.5"><Check size={16} className="text-indigo-500"/> Cancel anytime</span>
-              </div>
-            </motion.div>
+            </div>
           </div>
           
           {/* Subtle bottom gradient map */}
