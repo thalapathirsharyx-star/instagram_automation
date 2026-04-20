@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Mail, Lock, User, Building2, UserPlus, AlertCircle, Loader2, Zap } from 'lucide-react';
+import { Mail, Lock, User, Building2, UserPlus, AlertCircle, Loader2, Zap, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import api from '../lib/axios';
 
@@ -13,6 +13,7 @@ const Signup: React.FC = () => {
   });
   const [message, setMessage] = useState<{ text: string, type: 'success' | 'error' } | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const { login } = useAuth();
   const navigate = useNavigate();
@@ -140,15 +141,22 @@ const Signup: React.FC = () => {
             <div className="input-wrapper">
               <Lock size={18} className="input-icon" />
               <input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 id="password"
-                className="bg-slate-50 border-slate-200 text-slate-900 focus:ring-indigo-500 focus:border-indigo-500"
+                className="bg-slate-50 border-slate-200 text-slate-900 focus:ring-indigo-500 focus:border-indigo-500 pr-12"
                 placeholder="••••••••"
                 value={formData.password}
                 onChange={handleChange}
                 required
                 minLength={6}
               />
+              <button
+                type="button"
+                className="absolute right-4 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-indigo-600 transition-colors"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
             </div>
           </div>
 

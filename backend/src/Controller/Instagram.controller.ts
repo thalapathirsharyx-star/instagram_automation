@@ -97,6 +97,13 @@ export class InstagramController extends AuthBaseController {
   // --- PROTECTED ENDPOINTS (DASHBOARD & CRM) ---
 
   @UseGuards(JwtAuthGuard)
+  @Post('Connect')
+  async Connect(@Body('token') token: string, @Req() req: any) {
+    const result = await this._InstagramService.linkInstagramAccount(req.user?.company_id, token);
+    return this.SendResponseData(result);
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Post('Process')
   async Process(@Body() context: InstagramMessageContext) {
     const result = await this._InstagramService.processIncomingMessage(context);

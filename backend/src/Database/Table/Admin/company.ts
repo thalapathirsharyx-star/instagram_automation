@@ -60,4 +60,13 @@ export class company extends BaseTable {
   @Column({ nullable: true })
   invoice_footer: string;
 
+  @Column({ nullable: true })
+  instagram_business_id: string;
+
+  @Column({ nullable: true })
+  instagram_page_id: string;
+
+  @Column({ type: 'text', nullable: true })
+  instagram_access_token: string;
+
 }

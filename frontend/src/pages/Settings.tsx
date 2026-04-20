@@ -18,14 +18,79 @@ const SettingsCard: React.FC<{ icon: any, title: string, subtitle: string, child
         <p style={{ margin: '4px 0 0', fontSize: '0.85rem', color: 'var(--text-dim)' }}>{subtitle}</p>
       </div>
     </div>
-    <div className="card-content" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+    <div className="card-content" style={{ display: 'flex', flexDirection: 'column', gap: '16px', flexGrow: 1 }}>
       {children}
     </div>
   </div>
 );
 
+import { connectInstagram } from '../api/crm.api';
+
 const Settings: React.FC = () => {
   const { user } = useAuth();
+  const [isConnecting, setIsConnecting] = React.useState(false);
+  const [isConnected, setIsConnected] = React.useState(false);
+  const [connectionDetails, setConnectionDetails] = React.useState<{ name: string, id: string } | null>(null);
+
+  React.useEffect(() => {
+    // Check if SDK already exists
+    if (!(window as any).FB) {
+      const fbAppId = import.meta.env.VITE_FB_APP_ID || '955338716906984';
+      
+      // Load Facebook SDK
+      (window as any).fbAsyncInit = function() {
+        (window as any).FB.init({
+          appId      : fbAppId,
+          cookie     : true,
+          xfbml      : true,
+          version    : 'v21.0'
+        });
+      };
+
+      (function(d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0] as any;
+        if (d.getElementById(id)) return;
+        js = d.createElement(s) as any; js.id = id;
+        js.src = "https://connect.facebook.net/en_US/sdk.js";
+        fjs.parentNode.insertBefore(js, fjs);
+      }(document, 'script', 'facebook-jssdk'));
+    }
+  }, []);
+
+  const handleConnect = () => {
+    if (isConnecting) return;
+    setIsConnecting(true);
+
+    try {
+      (window as any).FB.login((response: any) => {
+        if (response.authResponse) {
+          const accessToken = response.authResponse.accessToken;
+          
+          // Send to backend
+          connectInstagram(accessToken)
+            .then(res => {
+              if (res.Success) {
+                setIsConnected(true);
+                setConnectionDetails({
+                  name: res.Data?.page_name || 'Instagram Account',
+                  id: res.Data?.business_id || ''
+                });
+                alert('Instagram Account Linked Successfully!');
+              } else {
+                alert('Connection Failed: ' + (res.Message || 'Unknown Error'));
+              }
+            })
+            .finally(() => setIsConnecting(false));
+        } else {
+          console.log('User cancelled login or did not fully authorize.');
+          setIsConnecting(false);
+        }
+      }, { scope: 'instagram_manage_messages,pages_manage_metadata,pages_show_list,instagram_basic' });
+    } catch (error) {
+      console.error('FB Logic Error:', error);
+      setIsConnecting(false);
+    }
+  };
 
   return (
     <div className="settings-page" style={{ height: '100%', display: 'flex', flexDirection: 'column', gap: '32px' }}>
@@ -40,22 +105,42 @@ const Settings: React.FC = () => {
         gap: '24px' 
       }}>
         
-        {/* Meta Integration */}
         <SettingsCard 
           icon={Shield} 
           title="Meta Integration" 
           subtitle="Manage your Instagram and Facebook connections."
         >
-          <div className="field-group">
-            <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-dim)', marginBottom: '8px' }}>App ID</label>
-            <div className="glass-input" style={{ background: 'var(--glass-border)', padding: '10px 16px', borderRadius: '8px', fontSize: '0.9rem' }}>
-              {import.meta.env.VITE_FB_APP_ID || '955338716906984'}
+          {isConnected ? (
+            <div className="connection-success">
+              <div className="status-indicator" style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.85rem', marginBottom: '12px' }}>
+                <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10b981' }}></div>
+                <span style={{ color: '#10b981', fontWeight: 600 }}>Active Connection</span>
+              </div>
+              <div className="account-details" style={{ padding: '12px', background: 'var(--glass-border)', borderRadius: '12px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+                 <div style={{ background: 'var(--primary)', width: '32px', height: '32px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 600 }}>
+                   {connectionDetails?.name[0]}
+                 </div>
+                 <div>
+                   <div style={{ fontSize: '0.9rem', fontWeight: 500 }}>{connectionDetails?.name}</div>
+                   <div style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>ID: {connectionDetails?.id}</div>
+                 </div>
+              </div>
             </div>
-          </div>
-          <div className="status-indicator" style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.85rem' }}>
-            <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10b981' }}></div>
-            <span style={{ color: '#10b981' }}>Connected to Instagram Business Account</span>
-          </div>
+          ) : (
+            <>
+              <p style={{ fontSize: '0.85rem', color: 'var(--text-dim)', marginBottom: '16px' }}>
+                Connect your business account to start receiving and responding to Instagram DMs automatically.
+              </p>
+              <button 
+                onClick={handleConnect}
+                disabled={isConnecting}
+                className="gradient-btn" 
+                style={{ width: '100%', padding: '12px', borderRadius: '12px', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', opacity: isConnecting ? 0.7 : 1 }}
+              >
+                {isConnecting ? 'Establishing Connection...' : 'Connect Instagram Account'}
+              </button>
+            </>
+          )}
         </SettingsCard>
 
         {/* AI & Automation */}

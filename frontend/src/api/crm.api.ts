@@ -20,3 +20,8 @@ export const getBalance = async (): Promise<ApiResponse<number>> => {
   const response = await api.get<ApiResponse<number>>('/Instagram/Balance');
   return response.data;
 };
+
+export const connectInstagram = async (token: string): Promise<ApiResponse<any>> => {
+  const response = await api.post<ApiResponse<any>>('/Instagram/Connect', { token });
+  return response.data;
+};

@@ -14,6 +14,83 @@ export class InstagramService {
 
   constructor(private readonly instagramGateway: InstagramGateway) { }
 
+  /**
+   * Automatically connects an Instagram account using a user access token.
+   * Finds the first Page with a linked Instagram Business Account.
+   */
+  async linkInstagramAccount(companyId: string, userToken: string) {
+    console.log(`[CONNECT] Linking Instagram for Company: ${companyId}`);
+
+    const APP_ID = process.env.FB_APP_ID;
+    const APP_SECRET = process.env.FB_APP_SECRET;
+
+    if (!APP_ID || !APP_SECRET) {
+      throw new Error('FB_APP_ID or FB_APP_SECRET missing in .env');
+    }
+
+    try {
+      // 1. Exchange for Long-Lived User Token
+      const exchangeRes = await axios.get(`https://graph.facebook.com/v21.0/oauth/access_token`, {
+        params: {
+          grant_type: 'fb_exchange_token',
+          client_id: APP_ID,
+          client_secret: APP_SECRET,
+          fb_exchange_token: userToken
+        }
+      });
+      const longLivedUserToken = exchangeRes.data.access_token;
+      console.log('[CONNECT] Obtained long-lived user token');
+
+      // 2. Fetch Pages & IG Business Accounts
+      const pagesRes = await axios.get(`https://graph.facebook.com/v21.0/me/accounts`, {
+        params: {
+          fields: 'name,access_token,instagram_business_account',
+          access_token: longLivedUserToken
+        }
+      });
+
+      const pages = pagesRes.data.data;
+      const targetPage = pages.find((p: any) => p.instagram_business_account);
+
+      if (!targetPage) {
+        throw new Error('No Instagram Business Account linked to any of your Facebook Pages.');
+      }
+
+      const igBusinessId = targetPage.instagram_business_account.id;
+      const pageAccessToken = targetPage.access_token; // This is already a long-lived Page Token if the User Token was long-lived
+      const pageId = targetPage.id;
+
+      console.log(`[CONNECT] Found IG Business ID: ${igBusinessId} on Page: ${targetPage.name}`);
+
+      // 3. Save to Database
+      const company = await CompanyTable.findOne({ where: { id: companyId } });
+      if (!company) throw new Error('Company not found');
+
+      company.instagram_business_id = igBusinessId;
+      company.instagram_page_id = pageId;
+      company.instagram_access_token = pageAccessToken;
+      await company.save();
+
+      // 4. Auto-Subscribe to Webhooks
+      console.log('[CONNECT] Subscribing Page to Webhooks...');
+      await axios.post(`https://graph.facebook.com/v21.0/${pageId}/subscribed_apps`, {
+        subscribed_fields: ['messages', 'messaging_postbacks'],
+        access_token: pageAccessToken
+      });
+
+      return {
+        success: true,
+        business_id: igBusinessId,
+        page_name: targetPage.name
+      };
+
+    } catch (error) {
+      const metaError = error.response?.data || error.message;
+      console.error('[CONNECT FAILED] Meta API Error Details:', JSON.stringify(metaError, null, 2));
+      throw error;
+    }
+  }
+
   async processIncomingMessage(input: InstagramMessageContext | string, text?: string, messageId?: string, igBusinessId?: string, skipDedupe = false): Promise<InstagramActionResponse | void> {
     // Deduplication check - only skip if not an internal recursive call
     if (!skipDedupe && messageId && this.processedMids.has(messageId)) {
@@ -152,14 +229,18 @@ export class InstagramService {
     }
 
     // 1. Get or Create Lead
+    // Identify the company based on the incoming Instagram Business ID (from Webhook)
+    const company = await CompanyTable.findOne({ where: { instagram_business_id: igBusinessId } });
+    const companyId = company?.id;
+
     const SYSTEM_ID = '00000000-0000-0000-0000-000000000000';
-    let lead = await instagram_lead.findOne({ where: { instagram_handle: context.instagram_handle } });
+    let lead = await instagram_lead.findOne({ where: { instagram_handle: context.instagram_handle, company_id: companyId } });
     
     if (!lead) {
-      console.log(`[NEW LEAD] Creating record for: ${context.instagram_handle}`);
+      console.log(`[NEW LEAD] Creating record for: ${context.instagram_handle} | Company: ${companyId || 'NULL'}`);
       
       // Attempt to fetch real name from Instagram Profile
-      const realProfile = await this.fetchUserProfile(context.instagram_handle);
+      const realProfile = await this.fetchUserProfile(context.instagram_handle, company?.instagram_access_token);
       
       lead = new instagram_lead();
       lead.customer_name = realProfile?.name || context.customer_name;
@@ -179,13 +260,13 @@ export class InstagramService {
     inboundMsg.direction = 'Inbound';
     inboundMsg.created_by_id = SYSTEM_ID;
     inboundMsg.created_on = new Date();
+    inboundMsg.company_id = companyId;
     await inboundMsg.save();
 
     // Notify real-time clients
     this.instagramGateway.emitNewMessage({ ...inboundMsg, lead });
 
     // 2.5 Deduct credits (example: $0.10 per message)
-    const company = await this.getCompany(); // Placeholder for actual company lookup
     if (company && company.wallet_balance > 0) {
       company.wallet_balance = Number(company.wallet_balance) - 0.10;
       await company.save();
@@ -249,7 +330,7 @@ export class InstagramService {
 
     // Only send the reply if it's an automated one
     if (response.reply && response.action !== 'HUMAN_HANDOFF') {
-      await this.sendInstagramMessage(lead.instagram_handle, response.reply);
+      await this.sendInstagramMessage(lead.instagram_handle, response.reply, company?.instagram_access_token);
     }
 
     return response;
@@ -439,6 +520,7 @@ Rules:
     outboundMsg.ai_notes = response.notes;
     outboundMsg.created_by_id = '00000000-0000-0000-0000-000000000000';
     outboundMsg.created_on = new Date();
+    outboundMsg.company_id = lead.company_id;
     await outboundMsg.save();
 
     // Notify real-time clients
@@ -462,8 +544,8 @@ Rules:
   }
 
 
-  private async sendInstagramMessage(recipientId: string, text: string) {
-    const PAGE_ACCESS_TOKEN = (process.env['IG_PAGE_ACCESS_TOKEN'] || '').trim();
+  private async sendInstagramMessage(recipientId: string, text: string, dynamicToken?: string) {
+    const PAGE_ACCESS_TOKEN = (dynamicToken || process.env['IG_PAGE_ACCESS_TOKEN'] || '').trim();
     // Using v21.0 to match our successful fetch endpoint
     const url = `https://graph.facebook.com/v21.0/me/messages`;
 
@@ -494,8 +576,8 @@ Rules:
    * Fetches the real name of an Instagram user using their ID.
    * Requires 'instagram_basic' permission and a Page Access Token.
    */
-  private async fetchUserProfile(instagramId: string): Promise<{ name: string } | null> {
-    const rawToken = (process.env.IG_PAGE_ACCESS_TOKEN || '').trim();
+  private async fetchUserProfile(instagramId: string, dynamicToken?: string): Promise<{ name: string } | null> {
+    const rawToken = (dynamicToken || process.env.IG_PAGE_ACCESS_TOKEN || '').trim();
     if (!rawToken || instagramId === 'FETCH_PENDING') return null;
 
     try {
