@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Mail, Lock, LogIn, AlertCircle, Loader2 } from 'lucide-react';
+import { Mail, Lock, LogIn, AlertCircle, Loader2, Zap } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import api from '../lib/axios';
 
@@ -46,25 +46,27 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="login-page">
-      <div className="background-decor">
-        <div className="blob blob-1"></div>
-        <div className="blob blob-2"></div>
-        <div className="blob blob-3"></div>
+    <div className="login-page dot-grid bg-white">
+      <div className="background-decor pointer-events-none">
+        <div className="absolute top-0 left-0 w-full h-full bg-indigo-50/50 -z-10" />
+        <div className="blob blob-1 bg-indigo-600/10 opacity-20"></div>
+        <div className="blob blob-2 bg-violet-600/10 opacity-20"></div>
       </div>
 
-      <div className="login-container glass-card">
-        <div className="login-header">
-          <div className="logo-section">
-            <span className="logo-icon">RZ</span>
-            <h1>ReplyZens</h1>
+      <div className="login-container bg-white border border-slate-200 shadow-2xl shadow-indigo-100 rounded-[2.5rem] p-12">
+        <div className="login-header text-center mb-10">
+          <div className="flex flex-col items-center gap-4 mb-6">
+            <div className="w-12 h-12 rounded-2xl bg-indigo-600 flex items-center justify-center shadow-lg shadow-indigo-200">
+              <Zap className="w-6 h-6 text-white" fill="currentColor" />
+            </div>
+            <h1 className="text-3xl font-black tracking-tight text-slate-900">ReplyZens</h1>
           </div>
-          <p className="subtitle">Welcome back! Please enter your details.</p>
+          <p className="subtitle text-slate-500">Welcome back! Please enter your details.</p>
         </div>
 
         {message && (
           <div className={`${message.type === 'success'
-            ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-500'
+            ? 'bg-white/10 border-white/20 text-white'
             : 'bg-destructive/10 border-destructive/20 text-destructive'
             } border text-sm p-3 rounded-lg flex items-center gap-2 mb-6 transition-all duration-300`}>
             {message.type === 'success' ? <LogIn size={16} /> : <AlertCircle size={16} />}
@@ -80,6 +82,7 @@ const Login: React.FC = () => {
               <input
                 type="email"
                 id="email"
+                className="bg-slate-50 border-slate-200 text-slate-900 focus:ring-indigo-500 focus:border-indigo-500"
                 placeholder="Enter your email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -95,6 +98,7 @@ const Login: React.FC = () => {
               <input
                 type="password"
                 id="password"
+                className="bg-slate-50 border-slate-200 text-slate-900 focus:ring-indigo-500 focus:border-indigo-500"
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -111,7 +115,7 @@ const Login: React.FC = () => {
             <a href="#" className="forgot-password">Forgot password?</a>
           </div>
 
-          <button type="submit" className="login-button" disabled={isLoading}>
+          <button type="submit" className="login-button gradient-btn rounded-full mt-4 py-4" disabled={isLoading}>
             {isLoading ? (
               <>
                 <Loader2 size={18} className="animate-spin" />

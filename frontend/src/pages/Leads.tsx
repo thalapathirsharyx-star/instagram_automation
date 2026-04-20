@@ -44,10 +44,10 @@ const Leads: React.FC = () => {
               placeholder="Search leads..." 
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              style={{ background: 'transparent', border: 'none', color: '#fff', outline: 'none' }}
+              style={{ background: 'transparent', border: 'none', color: 'var(--foreground)', outline: 'none' }}
             />
           </div>
-          <button className="glass-card hover-glow" style={{ padding: '8px 16px', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', border: '1px solid var(--glass-border)', color: '#fff' }}>
+          <button className="glass-card hover-glow" style={{ padding: '8px 16px', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', border: '1px solid var(--glass-border)', color: 'var(--foreground)' }}>
             <Filter size={18} /> Filter
           </button>
         </div>
@@ -83,7 +83,7 @@ const Leads: React.FC = () => {
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                     <div style={{ 
                       width: '36px', height: '36px', borderRadius: '10px', 
-                      background: 'linear-gradient(135deg, var(--primary), var(--hot))',
+                      background: 'linear-gradient(135deg, var(--primary), var(--secondary))',
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
                       fontSize: '0.9rem', fontWeight: 700
                     }}>
@@ -98,9 +98,9 @@ const Leads: React.FC = () => {
                 <td style={{ padding: '16px 24px' }}>
                   <span style={{ 
                     padding: '4px 10px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 600,
-                    background: lead.lead_status === 'Hot' ? 'rgba(255, 71, 87, 0.1)' : 'rgba(255, 255, 255, 0.05)',
-                    color: lead.lead_status === 'Hot' ? 'var(--hot)' : 'inherit',
-                    border: '1px solid ' + (lead.lead_status === 'Hot' ? 'rgba(255, 71, 87, 0.2)' : 'var(--glass-border)')
+                    background: lead.lead_status === 'Hot' ? 'rgba(99, 102, 241, 0.15)' : 'var(--glass)',
+                    color: lead.lead_status === 'Hot' ? 'var(--primary)' : 'var(--foreground)',
+                    border: '1px solid ' + (lead.lead_status === 'Hot' ? 'rgba(99, 102, 241, 0.3)' : 'var(--glass-border)')
                   }}>
                     {lead.lead_status}
                   </span>

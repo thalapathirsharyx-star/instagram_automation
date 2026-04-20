@@ -10,7 +10,7 @@ import {
 const SettingsCard: React.FC<{ icon: any, title: string, subtitle: string, children: React.ReactNode }> = ({ icon: Icon, title, subtitle, children }) => (
   <div className="glass-card" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
     <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
-      <div style={{ padding: '10px', background: 'rgba(255,255,255,0.03)', borderRadius: '12px' }}>
+      <div style={{ padding: '10px', background: 'var(--glass-border)', borderRadius: '12px' }}>
         <Icon size={24} className="text-primary" />
       </div>
       <div>
@@ -48,7 +48,7 @@ const Settings: React.FC = () => {
         >
           <div className="field-group">
             <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-dim)', marginBottom: '8px' }}>App ID</label>
-            <div className="glass-input" style={{ background: 'rgba(0,0,0,0.2)', padding: '10px 16px', borderRadius: '8px', fontSize: '0.9rem' }}>
+            <div className="glass-input" style={{ background: 'var(--glass-border)', padding: '10px 16px', borderRadius: '8px', fontSize: '0.9rem' }}>
               {import.meta.env.VITE_FB_APP_ID || '955338716906984'}
             </div>
           </div>
@@ -88,7 +88,7 @@ const Settings: React.FC = () => {
         >
           <div className="field-group">
             <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-dim)', marginBottom: '8px' }}>Webhook URL</label>
-            <div className="glass-input" style={{ background: 'rgba(0,0,0,0.2)', padding: '10px 16px', borderRadius: '8px', fontSize: '0.8rem', fontFamily: 'monospace', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+            <div className="glass-input" style={{ background: 'var(--glass-border)', padding: '10px 16px', borderRadius: '8px', fontSize: '0.8rem', fontFamily: 'monospace', overflow: 'hidden', textOverflow: 'ellipsis' }}>
               https://replyzens.com/v1/Instagram/Webhook
             </div>
           </div>
@@ -112,7 +112,7 @@ const Settings: React.FC = () => {
               <div style={{ fontSize: '0.8rem', color: 'var(--text-dim)' }}>Administrator</div>
             </div>
           </div>
-          <button className="glass-btn-secondary" style={{ padding: '8px 16px', borderRadius: '8px', border: '1px solid var(--glass-border)', background: 'var(--glass)', color: '#fff', cursor: 'pointer', marginTop: '8px' }}>
+          <button className="glass-btn-secondary" style={{ padding: '8px 16px', borderRadius: '8px', border: '1px solid var(--glass-border)', background: 'var(--glass)', color: 'var(--foreground)', cursor: 'pointer', marginTop: '8px' }}>
             Edit Profile
           </button>
         </SettingsCard>

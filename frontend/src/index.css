@@ -45,57 +45,57 @@
 
 @layer base {
   :root {
-    --background: 224 71% 2%;
-    --foreground: 210 40% 98%;
+    --background: 0 0% 100%;
+    --foreground: 0 0% 0%;
 
-    --card: 224 50% 6%;
-    --card-foreground: 210 40% 98%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 0%;
 
-    --popover: 224 50% 6%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 0%;
 
-    --primary: 239 84% 67%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 0 0% 0%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 270 60% 50%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 0 0% 96%;
+    --secondary-foreground: 0 0% 0%;
 
-    --muted: 224 30% 12%;
-    --muted-foreground: 215 20% 55%;
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 40%;
 
-    --accent: 280 60% 55%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 0 0% 96%;
+    --accent-foreground: 0 0% 0%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 0% 20%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 224 20% 14%;
-    --input: 224 20% 14%;
-    --ring: 239 84% 67%;
+    --border: 0 0% 90%;
+    --input: 0 0% 90%;
+    --ring: 0 0% 0%;
 
-    --radius: 0.75rem;
+    --radius: 1rem;
 
-    --glass-bg: 224 40% 8%;
-    --glass-border: 224 20% 18%;
-    --glass-highlight: 224 20% 22%;
+    --glass-bg: 0 0% 100%;
+    --glass-border: 0 0% 90%;
+    --glass-highlight: 0 0% 96%;
 
-    --gradient-start: 239 84% 67%;
-    --gradient-mid: 270 60% 60%;
-    --gradient-end: 330 80% 65%;
+    --gradient-start: 0 0% 0%;
+    --gradient-mid: 0 0% 40%;
+    --gradient-end: 0 0% 60%;
 
-    --glass: hsl(var(--glass-bg) / 0.6);
+    --glass: hsla(0, 0%, 100%, 0.9);
 
     /* Legacy compatibility for CRM */
-    --bg-dark: #030712;
-    --text-dim: #a0a0a0;
-    --hot: #ff4757;
+    --bg-dark: #FFFFFF;
+    --text-dim: #444444;
+    --hot: #000000;
   }
 }
 
 /* New UI Utilities */
 .icon-btn-glass {
   background: var(--glass);
-  border: 1px solid var(--glass-border);
+  border: 1px solid hsl(var(--glass-border));
   color: var(--text-dim);
   width: 32px;
   height: 32px;
@@ -108,7 +108,7 @@
 }
 
 .icon-btn-glass:hover {
-  background: var(--glass-highlight);
+  background: var(--primary);
   color: #fff;
   border-color: var(--primary);
 }
@@ -120,7 +120,7 @@
 .toggle {
   width: 44px;
   height: 22px;
-  background: var(--glass-border);
+  background: hsl(var(--glass-border));
   border-radius: 20px;
   position: relative;
   cursor: pointer;
@@ -140,7 +140,7 @@
 }
 
 .toggle.active {
-  background: var(--primary);
+  background: hsl(var(--primary));
 }
 
 .toggle.active::after {
@@ -152,7 +152,7 @@
 }
 
 .glass-btn-secondary:hover {
-  background: var(--glass-highlight) !important;
+  background: hsl(var(--glass-highlight)) !important;
   border-color: #fff !important;
 }
 
@@ -180,26 +180,31 @@
   }
 
   .gradient-text-premium {
-    @apply bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent;
+    @apply bg-gradient-to-br from-gray-900 via-gray-700 to-black bg-clip-text text-transparent;
   }
 
   .gradient-btn {
-    @apply bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 hover:from-indigo-400 hover:via-purple-400 hover:to-pink-400 transition-all duration-300;
+    @apply bg-black hover:bg-gray-800 text-white transition-all duration-300;
   }
 
   .glow-indigo {
-    box-shadow: 0 0 80px 40px hsla(239, 84%, 67%, 0.15);
+    box-shadow: 0 0 80px 40px rgba(0, 0, 0, 0.05);
   }
 
   .glow-purple {
-    box-shadow: 0 0 80px 40px hsla(270, 60%, 50%, 0.15);
+    box-shadow: 0 0 80px 40px rgba(0, 0, 0, 0.03);
   }
 
   .hover-glow {
     @apply transition-all duration-500;
   }
   .hover-glow:hover {
-    box-shadow: 0 0 40px 8px hsla(239, 84%, 67%, 0.15), 0 0 80px 20px hsla(270, 60%, 50%, 0.08);
+    box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.15);
+  }
+
+  .dot-grid {
+    background-image: radial-gradient(#e2e8f0 1px, transparent 1px);
+    background-size: 24px 24px;
   }
 }
 
@@ -245,7 +250,8 @@
   display: flex;
   height: 100vh;
   width: 100vw;
-  background-color: var(--bg-dark);
+  background-color: #ffffff;
+  color: #0f172a;
 }
 
 .sidebar {
@@ -264,11 +270,11 @@
   gap: 12px;
   font-weight: 600;
   font-size: 1.2rem;
-  color: #fff;
+  color: #0f172a;
 }
 
 .logo-icon {
-  background: var(--primary);
+  background: hsl(var(--primary));
   padding: 8px;
   border-radius: 8px;
   font-size: 0.9rem;
@@ -295,12 +301,13 @@
 }
 
 .nav-item:hover, .nav-item.active {
-  background: var(--glass);
-  color: #fff;
+  background: #f1f5f9;
+  color: #0f172a;
+  font-weight: 500;
 }
 
 .nav-item.active {
-  border-left: 3px solid var(--primary);
+  border-left: 3px solid hsl(var(--primary));
 }
 
 .user-info {
@@ -312,7 +319,7 @@
 }
 
 .avatar {
-  background: var(--glass-border);
+  background: hsl(var(--glass-border));
   width: 40px;
   height: 40px;
   border-radius: 50%;
@@ -355,7 +362,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  background: rgba(0,0,0,0.2);
+  background: #f1f5f9;
   padding: 8px 16px;
   border-radius: 20px;
   width: 300px;
@@ -364,7 +371,7 @@
 .search-bar input {
   background: none;
   border: none;
-  color: #fff;
+  color: #0f172a;
   outline: none;
   width: 100%;
 }
@@ -407,7 +414,7 @@
 .blob-1 {
   width: 400px;
   height: 400px;
-  background: var(--primary);
+  background: #dddddd;
   top: -100px;
   right: -50px;
 }
@@ -415,7 +422,7 @@
 .blob-2 {
   width: 300px;
   height: 300px;
-  background: #4b0082;
+  background: #eeeeee;
   bottom: -50px;
   left: -50px;
   animation-delay: -5s;
@@ -424,7 +431,7 @@
 .blob-3 {
   width: 250px;
   height: 250px;
-  background: var(--hot);
+  background: #cccccc;
   top: 40%;
   left: 30%;
   opacity: 0.2;
@@ -501,10 +508,10 @@
 .input-wrapper input {
   width: 100%;
   padding: 12px 16px 12px 48px;
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(0, 0, 0, 0.03);
   border: 1px solid var(--glass-border);
   border-radius: 12px;
-  color: #fff;
+  color: #000;
   font-family: inherit;
   font-size: 0.95rem;
   transition: all 0.3s;
@@ -513,8 +520,8 @@
 .input-wrapper input:focus {
   outline: none;
   border-color: var(--primary);
-  background: rgba(138, 43, 226, 0.05);
-  box-shadow: 0 0 0 4px rgba(138, 43, 226, 0.1);
+  background: rgba(0, 0, 0, 0.02);
+  box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.08);
 }
 
 .form-options {
@@ -539,7 +546,7 @@
 .login-button {
   margin-top: 12px;
   padding: 12px;
-  background: linear-gradient(135deg, var(--primary), #6a1bb2);
+  background: #000;
   border: none;
   border-radius: 12px;
   color: #fff;
@@ -555,7 +562,7 @@
 
 .login-button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(138, 43, 226, 0.3);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
 }
 
 .divider {
@@ -599,7 +606,7 @@
   background: transparent;
   border: 1px solid var(--glass-border);
   border-radius: 12px;
-  color: #fff;
+  color: #000;
   font-size: 0.9rem;
   font-weight: 500;
   cursor: pointer;
@@ -608,7 +615,7 @@
 
 .social-button:hover {
   background: var(--glass);
-  border-color: #fff;
+  border-color: #000;
 }
 
 /* Landing Page Styles */
@@ -616,7 +623,7 @@
   width: 100vw;
   min-height: 100vh;
   background-color: var(--bg-dark);
-  color: #fff;
+  color: #000;
   overflow-x: hidden;
   position: relative;
 }
@@ -655,7 +662,7 @@
 }
 
 .landing-nav .nav-links a:hover {
-  color: #fff;
+  color: #000;
 }
 
 .login-nav-button {
@@ -663,7 +670,7 @@
   border: 1px solid var(--glass-border);
   padding: 10px 24px;
   border-radius: 12px;
-  color: #fff;
+  color: #000;
   cursor: pointer;
   font-weight: 500;
   transition: all 0.3s;
@@ -672,6 +679,7 @@
 .login-nav-button:hover {
   background: var(--primary);
   border-color: var(--primary);
+  color: #fff;
 }
 
 .landing-hero {
@@ -701,7 +709,7 @@
 }
 
 .gradient-text {
-  background: linear-gradient(135deg, var(--primary), #00ff88);
+  background: linear-gradient(135deg, var(--primary), #666666);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -736,12 +744,12 @@
 
 .primary-button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 32px rgba(138, 43, 226, 0.4);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
 }
 
 .secondary-button {
   background: transparent;
-  color: #fff;
+  color: #000;
   border: 1px solid var(--glass-border);
   padding: 16px 32px;
   border-radius: 14px;
@@ -872,7 +880,7 @@
 .feature-icon {
   width: 60px;
   height: 60px;
-  background: rgba(138, 43, 226, 0.1);
+  background: rgba(0, 0, 0, 0.05);
   border-radius: 16px;
   display: flex;
   align-items: center;
@@ -918,7 +926,7 @@
 }
 
 .footer-links a:hover {
-  color: #fff;
+  color: #000;
 }
 
 .footer-bottom {

@@ -33,12 +33,12 @@ const funnelData = [
   { name: 'Converted', value: 100 },
 ];
 
-const COLORS = ['#8A2BE2', '#6366f1', '#a855f7', '#ec4899'];
+const COLORS = ['#6366f1', '#4f46e5', '#818cf8', '#a5b4fc'];
 
 const DashboardCard: React.FC<{ title: string; value: string | number; icon: any; trend: string; color?: string }> = ({ title, value, icon: Icon, trend, color = 'var(--primary)' }) => (
   <div className="glass-card hover-glow" style={{ padding: '24px', position: 'relative', overflow: 'hidden' }}>
     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
-      <div style={{ padding: '10px', background: 'rgba(255,255,255,0.03)', borderRadius: '12px' }}>
+      <div style={{ padding: '10px', background: 'var(--glass-border)', borderRadius: '12px' }}>
         <Icon size={20} style={{ color }} />
       </div>
       <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#10b981', fontSize: '0.8rem', fontWeight: 600 }}>
@@ -137,12 +137,12 @@ const Dashboard: React.FC = () => {
                     <stop offset="95%" stopColor="var(--primary)" stopOpacity={0}/>
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
                 <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{fill: 'var(--text-dim)', fontSize: 12}} dy={10} />
                 <YAxis axisLine={false} tickLine={false} tick={{fill: 'var(--text-dim)', fontSize: 12}} />
                 <Tooltip 
-                  contentStyle={{ background: 'rgba(13, 14, 18, 0.9)', border: '1px solid var(--glass-border)', borderRadius: '12px', backdropFilter: 'blur(10px)' }}
-                  itemStyle={{ color: '#fff' }}
+                  contentStyle={{ background: 'var(--card)', border: '1px solid var(--glass-border)', borderRadius: '12px', backdropFilter: 'blur(10px)' }}
+                  itemStyle={{ color: 'var(--foreground)' }}
                 />
                 <Area type="monotone" dataKey="msgs" stroke="var(--primary)" fillOpacity={1} fill="url(#colorMsgs)" strokeWidth={3} />
                 <Area type="monotone" dataKey="leads" stroke="#6366f1" fill="transparent" strokeWidth={3} />
@@ -202,7 +202,7 @@ const Dashboard: React.FC = () => {
               <div style={{ padding: '8px', background: 'rgba(16, 185, 129, 0.1)', borderRadius: '8px', color: '#10b981' }}><TrendingUp size={16} /></div>
               <div style={{ flexGrow: 1 }}>
                 <div style={{ fontSize: '0.9rem', fontWeight: 500 }}>API Latency</div>
-                <div style={{ height: '4px', background: 'rgba(255,255,255,0.05)', borderRadius: '2px', marginTop: '6px' }}>
+                <div style={{ height: '4px', background: '#e2e8f0', borderRadius: '2px', marginTop: '6px' }}>
                   <div style={{ width: '85%', height: '100%', background: '#10b981', borderRadius: '2px' }}></div>
                 </div>
               </div>
@@ -212,7 +212,7 @@ const Dashboard: React.FC = () => {
               <div style={{ padding: '8px', background: 'rgba(138, 43, 226, 0.1)', borderRadius: '8px', color: 'var(--primary)' }}><Clock size={16} /></div>
               <div style={{ flexGrow: 1 }}>
                 <div style={{ fontSize: '0.9rem', fontWeight: 500 }}>Webhook Success Rate</div>
-                <div style={{ height: '4px', background: 'rgba(255,255,255,0.05)', borderRadius: '2px', marginTop: '6px' }}>
+                <div style={{ height: '4px', background: '#e2e8f0', borderRadius: '2px', marginTop: '6px' }}>
                   <div style={{ width: '99.2%', height: '100%', background: 'var(--primary)', borderRadius: '2px' }}></div>
                 </div>
               </div>
@@ -227,7 +227,7 @@ const Dashboard: React.FC = () => {
           <p style={{ fontSize: '0.95rem', color: 'var(--text-dim)', lineHeight: 1.6 }}>
             The AI is currently set to **Professional Tone**. You can adjust this in Settings to make it more casual or sales-oriented to improve conversion rates.
           </p>
-          <button style={{ marginTop: '16px', background: 'transparent', border: '1px solid var(--glass-border)', color: '#fff', padding: '8px 16px', borderRadius: '8px', fontSize: '0.85rem', cursor: 'pointer' }}>
+          <button style={{ marginTop: '16px', background: 'transparent', border: '1px solid var(--glass-border)', color: '#0f172a', padding: '8px 16px', borderRadius: '8px', fontSize: '0.85rem', cursor: 'pointer' }}>
             Adjust Response Tone
           </button>
         </div>

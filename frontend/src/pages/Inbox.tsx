@@ -94,7 +94,7 @@ const Inbox: React.FC = () => {
               style={{
                 display: 'flex', gap: '12px', padding: '16px', cursor: 'pointer',
                 borderBottom: '1px solid var(--glass-border)', transition: 'background 0.3s',
-                backgroundColor: selectedLead?.id === lead.id ? 'rgba(138, 43, 226, 0.1)' : 'transparent',
+                backgroundColor: selectedLead?.id === lead.id ? 'rgba(255, 255, 255, 0.1)' : 'transparent',
                 borderLeft: selectedLead?.id === lead.id ? '4px solid var(--primary)' : 'none'
               }}
             >
@@ -128,7 +128,7 @@ const Inbox: React.FC = () => {
                 <h3 style={{ margin: 0 }}>{selectedLead.customer_name}</h3>
                 <p style={{ margin: '4px 0 0', fontSize: '0.85rem', color: 'var(--text-dim)' }}>@{selectedLead.instagram_handle}</p>
               </div>
-              <button className="action-btn" style={{ background: 'var(--glass)', border: '1px solid var(--glass-border)', color: '#fff', padding: '8px 16px', borderRadius: '8px', cursor: 'pointer' }}>Human Handoff</button>
+              <button className="action-btn" style={{ background: 'var(--glass)', border: '1px solid var(--glass-border)', color: 'var(--foreground)', padding: '8px 16px', borderRadius: '8px', cursor: 'pointer' }}>Human Handoff</button>
             </div>
 
             <div className="chat-history premium-scroll" ref={chatHistoryRef} style={{ flexGrow: 1, padding: '24px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '20px' }}>
@@ -137,7 +137,7 @@ const Inbox: React.FC = () => {
                   maxWidth: '70%', alignSelf: msg.direction === 'Outbound' ? 'flex-end' : 'flex-start'
                 }}>
                   <div className="message-bubble" style={{
-                    padding: '12px 16px', borderRadius: '12px', background: msg.direction === 'Outbound' ? 'var(--primary)' : 'var(--glass)'
+                    padding: '12px 16px', borderRadius: '12px', background: msg.direction === 'Outbound' ? 'var(--primary)' : 'var(--glass-border)', color: msg.direction === 'Outbound' ? '#fff' : 'var(--foreground)'
                   }}>
                     <p className="text" style={{ margin: 0, lineHeight: 1.5 }}>{msg.message_text}</p>
                     <span className="time" style={{ fontSize: '0.7rem', color: 'var(--text-dim)', display: 'block', marginTop: 4, textAlign: 'right' }}>
@@ -162,7 +162,7 @@ const Inbox: React.FC = () => {
                 type="text" 
                 placeholder="Type a message (Manual override)..." 
                 disabled 
-                style={{ flexGrow: 1, background: 'rgba(0,0,0,0.2)', border: '1px solid var(--glass-border)', borderRadius: '20px', padding: '8px 16px', color: '#fff', outline: 'none' }}
+                style={{ flexGrow: 1, background: 'var(--glass-border)', border: '1px solid var(--glass-border)', borderRadius: '20px', padding: '8px 16px', color: 'var(--foreground)', outline: 'none' }}
               />
               <button className="send-btn" style={{ background: 'var(--primary)', border: 'none', borderRadius: '50%', width: '40px', height: '40px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <Send size={18} />
