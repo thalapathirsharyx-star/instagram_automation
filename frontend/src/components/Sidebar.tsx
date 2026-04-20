@@ -14,18 +14,34 @@ const Sidebar: React.FC = () => {
       </div>
       
       <nav className="nav-links">
-        <NavLink to="/dashboard" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-          <LayoutDashboard size={20} /> Dashboard
-        </NavLink>
-        <NavLink to="/leads" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-          <Users size={20} /> Leads
-        </NavLink>
-        <NavLink to="/inbox" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-          <MessageSquare size={20} /> Inbox
-        </NavLink>
-        <NavLink to="/settings" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-          <Settings size={20} /> Settings
-        </NavLink>
+        {user?.role === 'SUPER_ADMIN' ? (
+          <>
+            <NavLink to="/admin/dashboard" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+              <LayoutDashboard size={20} /> Platform Admin
+            </NavLink>
+            <NavLink to="/admin/clients" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+              <Users size={20} /> Client Management
+            </NavLink>
+            <NavLink to="/settings" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+              <Settings size={20} /> System Settings
+            </NavLink>
+          </>
+        ) : (
+          <>
+            <NavLink to="/dashboard" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+              <LayoutDashboard size={20} /> Dashboard
+            </NavLink>
+            <NavLink to="/leads" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+              <Users size={20} /> Leads
+            </NavLink>
+            <NavLink to="/inbox" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+              <MessageSquare size={20} /> Inbox
+            </NavLink>
+            <NavLink to="/settings" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+              <Settings size={20} /> Settings
+            </NavLink>
+          </>
+        )}
       </nav>
 
       <div className="sidebar-footer">

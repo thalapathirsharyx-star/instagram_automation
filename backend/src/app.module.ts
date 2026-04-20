@@ -32,6 +32,7 @@ import { ErrorLogController } from '@Controller/Admin/ErrorLog.controller';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { AuditLogService } from '@Service/Admin/AuditLog.service';
 import { AuditLogController } from '@Controller/Admin/AuditLog.controller';
+import { AdminStatsController } from '@Controller/Admin/AdminStats.controller';
 import { MulterModule } from '@nestjs/platform-express';
 import { AutoNumberController } from '@Controller/Admin/AutoNumber.controller';
 import { Redis } from 'ioredis';
@@ -100,6 +101,7 @@ import { HashingService } from '@Service/Hashing.service';
     ErrorLogController,
     AuditLogController,
     AutoNumberController,
+    AdminStatsController,
     InstagramController,
     LegalController,
   ],

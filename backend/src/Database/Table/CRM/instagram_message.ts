@@ -1,9 +1,18 @@
 import { Entity, Column, JoinColumn, ManyToOne, Index } from 'typeorm';
 import { BaseTable } from '../BaseTable';
 import { instagram_lead } from './instagram_lead';
+import { company } from '../Admin/company';
 
 @Entity()
 export class instagram_message extends BaseTable {
+  @Column({ type: 'uuid', nullable: true })
+  @Index()
+  company_id: string;
+
+  @ManyToOne(() => company, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'company_id' })
+  company: company;
+
   @Column({ type: 'uuid' })
   @Index()
   lead_id: string;

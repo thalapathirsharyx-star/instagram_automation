@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query, Req } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { InstagramService } from '@Service/Instagram.service';
 import { InstagramMessageContext } from '@Model/Instagram.model';
@@ -105,22 +105,22 @@ export class InstagramController extends AuthBaseController {
 
   @UseGuards(JwtAuthGuard)
   @Get('Leads')
-  async Leads() {
-    const leads = await this._InstagramService.getAllLeads();
+  async Leads(@Req() req: any) {
+    const leads = await this._InstagramService.getAllLeads(req.user?.company_id);
     return { Data: leads };
   }
 
   @UseGuards(JwtAuthGuard)
   @Get('Messages/:LeadId')
-  async Messages(@Param('LeadId') LeadId: string) {
-    const messages = await this._InstagramService.getMessagesByLead(LeadId);
+  async Messages(@Param('LeadId') LeadId: string, @Req() req: any) {
+    const messages = await this._InstagramService.getMessagesByLead(LeadId, req.user?.company_id);
     return { Data: messages };
   }
 
   @UseGuards(JwtAuthGuard)
   @Get('Balance')
-  async Balance() {
-    const balance = await this._InstagramService.getWalletBalance();
+  async Balance(@Req() req: any) {
+    const balance = await this._InstagramService.getWalletBalance(req.user?.company_id);
     return { Data: balance };
   }
 

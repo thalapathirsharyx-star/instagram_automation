@@ -7,20 +7,21 @@ import Settings from './pages/Settings';
 import Login from './pages/Login';
 import Landing from './pages/Landing';
 import { PrivacyPolicy, TermsOfService, DataDeletion } from './pages/Legal';
+import SuperAdminDashboard from './pages/SuperAdminDashboard';
 import { Search, Bell } from 'lucide-react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 
 function AppContent() {
   const location = useLocation();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   
   const publicRoutes = ['/', '/login', '/privacy', '/terms', '/data-deletion'];
   const isPublicPage = publicRoutes.includes(location.pathname);
 
-  // If user is logged in and tries to access login, redirect to dashboard
+  // If user is logged in and tries to access login, redirect to appropriate dashboard
   if (isAuthenticated && location.pathname === '/login') {
-    return <Navigate to="/dashboard" replace />;
+    return <Navigate to={user?.role === 'SUPER_ADMIN' ? "/admin/dashboard" : "/dashboard"} replace />;
   }
 
   if (isPublicPage) {
@@ -58,11 +59,20 @@ function AppContent() {
 
         <div className="router-container">
           <Routes>
+            {/* Client Routes */}
             <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
             <Route path="/leads" element={<ProtectedRoute><Leads /></ProtectedRoute>} />
             <Route path="/inbox" element={<ProtectedRoute><Inbox /></ProtectedRoute>} />
+            
+            {/* Admin Routes */}
+            <Route path="/admin/dashboard" element={<ProtectedRoute><SuperAdminDashboard /></ProtectedRoute>} />
+            <Route path="/admin/clients" element={<ProtectedRoute><div>Client Management (Coming Soon)</div></ProtectedRoute>} />
+            
             <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
-            <Route path="*" element={<Navigate to="/dashboard" replace />} />
+            
+            {/* Redirect logic */}
+            <Route path="/" element={<Navigate to={user?.role === 'SUPER_ADMIN' ? "/admin/dashboard" : "/dashboard"} replace />} />
+            <Route path="*" element={<Navigate to={user?.role === 'SUPER_ADMIN' ? "/admin/dashboard" : "/dashboard"} replace />} />
           </Routes>
         </div>
       </main>

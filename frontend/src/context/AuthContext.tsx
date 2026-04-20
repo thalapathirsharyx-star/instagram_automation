@@ -5,6 +5,8 @@ interface User {
   email: string;
   role: string;
   roleId: string;
+  companyId?: string;
+  company?: any;
 }
 
 interface AuthContextType {
@@ -44,7 +46,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       id: userData.user_id,
       email: userData.email,
       role: userData.user_role_name,
-      roleId: userData.user_role_id
+      roleId: userData.user_role_id,
+      companyId: userData.company_id,
+      company: userData.company
     };
     
     setToken(newToken);

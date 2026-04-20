@@ -448,13 +448,15 @@ Rules:
     await lead.save();
   }
 
-  async getAllLeads() {
-    return await instagram_lead.find({ order: { last_message_time: 'DESC' } });
+  async getAllLeads(companyId?: string) {
+    return await instagram_lead.find({ where: companyId ? { company_id: companyId } : {}, order: { last_message_time: 'DESC' } });
   }
 
-  async getMessagesByLead(leadId: string) {
+  async getMessagesByLead(leadId: string, companyId?: string) {
+    const whereCondition: any = { lead_id: leadId };
+    if (companyId) whereCondition.company_id = companyId;
     return await instagram_message.find({
-      where: { lead_id: leadId },
+      where: whereCondition,
       order: { created_on: 'ASC' }
     });
   }
@@ -479,13 +481,13 @@ Rules:
     }
   }
 
-  async getWalletBalance() {
-    const companyData = await this.getCompany();
+  async getWalletBalance(companyId?: string) {
+    const companyData = await this.getCompany(companyId);
     return companyData?.wallet_balance || 0;
   }
 
-  private async getCompany() {
-    return await CompanyTable.findOne({ where: {} }); // For now, just gets the first company
+  private async getCompany(companyId?: string) {
+    return await CompanyTable.findOne({ where: companyId ? { id: companyId } : {} });
   }
 
   /**

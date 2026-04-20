@@ -5,6 +5,7 @@ import { AuditLogIdentity, AuditLogTableRemoveColumns } from '@Helper/AuditLog.d
 import { Entity, Column, JoinColumn, ManyToOne, Index } from 'typeorm';
 import { BaseTable } from '../BaseTable';
 import { user_role } from './user_role';
+import { company } from './company';
 
 @Entity()
 export class user extends BaseTable {
@@ -15,6 +16,14 @@ export class user extends BaseTable {
   @ManyToOne(() => user_role, { onDelete: 'RESTRICT' })
   @JoinColumn({ name: 'user_role_id' })
   user_role: user_role;
+
+  @Column({ type: 'uuid', nullable: true })
+  @Index()
+  company_id: string;
+
+  @ManyToOne(() => company, { onDelete: 'RESTRICT' })
+  @JoinColumn({ name: 'company_id' })
+  company: company;
 
   @Column({ type: "text", nullable: true })
   first_name: string;

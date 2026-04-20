@@ -1,8 +1,17 @@
-import { Entity, Column, Index } from 'typeorm';
+import { Entity, Column, Index, ManyToOne, JoinColumn } from 'typeorm';
 import { BaseTable } from '../BaseTable';
+import { company } from '../Admin/company';
 
 @Entity()
 export class instagram_lead extends BaseTable {
+  @Column({ type: 'uuid', nullable: true })
+  @Index()
+  company_id: string;
+
+  @ManyToOne(() => company, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'company_id' })
+  company: company;
+
   @Column({ type: 'text' })
   customer_name: string;
 

@@ -14,8 +14,11 @@ export class AuthService {
   ) { }
 
   async ValidateUser(username: string, password: string): Promise<any> {
-    const UserData = await user.findOne({ where: { email: username }, relations: ['user_role'] });
-    const CompanyData = await company.find({ relations: ["currency"] });
+    const UserData = await user.findOne({ 
+      where: { email: username }, 
+      relations: ['user_role', 'company'] 
+    });
+    
     if (!UserData) {
       throw new Error('Invalid email id');
     }
@@ -26,12 +29,22 @@ export class AuthService {
     if (!isPasswordValid) {
       throw new Error('Invalid password');
     }
+    
+    // For backwards compatibility or super admins, if no company is linked directly,
+    // we can either leave it undefined or fetch a default.
+    let companyData = UserData.company;
+    if (!companyData) {
+       const companies = await company.find({ relations: ["currency"] });
+       companyData = companies[0] || null;
+    }
+
     const payload = {
       email: UserData.email,
       user_id: UserData.id,
       user_role_id: UserData.user_role_id,
-      user_role_name: UserData.user_role.name,
-      company: CompanyData[0]
+      user_role_name: UserData.user_role?.name || 'CLIENT',
+      company: companyData,
+      company_id: companyData?.id
     };
     const api_token = this._JwtService.sign(payload);
     return { api_token, user: payload };
