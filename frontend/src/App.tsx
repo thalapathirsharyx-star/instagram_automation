@@ -54,8 +54,9 @@ function AppContent() {
             <Bell size={20} />
             <span className="badge" style={{
               position: 'absolute', top: '-5px', right: '-5px',
-              background: 'var(--hot)', fontSize: '0.65rem',
-              padding: '2px 5px', borderRadius: '50%'
+              background: '#10B981', color: '#fff', fontSize: '0.65rem',
+              padding: '2px 5px', borderRadius: '50%',
+              boxShadow: '0 2px 4px rgba(16, 185, 129, 0.3)'
             }}>3</span>
           </div>
         </header>

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 @import "tailwindcss";
 
 @plugin "tailwindcss-animate";
@@ -40,12 +40,14 @@
   --radius-md: calc(var(--radius) - 4px);
   --radius-sm: calc(var(--radius) - 6px);
 
-  --font-outfit: "Outfit", sans-serif;
+  --font-inter: "Inter", sans-serif;
+  --shadow-3xl: 0 2px 2px rgb(224 230 237 / 46%), 1px 6px 7px rgb(224 230 237 / 46%);
+  --spacing-base: 18px;
 }
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
+    --background: 210 20% 98%; /* #F3F4F6 equivalent */
     --foreground: 0 0% 0%;
 
     --card: 0 0% 100%;
@@ -54,41 +56,37 @@
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 0%;
 
-    --primary: 0 0% 0%;
+    --primary: 161 72% 38%; /* #10B981 Emerald Green */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 0 0% 96%;
+    --secondary: 0 0% 100%;
     --secondary-foreground: 0 0% 0%;
 
-    --muted: 0 0% 96%;
-    --muted-foreground: 0 0% 40%;
+    --muted: 210 20% 96%;
+    --muted-foreground: 210 10% 40%;
 
-    --accent: 0 0% 96%;
-    --accent-foreground: 0 0% 0%;
+    --accent: 161 72% 38%;
+    --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 0% 20%;
+    --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 0 0% 90%;
-    --input: 0 0% 90%;
-    --ring: 0 0% 0%;
+    --border: 210 20% 90%;
+    --input: 210 20% 90%;
+    --ring: 161 72% 38%;
 
-    --radius: 1rem;
+    --radius: 12px;
 
     --glass-bg: 0 0% 100%;
-    --glass-border: 0 0% 90%;
-    --glass-highlight: 0 0% 96%;
+    --glass-border: 210 20% 90%;
+    --glass-highlight: 210 20% 96%;
 
-    --gradient-start: 0 0% 0%;
-    --gradient-mid: 0 0% 40%;
-    --gradient-end: 0 0% 60%;
+    --glass: hsla(0, 0%, 100%, 0.8);
 
-    --glass: hsla(0, 0%, 100%, 0.9);
-
-    /* Legacy compatibility for CRM */
-    --bg-dark: #FFFFFF;
-    --text-dim: #444444;
-    --hot: #000000;
+    /* Legacy compatibility */
+    --bg-dark: #F3F4F6;
+    --text-dim: #6B7280;
+    --hot: #10B981;
   }
 }
 
@@ -214,7 +212,7 @@
   }
 
   body {
-    @apply bg-background text-foreground font-outfit antialiased m-0 p-0;
+    @apply bg-background text-foreground font-inter antialiased m-0 p-0;
     display: block;
     min-width: 100%;
     overflow-x: hidden;
@@ -230,10 +228,10 @@
 }
 
 .glass-card {
-  background: var(--glass);
-  backdrop-filter: blur(10px);
-  border: 1px solid var(--glass-border);
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
   border-radius: 16px;
+  box-shadow: var(--shadow-3xl);
 }
 
 .premium-scroll::-webkit-scrollbar {
@@ -250,8 +248,8 @@
   display: flex;
   height: 100vh;
   width: 100vw;
-  background-color: #ffffff;
-  color: #0f172a;
+  background-color: #F3F4F6;
+  color: #000000;
 }
 
 .sidebar {
@@ -274,10 +272,11 @@
 }
 
 .logo-icon {
-  background: hsl(var(--primary));
+  background: #10B981;
   padding: 8px;
-  border-radius: 8px;
+  border-radius: 10px;
   font-size: 0.9rem;
+  color: #FFFFFF;
 }
 
 .nav-links {
@@ -300,14 +299,17 @@
   cursor: pointer;
 }
 
-.nav-item:hover, .nav-item.active {
-  background: #f1f5f9;
-  color: #0f172a;
-  font-weight: 500;
+.nav-item:hover {
+  background: #FFFFFF;
+  color: #10B981;
+  box-shadow: var(--shadow-3xl);
 }
 
 .nav-item.active {
-  border-left: 3px solid hsl(var(--primary));
+  background: #10B981;
+  color: #FFFFFF;
+  font-weight: 500;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
 }
 
 .user-info {
@@ -345,7 +347,8 @@
   flex-grow: 1;
   display: flex;
   flex-direction: column;
-  padding: 16px 16px 16px 0;
+  padding: var(--spacing-base);
+  padding-left: 0;
   overflow: hidden;
 }
 
@@ -519,9 +522,9 @@
 
 .input-wrapper input:focus {
   outline: none;
-  border-color: var(--primary);
-  background: rgba(0, 0, 0, 0.02);
-  box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.08);
+  border-color: #10B981;
+  background: #FFFFFF;
+  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
 }
 
 .form-options {

@@ -59,17 +59,17 @@ const Signup: React.FC = () => {
   };
 
   return (
-    <div className="login-page dot-grid bg-white">
+    <div className="login-page dot-grid bg-[#F3F4F6]">
       <div className="background-decor pointer-events-none">
         <div className="absolute top-0 left-0 w-full h-full bg-indigo-50/50 -z-10" />
-        <div className="blob blob-1 bg-indigo-600/10 opacity-20"></div>
+        <div className="blob blob-1 bg-emerald-600/10 opacity-20"></div>
         <div className="blob blob-2 bg-violet-600/10 opacity-20"></div>
       </div>
 
-      <div className="login-container bg-white border border-slate-200 shadow-2xl shadow-indigo-100 rounded-[2.5rem] p-10 max-w-md w-full">
+      <div className="login-container bg-white border border-slate-200 shadow-2xl shadow-emerald-100 rounded-[2.5rem] p-10 max-w-md w-full">
         <div className="login-header text-center mb-8">
           <div className="flex flex-col items-center gap-4 mb-6">
-            <div className="w-12 h-12 rounded-2xl bg-indigo-600 flex items-center justify-center shadow-lg shadow-indigo-200">
+            <div className="w-12 h-12 rounded-2xl bg-emerald-600 flex items-center justify-center shadow-lg shadow-indigo-200">
               <Zap className="w-6 h-6 text-white" fill="currentColor" />
             </div>
             <h1 className="text-3xl font-black tracking-tight text-slate-900">Start Growing</h1>
@@ -95,7 +95,7 @@ const Signup: React.FC = () => {
               <input
                 type="text"
                 id="firstName"
-                className="bg-slate-50 border-slate-200 text-slate-900 focus:ring-indigo-500 focus:border-indigo-500"
+                className="bg-slate-50 border-slate-200 text-slate-900 focus:ring-emerald-500 focus:border-emerald-500"
                 placeholder="John Doe"
                 value={formData.firstName}
                 onChange={handleChange}
@@ -111,7 +111,7 @@ const Signup: React.FC = () => {
               <input
                 type="text"
                 id="companyName"
-                className="bg-slate-50 border-slate-200 text-slate-900 focus:ring-indigo-500 focus:border-indigo-500"
+                className="bg-slate-50 border-slate-200 text-slate-900 focus:ring-emerald-500 focus:border-emerald-500"
                 placeholder="Acme Inc."
                 value={formData.companyName}
                 onChange={handleChange}
@@ -127,7 +127,7 @@ const Signup: React.FC = () => {
               <input
                 type="email"
                 id="email"
-                className="bg-slate-50 border-slate-200 text-slate-900 focus:ring-indigo-500 focus:border-indigo-500"
+                className="bg-slate-50 border-slate-200 text-slate-900 focus:ring-emerald-500 focus:border-emerald-500"
                 placeholder="john@example.com"
                 value={formData.email}
                 onChange={handleChange}
@@ -143,7 +143,7 @@ const Signup: React.FC = () => {
               <input
                 type={showPassword ? "text" : "password"}
                 id="password"
-                className="bg-slate-50 border-slate-200 text-slate-900 focus:ring-indigo-500 focus:border-indigo-500 pr-12"
+                className="bg-slate-50 border-slate-200 text-slate-900 focus:ring-emerald-500 focus:border-emerald-500 pr-12"
                 placeholder="••••••••"
                 value={formData.password}
                 onChange={handleChange}
@@ -152,7 +152,7 @@ const Signup: React.FC = () => {
               />
               <button
                 type="button"
-                className="absolute right-4 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-indigo-600 transition-colors"
+                className="absolute right-4 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-emerald-600 transition-colors"
                 onClick={() => setShowPassword(!showPassword)}
               >
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -178,7 +178,7 @@ const Signup: React.FC = () => {
         <div className="text-center mt-8">
           <p className="text-slate-500 text-sm">
             Already have an account?{' '}
-            <Link to="/login" className="text-indigo-600 font-bold hover:underline">
+            <Link to="/login" className="text-emerald-600 font-bold hover:underline">
               Sign in
             </Link>
           </p>
