@@ -83,7 +83,7 @@ const Leads: React.FC = () => {
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                     <div style={{ 
                       width: '36px', height: '36px', borderRadius: '10px', 
-                      background: 'linear-gradient(135deg, #10B981, #000000)',
+                      background: 'linear-gradient(135deg, #0ea5e9, #000000)',
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
                       fontSize: '0.9rem', fontWeight: 700, color: '#fff'
                     }}>

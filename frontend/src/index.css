@@ -56,7 +56,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 0%;
 
-    --primary: 161 72% 38%; /* #10B981 Emerald Green */
+    --primary: 199 89% 48%; /* #0EA5E9 Sky Blue */
     --primary-foreground: 0 0% 100%;
 
     --secondary: 0 0% 100%;
@@ -65,7 +65,7 @@
     --muted: 210 20% 96%;
     --muted-foreground: 210 10% 40%;
 
-    --accent: 161 72% 38%;
+    --accent: 199 89% 48%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84% 60%;
@@ -73,7 +73,7 @@
 
     --border: 210 20% 90%;
     --input: 210 20% 90%;
-    --ring: 161 72% 38%;
+    --ring: 199 89% 48%;
 
     --radius: 12px;
 
@@ -86,7 +86,7 @@
     /* Legacy compatibility */
     --bg-dark: #F3F4F6;
     --text-dim: #6B7280;
-    --hot: #10B981;
+    --hot: #0ea5e9;
   }
 }
 
@@ -253,13 +253,17 @@
 }
 
 .sidebar {
-  width: 260px;
+  width: 280px;
   height: calc(100vh - 32px);
   margin: 16px;
-  padding: 24px;
+  background: hsla(199, 89%, 48%, 0.03); /* Subtle Sky Blue Tint */
+  backdrop-filter: blur(20px);
+  border-radius: 24px;
+  border: 1px solid hsla(199, 89%, 48%, 0.1);
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  padding: 32px 16px;
+  box-shadow: var(--shadow-3xl);
 }
 
 .logo {
@@ -272,11 +276,11 @@
 }
 
 .logo-icon {
-  background: #10B981;
+  background: #0ea5e9;
   padding: 8px;
-  border-radius: 10px;
-  font-size: 0.9rem;
-  color: #FFFFFF;
+  border-radius: 8px;
+  color: #fff;
+  font-weight: bold;
 }
 
 .nav-links {

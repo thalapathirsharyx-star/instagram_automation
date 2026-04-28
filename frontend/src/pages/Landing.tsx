@@ -33,8 +33,8 @@ const FAQItem = ({ question, answer }: { question: string, answer: string }) => 
         onClick={() => setIsOpen(!isOpen)}
         className="w-full flex items-center justify-between text-left group transition-all"
       >
-        <span className="text-lg font-semibold text-slate-800 group-hover:text-emerald-600">{question}</span>
-        {isOpen ? <ChevronUp className="text-emerald-600" /> : <ChevronDown className="text-slate-400 group-hover:text-emerald-400" />}
+        <span className="text-lg font-semibold text-slate-800 group-hover:text-sky-600">{question}</span>
+        {isOpen ? <ChevronUp className="text-sky-600" /> : <ChevronDown className="text-slate-400 group-hover:text-sky-400" />}
       </button>
       <AnimatePresence>
         {isOpen && (
@@ -114,7 +114,7 @@ const PhoneMockup: React.FC = () => {
                transition={{ delay: 1 }}
                className="flex justify-end"
              >
-               <div className="max-w-[80%] bg-emerald-600 p-2.5 rounded-2xl rounded-tr-none text-[11px] text-white leading-relaxed shadow-sm">
+               <div className="max-w-[80%] bg-sky-600 p-2.5 rounded-2xl rounded-tr-none text-[11px] text-white leading-relaxed shadow-sm">
                  <div className="flex items-center gap-1.5 mb-1 opacity-80 text-[8px] font-bold uppercase tracking-wider">
                    <Zap size={8} fill="currentColor" /> AI Assistant
                  </div>
@@ -136,7 +136,7 @@ const PhoneMockup: React.FC = () => {
 
           {/* Footer Input */}
           <div className="h-16 border-t border-slate-50 px-4 flex items-center gap-3 pb-2">
-            <div className="w-8 h-8 rounded-full bg-indigo-50 border border-emerald-100/50 flex items-center justify-center text-emerald-500">
+            <div className="w-8 h-8 rounded-full bg-indigo-50 border border-sky-100/50 flex items-center justify-center text-sky-500">
                <Zap size={14} fill="currentColor" />
             </div>
             <div className="flex-1 h-9 bg-slate-50 border border-slate-100 rounded-full px-4 flex items-center text-[10px] text-slate-400">
@@ -166,7 +166,7 @@ const PhoneMockup: React.FC = () => {
         transition={{ repeat: Infinity, duration: 5, ease: "easeInOut", delay: 0.5 }}
         className="absolute bottom-20 -left-16 bg-white p-3 rounded-2xl shadow-xl border border-slate-100 flex items-center gap-3 w-48 z-30"
       >
-        <div className="w-8 h-8 rounded-full bg-indigo-50 flex items-center justify-center text-emerald-500 shrink-0 border border-emerald-100">
+        <div className="w-8 h-8 rounded-full bg-indigo-50 flex items-center justify-center text-sky-500 shrink-0 border border-sky-100">
           <Zap size={14} fill="currentColor"/>
         </div>
         <div>
@@ -183,17 +183,17 @@ const Landing: React.FC = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <div className="landing-page bg-[#FAFAFA] text-slate-900 font-outfit selection:bg-emerald-100 selection:text-emerald-900">
+    <div className="landing-page bg-[#FAFAFA] text-slate-900 font-outfit selection:bg-sky-100 selection:text-sky-900">
 
       {/* NAVBAR */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 border-b border-slate-200/50 backdrop-blur-xl">
         <div className="max-w-6xl mx-auto px-6 h-[72px] flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2.5 group">
-            <div className="relative flex items-center justify-center w-8 h-8 rounded-lg bg-emerald-600 text-white shadow-sm transition-transform duration-300">
+            <div className="relative flex items-center justify-center w-8 h-8 rounded-lg bg-sky-600 text-white shadow-sm transition-transform duration-300">
               <Zap className="w-4 h-4 text-current" fill="currentColor" />
             </div>
             <span className="text-xl font-bold tracking-tight text-slate-900">
-              Reply<span className="text-emerald-600">Zens</span>
+              Reply<span className="text-sky-600">Zens</span>
             </span>
           </Link>
 
@@ -264,13 +264,13 @@ const Landing: React.FC = () => {
                 className="text-left"
               >
                 {/* Product Badge */}
-                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-indigo-50 border border-emerald-100 mb-8">
-                  <span className="w-2 h-2 rounded-full bg-emerald-600 animate-pulse" />
-                  <span className="text-xs font-semibold text-emerald-700">Instagram CRM Automation</span>
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-indigo-50 border border-sky-100 mb-8">
+                  <span className="w-2 h-2 rounded-full bg-sky-600 animate-pulse" />
+                  <span className="text-xs font-semibold text-sky-700">Instagram CRM Automation</span>
                 </div>
 
                 <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-8 text-slate-900 leading-[1.05]">
-                  Scale your Instagram DMs without <span className="text-emerald-600">scaling yourself</span>
+                  Scale your Instagram DMs without <span className="text-sky-600">scaling yourself</span>
                 </h1>
 
                 <p className="text-lg md:text-xl text-slate-500 font-medium leading-relaxed mb-10 max-w-2xl">
@@ -280,7 +280,7 @@ const Landing: React.FC = () => {
                 <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto mb-8">
                   <button
                     onClick={() => navigate('/signup')}
-                    className="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-4 rounded-xl text-base font-semibold flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/20 active:scale-95 transition-all w-full sm:w-auto min-w-[200px] group"
+                    className="bg-sky-600 hover:bg-sky-700 text-white px-8 py-4 rounded-xl text-base font-semibold flex items-center justify-center gap-2 shadow-lg shadow-sky-600/20 active:scale-95 transition-all w-full sm:w-auto min-w-[200px] group"
                   >
                     Start Free Trial
                     <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
@@ -291,9 +291,9 @@ const Landing: React.FC = () => {
                 </div>
 
                 <div className="flex flex-wrap items-center gap-5 text-sm font-medium text-slate-500">
-                  <span className="flex items-center gap-1.5"><Check size={16} className="text-emerald-500"/> No credit card</span>
-                  <span className="flex items-center gap-1.5"><Check size={16} className="text-emerald-500"/> 14-day free trial</span>
-                  <span className="flex items-center gap-1.5"><Check size={16} className="text-emerald-500"/> Cancel anytime</span>
+                  <span className="flex items-center gap-1.5"><Check size={16} className="text-sky-500"/> No credit card</span>
+                  <span className="flex items-center gap-1.5"><Check size={16} className="text-sky-500"/> 14-day free trial</span>
+                  <span className="flex items-center gap-1.5"><Check size={16} className="text-sky-500"/> Cancel anytime</span>
                 </div>
               </motion.div>
 
@@ -408,10 +408,10 @@ const Landing: React.FC = () => {
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
                 viewport={{ once: true }}
-                className="mt-8 p-6 bg-indigo-50 border border-emerald-100 rounded-xl"
+                className="mt-8 p-6 bg-indigo-50 border border-sky-100 rounded-xl"
               >
-                <p className="text-base font-semibold text-emerald-900 leading-relaxed">
-                  You're not losing customers because of demand — <span className="text-emerald-600">you're losing them because you can't keep up.</span>
+                <p className="text-base font-semibold text-sky-900 leading-relaxed">
+                  You're not losing customers because of demand — <span className="text-sky-600">you're losing them because you can't keep up.</span>
                 </p>
               </motion.div>
             </div>
@@ -430,7 +430,7 @@ const Landing: React.FC = () => {
                viewport={{ once: true }}
                className="text-4xl md:text-5xl font-bold tracking-tight mb-6"
              >
-               What if your inbox worked <span className="text-emerald-400">for you?</span>
+               What if your inbox worked <span className="text-sky-400">for you?</span>
              </motion.h2>
              <p className="text-lg md:text-xl text-slate-400">
                Instead of replying to everyone... <br/>
@@ -451,21 +451,21 @@ const Landing: React.FC = () => {
             </p>
             <div className="grid sm:grid-cols-2 gap-4 mb-10">
               <div className="flex gap-3 items-center text-sm font-medium text-slate-200">
-                <div className="w-6 h-6 rounded-full bg-emerald-500/20 flex items-center justify-center"><Check size={14} className="text-emerald-400"/></div>
+                <div className="w-6 h-6 rounded-full bg-sky-500/20 flex items-center justify-center"><Check size={14} className="text-sky-400"/></div>
                 Messages are automatically sorted
               </div>
               <div className="flex gap-3 items-center text-sm font-medium text-slate-200">
-                <div className="w-6 h-6 rounded-full bg-emerald-500/20 flex items-center justify-center"><Check size={14} className="text-emerald-400"/></div>
+                <div className="w-6 h-6 rounded-full bg-sky-500/20 flex items-center justify-center"><Check size={14} className="text-sky-400"/></div>
                 High-intent users become leads
               </div>
               <div className="flex gap-3 items-center text-sm font-medium text-slate-200">
-                <div className="w-6 h-6 rounded-full bg-emerald-500/20 flex items-center justify-center"><Check size={14} className="text-emerald-400"/></div>
+                <div className="w-6 h-6 rounded-full bg-sky-500/20 flex items-center justify-center"><Check size={14} className="text-sky-400"/></div>
                 Low-value chats filtered out
               </div>
             </div>
             
             <div className="border-t border-slate-700/50 pt-6">
-              <div className="inline-flex items-center font-bold tracking-widest text-sm uppercase text-emerald-400">
+              <div className="inline-flex items-center font-bold tracking-widest text-sm uppercase text-sky-400">
                 <Zap size={16} className="mr-2" /> Less noise. More conversions.
               </div>
             </div>
@@ -527,7 +527,7 @@ const Landing: React.FC = () => {
                   
                   {/* Timeline Node */}
                   <div className="hidden md:flex absolute left-1/2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white border-4 border-slate-100 shadow-sm -translate-x-1/2 z-10 items-center justify-center">
-                    <div className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
+                    <div className="w-2.5 h-2.5 rounded-full bg-sky-500" />
                   </div>
 
                   <motion.div 
@@ -540,7 +540,7 @@ const Landing: React.FC = () => {
                       idx % 2 === 0 ? "md:items-end text-left md:text-right pr-0 md:pr-12" : "md:items-start text-left pl-0 md:pl-12 md:order-2"
                     )}
                   >
-                    <span className="inline-block text-xs font-bold tracking-[0.2em] text-emerald-600 mb-4 bg-indigo-50 px-3 py-1 rounded-full">
+                    <span className="inline-block text-xs font-bold tracking-[0.2em] text-sky-600 mb-4 bg-indigo-50 px-3 py-1 rounded-full">
                       {step.subtitle}
                     </span>
                     <h3 className="text-2xl md:text-3xl font-bold text-slate-900 mb-4 leading-tight">{step.title}</h3>
@@ -605,9 +605,9 @@ const Landing: React.FC = () => {
         </section>
 
         {/* 6. TRANSFORMATION SECTION */}
-        <section className="py-24 bg-emerald-900 text-white relative overflow-hidden">
+        <section className="py-24 bg-sky-900 text-white relative overflow-hidden">
            {/* Abstract shapes */}
-           <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-emerald-500/20 blur-[100px] rounded-full" />
+           <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-sky-500/20 blur-[100px] rounded-full" />
            <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-blue-500/20 blur-[100px] rounded-full" />
            
            <div className="max-w-5xl mx-auto px-6 text-center relative z-10">
@@ -653,22 +653,22 @@ const Landing: React.FC = () => {
                   initial={{ opacity: 0, x: 20 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
-                  className="bg-white border border-emerald-100 rounded-2xl p-8 flex flex-col shadow-2xl shadow-black/10"
+                  className="bg-white border border-sky-100 rounded-2xl p-8 flex flex-col shadow-2xl shadow-black/10"
                 >
                   <div className="flex items-center gap-3 mb-8">
-                    <div className="px-3 py-1 bg-indigo-50 text-emerald-600 rounded-md text-xs font-bold tracking-wider uppercase border border-emerald-100">After</div>
+                    <div className="px-3 py-1 bg-indigo-50 text-sky-600 rounded-md text-xs font-bold tracking-wider uppercase border border-sky-100">After</div>
                   </div>
                   <ul className="space-y-5 text-slate-700 font-medium text-left">
                     <li className="flex items-start gap-4">
-                      <div className="w-6 h-6 rounded-full bg-indigo-50 flex items-center justify-center shrink-0 mt-0.5 border border-emerald-100"><Check size={14} className="text-emerald-600"/></div>
+                      <div className="w-6 h-6 rounded-full bg-indigo-50 flex items-center justify-center shrink-0 mt-0.5 border border-sky-100"><Check size={14} className="text-sky-600"/></div>
                       <span>Clean, organized inbox built specifically for sales.</span>
                     </li>
                     <li className="flex items-start gap-4">
-                      <div className="w-6 h-6 rounded-full bg-indigo-50 flex items-center justify-center shrink-0 mt-0.5 border border-emerald-100"><Check size={14} className="text-emerald-600"/></div>
+                      <div className="w-6 h-6 rounded-full bg-indigo-50 flex items-center justify-center shrink-0 mt-0.5 border border-sky-100"><Check size={14} className="text-sky-600"/></div>
                       <span>Automated responses handling the bulk of inquiries.</span>
                     </li>
                     <li className="flex items-start gap-4">
-                      <div className="w-6 h-6 rounded-full bg-indigo-50 flex items-center justify-center shrink-0 mt-0.5 border border-emerald-100"><Check size={14} className="text-emerald-600"/></div>
+                      <div className="w-6 h-6 rounded-full bg-indigo-50 flex items-center justify-center shrink-0 mt-0.5 border border-sky-100"><Check size={14} className="text-sky-600"/></div>
                       <span className="text-slate-900 font-semibold">More qualified leads, faster conversions.</span>
                     </li>
                   </ul>
@@ -762,16 +762,16 @@ const Landing: React.FC = () => {
             <div className="flex flex-col items-center">
               <button
                 onClick={() => navigate('/signup')}
-                className="bg-emerald-600 hover:bg-emerald-700 text-white px-10 py-5 rounded-xl font-semibold text-lg shadow-lg shadow-emerald-600/20 active:scale-95 transition-all inline-flex items-center gap-3 group mb-6"
+                className="bg-sky-600 hover:bg-sky-700 text-white px-10 py-5 rounded-xl font-semibold text-lg shadow-lg shadow-sky-600/20 active:scale-95 transition-all inline-flex items-center gap-3 group mb-6"
               >
                 Start Your Free Trial
                 <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
               </button>
               
               <div className="flex flex-wrap justify-center items-center gap-4 text-sm font-medium text-slate-500">
-                <span className="flex items-center gap-1.5"><Check size={16} className="text-emerald-400"/> No credit card</span>
-                <span className="flex items-center gap-1.5"><Check size={16} className="text-emerald-400"/> 14-day free trial</span>
-                <span className="flex items-center gap-1.5"><Check size={16} className="text-emerald-400"/> Cancel anytime</span>
+                <span className="flex items-center gap-1.5"><Check size={16} className="text-sky-400"/> No credit card</span>
+                <span className="flex items-center gap-1.5"><Check size={16} className="text-sky-400"/> 14-day free trial</span>
+                <span className="flex items-center gap-1.5"><Check size={16} className="text-sky-400"/> Cancel anytime</span>
               </div>
             </div>
           </motion.div>
@@ -787,11 +787,11 @@ const Landing: React.FC = () => {
             {/* Brand Column */}
             <div className="col-span-2 lg:col-span-2">
               <Link to="/" className="flex items-center gap-2.5 mb-6 group">
-                <div className="w-9 h-9 rounded-xl bg-emerald-600 flex items-center justify-center text-white shadow-lg shadow-emerald-600/20 group-hover:scale-105 transition-transform">
+                <div className="w-9 h-9 rounded-xl bg-sky-600 flex items-center justify-center text-white shadow-lg shadow-sky-600/20 group-hover:scale-105 transition-transform">
                   <Zap className="w-5 h-5 text-current" fill="currentColor" />
                 </div>
                 <span className="text-2xl font-bold tracking-tight text-slate-900 font-outfit uppercase">
-                  Reply<span className="text-emerald-600">Zens</span>
+                  Reply<span className="text-sky-600">Zens</span>
                 </span>
               </Link>
               <p className="text-slate-500 font-medium text-sm leading-relaxed max-w-xs mb-8">
@@ -823,10 +823,10 @@ const Landing: React.FC = () => {
             <div>
               <h4 className="text-slate-900 font-bold text-sm uppercase tracking-wider mb-6">Product</h4>
               <ul className="space-y-4">
-                <li><a href="#story" className="text-slate-500 hover:text-emerald-600 font-medium text-sm transition-colors">Features</a></li>
-                <li><a href="#how-it-works" className="text-slate-500 hover:text-emerald-600 font-medium text-sm transition-colors">How it works</a></li>
-                <li><button onClick={() => navigate('/login')} className="text-slate-500 hover:text-emerald-600 font-medium text-sm transition-colors">Live Demo</button></li>
-                <li><a href="#" className="text-slate-500 hover:text-emerald-600 font-medium text-sm transition-colors">Pricing</a></li>
+                <li><a href="#story" className="text-slate-500 hover:text-sky-600 font-medium text-sm transition-colors">Features</a></li>
+                <li><a href="#how-it-works" className="text-slate-500 hover:text-sky-600 font-medium text-sm transition-colors">How it works</a></li>
+                <li><button onClick={() => navigate('/login')} className="text-slate-500 hover:text-sky-600 font-medium text-sm transition-colors">Live Demo</button></li>
+                <li><a href="#" className="text-slate-500 hover:text-sky-600 font-medium text-sm transition-colors">Pricing</a></li>
               </ul>
             </div>
 
@@ -834,10 +834,10 @@ const Landing: React.FC = () => {
             <div>
               <h4 className="text-slate-900 font-bold text-sm uppercase tracking-wider mb-6">Resources</h4>
               <ul className="space-y-4">
-                <li><a href="#" className="text-slate-500 hover:text-emerald-600 font-medium text-sm transition-colors">Documentation</a></li>
-                <li><a href="#" className="text-slate-500 hover:text-emerald-600 font-medium text-sm transition-colors">Help Center</a></li>
-                <li><a href="#" className="text-slate-500 hover:text-emerald-600 font-medium text-sm transition-colors">Community</a></li>
-                <li><a href="#" className="text-slate-500 hover:text-emerald-600 font-medium text-sm transition-colors">API Status</a></li>
+                <li><a href="#" className="text-slate-500 hover:text-sky-600 font-medium text-sm transition-colors">Documentation</a></li>
+                <li><a href="#" className="text-slate-500 hover:text-sky-600 font-medium text-sm transition-colors">Help Center</a></li>
+                <li><a href="#" className="text-slate-500 hover:text-sky-600 font-medium text-sm transition-colors">Community</a></li>
+                <li><a href="#" className="text-slate-500 hover:text-sky-600 font-medium text-sm transition-colors">API Status</a></li>
               </ul>
             </div>
 
@@ -845,9 +845,9 @@ const Landing: React.FC = () => {
             <div>
               <h4 className="text-slate-900 font-bold text-sm uppercase tracking-wider mb-6">Legal</h4>
               <ul className="space-y-4">
-                <li><Link to="/privacy" className="text-slate-500 hover:text-emerald-600 font-medium text-sm transition-colors">Privacy Policy</Link></li>
-                <li><Link to="/terms" className="text-slate-500 hover:text-emerald-600 font-medium text-sm transition-colors">Terms of Service</Link></li>
-                <li><a href="#" className="text-slate-500 hover:text-emerald-600 font-medium text-sm transition-colors">Cookie Policy</a></li>
+                <li><Link to="/privacy" className="text-slate-500 hover:text-sky-600 font-medium text-sm transition-colors">Privacy Policy</Link></li>
+                <li><Link to="/terms" className="text-slate-500 hover:text-sky-600 font-medium text-sm transition-colors">Terms of Service</Link></li>
+                <li><a href="#" className="text-slate-500 hover:text-sky-600 font-medium text-sm transition-colors">Cookie Policy</a></li>
               </ul>
             </div>
           </div>

@@ -33,7 +33,7 @@ const funnelData = [
   { name: 'Converted', value: 100 },
 ];
 
-const COLORS = ['#10B981', '#059669', '#34D399', '#000000'];
+const COLORS = ['#0ea5e9', '#0284c7', '#38bdf8', '#000000'];
 
 const DashboardCard: React.FC<{ title: string; value: string | number; icon: any; trend: string; color?: string }> = ({ title, value, icon: Icon, trend, color = 'var(--primary)' }) => (
   <div className="glass-card hover-glow" style={{ padding: '24px', position: 'relative', overflow: 'hidden' }}>
@@ -41,7 +41,7 @@ const DashboardCard: React.FC<{ title: string; value: string | number; icon: any
       <div style={{ padding: '10px', background: 'var(--glass-border)', borderRadius: '12px' }}>
         <Icon size={20} style={{ color }} />
       </div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#10b981', fontSize: '0.8rem', fontWeight: 600 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#0ea5e9', fontSize: '0.8rem', fontWeight: 600 }}>
         {trend} <ArrowUpRight size={14} />
       </div>
     </div>
@@ -107,10 +107,10 @@ const Dashboard: React.FC = () => {
         gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', 
         gap: '24px' 
       }}>
-        <DashboardCard title="Total Leads" value={leadCount} icon={Users} trend="+12.5%" color="#10B981" />
-        <DashboardCard title="Wallet Balance" value={`$${Number(balance).toFixed(2)}`} icon={Wallet} trend="+5.2%" color="#10B981" />
+        <DashboardCard title="Total Leads" value={leadCount} icon={Users} trend="+12.5%" color="#0ea5e9" />
+        <DashboardCard title="Wallet Balance" value={`$${Number(balance).toFixed(2)}`} icon={Wallet} trend="+5.2%" color="#0ea5e9" />
         <DashboardCard title="Interactions" value="1,247" icon={MessageSquare} trend="+24.8%" color="#000000" />
-        <DashboardCard title="Active Funnel" value="38" icon={Target} trend="+8.1%" color="#10B981" />
+        <DashboardCard title="Active Funnel" value="38" icon={Target} trend="+8.1%" color="#0ea5e9" />
       </div>
 
       <div className="charts-row" style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '24px' }}>
@@ -121,7 +121,7 @@ const Dashboard: React.FC = () => {
             <h3 style={{ margin: 0 }}>Interaction Analytics</h3>
             <div style={{ display: 'flex', gap: '12px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.8rem', color: 'var(--text-dim)' }}>
-                <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10B981' }}></div> Messages
+                <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#0ea5e9' }}></div> Messages
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.8rem', color: 'var(--text-dim)' }}>
                 <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#000000' }}></div> New Leads
@@ -144,7 +144,7 @@ const Dashboard: React.FC = () => {
                   contentStyle={{ background: 'var(--card)', border: '1px solid var(--glass-border)', borderRadius: '12px', backdropFilter: 'blur(10px)' }}
                   itemStyle={{ color: 'var(--foreground)' }}
                 />
-                <Area type="monotone" dataKey="msgs" stroke="#10B981" fillOpacity={1} fill="url(#colorMsgs)" strokeWidth={3} />
+                <Area type="monotone" dataKey="msgs" stroke="#0ea5e9" fillOpacity={1} fill="url(#colorMsgs)" strokeWidth={3} />
                 <Area type="monotone" dataKey="leads" stroke="#000000" fill="transparent" strokeWidth={3} />
               </AreaChart>
             </ResponsiveContainer>
