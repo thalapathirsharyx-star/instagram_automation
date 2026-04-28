@@ -41,6 +41,17 @@ const Settings: React.FC = () => {
   const [connectionDetails, setConnectionDetails] = React.useState<{ name: string, id: string } | null>(null);
 
   React.useEffect(() => {
+    // Check current connection status on mount
+    getInstagramSettings().then(res => {
+      if (res.Success && res.Data?.isConnected) {
+        setIsConnected(true);
+        setConnectionDetails({
+          name: res.Data.page_name,
+          id: res.Data.business_id
+        });
+      }
+    }).catch(err => console.error('Failed to fetch IG settings:', err));
+
     const fbAppId = import.meta.env.VITE_FB_APP_ID || '955338716906984';
 
     // Load Facebook SDK
@@ -132,20 +143,26 @@ const Settings: React.FC = () => {
           subtitle="Manage your Instagram and Facebook connections."
         >
           {isConnected ? (
-            <div className="connection-success">
-              <div className="status-indicator" style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.85rem', marginBottom: '12px' }}>
-                <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10b981' }}></div>
-                <span style={{ color: '#10b981', fontWeight: 600 }}>Active Connection</span>
+            <div className="flex flex-col gap-4">
+              <div className="flex items-center gap-2 text-emerald-600 font-medium text-sm">
+                <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                Active Connection
               </div>
-              <div className="account-details" style={{ padding: '12px', background: 'var(--glass-border)', borderRadius: '12px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-                 <div style={{ background: 'var(--primary)', width: '32px', height: '32px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 600 }}>
-                   {connectionDetails?.name?.[0]}
-                 </div>
-                 <div>
-                   <div style={{ fontSize: '0.9rem', fontWeight: 500 }}>{connectionDetails?.name}</div>
-                   <div style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>ID: {connectionDetails?.id}</div>
-                 </div>
+              
+              <div className="p-4 bg-gray-50 rounded-xl border border-gray-100">
+                <div className="text-sm font-semibold text-gray-900">{connectionDetails?.name}</div>
+                <div className="text-xs text-gray-500 font-mono mt-1">ID: {connectionDetails?.id}</div>
               </div>
+
+              <button 
+                onClick={() => {
+                  setIsConnected(false);
+                  setConnectionDetails(null);
+                }}
+                className="text-xs text-red-500 hover:text-red-600 font-medium self-start transition-colors"
+              >
+                Disconnect and Reconnect
+              </button>
             </div>
           ) : (
             <>

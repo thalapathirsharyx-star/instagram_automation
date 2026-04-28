@@ -1,8 +1,9 @@
-import { Entity, Column, Index, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, Column, Index, ManyToOne, JoinColumn, Unique } from 'typeorm';
 import { BaseTable } from '../BaseTable';
 import { company } from '../Admin/company';
 
 @Entity()
+@Unique(['instagram_handle', 'company_id'])
 export class instagram_lead extends BaseTable {
   @Column({ type: 'uuid', nullable: true })
   @Index()
@@ -15,7 +16,7 @@ export class instagram_lead extends BaseTable {
   @Column({ type: 'text' })
   customer_name: string;
 
-  @Column({ unique: true })
+  @Column()
   @Index()
   instagram_handle: string;
 

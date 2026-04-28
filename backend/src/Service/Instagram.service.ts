@@ -89,20 +89,34 @@ export class InstagramService {
 
       company.instagram_business_id = igBusinessId;
       company.instagram_page_id = pageId;
-      company.instagram_access_token = pageAccessToken;
+      company.instagram_access_token = targetPage.access_token;
       await company.save();
 
       // 4. Auto-Subscribe to Webhooks
       console.log('[CONNECT] Subscribing Page to Webhooks...');
-      await axios.post(`https://graph.facebook.com/v21.0/${pageId}/subscribed_apps`, {
-        subscribed_fields: ['messages', 'messaging_postbacks'],
-        access_token: pageAccessToken
-      });
+      try {
+        await axios.post(`https://graph.facebook.com/v21.0/${pageId}/subscribed_apps`, {
+          subscribed_fields: ['messages', 'messaging_postbacks'],
+          access_token: pageAccessToken
+        });
+        console.log('[CONNECT SUCCESS] Page successfully subscribed to webhooks.');
+      } catch (subError: any) {
+        const subData = subError.response?.data || {};
+        console.error('[SUBSCRIPTION FAILED] Meta rejected the subscription request:', JSON.stringify(subData, null, 2));
+        
+        // Provide a clearer error message for common Meta issues
+        if (subData.error?.code === 200 || subData.error?.error_subcode === 1363030) {
+          throw new Error('META_PERMISSION_DENIED: Your Meta App does not have permission to subscribe to this page. Ensure "pages_manage_metadata" is approved and active.');
+        }
+        throw new Error(`META_SUBSCRIPTION_FAILED: ${subData.error?.message || 'Unknown Meta error'}`);
+      }
 
       return {
-        success: true,
-        business_id: igBusinessId,
-        page_name: targetPage.name
+        Success: true,
+        Data: {
+          business_id: igBusinessId,
+          page_name: targetPage.name
+        }
       };
 
     } catch (error) {
@@ -139,9 +153,16 @@ export class InstagramService {
       if (senderId === 'FETCH_PENDING' && messageId) {
         try {
           await new Promise(resolve => setTimeout(resolve, 2000));
-          const rawToken = (process.env.IG_PAGE_ACCESS_TOKEN || '').trim();
           
-          // Mask token for safe logging
+          // SaaS FIX: Get the token from the database for this specific IG Business ID
+          const company = await CompanyTable.findOne({ where: { instagram_business_id: igBusinessId } });
+          const rawToken = company?.instagram_access_token || '';
+          
+          if (!rawToken) {
+            console.error(`[FETCH ERROR] No access token found in DB for IG Business ID: ${igBusinessId}`);
+            return;
+          }
+          
           const maskedToken = rawToken.length > 10 
             ? `${rawToken.substring(0, 6)}...${rawToken.substring(rawToken.length - 4)}`
             : 'INVALID_TOKEN_LENGTH';
@@ -150,10 +171,8 @@ export class InstagramService {
 
           let response;
           const fetchParams = {
-            fields: 'id,message,from,created_time'
-          };
-          const fetchHeaders = {
-            'Authorization': `Bearer ${rawToken}`
+            fields: 'id,message,from,created_time',
+            access_token: rawToken
           };
 
           // Diagnostic: Facebook Page Tokens for Instagram DMs MUST start with EAA... 
@@ -170,12 +189,11 @@ export class InstagramService {
             try {
               // graph.facebook.com is the only host that works for Page-linked Instagram DMs
               response = await axios.get(`https://graph.facebook.com/v21.0/${messageId}`, {
-                params: fetchParams,
-                headers: fetchHeaders
+                params: fetchParams
               });
               lastError = null;
               break; 
-            } catch (err) {
+            } catch (err: any) {
               lastError = err.response?.data?.error;
               if (lastError?.code === 1 && retries > 0) {
                 console.warn(`[FETCH RETRY] Meta Code 1 (Unknown Error). Retrying... (${retries} left)`);
@@ -187,16 +205,9 @@ export class InstagramService {
             }
           }
 
-          if (lastError) {
-            console.error('[FETCH FAILED] Meta rejected the request.');
-            console.error(`Error Code: ${lastError.code} | Message: ${lastError.message}`);
-            
-            if (lastError.code === 1) {
-              console.error('--- IMPORTANT ACTION REQUIRED ---');
-              console.error('1. Ensure "Allow Access to Messages" is ON in your Instagram App settings.');
-              console.error('2. Ensure you are using a PAGE Access Token (starts with EAA...) from the Graph API Explorer dropdown.');
-              console.error('---------------------------------');
-            }
+          if (lastError || !response) {
+            console.error('[FETCH FAILED] Meta rejected the request or returned no data.');
+            if (lastError) console.error(`Error Code: ${lastError.code} | Message: ${lastError.message}`);
             return;
           }
 
@@ -260,18 +271,28 @@ export class InstagramService {
     if (!lead) {
       console.log(`[NEW LEAD] Creating record for: ${context.instagram_handle} | Company: ${companyId || 'NULL'}`);
       
-      // Attempt to fetch real name from Instagram Profile
-      const realProfile = await this.fetchUserProfile(context.instagram_handle, company?.instagram_access_token);
-      
-      lead = new instagram_lead();
-      lead.customer_name = realProfile?.name || context.customer_name;
-      lead.instagram_handle = context.instagram_handle;
-      lead.lead_status = 'New';
-      lead.created_by_id = SYSTEM_ID;
-      lead.created_on = new Date();
-      await lead.save();
-      
-      console.log(`[LEAD CREATED] Name: ${lead.customer_name} | Handle: ${lead.instagram_handle}`);
+      try {
+        // Attempt to fetch real name from Instagram Profile
+        const realProfile = await this.fetchUserProfile(context.instagram_handle, company?.instagram_access_token);
+        
+        lead = new instagram_lead();
+        lead.customer_name = realProfile?.name || context.customer_name;
+        lead.instagram_handle = context.instagram_handle;
+        lead.company_id = companyId; // CRITICAL FIX: Assign the company ID
+        lead.lead_status = 'New';
+        lead.created_by_id = SYSTEM_ID;
+        lead.created_on = new Date();
+        await lead.save();
+        
+        console.log(`[LEAD CREATED] Name: ${lead.customer_name} | Handle: ${lead.instagram_handle}`);
+      } catch (saveError: any) {
+        // If someone else created it in the last millisecond, just find it
+        if (saveError.code === '23505') {
+           lead = await instagram_lead.findOne({ where: { instagram_handle: context.instagram_handle, company_id: companyId } });
+        } else {
+           throw saveError;
+        }
+      }
     }
 
     // 2. Log Inbound Message
@@ -643,8 +664,14 @@ Rules:
     if (!company) throw new Error('Company not found');
 
     return {
-      appId: company.instagram_app_id,
-      appSecret: company.instagram_app_secret ? '********' : '' // Hide secret for security
+      Success: true,
+      Data: {
+        appId: company.instagram_app_id,
+        appSecret: company.instagram_app_secret ? '********' : '',
+        isConnected: !!company.instagram_business_id,
+        business_id: company.instagram_business_id,
+        page_name: company.instagram_username || 'Connected Account'
+      }
     };
   }
 }
