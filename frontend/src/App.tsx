@@ -4,12 +4,15 @@ import Dashboard from './pages/Dashboard';
 import Inbox from './pages/Inbox';
 import Leads from './pages/Leads';
 import Settings from './pages/Settings';
+import KnowledgeBase from './pages/KnowledgeBase';
+import Automation from './pages/Automation';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Landing from './pages/Landing';
 import { PrivacyPolicy, TermsOfService, DataDeletion } from './pages/Legal';
 import SuperAdminDashboard from './pages/SuperAdminDashboard';
 import ClientManagement from './pages/ClientManagement';
+import AISettings from './pages/AISettings';
 import { Search, Bell } from 'lucide-react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -67,6 +70,9 @@ function AppContent() {
             <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
             <Route path="/leads" element={<ProtectedRoute><Leads /></ProtectedRoute>} />
             <Route path="/inbox" element={<ProtectedRoute><Inbox /></ProtectedRoute>} />
+            <Route path="/knowledge" element={<ProtectedRoute><KnowledgeBase /></ProtectedRoute>} />
+            <Route path="/automation" element={<ProtectedRoute><Automation /></ProtectedRoute>} />
+            <Route path="/ai-settings" element={<ProtectedRoute><AISettings /></ProtectedRoute>} />
             
             {/* Admin Routes */}
             <Route path="/admin/dashboard" element={<ProtectedRoute><SuperAdminDashboard /></ProtectedRoute>} />

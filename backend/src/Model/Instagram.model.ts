@@ -16,6 +16,7 @@ export interface AutoReplySettings {
 }
 
 export interface InstagramMessageContext {
+  company_id?: string;
   customer_name: string;
   instagram_handle: string;
   message_text: string;

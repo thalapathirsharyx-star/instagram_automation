@@ -37,11 +37,13 @@ const Settings: React.FC = () => {
   const { user } = useAuth();
   const [isConnecting, setIsConnecting] = React.useState(false);
   const [isConnected, setIsConnected] = React.useState(false);
+  const [isLoadingStatus, setIsLoadingStatus] = React.useState(true);
   const [showGuide, setShowGuide] = React.useState(false);
   const [connectionDetails, setConnectionDetails] = React.useState<{ name: string, id: string } | null>(null);
 
   React.useEffect(() => {
     // Check current connection status on mount
+    setIsLoadingStatus(true);
     getInstagramSettings().then(res => {
       if (res.Success && res.Data?.isConnected) {
         setIsConnected(true);
@@ -50,7 +52,8 @@ const Settings: React.FC = () => {
           id: res.Data.business_id
         });
       }
-    }).catch(err => console.error('Failed to fetch IG settings:', err));
+    }).catch(err => console.error('Failed to fetch IG settings:', err))
+      .finally(() => setIsLoadingStatus(false));
 
     const fbAppId = import.meta.env.VITE_FB_APP_ID || '955338716906984';
 
@@ -142,10 +145,15 @@ const Settings: React.FC = () => {
           title="Meta Integration" 
           subtitle="Manage your Instagram and Facebook connections."
         >
-          {isConnected ? (
+          {isLoadingStatus ? (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px', background: 'var(--glass-border)', borderRadius: '12px', color: 'var(--text-dim)', fontSize: '0.85rem' }}>
+              <div className="animate-spin w-4 h-4 border-2 border-primary border-t-transparent rounded-full" />
+              Verifying connection status...
+            </div>
+          ) : isConnected ? (
             <div className="flex flex-col gap-4">
-              <div className="flex items-center gap-2 text-emerald-600 font-medium text-sm">
-                <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              <div className="flex items-center gap-2 text-sky-600 font-medium text-sm">
+                <div className="w-2 h-2 rounded-full bg-sky-500 animate-pulse" />
                 Active Connection
               </div>
               

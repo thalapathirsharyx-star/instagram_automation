@@ -15,7 +15,7 @@ const Leads: React.FC = () => {
   const fetchLeads = async () => {
     try {
       setIsLoading(true);
-      const res = await getLeads();
+      const res = await getLeads(true); // Fetch ONLY qualified leads
       setLeads(res?.Data || []);
     } catch (error) {
       console.error('Error fetching leads:', error);

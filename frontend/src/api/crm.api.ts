@@ -1,8 +1,9 @@
 import api from '../lib/axios';
 import type { ApiResponse, Lead, Message } from '../models/crm.models';
 
-export const getLeads = async (): Promise<ApiResponse<Lead[]>> => {
-  const response = await api.get<ApiResponse<Lead[]>>('/Instagram/Leads');
+export const getLeads = async (qualified?: boolean): Promise<ApiResponse<Lead[]>> => {
+  const url = qualified !== undefined ? `/Instagram/Leads?qualified=${qualified}` : '/Instagram/Leads';
+  const response = await api.get<ApiResponse<Lead[]>>(url);
   return response.data;
 };
 
@@ -33,5 +34,15 @@ export const getInstagramSettings = async (): Promise<ApiResponse<any>> => {
 
 export const updateInstagramSettings = async (data: { appId: string, appSecret: string }): Promise<ApiResponse<any>> => {
   const response = await api.post<ApiResponse<any>>('/Instagram/Settings', data);
+  return response.data;
+};
+
+export const getAIPrompt = async (): Promise<ApiResponse<{ prompt: string }>> => {
+  const response = await api.get<ApiResponse<{ prompt: string }>>('/Instagram/Prompt');
+  return response.data;
+};
+
+export const updateAIPrompt = async (prompt: string): Promise<ApiResponse<any>> => {
+  const response = await api.post<ApiResponse<any>>('/Instagram/Prompt', { prompt });
   return response.data;
 };

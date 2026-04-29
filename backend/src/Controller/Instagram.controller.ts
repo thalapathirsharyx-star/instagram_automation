@@ -1,5 +1,6 @@
-import { Body, Controller, Get, Param, Post, Query, Req } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Query, Req, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { InstagramService } from '@Service/Instagram.service';
 import { InstagramMessageContext } from '@Model/Instagram.model';
 import { ResponseEnum } from '@Helper/Enum/ResponseEnum';
@@ -111,6 +112,13 @@ export class InstagramController extends AuthBaseController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Post('Welcome')
+  async SetWelcome(@Body('message') message: string, @Req() req: any) {
+    const result = await this._InstagramService.updateWelcomeMessage(req.user?.company_id, message);
+    return this.SendResponseData(result);
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Get('Settings')
   async GetSettings(@Req() req: any) {
     const result = await this._InstagramService.getIntegrationSettings(req.user?.company_id);
@@ -126,8 +134,13 @@ export class InstagramController extends AuthBaseController {
 
   @UseGuards(JwtAuthGuard)
   @Get('Leads')
-  async Leads(@Req() req: any) {
-    const leads = await this._InstagramService.getAllLeads(req.user?.company_id);
+  async Leads(@Req() req: any, @Query('qualified') qualified?: string) {
+    let isQualified: boolean | undefined = undefined;
+    if (qualified === 'true') isQualified = true;
+    if (qualified === 'false') isQualified = false;
+    
+    console.log(`[DEBUG] Fetching leads for company: ${req.user?.company_id}, isQualified: ${isQualified}`);
+    const leads = await this._InstagramService.getAllLeads(req.user?.company_id, isQualified);
     return { Data: leads };
   }
 
@@ -143,6 +156,35 @@ export class InstagramController extends AuthBaseController {
   async Balance(@Req() req: any) {
     const balance = await this._InstagramService.getWalletBalance(req.user?.company_id);
     return { Data: balance };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('KnowledgeBase')
+  async GetKnowledge(@Req() req: any) {
+    const data = await this._InstagramService.getKnowledgeBase(req.user?.company_id);
+    return { Data: data };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('KnowledgeBase')
+  async CreateKnowledge(@Body() data: any, @Req() req: any) {
+    const result = await this._InstagramService.createKnowledgeItem(req.user?.company_id, data);
+    return this.SendResponseData(result);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('KnowledgeBase/Upload')
+  @UseInterceptors(FileInterceptor('file'))
+  async UploadKnowledge(@UploadedFile() file: any, @Req() req: any) {
+    const result = await this._InstagramService.uploadKnowledgeFile(req.user?.company_id, file);
+    return this.SendResponseData(result);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Delete('KnowledgeBase/:id')
+  async DeleteKnowledge(@Param('id') id: string, @Req() req: any) {
+    const result = await this._InstagramService.deleteKnowledgeItem(req.user?.company_id, id);
+    return this.SendResponseData(result);
   }
 
   // --- PRIVATE HELPERS ---
@@ -180,5 +222,20 @@ export class InstagramController extends AuthBaseController {
       console.log(`Message detected in changes: "${change.value.message.text}" from sender: ${change.value.sender.id}`);
       await this._InstagramService.processIncomingMessage(change.value.sender.id, change.value.message.text, change.value.message.mid, igBusinessId);
     }
+  }
+  @UseGuards(JwtAuthGuard)
+  @Get('Prompt')
+  async getPrompt(@Req() req: any) {
+    const companyId = req.user.company_id;
+    const result = await this._InstagramService.getPrompt(companyId);
+    return { Data: result };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('Prompt')
+  async updatePrompt(@Req() req: any, @Body() body: { prompt: string }) {
+    const companyId = req.user.company_id;
+    const result = await this._InstagramService.updatePrompt(companyId, body.prompt);
+    return { Data: result };
   }
 }

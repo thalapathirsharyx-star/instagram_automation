@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, Users, MessageSquare, Settings, LogOut } from 'lucide-react';
+import { LayoutDashboard, Users, MessageSquare, Settings, LogOut, Book, Zap, Sparkles } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 const Sidebar: React.FC = () => {
@@ -36,6 +36,15 @@ const Sidebar: React.FC = () => {
             </NavLink>
             <NavLink to="/inbox" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
               <MessageSquare size={20} /> Inbox
+            </NavLink>
+            <NavLink to="/knowledge" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+              <Book size={20} /> Brain Base
+            </NavLink>
+            <NavLink to="/automation" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+              <Zap size={20} /> Automation
+            </NavLink>
+            <NavLink to="/ai-settings" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+              <Sparkles size={20} /> AI Persona
             </NavLink>
             <NavLink to="/settings" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
               <Settings size={20} /> Settings

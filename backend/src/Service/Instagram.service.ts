@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { instagram_lead } from '@Database/Table/CRM/instagram_lead';
 import { instagram_message } from '@Database/Table/CRM/instagram_message';
+import { knowledge_base } from '@Database/Table/CRM/knowledge_base';
 import { company as CompanyTable } from '@Database/Table/Admin/company';
 import { InstagramMessageContext, InstagramActionResponse } from '@Model/Instagram.model';
 import { InstagramGateway } from '../Gateway/Instagram.gateway';
@@ -8,7 +9,6 @@ import axios from 'axios';
 
 @Injectable()
 export class InstagramService {
-  // Simple in-memory cache to prevent duplicate processing of the same message
   private processedMids = new Set<string>();
   private readonly CACHE_LIMIT = 500;
 
@@ -16,7 +16,6 @@ export class InstagramService {
 
   /**
    * Automatically connects an Instagram account using a user access token.
-   * Finds the first Page with a linked Instagram Business Account.
    */
   async linkInstagramAccount(companyId: string, userToken: string) {
     console.log(`[CONNECT] Linking Instagram for Company: ${companyId}`);
@@ -29,34 +28,17 @@ export class InstagramService {
     }
 
     try {
-      // 1. Exchange for Long-Lived User Token
-      let exchangeRes;
-      try {
-        exchangeRes = await axios.get(`https://graph.facebook.com/v21.0/oauth/access_token`, {
-          params: {
-            grant_type: 'fb_exchange_token',
-            client_id: APP_ID,
-            client_secret: APP_SECRET,
-            fb_exchange_token: userToken
-          }
-        });
-      } catch (err: any) {
-        const errorData = err.response?.data?.error || {};
-        const errorMsg = errorData.message || err.message;
-        const metaError = JSON.stringify(errorData, null, 2);
-        
-        console.error('[TOKEN EXCHANGE FAILED]', metaError);
-
-        if (errorMsg.includes('App Not Active') || errorMsg.includes('paused') || errorMsg.includes('restricted')) {
-          throw new Error(`META_APP_RESTRICTED: Your Facebook App is currently 'Paused' or 'Not Active' in the Meta Dashboard. Please ensure it is set to 'Development' or 'Live' mode.`);
+      let exchangeRes = await axios.get(`https://graph.facebook.com/v21.0/oauth/access_token`, {
+        params: {
+          grant_type: 'fb_exchange_token',
+          client_id: APP_ID,
+          client_secret: APP_SECRET,
+          fb_exchange_token: userToken
         }
-        throw new Error(`META_TOKEN_EXCHANGE_FAILED: ${errorMsg}`);
-      }
+      });
       
       const longLivedUserToken = exchangeRes.data.access_token;
-      console.log('[CONNECT] Obtained long-lived user token');
-
-      // 2. Fetch Pages & IG Business Accounts
+      
       const pagesRes = await axios.get(`https://graph.facebook.com/v21.0/me/accounts`, {
         params: {
           fields: 'name,access_token,instagram_business_account',
@@ -65,12 +47,6 @@ export class InstagramService {
       });
 
       const pages = pagesRes.data.data;
-      console.log(`[CONNECT] Found ${pages.length} Pages. Checking for linked Instagram accounts...`);
-      
-      pages.forEach((p: any) => {
-        console.log(`  - Page: "${p.name}" | ID: ${p.id} | Has IG Link: ${!!p.instagram_business_account}`);
-      });
-
       const targetPage = pages.find((p: any) => p.instagram_business_account);
 
       if (!targetPage) {
@@ -78,38 +54,22 @@ export class InstagramService {
       }
 
       const igBusinessId = targetPage.instagram_business_account.id;
-      const pageAccessToken = targetPage.access_token; // This is already a long-lived Page Token if the User Token was long-lived
+      const pageAccessToken = targetPage.access_token;
       const pageId = targetPage.id;
 
-      console.log(`[CONNECT] Found IG Business ID: ${igBusinessId} on Page: ${targetPage.name}`);
-
-      // 3. Save to Database
       const company = await CompanyTable.findOne({ where: { id: companyId } });
       if (!company) throw new Error('Company not found');
 
       company.instagram_business_id = igBusinessId;
       company.instagram_page_id = pageId;
-      company.instagram_access_token = targetPage.access_token;
+      company.instagram_access_token = pageAccessToken;
+      company.instagram_username = targetPage.name; // Save the name too!
       await company.save();
 
-      // 4. Auto-Subscribe to Webhooks
-      console.log('[CONNECT] Subscribing Page to Webhooks...');
-      try {
-        await axios.post(`https://graph.facebook.com/v21.0/${pageId}/subscribed_apps`, {
-          subscribed_fields: ['messages', 'messaging_postbacks'],
-          access_token: pageAccessToken
-        });
-        console.log('[CONNECT SUCCESS] Page successfully subscribed to webhooks.');
-      } catch (subError: any) {
-        const subData = subError.response?.data || {};
-        console.error('[SUBSCRIPTION FAILED] Meta rejected the subscription request:', JSON.stringify(subData, null, 2));
-        
-        // Provide a clearer error message for common Meta issues
-        if (subData.error?.code === 200 || subData.error?.error_subcode === 1363030) {
-          throw new Error('META_PERMISSION_DENIED: Your Meta App does not have permission to subscribe to this page. Ensure "pages_manage_metadata" is approved and active.');
-        }
-        throw new Error(`META_SUBSCRIPTION_FAILED: ${subData.error?.message || 'Unknown Meta error'}`);
-      }
+      await axios.post(`https://graph.facebook.com/v21.0/${pageId}/subscribed_apps`, {
+        subscribed_fields: ['messages', 'messaging_postbacks'],
+        access_token: pageAccessToken
+      });
 
       return {
         Success: true,
@@ -120,436 +80,327 @@ export class InstagramService {
       };
 
     } catch (error) {
-      const metaError = error.response?.data || error.message;
-      console.error('[CONNECT FAILED] Meta API Error Details:', JSON.stringify(metaError, null, 2));
+      console.error('[CONNECT FAILED]', error);
       throw error;
     }
   }
 
   async processIncomingMessage(input: InstagramMessageContext | string, text?: string, messageId?: string, igBusinessId?: string, skipDedupe = false): Promise<InstagramActionResponse | void> {
-    // Deduplication check - only skip if not an internal recursive call
-    if (!skipDedupe && messageId && this.processedMids.has(messageId)) {
-      console.log(`[SKIP] Duplicate message detected. MID: ${messageId}`);
+    if (messageId && this.processedMids.has(messageId) && !skipDedupe) {
       return;
     }
+    if (messageId) this.processedMids.add(messageId);
 
-    // Track this message ID
-    if (messageId) {
-      if (this.processedMids.size >= this.CACHE_LIMIT) {
-        // Clear old entries to prevent memory leak
-        const iterator = this.processedMids.values();
-        for (let i = 0; i < 100; i++) this.processedMids.delete(iterator.next().value);
-      }
-      this.processedMids.add(messageId);
-    }
-    let context: InstagramMessageContext;
+    // If the controller couldn't provide a sender ID/text (e.g. message_edit), we fetch it now
+    if (typeof input === 'string' && input === 'FETCH_PENDING' && messageId) {
+      console.log(`[RESOLVE] Fetching real content for MID: ${messageId}`);
+      const company = await CompanyTable.findOne({ where: { instagram_business_id: igBusinessId } });
+      const details = await this.fetchMessageDetails(messageId, company?.instagram_access_token);
 
-    if (typeof input === 'string') {
-      const messageText = text;
-      const senderId = input;
-
-      // If called with FETCH_PENDING (from a message_edit event), attempt to retrieve
-      // the message content from the Graph API using the correct Instagram field names.
-      if (senderId === 'FETCH_PENDING' && messageId) {
-        try {
-          await new Promise(resolve => setTimeout(resolve, 2000));
-          
-          // SaaS FIX: Get the token from the database for this specific IG Business ID
-          const company = await CompanyTable.findOne({ where: { instagram_business_id: igBusinessId } });
-          const rawToken = company?.instagram_access_token || '';
-          
-          if (!rawToken) {
-            console.error(`[FETCH ERROR] No access token found in DB for IG Business ID: ${igBusinessId}`);
-            return;
-          }
-          
-          const maskedToken = rawToken.length > 10 
-            ? `${rawToken.substring(0, 6)}...${rawToken.substring(rawToken.length - 4)}`
-            : 'INVALID_TOKEN_LENGTH';
-          
-          console.log(`[FETCH] Executing message content fetch. MID: ${messageId} | Token: ${maskedToken}`);
-
-          let response;
-          const fetchParams = {
-            fields: 'id,message,from,created_time',
-            access_token: rawToken
-          };
-
-          // Diagnostic: Facebook Page Tokens for Instagram DMs MUST start with EAA... 
-          // and be 'Page' type. User tokens (even with correct scopes) often fail fetching.
-          if (rawToken.startsWith('EAANk')) {
-             console.log('[DIAGNOSTIC] Token starts with EAANk... (Likely a User Token). If fetch fails, please switch to a PAGE token.');
-          }
-
-          // Retry logic for Code 1 (Transient Meta errors / Privacy blocks)
-          let retries = 2;
-          let lastError = null;
-          
-          while (retries >= 0) {
-            try {
-              // graph.facebook.com is the only host that works for Page-linked Instagram DMs
-              response = await axios.get(`https://graph.facebook.com/v21.0/${messageId}`, {
-                params: fetchParams
-              });
-              lastError = null;
-              break; 
-            } catch (err: any) {
-              lastError = err.response?.data?.error;
-              if (lastError?.code === 1 && retries > 0) {
-                console.warn(`[FETCH RETRY] Meta Code 1 (Unknown Error). Retrying... (${retries} left)`);
-                await new Promise(resolve => setTimeout(resolve, 1500));
-                retries--;
-              } else {
-                break;
-              }
-            }
-          }
-
-          if (lastError || !response) {
-            console.error('[FETCH FAILED] Meta rejected the request or returned no data.');
-            if (lastError) console.error(`Error Code: ${lastError.code} | Message: ${lastError.message}`);
-            return;
-          }
-
-          const msgData = response.data;
-          const content = msgData.message;
-          const actualSenderId = msgData.from?.id;
-
-          // CRITICAL: Filter out messages sent by the bot/page itself to prevent loops
-          if (actualSenderId === igBusinessId) {
-            console.log(`[SKIP] Ignoring message sent by the bot itself (ID: ${actualSenderId})`);
-            return;
-          }
-          
-          if (content) {
-            console.log(`[FETCH SUCCESS] Received content: "${content}" from ${actualSenderId}`);
-            // Pass skipDedupe = true so we don't get blocked by our own cache
-            return await this.processIncomingMessage(actualSenderId, content, messageId, igBusinessId, true);
-          } else {
-            console.error('[FETCH FAILED] Response received but no message content found:', JSON.stringify(msgData));
-          }
-        } catch (err) {
-          const apiError = err.response?.data?.error;
-          console.error('[FETCH ERROR]', JSON.stringify(apiError || err.message));
-
-          if (apiError?.code === 10 || apiError?.code === 230 || apiError?.code === 298) {
-            console.error('[PERMISSION ERROR] Missing scope: instagram_manage_messages or account linking issue.');
-          }
+      if (details && details.from) {
+        // If the sender ID matches the Page's Business ID, it's an echo of our own message.
+        if (details.from.id === igBusinessId) {
+          console.log(`[RESOLVE] Skipping echo message (Page's own message) for MID: ${messageId}`);
+          return;
         }
+
+        input = details.from.id;
+        text = details.message;
+        console.log(`[RESOLVE] Success! Sender: ${input}, Text: "${text}"`);
+      } else {
+        console.error(`[RESOLVE] Failed to resolve message details for MID: ${messageId}`);
         return;
       }
+    }
 
+    let context: InstagramMessageContext;
+    if (typeof input === 'string') {
+      const company = await CompanyTable.findOne({ where: { instagram_business_id: igBusinessId } });
+      const companyId = company?.id;
 
       context = {
-        customer_name: 'IG User',
-        instagram_handle: senderId,
-        message_text: messageText,
+        instagram_handle: input,
+        customer_name: 'Customer',
+        message_text: text || '',
+        company_id: companyId,
+        last_message_time: new Date(),
+        product_context: [],
         conversation_history: [],
         tags: [],
         lead_status: 'New',
-        last_message_time: new Date(),
-        product_context: [],
-        auto_reply_settings: {
-          is_enabled: true,
-          min_delay_ms: 1000,
-          max_delay_ms: 3000,
-          allow_ai_override: true
-        }
+        auto_reply_settings: { is_enabled: true, min_delay_ms: 1000, max_delay_ms: 3000, allow_ai_override: true }
       };
     } else {
       context = input;
     }
 
-    // 1. Get or Create Lead
-    // Identify the company based on the incoming Instagram Business ID (from Webhook)
     const company = await CompanyTable.findOne({ where: { instagram_business_id: igBusinessId } });
     const companyId = company?.id;
 
-    const SYSTEM_ID = '00000000-0000-0000-0000-000000000000';
     let lead = await instagram_lead.findOne({ where: { instagram_handle: context.instagram_handle, company_id: companyId } });
     
     if (!lead) {
-      console.log(`[NEW LEAD] Creating record for: ${context.instagram_handle} | Company: ${companyId || 'NULL'}`);
+      lead = new instagram_lead();
+      lead.company_id = companyId;
+      lead.instagram_handle = context.instagram_handle;
+      lead.customer_name = `User_${context.instagram_handle.slice(-4)}`;
+      lead.lead_status = 'New';
       
       try {
-        // Attempt to fetch real name from Instagram Profile
-        const realProfile = await this.fetchUserProfile(context.instagram_handle, company?.instagram_access_token);
-        
-        lead = new instagram_lead();
-        lead.customer_name = realProfile?.name || context.customer_name;
-        lead.instagram_handle = context.instagram_handle;
-        lead.company_id = companyId; // CRITICAL FIX: Assign the company ID
-        lead.lead_status = 'New';
-        lead.created_by_id = SYSTEM_ID;
-        lead.created_on = new Date();
-        await lead.save();
-        
-        console.log(`[LEAD CREATED] Name: ${lead.customer_name} | Handle: ${lead.instagram_handle}`);
-      } catch (saveError: any) {
-        // If someone else created it in the last millisecond, just find it
-        if (saveError.code === '23505') {
-           lead = await instagram_lead.findOne({ where: { instagram_handle: context.instagram_handle, company_id: companyId } });
-        } else {
-           throw saveError;
-        }
+        const profileRes = await axios.get(`https://graph.facebook.com/v21.0/${context.instagram_handle}?fields=name,profile_pic&access_token=${company?.instagram_access_token}`);
+        if (profileRes.data.name) lead.customer_name = profileRes.data.name;
+      } catch (e: any) {
+        console.error('[IG PROFILE ERROR] Could not fetch profile details:', e.message);
+      }
+      
+      lead.created_by_id = '00000000-0000-0000-0000-000000000000';
+      lead.created_on = new Date();
+      await lead.save();
+
+      // Send Welcome Message if configured
+      if (company?.welcome_message) {
+        await this.sendInstagramMessage(lead.instagram_handle, company.welcome_message, company.instagram_access_token);
+        await this.logOutboundMessage(lead, { reply: company.welcome_message, action: 'welcome' } as any);
       }
     }
 
-    // 2. Log Inbound Message
     const inboundMsg = new instagram_message();
     inboundMsg.lead_id = lead.id;
     inboundMsg.message_text = context.message_text;
     inboundMsg.direction = 'Inbound';
-    inboundMsg.created_by_id = SYSTEM_ID;
+    inboundMsg.created_by_id = '00000000-0000-0000-0000-000000000000';
     inboundMsg.created_on = new Date();
     inboundMsg.company_id = companyId;
     await inboundMsg.save();
 
-    // Notify real-time clients
     this.instagramGateway.emitNewMessage({ ...inboundMsg, lead });
 
-    // 2.5 Deduct credits (example: $0.10 per message)
-    if (company && company.wallet_balance > 0) {
-      company.wallet_balance = Number(company.wallet_balance) - 0.10;
-      await company.save();
-      this.instagramGateway.emitBalanceUpdate(company.wallet_balance);
-    }
-
-    // 3. Decision Logic - Step 1: Keyword Matching
-    const keywordMatch = this.checkKeywords(context.message_text);
-    if (keywordMatch) {
-      const response: InstagramActionResponse = {
-        action: 'AUTO_KEYWORD_REPLY',
-        reply: keywordMatch.reply.replace('{name}', context.customer_name),
-        status_update: lead.lead_status as 'New' | 'Hot' | 'Buyer' | 'Lost' | 'Needs_Human',
-        notes: `Matched keyword: ${keywordMatch.keyword}`,
-      };
-      await this.logOutboundMessage(lead, response);
-      await this.sendInstagramMessage(lead.instagram_handle, response.reply);
-      return response;
-    }
-
-    // 4. Decision Logic - Step 3: Human Handoff (checking for complaints/anger)
-    if (this.isNeedsHuman(context.message_text)) {
-      const response: InstagramActionResponse = {
-        action: 'HUMAN_HANDOFF',
-        reply: '',
-        status_update: 'Needs_Human',
-        notes: 'Detected complaint or technical query requiring human intervention',
-      };
-      lead.lead_status = 'Needs_Human';
-      await lead.save();
-      return response;
-    }
-
-    // 5. Decision Logic - Step 2: AI Smart Reply (Powered by LLM)
-    const chatHistory = await this.getMessagesByLead(lead.id);
-    const historyStrings = chatHistory.slice(-10).map(msg => `${msg.direction === 'Inbound' ? 'Customer' : 'Assistant'}: ${msg.message_text}`);
-
-    const aiResponse = await this.generateAiReply(context.message_text, historyStrings);
-    const score = aiResponse.lead_score || 0;
+    // 1. Check for Direct FAQ Match (Fuzzy Word Match)
+    const knowledgeItems = await knowledge_base.find({ where: { company_id: companyId } });
+    console.log(`[FAQ DEBUG] Checking ${knowledgeItems.length} items in Brain Base for company ${companyId}`);
     
-    let nextStatus = lead.lead_status;
-    if (score >= 70) {
-      nextStatus = 'Hot';
-    } else if (score >= 30) {
-      nextStatus = 'Buyer';
+    const normalize = (str: string) => str.toLowerCase().replace(/[^a-z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim();
+    const queryWords = normalize(context.message_text).split(' ');
+    console.log(`[FAQ DEBUG] Normalized Query Words: ${JSON.stringify(queryWords)}`);
+    
+    for (const item of knowledgeItems) {
+      const titleWords = normalize(item.title).split(' ');
+      // Check if ALL words in the FAQ title exist in the user's message (fuzzy)
+      const matchCount = titleWords.filter(tw => queryWords.some(qw => qw.includes(tw) || tw.includes(qw))).length;
+      const matchPercentage = matchCount / titleWords.length;
+      
+      console.log(`[FAQ DEBUG] Comparing with "${item.title}" | Match: ${matchCount}/${titleWords.length} (${Math.round(matchPercentage*100)}%)`);
+
+      if (matchPercentage >= 0.8) { // 80% word match
+        console.log(`[FAQ MATCH] Found fuzzy match: ${item.title}`);
+        const directResponse: any = { 
+          reply: item.content, 
+          action: 'faq',
+          status_update: 'Qualified',
+          notes: `Matched FAQ: ${item.title}`
+        };
+        
+        // Promote to lead if they match an FAQ
+        lead.is_qualified = true;
+        await lead.save();
+
+        await this.logOutboundMessage(lead, directResponse as any);
+        await this.sendInstagramMessage(lead.instagram_handle, directResponse.reply, company?.instagram_access_token);
+        return directResponse;
+      }
     }
 
-    const response: InstagramActionResponse = {
-      action: aiResponse.action,
-      reply: aiResponse.reply,
-      status_update: nextStatus as 'New' | 'Hot' | 'Buyer' | 'Lost' | 'Needs_Human',
-      notes: `Intent: ${aiResponse.intent} | Score: ${score} | Entities: ${JSON.stringify(aiResponse.entities || {})}`,
-    };
-
-    if (nextStatus !== lead.lead_status) {
-      lead.lead_status = nextStatus;
+    // 2. Fallback to AI if no direct match
+    const aiResponse = await this.generateAiReply(context.message_text, lead, companyId);
+    
+    if (aiResponse.reply) {
+      // Update Lead metadata if AI suggests changes
+      if (aiResponse.lead_status) lead.lead_status = aiResponse.lead_status;
+      // Only set to true, never back to false once qualified
+      if (aiResponse.is_qualified === true) lead.is_qualified = true;
+      if (aiResponse.tags) lead.tags = aiResponse.tags;
+      if (aiResponse.notes) lead.notes = (lead.notes ? lead.notes + '\n' : '') + aiResponse.notes;
       await lead.save();
+
+      await this.logOutboundMessage(lead, aiResponse);
+      await this.sendInstagramMessage(lead.instagram_handle, aiResponse.reply, company?.instagram_access_token);
     }
 
-    await this.logOutboundMessage(lead, response);
-
-    // Only send the reply if it's an automated one
-    if (response.reply && response.action !== 'HUMAN_HANDOFF') {
-      await this.sendInstagramMessage(lead.instagram_handle, response.reply, company?.instagram_access_token);
-    }
-
-    return response;
+    return aiResponse;
   }
 
-  private checkKeywords(text: string) {
-    const keywords = [
-      { keyword: 'price', reply: 'Hi {name}, the price for this item is $99. Would you like to order?' },
-      { keyword: 'available', reply: 'Yes, it is currently in stock! How many would you like?' },
-      { keyword: 'location', reply: 'We are located in Los Angeles, but we ship nationwide! 🚚' },
-    ];
+  private async generateAiReply(messageText: string, lead: instagram_lead, companyId: string): Promise<any> {
+    const GROQ_API_KEY = process.env.GROQ_API_KEY;
+    const context = await this.getRelevantContext(messageText, companyId);
 
-    const found = keywords.find(k => text.toLowerCase().includes(k.keyword));
-    return found;
-  }
+    const history = await this.getMessagesByLead(lead.id, lead.company_id);
+    const historyText = history.slice(-10).map(m => `${m.direction}: ${m.message_text}`).join('\n');
 
-  private isNeedsHuman(text: string): boolean {
-    const triggers = ['refund', 'angry', 'complaint', 'manager', 'stole', 'broken'];
-    return triggers.some(t => text.toLowerCase().includes(t));
-  }
+    const company = await CompanyTable.findOne({ where: { id: companyId } });
+    
+    const defaultPrompt = `
+You are Maya, a warm and polite sales assistant for a clothing brand.
+You genuinely care about helping customers find the right product.
+You speak naturally in English, Tamil, and Tanglish.
 
-  private async generateAiReply(messageText: string, history: string[]): Promise<any> {
-    const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-    if (!GEMINI_API_KEY) {
-      console.warn('[AI] No GEMINI_API_KEY found, falling back to basic response.');
-      return { 
-        reply: "Thanks for reaching out! A human agent will be with you shortly.", 
-        intent: "general_inquiry",
-        lead_score: 10,
-        action: "followup",
-        entities: {}
-      };
-    }
+═══════════════════════════════
+KNOWLEDGE BASE
+═══════════════════════════════
+\${context}
 
-    const businessType = 'clothing'; // Mock or load from config
-    const goal = 'sell_products';
-    const tone = 'friendly and professional';
-    const language = 'english';
+═══════════════════════════════
+CHAT HISTORY
+═══════════════════════════════
+\${historyText}
 
-    const systemPrompt = `You are a dynamic AI assistant inside a CRM system.
-You handle customer conversations for multiple types of businesses (e.g., clothing, real estate, clinics, services).
+═══════════════════════════════
+CUSTOMER'S MESSAGE
+═══════════════════════════════
+"\${messageText}"
 
-Your behavior MUST adapt based on the provided business configuration.
+═══════════════════════════════
+LANGUAGE RULES (CRITICAL)
+═══════════════════════════════
+- Detect the language of the customer's last message and reply in the SAME language.
+- Tamil script (e.g. "என்ன விலை?") → reply politely in Tamil script.
+- Tanglish (e.g. "anna price sollunga") → reply warmly in Tanglish, respectful tone.
+- English → reply in polite, friendly English.
+- Never switch language unless the customer does first.
 
----
+Polite Tanglish examples to match:
+  Customer: "anna price evlo?"
+  Maya: "Anna, ithu RM89 thaan 😊 Romba nalla quality, worth it irukku. Ungalukku enna size venum?"
 
-### INPUT CONTEXT:
+  Customer: "akka ithu nalla iruka?"
+  Maya: "Aama akka, ithu customers-ku romba pidikkum! Ungalukku suit aagum pola irukku. Oru size try pannalama? 🙏"
 
-Business Profile:
-* business_type: ${businessType}
-* business_goal: ${goal}
-* tone: ${tone}
-* language: ${language}
+  Customer: "என்ன விலை?"
+  Maya: "விலை RM89 மட்டுமே 😊 தரமான தயாரிப்பு, மதிப்புக்கு ஏற்றது. உங்களுக்கு என்ன அளவு வேண்டும்?"
 
-Product / Service Data:
-We offer custom and premium apparel.
+═══════════════════════════════
+POLITENESS RULES
+═══════════════════════════════
+- Always address the customer respectfully (anna / akka / sir / madam as appropriate).
+- Never pressure or rush the customer.
+- If they seem unsure, gently reassure them.
+- If they have a complaint, acknowledge it kindly before responding.
+- End every reply with a warm, soft question to keep the conversation going.
+- Use "please", "thank you", "of course" naturally in English replies.
 
-Custom Rules:
-Be polite and helpful.
+═══════════════════════════════
+LEAD QUALIFICATION RULES
+═══════════════════════════════
+- Hot   → asks price, size, payment, delivery or says "venum / I want / order"
+- Warm  → curious, asking product questions, comparing options
+- New   → first message, no clear signal yet
+- Cold  → very short replies, low engagement
+- Buyer → confirmed order or completed payment
+- Lost  → said not interested, too expensive, or gone silent
 
----
+═══════════════════════════════
+BEHAVIOR RULES
+═══════════════════════════════
+1. Answer only from the knowledge base. Never guess or make up product details.
+2. If something is not in the knowledge base, say warmly:
+   "Let me check that for you and get back to you shortly! 😊"
+3. Keep replies short and warm — 2 to 3 sentences is ideal.
+4. Use 1 or 2 emojis naturally — never overdo it.
+5. Always close with a gentle next step (size? color? shall I reserve one for you?).
 
-### YOUR OBJECTIVES:
-1. Understand customer intent
-2. Extract useful information
-3. Qualify the lead
-4. Respond like a human sales agent
-5. Move the conversation toward the business goal
+═══════════════════════════════
+OUTPUT FORMAT (JSON ONLY)
+═══════════════════════════════
+Return ONLY valid JSON. No extra text outside it.
 
----
-
-### STEP 1: DETECT INTENT
-Classify the message into the most relevant intent depending on business_type.
-Examples:
-For "clothing": product_inquiry, price_check, size_check, color_check, purchase_intent
-If unclear -> use "general_inquiry"
-
----
-
-### STEP 2: EXTRACT ENTITIES
-Extract relevant structured data based on business_type:
-For clothing: product_name, size, color, quantity
-Return null if not found.
-
----
-
-### STEP 3: LEAD SCORING (0-100)
-Score based on buying intent:
-* low intent (greeting, browsing) -> 5-30
-* medium intent (questions, interest) -> 30-70
-* high intent (ready to act) -> 70-95
-
----
-
-### STEP 4: DECIDE NEXT ACTION
-Based on business_goal:
-IF goal = sell_products: Guide toward purchase. Ask size, confirm product, move to order.
-
----
-
-### STEP 5: GENERATE RESPONSE
-Rules:
-* Keep response short (1-3 lines)
-* Sound human, not robotic
-* Use tone provided
-* Ask at most ONE follow-up question
-* Use available context_data (product/service info)
-* If data missing -> ask instead of assuming
-
----
-
-### STEP 6: OUTPUT FORMAT (STRICT JSON)
 {
-"intent": "...",
-"lead_score": 0,
-"entities": {
-"key": "value"
-},
-"reply": "...",
-"action": "none" | "lead" | "order" | "book" | "followup"
+  "reply": "your polite message to the customer",
+  "action": "reply",
+  "detected_language": "english" | "tamil" | "tanglish",
+  "lead_status": "New" | "Hot" | "Warm" | "Cold" | "Buyer" | "Lost",
+  "is_qualified": true | false,
+  "tags": ["interested", "pricing", "size_query", "support", "tamil_speaker", ...],
+  "notes": "1-line CRM summary in English, regardless of chat language"
 }
+`;
 
----
-
-### ACTION RULES:
-* lead_score >= 70 -> "lead"
-* purchase intent -> "order"
-* missing info -> "followup"
-* otherwise -> "none"
-
----
-
-### IMPORTANT RULES:
-* Adapt behavior based on business_type
-* Do NOT assume missing data
-* Do NOT generate long responses
-* Always prioritize clarity and conversion
-* Use chat history to avoid repeating questions
-* If user already provided info, do not ask again`;
-
-    const userMessage = `Customer Message:\n${messageText}\n\nChat History:\n${history.join('\n')}`;
+    let customPrompt = company?.system_prompt || defaultPrompt;
+    
+    // Replace placeholders in custom prompt
+    const prompt = customPrompt
+      .replace(/\${context}/g, context)
+      .replace(/\${historyText}/g, historyText)
+      .replace(/\${messageText}/g, messageText);
 
     try {
-      console.log(`[AI] Generating reply for message: "${messageText}"`);
       const response = await axios.post(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`,
+        'https://api.groq.com/openai/v1/chat/completions',
         {
-          system_instruction: {
-            parts: { text: systemPrompt }
-          },
-          contents: [
-            {
-              parts: [{ text: userMessage }]
-            }
+          model: 'llama-3.3-70b-versatile',
+          messages: [
+            { role: 'system', content: prompt },
+            { role: 'user', content: messageText }
           ],
-          generationConfig: {
-            responseMimeType: "application/json"
-          }
+          response_format: { type: "json_object" }
         },
         {
           headers: {
+            'Authorization': `Bearer ${GROQ_API_KEY}`,
             'Content-Type': 'application/json'
           }
         }
       );
 
-      const responseContent = response.data.candidates[0].content.parts[0].text;
-      return JSON.parse(responseContent);
-    } catch (e) {
-      console.error("[AI] Gemini API error", e.response?.data || e.message);
-      return { 
-        reply: "I'm having a little trouble connecting to my network. Give me a moment please.", 
-        intent: "error",
-        lead_score: 10,
-        action: "none",
-        entities: {}
+      const aiData = JSON.parse(response.data.choices[0].message.content);
+      return {
+        reply: aiData.reply || aiData.message || aiData.text || "I'll check on that for you!",
+        action: aiData.action || 'reply',
+        notes: aiData.notes || ''
       };
+    } catch (error: any) {
+      console.error('[AI ERROR] Groq failed:', error.response?.data || error.message);
+      return { reply: "I'll check on that for you!", action: 'human_required' };
+    }
+  }
+
+  private async getRelevantContext(messageText: string, companyId: string): Promise<string> {
+    try {
+      const kbRepo = await knowledge_base.find({ where: { company_id: companyId } });
+      if (!kbRepo || kbRepo.length === 0) return "No specific data provided.";
+      
+      const query = messageText.toLowerCase();
+      const relevant = kbRepo.filter(item => 
+        query.includes(item.title.toLowerCase()) || 
+        query.split(' ').some(w => w.length > 3 && item.content.toLowerCase().includes(w))
+      );
+
+      return relevant.length > 0 
+        ? relevant.map(i => `${i.title}: ${i.content}`).join('\n')
+        : kbRepo.slice(0, 2).map(i => `${i.title}: ${i.content}`).join('\n');
+    } catch (err) {
+      return "Clothing brand info.";
+    }
+  }
+
+  private async fetchUserProfile(instagramId: string, token: string) {
+    try {
+      const res = await axios.get(`https://graph.facebook.com/v21.0/${instagramId}`, {
+        params: { fields: 'name', access_token: token }
+      });
+      return res.data;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  private async fetchMessageDetails(mid: string, token: string) {
+    try {
+      const res = await axios.get(`https://graph.facebook.com/v21.0/${mid}`, {
+        params: { fields: 'from,message', access_token: token }
+      });
+      return res.data;
+    } catch (e: any) {
+      console.error('[IG FETCH ERROR] Failed to fetch message details:', e.response?.data || e.message);
+      return null;
     }
   }
 
@@ -558,120 +409,168 @@ Rules:
     outboundMsg.lead_id = lead.id;
     outboundMsg.message_text = response.reply;
     outboundMsg.direction = 'Outbound';
-    outboundMsg.action_taken = response.action;
-    outboundMsg.ai_notes = response.notes;
     outboundMsg.created_by_id = '00000000-0000-0000-0000-000000000000';
     outboundMsg.created_on = new Date();
     outboundMsg.company_id = lead.company_id;
     await outboundMsg.save();
 
-    // Notify real-time clients
+    // Notify the UI via WebSocket
     this.instagramGateway.emitNewMessage({ ...outboundMsg, lead });
-
+    
     lead.last_message_time = new Date();
     await lead.save();
   }
 
-  async getAllLeads(companyId?: string) {
-    return await instagram_lead.find({ where: companyId ? { company_id: companyId } : {}, order: { last_message_time: 'DESC' } });
+  async getAllLeads(companyId: string, isQualified?: boolean) {
+    const where: any = { company_id: companyId as any };
+    if (isQualified === true) where.is_qualified = true;
+    if (isQualified === false) where.is_qualified = false;
+    // If undefined, we don't add the filter, showing all leads.
+
+    return await instagram_lead.find({ 
+      where, 
+      order: { last_message_time: 'DESC' } 
+    });
   }
 
   async getMessagesByLead(leadId: string, companyId?: string) {
-    const whereCondition: any = { lead_id: leadId };
-    if (companyId) whereCondition.company_id = companyId;
     return await instagram_message.find({
-      where: whereCondition,
+      where: { lead_id: leadId, company_id: companyId },
       order: { created_on: 'ASC' }
     });
   }
 
-
-  private async sendInstagramMessage(recipientId: string, text: string, dynamicToken?: string) {
-    const PAGE_ACCESS_TOKEN = (dynamicToken || process.env['IG_PAGE_ACCESS_TOKEN'] || '').trim();
-    // Using v21.0 to match our successful fetch endpoint
-    const url = `https://graph.facebook.com/v21.0/me/messages`;
-
+  private async sendInstagramMessage(recipientId: string, text: string, token: string) {
     try {
-      console.log(`[REPLY] Sending response to: ${recipientId}`);
-      await axios.post(url, {
-        recipient: { id: recipientId },
-        message: { text: text }
-      }, {
-        headers: { 'Authorization': `Bearer ${PAGE_ACCESS_TOKEN}` }
+      const url = `https://graph.facebook.com/v21.0/me/messages`;
+      await axios.post(url, { recipient: { id: recipientId }, message: { text } }, {
+        headers: { 'Authorization': `Bearer ${token}` }
       });
-      console.log(`[REPLY SUCCESS] Message sent to ${recipientId}`);
-    } catch (error) {
-      console.error('[REPLY FAILED] Meta rejected the outbound message:', JSON.stringify(error.response?.data?.error || error.message));
+    } catch (error: any) {
+      console.error('[IG ERROR] Message failed to send:', error.response?.data || error.message);
     }
   }
 
-  async getWalletBalance(companyId?: string) {
-    const companyData = await this.getCompany(companyId);
-    return companyData?.wallet_balance || 0;
+  async getKnowledgeBase(companyId: string) {
+    return await knowledge_base.find({ where: { company_id: companyId }, order: { created_on: 'DESC' } });
   }
 
-  private async getCompany(companyId?: string) {
-    return await CompanyTable.findOne({ where: companyId ? { id: companyId } : {} });
+  async createKnowledgeItem(companyId: string, data: any) {
+    const item = new knowledge_base();
+    item.company_id = companyId;
+    item.title = data.title;
+    item.content = data.content;
+    item.category = data.category || 'General';
+    item.created_by_id = '00000000-0000-0000-0000-000000000000';
+    item.created_on = new Date();
+    await item.save();
+    return { Success: true, Data: item };
   }
 
-  /**
-   * Fetches the real name of an Instagram user using their ID.
-   * Requires 'instagram_basic' permission and a Page Access Token.
-   */
-  private async fetchUserProfile(instagramId: string, dynamicToken?: string): Promise<{ name: string } | null> {
-    const rawToken = (dynamicToken || process.env.IG_PAGE_ACCESS_TOKEN || '').trim();
-    if (!rawToken || instagramId === 'FETCH_PENDING') return null;
+  async deleteKnowledgeItem(companyId: string, id: string) {
+    const item = await knowledge_base.findOne({ where: { id, company_id: companyId } });
+    if (!item) throw new Error('Knowledge item not found');
+    await item.remove();
+    return { Success: true };
+  }
 
-    try {
-      console.log(`[PROFILE_FETCH] Attempting to get name for: ${instagramId}`);
+  async uploadKnowledgeFile(companyId: string, file: any) {
+    let content = '';
+    const fileName = file.originalname;
+
+    if (fileName.endsWith('.pdf')) {
+      const pdfModule = require('pdf-parse');
       
-      const response = await axios.get(`https://graph.facebook.com/v21.0/${instagramId}`, {
-        params: {
-          fields: 'name',
-          access_token: rawToken
+      try {
+        // Support for modern pdf-parse (v2.x) class-based API
+        if (pdfModule.PDFParse) {
+          const parser = new pdfModule.PDFParse({ 
+            data: file.buffer,
+            verbosity: 0 
+          });
+          await parser.load();
+          const result = await parser.getText();
+          content = result.text;
+        } 
+        // Support for classic pdf-parse (v1.x) function-based API
+        else {
+          const parseFunction = typeof pdfModule === 'function' ? pdfModule : pdfModule.default;
+          if (typeof parseFunction === 'function') {
+            const data = await parseFunction(file.buffer);
+            content = data.text;
+          } else {
+            throw new Error('PDF parsing library structure is unrecognized.');
+          }
         }
-      });
-
-      if (response.data && response.data.name) {
-        console.log(`[PROFILE_FETCH] Found real name: ${response.data.name}`);
-        return { name: response.data.name };
+      } catch (e: any) {
+        console.error('[PDF PARSE ERROR]', e.message);
+        throw new Error(`Failed to parse PDF: ${e.message}`);
       }
-    } catch (err) {
-      const apiError = err.response?.data?.error;
-      console.warn(`[PROFILE_FETCH_FAILED] Could not get real name for ${instagramId}. Falling back to default.`);
-      console.warn(`Error: ${apiError?.message || err.message}`);
-      
-      if (apiError?.code === 10 || apiError?.code === 200) {
-        console.warn('NOTE: This often happens in Development Mode or if "instagram_basic" permission is not yet approved.');
-      }
+    } else if (fileName.endsWith('.txt')) {
+      content = file.buffer.toString('utf-8');
+    } else {
+      throw new Error('Unsupported file format. Please upload PDF or TXT.');
     }
-    return null;
+
+    if (!content.trim()) throw new Error('File is empty.');
+
+    const item = new knowledge_base();
+    item.company_id = companyId;
+    item.title = fileName;
+    item.content = content.trim();
+    item.category = 'Document';
+    item.created_by_id = '00000000-0000-0000-0000-000000000000';
+    item.created_on = new Date();
+    await item.save();
+
+    return { Success: true, Data: item };
   }
 
-  async updateIntegrationSettings(companyId: string, data: { appId: string, appSecret: string }) {
+  async updateWelcomeMessage(companyId: string, message: string) {
     const company = await CompanyTable.findOneBy({ id: companyId as any });
     if (!company) throw new Error('Company not found');
-
-    company.instagram_app_id = data.appId;
-    company.instagram_app_secret = data.appSecret;
+    company.welcome_message = message;
     await company.save();
-
     return { Success: true };
   }
 
   async getIntegrationSettings(companyId: string) {
     const company = await CompanyTable.findOneBy({ id: companyId as any });
-    if (!company) throw new Error('Company not found');
-
     return {
       Success: true,
       Data: {
-        appId: company.instagram_app_id,
-        appSecret: company.instagram_app_secret ? '********' : '',
-        isConnected: !!company.instagram_business_id,
-        business_id: company.instagram_business_id,
-        page_name: company.instagram_username || 'Connected Account'
+        isConnected: !!company?.instagram_business_id,
+        business_id: company?.instagram_business_id,
+        page_name: company?.instagram_username || 'Connected Account',
+        welcome_message: company?.welcome_message
       }
     };
+  }
+
+  async updateIntegrationSettings(companyId: string, data: any) {
+    const company = await CompanyTable.findOneBy({ id: companyId as any });
+    if (!company) throw new Error('Company not found');
+    if (data.welcome_message !== undefined) company.welcome_message = data.welcome_message;
+    await company.save();
+    return { Success: true };
+  }
+
+  async getWalletBalance(companyId: string) {
+    const company = await CompanyTable.findOneBy({ id: companyId as any });
+    return company?.wallet_balance || 0;
+  }
+
+  async getPrompt(companyId: string) {
+    const company = await CompanyTable.findOne({ where: { id: companyId as any } });
+    return { prompt: company?.system_prompt || '' };
+  }
+
+  async updatePrompt(companyId: string, prompt: string) {
+    const company = await CompanyTable.findOne({ where: { id: companyId as any } });
+    if (company) {
+      company.system_prompt = prompt;
+      await company.save();
+    }
+    return { success: true };
   }
 }

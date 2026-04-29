@@ -1,8 +1,9 @@
 import { AuditLogIdentity } from "@Helper/AuditLog.decorators";
-import { Column, Entity, Index, JoinColumn, ManyToOne } from "typeorm";
+import { Column, Entity, Index, JoinColumn, ManyToOne, OneToMany } from "typeorm";
 import { BaseTable } from "../BaseTable";
 import { country } from "./country";
 import { currency } from "./currency";
+import { user } from "./user";
 
 @Entity()
 export class company extends BaseTable {
@@ -25,6 +26,12 @@ export class company extends BaseTable {
   @Column({ type: 'uuid' })
   @Index()
   currency_id: string;
+
+  @Column({ type: 'text', nullable: true })
+  system_prompt: string;
+
+  @OneToMany(() => user, (u) => u.company)
+  users: user[];
 
   @ManyToOne(() => currency, { onDelete: "RESTRICT" })
   @JoinColumn({ name: "currency_id" })
@@ -80,4 +87,7 @@ export class company extends BaseTable {
 
   @Column({ type: 'text', nullable: true })
   instagram_profile_picture_url: string;
+
+  @Column({ type: 'text', nullable: true })
+  welcome_message: string;
 }

@@ -31,4 +31,7 @@ export class instagram_lead extends BaseTable {
 
   @Column({ type: 'text', nullable: true })
   notes: string;
+
+  @Column({ type: 'boolean', default: false })
+  is_qualified: boolean;
 }
