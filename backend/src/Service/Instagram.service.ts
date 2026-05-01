@@ -36,9 +36,9 @@ export class InstagramService {
           fb_exchange_token: userToken
         }
       });
-      
+
       const longLivedUserToken = exchangeRes.data.access_token;
-      
+
       const pagesRes = await axios.get(`https://graph.facebook.com/v21.0/me/accounts`, {
         params: {
           fields: 'name,access_token,instagram_business_account',
@@ -138,21 +138,21 @@ export class InstagramService {
     const companyId = company?.id;
 
     let lead = await instagram_lead.findOne({ where: { instagram_handle: context.instagram_handle, company_id: companyId } });
-    
+
     if (!lead) {
       lead = new instagram_lead();
       lead.company_id = companyId;
       lead.instagram_handle = context.instagram_handle;
       lead.customer_name = `User_${context.instagram_handle.slice(-4)}`;
       lead.lead_status = 'New';
-      
+
       try {
         const profileRes = await axios.get(`https://graph.facebook.com/v21.0/${context.instagram_handle}?fields=name,profile_pic&access_token=${company?.instagram_access_token}`);
         if (profileRes.data.name) lead.customer_name = profileRes.data.name;
       } catch (e: any) {
         console.error('[IG PROFILE ERROR] Could not fetch profile details:', e.message);
       }
-      
+
       lead.created_by_id = '00000000-0000-0000-0000-000000000000';
       lead.created_on = new Date();
       await lead.save();
@@ -178,28 +178,28 @@ export class InstagramService {
     // 1. Check for Direct FAQ Match (Fuzzy Word Match)
     const knowledgeItems = await knowledge_base.find({ where: { company_id: companyId } });
     console.log(`[FAQ DEBUG] Checking ${knowledgeItems.length} items in Brain Base for company ${companyId}`);
-    
+
     const normalize = (str: string) => str.toLowerCase().replace(/[^a-z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim();
     const queryWords = normalize(context.message_text).split(' ');
     console.log(`[FAQ DEBUG] Normalized Query Words: ${JSON.stringify(queryWords)}`);
-    
+
     for (const item of knowledgeItems) {
       const titleWords = normalize(item.title).split(' ');
       // Check if ALL words in the FAQ title exist in the user's message (fuzzy)
       const matchCount = titleWords.filter(tw => queryWords.some(qw => qw.includes(tw) || tw.includes(qw))).length;
       const matchPercentage = matchCount / titleWords.length;
-      
-      console.log(`[FAQ DEBUG] Comparing with "${item.title}" | Match: ${matchCount}/${titleWords.length} (${Math.round(matchPercentage*100)}%)`);
+
+      console.log(`[FAQ DEBUG] Comparing with "${item.title}" | Match: ${matchCount}/${titleWords.length} (${Math.round(matchPercentage * 100)}%)`);
 
       if (matchPercentage >= 0.8) { // 80% word match
         console.log(`[FAQ MATCH] Found fuzzy match: ${item.title}`);
-        const directResponse: any = { 
-          reply: item.content, 
+        const directResponse: any = {
+          reply: item.content,
           action: 'faq',
           status_update: 'Qualified',
           notes: `Matched FAQ: ${item.title}`
         };
-        
+
         // Promote to lead if they match an FAQ
         lead.is_qualified = true;
         await lead.save();
@@ -212,7 +212,7 @@ export class InstagramService {
 
     // 2. Fallback to AI if no direct match
     const aiResponse = await this.generateAiReply(context.message_text, lead, companyId);
-    
+
     if (aiResponse.reply) {
       // Update Lead metadata if AI suggests changes
       if (aiResponse.lead_status) lead.lead_status = aiResponse.lead_status;
@@ -237,7 +237,7 @@ export class InstagramService {
     const historyText = history.slice(-10).map(m => `${m.direction}: ${m.message_text}`).join('\n');
 
     const company = await CompanyTable.findOne({ where: { id: companyId } });
-    
+
     const defaultPrompt = `
 You are Maya, a warm and polite sales assistant for a clothing brand.
 You genuinely care about helping customers find the right product.
@@ -302,10 +302,11 @@ BEHAVIOR RULES
 ═══════════════════════════════
 1. Answer only from the knowledge base. Never guess or make up product details.
 2. If something is not in the knowledge base, say warmly:
-   "Let me check that for you and get back to you shortly! 😊"
 3. Keep replies short and warm — 2 to 3 sentences is ideal.
 4. Use 1 or 2 emojis naturally — never overdo it.
 5. Always close with a gentle next step (size? color? shall I reserve one for you?).
+6. NEVER echo the user's statement back to them as your own. If the user says "I want a shirt", you MUST reply as the store (e.g. "We have great shirts!"). Do NOT say "I want a shirt".
+7. Be extremely careful in Tanglish to not use words like "ennakku" (to me) when describing the customer's needs. Use "ungalukku" (to you) instead.
 
 ═══════════════════════════════
 OUTPUT FORMAT (JSON ONLY)
@@ -324,7 +325,12 @@ Return ONLY valid JSON. No extra text outside it.
 `;
 
     let customPrompt = company?.system_prompt || defaultPrompt;
-    
+
+    // Always append strict perspective rule to prevent echoing bugs even if they use a custom prompt
+    if (company?.system_prompt) {
+      customPrompt += `\n\nCRITICAL RULE: Never echo the user's request from your own perspective. Respond as the store. Use "we" and "you" (or "ungalukku" in Tanglish). Never say "I want" if the user wants something. Return ONLY valid JSON format.`;
+    }
+
     // Replace placeholders in custom prompt
     const prompt = customPrompt
       .replace(/\${context}/g, context)
@@ -366,14 +372,14 @@ Return ONLY valid JSON. No extra text outside it.
     try {
       const kbRepo = await knowledge_base.find({ where: { company_id: companyId } });
       if (!kbRepo || kbRepo.length === 0) return "No specific data provided.";
-      
+
       const query = messageText.toLowerCase();
-      const relevant = kbRepo.filter(item => 
-        query.includes(item.title.toLowerCase()) || 
+      const relevant = kbRepo.filter(item =>
+        query.includes(item.title.toLowerCase()) ||
         query.split(' ').some(w => w.length > 3 && item.content.toLowerCase().includes(w))
       );
 
-      return relevant.length > 0 
+      return relevant.length > 0
         ? relevant.map(i => `${i.title}: ${i.content}`).join('\n')
         : kbRepo.slice(0, 2).map(i => `${i.title}: ${i.content}`).join('\n');
     } catch (err) {
@@ -416,7 +422,7 @@ Return ONLY valid JSON. No extra text outside it.
 
     // Notify the UI via WebSocket
     this.instagramGateway.emitNewMessage({ ...outboundMsg, lead });
-    
+
     lead.last_message_time = new Date();
     await lead.save();
   }
@@ -427,9 +433,9 @@ Return ONLY valid JSON. No extra text outside it.
     if (isQualified === false) where.is_qualified = false;
     // If undefined, we don't add the filter, showing all leads.
 
-    return await instagram_lead.find({ 
-      where, 
-      order: { last_message_time: 'DESC' } 
+    return await instagram_lead.find({
+      where,
+      order: { last_message_time: 'DESC' }
     });
   }
 
@@ -480,18 +486,18 @@ Return ONLY valid JSON. No extra text outside it.
 
     if (fileName.endsWith('.pdf')) {
       const pdfModule = require('pdf-parse');
-      
+
       try {
         // Support for modern pdf-parse (v2.x) class-based API
         if (pdfModule.PDFParse) {
-          const parser = new pdfModule.PDFParse({ 
+          const parser = new pdfModule.PDFParse({
             data: file.buffer,
-            verbosity: 0 
+            verbosity: 0
           });
           await parser.load();
           const result = await parser.getText();
           content = result.text;
-        } 
+        }
         // Support for classic pdf-parse (v1.x) function-based API
         else {
           const parseFunction = typeof pdfModule === 'function' ? pdfModule : pdfModule.default;
