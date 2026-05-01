@@ -15,7 +15,7 @@ const Leads: React.FC = () => {
   const fetchLeads = async () => {
     try {
       setIsLoading(true);
-      const res = await getLeads(true); // Fetch ONLY qualified leads
+      const res = await getLeads(true);
       setLeads(res?.Data || []);
     } catch (error) {
       console.error('Error fetching leads:', error);
@@ -30,107 +30,103 @@ const Leads: React.FC = () => {
   );
 
   return (
-    <div className="leads-page" style={{ height: '100%', display: 'flex', flexDirection: 'column', gap: '24px' }}>
-      <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+    <div className="flex flex-col gap-8 h-full animate-in fade-in duration-700">
+      <div className="flex justify-between items-end">
         <div>
-          <h1 style={{ margin: 0, fontSize: '1.8rem' }}>Lead Management</h1>
-          <p style={{ margin: '8px 0 0', color: 'var(--text-dim)' }}>Manage and track your discovered Instagram leads.</p>
+          <h1 className="text-3xl font-bold text-zinc-100 mb-2">Lead Intelligence</h1>
+          <p className="text-zinc-400 font-medium">Manage and track your AI-discovered Instagram leads.</p>
         </div>
-        <div className="header-actions" style={{ display: 'flex', gap: '12px' }}>
-          <div className="search-input glass-card" style={{ display: 'flex', alignItems: 'center', padding: '8px 16px', gap: '8px' }}>
-            <Search size={18} color="var(--text-dim)" />
+        <div className="flex gap-4">
+          <div className="relative group">
+            <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500 group-focus-within:text-purple-400 transition-colors" />
             <input 
               type="text" 
               placeholder="Search leads..." 
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              style={{ background: 'transparent', border: 'none', color: 'var(--foreground)', outline: 'none' }}
+              className="w3-input pl-12 w-64 shadow-sm"
             />
           </div>
-          <button className="glass-card hover-glow" style={{ padding: '8px 16px', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', border: '1px solid var(--glass-border)', color: 'var(--foreground)' }}>
-            <Filter size={18} /> Filter
+          <button className="flex items-center gap-2 px-4 py-2.5 bg-zinc-800/50 border border-white/5 rounded-xl text-zinc-300 font-bold hover:bg-zinc-800 hover:text-white transition-all shadow-sm">
+            <Filter size={18} />
+            <span>Filter</span>
           </button>
         </div>
       </div>
 
-      <div className="leads-table-container glass-card premium-scroll" style={{ flexGrow: 1, overflowX: 'auto', padding: '0' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
-          <thead>
-            <tr style={{ borderBottom: '1px solid var(--glass-border)' }}>
-              <th style={{ padding: '20px 24px', color: 'var(--text-dim)', fontWeight: 500, fontSize: '0.85rem' }}>CUSTOMER</th>
-              <th style={{ padding: '20px 24px', color: 'var(--text-dim)', fontWeight: 500, fontSize: '0.85rem' }}>STATUS</th>
-              <th style={{ padding: '20px 24px', color: 'var(--text-dim)', fontWeight: 500, fontSize: '0.85rem' }}>TOTAL MSGS</th>
-              <th style={{ padding: '20px 24px', color: 'var(--text-dim)', fontWeight: 500, fontSize: '0.85rem' }}>LAST ACTIVITY</th>
-              <th style={{ padding: '20px 24px', color: 'var(--text-dim)', fontWeight: 500, fontSize: '0.85rem', textAlign: 'right' }}>ACTIONS</th>
-            </tr>
-          </thead>
-          <tbody>
-            {isLoading ? (
-              <tr>
-                <td colSpan={5} style={{ padding: '100px', textAlign: 'center' }}>
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-                </td>
+      <div className="w3-card p-0 overflow-hidden flex-grow shadow-lg border-white/5 flex flex-col">
+        <div className="overflow-x-auto flex-grow">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="bg-zinc-900/50 border-b border-white/5">
+                <th className="px-8 py-5 text-[11px] font-bold text-zinc-500 uppercase tracking-widest">Customer Profile</th>
+                <th className="px-8 py-5 text-[11px] font-bold text-zinc-500 uppercase tracking-widest">Pipeline Status</th>
+                <th className="px-8 py-5 text-[11px] font-bold text-zinc-500 uppercase tracking-widest">Engagement</th>
+                <th className="px-8 py-5 text-[11px] font-bold text-zinc-500 uppercase tracking-widest">Last Signal</th>
+                <th className="px-8 py-5 text-[11px] font-bold text-zinc-500 uppercase tracking-widest text-right">Actions</th>
               </tr>
-            ) : filteredLeads.length === 0 ? (
-              <tr>
-                <td colSpan={5} style={{ padding: '100px', textAlign: 'center', color: 'var(--text-dim)' }}>
-                  No leads found.
-                </td>
-              </tr>
-            ) : filteredLeads.map((lead) => (
-              <tr key={lead.id} className="table-row-hover" style={{ borderBottom: '1px solid var(--glass-border)', transition: 'background 0.3s' }}>
-                <td style={{ padding: '16px 24px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    <div style={{ 
-                      width: '36px', height: '36px', borderRadius: '10px', 
-                      background: 'linear-gradient(135deg, #0ea5e9, #000000)',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      fontSize: '0.9rem', fontWeight: 700, color: '#fff'
-                    }}>
-                      {lead.customer_name[0]}
+            </thead>
+            <tbody className="divide-y divide-white/5">
+              {isLoading ? (
+                <tr>
+                  <td colSpan={5} className="py-32">
+                    <div className="flex justify-center">
+                      <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-purple-500"></div>
                     </div>
-                    <div>
-                      <div style={{ fontWeight: 600, fontSize: '0.95rem' }}>{lead.customer_name}</div>
-                      <div style={{ fontSize: '0.8rem', color: 'var(--text-dim)' }}>@{lead.instagram_handle}</div>
+                  </td>
+                </tr>
+              ) : filteredLeads.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="py-32 text-center text-zinc-500 font-medium">
+                    No leads found matching your criteria.
+                  </td>
+                </tr>
+              ) : filteredLeads.map((lead) => (
+                <tr key={lead.id} className="hover:bg-purple-500/5 transition-colors duration-300 group">
+                  <td className="px-8 py-5">
+                    <div className="flex items-center gap-4">
+                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-blue-600 flex items-center justify-center text-white font-bold text-base shadow-lg shadow-purple-500/20 group-hover:scale-110 transition-transform border border-white/10">
+                        {lead.customer_name[0]}
+                      </div>
+                      <div>
+                        <div className="font-bold text-zinc-100 group-hover:text-purple-400 transition-colors">{lead.customer_name}</div>
+                        <div className="text-xs text-zinc-500 font-medium mt-0.5">@{lead.instagram_handle}</div>
+                      </div>
                     </div>
-                  </div>
-                </td>
-                <td style={{ padding: '16px 24px' }}>
-                  <span style={{ 
-                    padding: '4px 10px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 600,
-                    background: lead.lead_status === 'Hot' ? 'rgba(16, 185, 129, 0.1)' : '#F3F4F6',
-                    color: lead.lead_status === 'Hot' ? '#10B981' : '#6B7280',
-                    border: '1px solid ' + (lead.lead_status === 'Hot' ? 'rgba(16, 185, 129, 0.2)' : '#E5E7EB')
-                  }}>
-                    {lead.lead_status}
-                  </span>
-                </td>
-                <td style={{ padding: '16px 24px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--text-dim)' }}>
-                    <MessageCircle size={14} />
-                    <span>--</span>
-                  </div>
-                </td>
-                <td style={{ padding: '16px 24px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--text-dim)', fontSize: '0.85rem' }}>
-                    <Calendar size={14} />
-                    <span>{new Date().toLocaleDateString()}</span>
-                  </div>
-                </td>
-                <td style={{ padding: '16px 24px', textAlign: 'right' }}>
-                  <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px' }}>
-                    <button className="icon-btn-glass" title="View Conversation">
-                      <ExternalLink size={16} />
-                    </button>
-                    <button className="icon-btn-glass">
-                      <MoreHorizontal size={16} />
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                  </td>
+                  <td className="px-8 py-5">
+                    <span className={`px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider border
+                      ${lead.lead_status === 'Hot' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-zinc-800 text-zinc-400 border-white/5'}`}>
+                      {lead.lead_status}
+                    </span>
+                  </td>
+                  <td className="px-8 py-5">
+                    <div className="flex items-center gap-2 text-zinc-400 font-medium">
+                      <MessageCircle size={14} className="text-zinc-600" />
+                      <span>--</span>
+                    </div>
+                  </td>
+                  <td className="px-8 py-5">
+                    <div className="flex items-center gap-2 text-zinc-400 font-medium">
+                      <Calendar size={14} className="text-zinc-600" />
+                      <span>{new Date().toLocaleDateString()}</span>
+                    </div>
+                  </td>
+                  <td className="px-8 py-5 text-right">
+                    <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button className="p-2.5 bg-zinc-800/50 border border-white/5 rounded-xl text-zinc-400 hover:text-purple-400 hover:bg-purple-500/10 hover:border-purple-500/20 transition-all shadow-sm" title="View Intelligence">
+                        <ExternalLink size={16} />
+                      </button>
+                      <button className="p-2.5 bg-zinc-800/50 border border-white/5 rounded-xl text-zinc-400 hover:text-zinc-200 hover:bg-zinc-700 transition-all shadow-sm">
+                        <MoreHorizontal size={16} />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

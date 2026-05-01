@@ -15,7 +15,6 @@ import {
   Clock
 } from 'lucide-react';
 
-// Simulated data for charts
 const interactionData = [
   { day: 'Mon', msgs: 45, leads: 12 },
   { day: 'Tue', msgs: 52, leads: 15 },
@@ -33,26 +32,20 @@ const funnelData = [
   { name: 'Converted', value: 100 },
 ];
 
-const COLORS = ['#0ea5e9', '#0284c7', '#38bdf8', '#000000'];
-
-const DashboardCard: React.FC<{ title: string; value: string | number; icon: any; trend: string; color?: string }> = ({ title, value, icon: Icon, trend, color = 'var(--primary)' }) => (
-  <div className="glass-card hover-glow" style={{ padding: '24px', position: 'relative', overflow: 'hidden' }}>
-    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
-      <div style={{ padding: '10px', background: 'var(--glass-border)', borderRadius: '12px' }}>
-        <Icon size={20} style={{ color }} />
+const DashboardCard: React.FC<{ title: string; value: string | number; icon: any; trend: string; color?: string }> = ({ title, value, icon: Icon, trend, color }) => (
+  <div className="w3-card group">
+    <div className="flex justify-between items-start mb-6">
+      <div className="p-3.5 bg-zinc-800/50 rounded-2xl text-purple-400 group-hover:bg-purple-500/10 transition-all duration-500 border border-white/5">
+        <Icon size={24} />
       </div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#0ea5e9', fontSize: '0.8rem', fontWeight: 600 }}>
+      <div className="flex items-center gap-1 text-emerald-400 text-xs font-bold bg-emerald-500/10 px-2 py-1 rounded-lg border border-emerald-500/20">
         {trend} <ArrowUpRight size={14} />
       </div>
     </div>
     <div>
-      <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-dim)', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.05em' }}>{title}</p>
-      <h3 style={{ margin: '8px 0 0', fontSize: '1.8rem', fontWeight: 700 }}>{value}</h3>
+      <p className="text-[11px] font-bold text-zinc-500 uppercase tracking-widest mb-1">{title}</p>
+      <h3 className="text-3xl font-bold text-zinc-100 tabular-nums">{value}</h3>
     </div>
-    <div style={{ 
-      position: 'absolute', bottom: '-10px', right: '-10px', width: '80px', height: '80px', 
-      background: color, filter: 'blur(50px)', opacity: 0.05, borderRadius: '50%' 
-    }}></div>
   </div>
 );
 
@@ -84,102 +77,104 @@ const Dashboard: React.FC = () => {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-full">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500"></div>
       </div>
     );
   }
 
   return (
-    <div className="dashboard-page" style={{ height: '100%', display: 'flex', flexDirection: 'column', gap: '32px', overflowY: 'auto', paddingRight: '8px' }}>
+    <div className="flex flex-col gap-8 h-full animate-in fade-in duration-700">
       
-      <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div className="flex justify-between items-end">
         <div>
-          <h1 style={{ margin: 0, fontSize: '1.8rem' }}>Welcome back, Admin</h1>
-          <p style={{ margin: '8px 0 0', color: 'var(--text-dim)' }}>Here's what's happening with your Instagram CRM today.</p>
+          <h1 className="text-3xl font-bold text-zinc-100 mb-2">Overview</h1>
+          <p className="text-zinc-400 font-medium">Monitoring your AI Instagram automation performance.</p>
         </div>
-        <button className="gradient-btn" style={{ padding: '10px 20px', borderRadius: '12px', fontSize: '0.9rem', fontWeight: 600 }}>
-          Export Report
+        <button className="w3-button-primary">
+          <TrendingUp size={18} />
+          <span>Generate Report</span>
         </button>
       </div>
 
-      <div className="stats-grid" style={{ 
-        display: 'grid', 
-        gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', 
-        gap: '24px' 
-      }}>
-        <DashboardCard title="Total Leads" value={leadCount} icon={Users} trend="+12.5%" color="#0ea5e9" />
-        <DashboardCard title="Wallet Balance" value={`$${Number(balance).toFixed(2)}`} icon={Wallet} trend="+5.2%" color="#0ea5e9" />
-        <DashboardCard title="Interactions" value="1,247" icon={MessageSquare} trend="+24.8%" color="#000000" />
-        <DashboardCard title="Active Funnel" value="38" icon={Target} trend="+8.1%" color="#0ea5e9" />
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <DashboardCard title="Total Leads" value={leadCount} icon={Users} trend="+12.5%" />
+        <DashboardCard title="Wallet Balance" value={`$${Number(balance).toFixed(2)}`} icon={Wallet} trend="+5.2%" />
+        <DashboardCard title="Interactions" value="1,247" icon={MessageSquare} trend="+24.8%" />
+        <DashboardCard title="Active Funnel" value="38" icon={Target} trend="+8.1%" />
       </div>
 
-      <div className="charts-row" style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '24px' }}>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
-        {/* Interaction History Chart */}
-        <div className="glass-card" style={{ padding: '24px', minHeight: '400px', display: 'flex', flexDirection: 'column' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
-            <h3 style={{ margin: 0 }}>Interaction Analytics</h3>
-            <div style={{ display: 'flex', gap: '12px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.8rem', color: 'var(--text-dim)' }}>
-                <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#0ea5e9' }}></div> Messages
+        <div className="lg:col-span-2 w3-card flex flex-col h-[450px]">
+          <div className="flex justify-between items-center mb-10">
+            <h3 className="text-xl font-bold text-zinc-100">Engagement Analytics</h3>
+            <div className="flex gap-6">
+              <div className="flex items-center gap-2 text-xs font-bold text-zinc-400">
+                <div className="w-2.5 h-2.5 rounded-full bg-purple-500 shadow-glow-purple"></div> Messages
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.8rem', color: 'var(--text-dim)' }}>
-                <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#000000' }}></div> New Leads
+              <div className="flex items-center gap-2 text-xs font-bold text-zinc-400">
+                <div className="w-2.5 h-2.5 rounded-full bg-blue-500 shadow-glow-blue"></div> New Leads
               </div>
             </div>
           </div>
-          <div style={{ flexGrow: 1, width: '100%', minHeight: '300px' }}>
+          <div className="flex-grow w-full">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={interactionData}>
                 <defs>
                   <linearGradient id="colorMsgs" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="var(--primary)" stopOpacity={0.3}/>
-                    <stop offset="95%" stopColor="var(--primary)" stopOpacity={0}/>
+                    <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.3}/>
+                    <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0}/>
+                  </linearGradient>
+                  <linearGradient id="colorLeads" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3}/>
+                    <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
-                <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{fill: 'var(--text-dim)', fontSize: 12}} dy={10} />
-                <YAxis axisLine={false} tickLine={false} tick={{fill: 'var(--text-dim)', fontSize: 12}} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#27272a" vertical={false} />
+                <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{fill: '#71717a', fontSize: 12, fontWeight: 500}} dy={15} />
+                <YAxis axisLine={false} tickLine={false} tick={{fill: '#71717a', fontSize: 12, fontWeight: 500}} />
                 <Tooltip 
-                  contentStyle={{ background: 'var(--card)', border: '1px solid var(--glass-border)', borderRadius: '12px', backdropFilter: 'blur(10px)' }}
-                  itemStyle={{ color: 'var(--foreground)' }}
+                  contentStyle={{ background: '#18181b', border: '1px solid #27272a', borderRadius: '12px', boxShadow: '0 10px 25px -5px rgba(0,0,0,0.5)', color: '#fff' }}
+                  itemStyle={{ color: '#fff' }}
                 />
-                <Area type="monotone" dataKey="msgs" stroke="#0ea5e9" fillOpacity={1} fill="url(#colorMsgs)" strokeWidth={3} />
-                <Area type="monotone" dataKey="leads" stroke="#000000" fill="transparent" strokeWidth={3} />
+                <Area type="monotone" dataKey="msgs" stroke="#8b5cf6" fillOpacity={1} fill="url(#colorMsgs)" strokeWidth={3} />
+                <Area type="monotone" dataKey="leads" stroke="#3b82f6" fillOpacity={1} fill="url(#colorLeads)" strokeWidth={3} />
               </AreaChart>
             </ResponsiveContainer>
           </div>
         </div>
 
-        {/* Lead Status Chart */}
-        <div className="glass-card" style={{ padding: '24px', display: 'flex', flexDirection: 'column' }}>
-          <h3 style={{ marginBottom: '24px' }}>Lead Distribution</h3>
-          <div style={{ flexGrow: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <ResponsiveContainer width="100%" height={250}>
+        <div className="w3-card flex flex-col h-[450px]">
+          <h3 className="text-xl font-bold text-zinc-100 mb-8">Lead Distribution</h3>
+          <div className="flex-grow flex items-center justify-center">
+            <ResponsiveContainer width="100%" height={260}>
               <PieChart>
                 <Pie
                   data={funnelData}
                   cx="50%"
                   cy="50%"
-                  innerRadius={60}
-                  outerRadius={80}
-                  paddingAngle={8}
+                  innerRadius={75}
+                  outerRadius={100}
+                  paddingAngle={5}
                   dataKey="value"
+                  stroke="none"
                 >
                   {funnelData.map((_, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    <Cell key={`cell-${index}`} fill={['#8b5cf6', '#3b82f6', '#14b8a6', '#f43f5e'][index % 4]} />
                   ))}
                 </Pie>
-                <Tooltip />
+                <Tooltip contentStyle={{ background: '#18181b', border: '1px solid #27272a', borderRadius: '12px', color: '#fff' }} />
               </PieChart>
             </ResponsiveContainer>
           </div>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', marginTop: '20px' }}>
+          <div className="grid grid-cols-2 gap-4 mt-8">
             {funnelData.map((entry, index) => (
-              <div key={entry.name} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.8rem' }}>
-                <div style={{ width: '8px', height: '8px', borderRadius: '2px', background: COLORS[index % COLORS.length] }}></div>
-                <span style={{ color: 'var(--text-dim)' }}>{entry.name}</span>
-                <span style={{ fontWeight: 600 }}>{entry.value}</span>
+              <div key={entry.name} className="flex flex-col gap-1 p-2 rounded-xl bg-zinc-800/20 border border-white/5">
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full" style={{ background: ['#8b5cf6', '#3b82f6', '#14b8a6', '#f43f5e'][index % 4] }}></div>
+                  <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider">{entry.name}</span>
+                </div>
+                <span className="text-base font-bold text-zinc-100 ml-4">{entry.value}</span>
               </div>
             ))}
           </div>
@@ -187,49 +182,75 @@ const Dashboard: React.FC = () => {
 
       </div>
 
-      <div className="bottom-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', marginBottom: '24px' }}>
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 mb-8">
         
-        {/* Recent Webhook Events */}
-        <div className="glass-card" style={{ padding: '24px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-            <h3 style={{ margin: 0 }}>System Health</h3>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.75rem', color: '#10b981' }}>
-              <Zap size={14} fill="#10b981" /> Operational
+        <div className="w3-card flex flex-col justify-between">
+          <div>
+            <div className="flex justify-between items-start mb-10">
+              <div>
+                <h3 className="text-xl font-bold text-zinc-100 mb-1">System Health</h3>
+                <p className="text-xs text-zinc-500 font-medium">Real-time infrastructure monitoring</p>
+              </div>
+              <div className="flex items-center gap-2 text-[10px] font-bold text-emerald-400 bg-emerald-500/10 px-3 py-1.5 rounded-xl uppercase tracking-widest border border-emerald-500/20">
+                <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></div>
+                All Operational
+              </div>
             </div>
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-              <div style={{ padding: '8px', background: 'rgba(16, 185, 129, 0.1)', borderRadius: '8px', color: '#10b981' }}><TrendingUp size={16} /></div>
-              <div style={{ flexGrow: 1 }}>
-                <div style={{ fontSize: '0.9rem', fontWeight: 500 }}>API Latency</div>
-                <div style={{ height: '4px', background: '#e2e8f0', borderRadius: '2px', marginTop: '6px' }}>
-                  <div style={{ width: '85%', height: '100%', background: '#10b981', borderRadius: '2px' }}></div>
+            <div className="space-y-10">
+              <div className="flex gap-5 items-center group">
+                <div className="p-4 bg-zinc-800/50 rounded-2xl text-zinc-400 group-hover:bg-purple-500/10 group-hover:text-purple-400 transition-all duration-500 border border-white/5 shrink-0">
+                  <TrendingUp size={20} />
+                </div>
+                <div className="flex-grow">
+                  <div className="flex justify-between items-center mb-3">
+                    <span className="text-xs font-bold text-zinc-500 uppercase tracking-widest">API Latency</span>
+                    <span className="text-sm font-bold text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded-md border border-purple-500/20">45ms</span>
+                  </div>
+                  <div className="h-2 bg-zinc-800 rounded-full overflow-hidden border border-white/5">
+                    <div className="h-full bg-gradient-to-r from-purple-600 to-indigo-500 rounded-full shadow-glow-purple" style={{ width: '85%' }}></div>
+                  </div>
                 </div>
               </div>
-              <span style={{ fontSize: '0.8rem', color: 'var(--text-dim)' }}>45ms</span>
-            </div>
-            <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-              <div style={{ padding: '8px', background: 'rgba(138, 43, 226, 0.1)', borderRadius: '8px', color: 'var(--primary)' }}><Clock size={16} /></div>
-              <div style={{ flexGrow: 1 }}>
-                <div style={{ fontSize: '0.9rem', fontWeight: 500 }}>Webhook Success Rate</div>
-                <div style={{ height: '4px', background: '#e2e8f0', borderRadius: '2px', marginTop: '6px' }}>
-                  <div style={{ width: '99.2%', height: '100%', background: 'var(--primary)', borderRadius: '2px' }}></div>
+              <div className="flex gap-5 items-center group">
+                <div className="p-4 bg-zinc-800/50 rounded-2xl text-zinc-400 group-hover:bg-blue-500/10 group-hover:text-blue-400 transition-all duration-500 border border-white/5 shrink-0">
+                  <Clock size={20} />
+                </div>
+                <div className="flex-grow">
+                  <div className="flex justify-between items-center mb-3">
+                    <span className="text-xs font-bold text-zinc-500 uppercase tracking-widest">Webhook Success</span>
+                    <span className="text-sm font-bold text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded-md border border-blue-500/20">99.2%</span>
+                  </div>
+                  <div className="h-2 bg-zinc-800 rounded-full overflow-hidden border border-white/5">
+                    <div className="h-full bg-gradient-to-r from-blue-600 to-cyan-500 rounded-full shadow-glow-blue" style={{ width: '99%' }}></div>
+                  </div>
                 </div>
               </div>
-              <span style={{ fontSize: '0.8rem', color: 'var(--text-dim)' }}>99.2%</span>
             </div>
           </div>
         </div>
 
-        {/* Quick Tips / Meta Status */}
-        <div className="glass-card" style={{ padding: '24px', background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.05), rgba(0, 0, 0, 0.05))' }}>
-          <h3 style={{ marginBottom: '16px' }}>Pro Tip</h3>
-          <p style={{ fontSize: '0.95rem', color: 'var(--text-dim)', lineHeight: 1.6 }}>
-            The AI is currently set to **Professional Tone**. You can adjust this in Settings to make it more casual or sales-oriented to improve conversion rates.
-          </p>
-          <button style={{ marginTop: '16px', background: 'transparent', border: '1px solid var(--glass-border)', color: '#0f172a', padding: '8px 16px', borderRadius: '8px', fontSize: '0.85rem', cursor: 'pointer' }}>
-            Adjust Response Tone
-          </button>
+        <div className="w3-card bg-gradient-to-br from-purple-900/40 to-indigo-900/40 border border-purple-500/20 text-white overflow-hidden relative min-h-[300px] flex flex-col justify-center">
+          <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
+          <div className="relative z-10 px-4">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="p-2 bg-purple-500/20 border border-purple-500/30 rounded-lg shadow-lg">
+                <Zap size={20} className="text-purple-300" />
+              </div>
+              <h3 className="text-lg font-bold uppercase tracking-[0.2em] text-purple-300 text-[10px]">AI Optimization Engine</h3>
+            </div>
+            <h2 className="text-2xl font-bold mb-4 leading-tight">Personality Tuning</h2>
+            <p className="text-sm font-medium leading-relaxed text-purple-200/80 mb-8 max-w-md">
+              Maya is currently using a <strong className="text-white">Professional Tone</strong>. Based on current lead behavior, switching to a <strong className="text-purple-300">Friendly Tone</strong> could increase engagement by up to 18%.
+            </p>
+            <button className="w3-button-primary bg-white/10 hover:bg-white/20 shadow-none border border-white/20 group">
+              <span>Adjust AI Persona</span>
+              <ArrowUpRight size={18} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+            </button>
+          </div>
+          <Zap className="absolute -bottom-20 -right-20 w-80 h-80 text-purple-500 opacity-20 rotate-12 blur-2xl" />
+          <div className="absolute top-0 right-0 p-8">
+            <div className="w-24 h-24 rounded-full border border-purple-500/30 animate-pulse shadow-[0_0_40px_rgba(168,85,247,0.2)]"></div>
+          </div>
         </div>
 
       </div>

@@ -7,7 +7,6 @@ const Automation: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
 
-  // Helper to get token
   const getHeaders = () => ({
     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
   });
@@ -21,8 +20,6 @@ const Automation: React.FC = () => {
       setIsLoading(true);
       const res = await api.get('/Instagram/Settings');
       if (res.data.Success) {
-        // Assuming welcome_message is returned in the settings
-        // Actually, I need to make sure getIntegrationSettings returns it
         setWelcomeMessage(res.data.Data?.welcome_message || '');
       }
     } catch (error) {
@@ -48,126 +45,123 @@ const Automation: React.FC = () => {
   };
 
   return (
-    <div className="automation-page" style={{ height: '100%', display: 'flex', flexDirection: 'column', gap: '32px' }}>
-      <div className="page-header">
-        <h1 style={{ margin: 0, fontSize: '1.8rem', display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <Zap className="text-sky-500" /> Automation Center
-        </h1>
-        <p style={{ margin: '8px 0 0', color: 'var(--text-dim)' }}>
-          Configure how your AI agent behaves when interacting with customers.
-        </p>
+    <div className="flex flex-col gap-8 h-full animate-in fade-in duration-700">
+      <div className="flex justify-between items-end">
+        <div>
+          <h1 className="text-3xl font-bold text-zinc-100 mb-2">Automation Center</h1>
+          <p className="text-zinc-400 font-medium">Configure how your AI agent behaves when interacting with customers.</p>
+        </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 350px', gap: '24px' }}>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="lg:col-span-2 space-y-8">
           
           {/* Welcome Message Card */}
-          <div className="glass-card" style={{ padding: '32px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px' }}>
-              <div>
-                <h3 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <MessageSquare className="text-sky-500" /> Welcome Message
+          <div className="w3-card border-white/5">
+            <div className="flex justify-between items-start mb-8">
+              <div className="flex-grow pr-12">
+                <h3 className="text-xl font-bold text-zinc-100 flex items-center gap-3 mb-2">
+                  <div className="p-2 bg-purple-500/10 rounded-lg text-purple-400 border border-purple-500/20"><MessageSquare size={20} /></div> Welcome Message
                 </h3>
-                <p style={{ margin: '8px 0 0', fontSize: '0.9rem', color: 'var(--text-dim)' }}>
-                  This message is sent automatically to every **new customer** who DMs you for the first time.
+                <p className="text-sm text-zinc-400 font-medium leading-relaxed">
+                  Sent automatically to every <strong className="text-purple-400">new customer</strong> who DMs you for the first time.
                 </p>
               </div>
-              <div className="toggle active"></div>
+              <div className="w-12 h-6 bg-purple-500 rounded-full relative cursor-pointer shadow-[0_0_15px_rgba(168,85,247,0.4)]">
+                <div className="absolute right-1 top-1 w-4 h-4 bg-white rounded-full"></div>
+              </div>
             </div>
 
-            <div style={{ position: 'relative' }}>
+            <div className="relative group">
               <textarea 
                 value={welcomeMessage}
                 onChange={(e) => setWelcomeMessage(e.target.value)}
-                placeholder="e.g. Hi there! Thanks for reaching out. Our team will be with you shortly. In the meantime, how can we help you?"
+                placeholder="e.g. Hi there! Thanks for reaching out..."
                 rows={6}
-                style={{ 
-                  width: '100%', 
-                  padding: '20px', 
-                  borderRadius: '16px', 
-                  background: 'var(--glass-border)', 
-                  border: '1px solid transparent',
-                  color: 'var(--text-main)',
-                  fontSize: '1rem',
-                  lineHeight: 1.6,
-                  resize: 'none',
-                  outline: 'none',
-                  transition: 'border 0.3s'
-                }}
-                className="focus-border-primary"
+                className="w-full w3-input p-6 text-base font-medium resize-none shadow-sm focus:ring-4 focus:ring-purple-500/10 bg-zinc-900/50 border-white/5"
               />
-              <div style={{ position: 'absolute', bottom: '12px', right: '12px', fontSize: '0.8rem', color: 'var(--text-dim)' }}>
-                {welcomeMessage.length} characters
+              <div className="absolute bottom-4 right-6 text-[10px] font-bold text-zinc-500 bg-zinc-900 px-2 py-1 rounded-md border border-white/5">
+                {welcomeMessage.length} CHARACTERS
               </div>
             </div>
 
-            <div style={{ marginTop: '24px', display: 'flex', justifyContent: 'flex-end' }}>
+            <div className="mt-8 flex justify-end">
               <button 
                 onClick={handleSave} 
                 disabled={isSaving}
-                className="gradient-btn" 
-                style={{ padding: '12px 32px', borderRadius: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}
+                className="w3-button-primary px-10 shadow-glow-purple"
               >
-                {isSaving ? <Loader2 size={18} className="animate-spin" /> : <Save size={18} />}
-                Save Changes
+                {isSaving ? <Loader2 size={20} className="animate-spin" /> : <Save size={20} />}
+                <span>Save Automation</span>
               </button>
             </div>
           </div>
 
           {/* AI Response Settings */}
-          <div className="glass-card" style={{ padding: '32px' }}>
-             <h3 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <Bot className="text-sky-500" /> AI Response Logic
+          <div className="w3-card border-white/5">
+             <h3 className="text-xl font-bold text-zinc-100 flex items-center gap-3 mb-2">
+                <div className="p-2 bg-purple-500/10 rounded-lg text-purple-400 border border-purple-500/20"><Bot size={20} /></div> AI Response Logic
              </h3>
-             <p style={{ margin: '8px 0 24px', fontSize: '0.9rem', color: 'var(--text-dim)' }}>
+             <p className="text-sm text-zinc-400 font-medium mb-8">
                 Fine-tune how the AI generates replies after the initial welcome.
              </p>
 
-             <div style={{ display: 'grid', gap: '20px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px', background: 'var(--glass-border)', borderRadius: '12px' }}>
+             <div className="space-y-4">
+                <div className="flex justify-between items-center p-6 bg-zinc-900/50 rounded-2xl border border-white/5">
                    <div>
-                      <div style={{ fontWeight: 600 }}>Response Delay</div>
-                      <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-dim)' }}>Simulate human typing by adding a small delay.</p>
+                      <div className="font-bold text-zinc-100 mb-1">Response Delay</div>
+                      <p className="text-xs text-zinc-500 font-medium">Simulate human typing by adding a small delay.</p>
                    </div>
-                   <select style={{ padding: '8px 12px', borderRadius: '8px', background: 'var(--bg-card)', border: 'none' }}>
+                   <select className="bg-zinc-800 border border-white/10 px-4 py-2 rounded-xl text-sm font-bold text-zinc-300 outline-none">
                       <option>Instant</option>
                       <option>2-5 seconds</option>
                       <option>5-10 seconds</option>
                    </select>
                 </div>
 
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px', background: 'var(--glass-border)', borderRadius: '12px' }}>
+                <div className="flex justify-between items-center p-6 bg-zinc-900/50 rounded-2xl border border-white/5">
                    <div>
-                      <div style={{ fontWeight: 600 }}>Human Handoff</div>
-                      <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-dim)' }}>Notify team if AI cannot answer a question.</p>
+                      <div className="font-bold text-zinc-100 mb-1">Human Handoff</div>
+                      <p className="text-xs text-zinc-500 font-medium">Notify team if AI cannot answer a question.</p>
                    </div>
-                   <div className="toggle active"></div>
+                   <div className="w-12 h-6 bg-purple-500 rounded-full relative cursor-pointer shadow-[0_0_15px_rgba(168,85,247,0.4)]">
+                      <div className="absolute right-1 top-1 w-4 h-4 bg-white rounded-full"></div>
+                   </div>
                 </div>
              </div>
           </div>
         </div>
 
         {/* Sidebar Info */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-          <div className="glass-card" style={{ padding: '24px', background: 'var(--primary-soft)' }}>
-            <h4 style={{ margin: '0 0 12px 0', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <Sparkles size={18} className="text-sky-500" /> Pro Tip
-            </h4>
-            <p style={{ margin: 0, fontSize: '0.85rem', lineHeight: 1.6, color: 'var(--text-dim)' }}>
-              A warm welcome message increases customer trust by 40%. Keep it short, friendly, and set clear expectations for when a human might jump in.
-            </p>
+        <div className="space-y-8">
+          <div className="w3-card bg-gradient-to-br from-purple-900 to-indigo-900 border border-purple-500/20 text-white overflow-hidden relative">
+            <div className="relative z-10">
+              <h4 className="font-bold flex items-center gap-2 mb-4 text-purple-200">
+                <Sparkles size={18} /> Pro Tip
+              </h4>
+              <p className="text-sm font-medium leading-relaxed text-purple-100/80">
+                A warm welcome message increases customer trust by 40%. Keep it short, friendly, and set clear expectations for when a human might jump in.
+              </p>
+            </div>
+            <Zap className="absolute -bottom-6 -right-6 w-32 h-32 text-purple-500 opacity-20 blur-xl" />
           </div>
 
-          <div className="glass-card" style={{ padding: '24px' }}>
-            <h4 style={{ margin: '0 0 16px 0' }}>Preview</h4>
-            <div style={{ background: 'var(--glass-border)', borderRadius: '12px', padding: '16px', fontSize: '0.85rem' }}>
-              <div style={{ color: 'var(--text-dim)', marginBottom: '8px', fontSize: '0.75rem' }}>Customer DMs you...</div>
-              <div style={{ background: 'var(--bg-card)', padding: '10px 14px', borderRadius: '14px 14px 14px 2px', width: 'fit-content', maxWidth: '80%', marginBottom: '12px' }}>
-                Hello!
-              </div>
-              <div style={{ color: 'var(--text-dim)', textAlign: 'right', marginBottom: '8px', fontSize: '0.75rem' }}>Your Agent replies...</div>
-              <div style={{ background: 'var(--primary)', color: 'white', padding: '10px 14px', borderRadius: '14px 14px 2px 14px', width: 'fit-content', maxWidth: '80%', marginLeft: 'auto' }}>
-                {welcomeMessage || 'Your welcome message will appear here.'}
+          <div className="w3-card border-white/5">
+            <h4 className="text-lg font-bold text-zinc-100 mb-6">Live Preview</h4>
+            <div className="bg-zinc-900/50 rounded-3xl p-6 border border-white/5 shadow-inner">
+              <div className="flex flex-col gap-6">
+                <div className="flex flex-col items-start">
+                  <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-2 ml-1">Customer DMs...</span>
+                  <div className="bg-zinc-800 text-zinc-300 p-4 rounded-2xl rounded-tl-none shadow-sm text-sm font-medium border border-white/5">
+                    Hello! 👋
+                  </div>
+                </div>
+                <div className="flex flex-col items-end">
+                  <span className="text-[10px] font-bold text-purple-400 uppercase tracking-widest mb-2 mr-1 text-right">Your AI replies...</span>
+                  <div className="bg-purple-600 text-white p-4 rounded-2xl rounded-tr-none shadow-[0_4px_15px_rgba(147,51,234,0.3)] text-sm font-medium border border-purple-500">
+                    {welcomeMessage || 'Your welcome message will appear here.'}
+                  </div>
+                </div>
               </div>
             </div>
           </div>

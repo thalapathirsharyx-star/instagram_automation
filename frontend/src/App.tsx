@@ -48,19 +48,33 @@ function AppContent() {
       <Sidebar />
 
       <main className="content-area">
-        <header className="top-header glass-card">
-          <div className="search-bar">
-            <Search size={18} color="var(--text-dim)" />
-            <input type="text" placeholder="Search leads or messages..." />
+        <header className="top-header">
+          <div className="flex items-center gap-6 flex-grow">
+            <div className="relative group max-w-md w-full">
+              <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500 group-focus-within:text-purple-400 transition-colors" />
+              <input 
+                type="text" 
+                placeholder="Search leads, messages, or documents..." 
+                className="w3-input pl-12 w-full text-sm"
+              />
+            </div>
           </div>
-          <div className="notifications" style={{ position: 'relative', cursor: 'pointer' }}>
-            <Bell size={20} />
-            <span className="badge" style={{
-              position: 'absolute', top: '-5px', right: '-5px',
-              background: '#0ea5e9', color: '#fff', fontSize: '0.65rem',
-              padding: '2px 5px', borderRadius: '50%',
-              boxShadow: '0 2px 4px rgba(14, 165, 233, 0.3)'
-            }}>3</span>
+          <div className="flex items-center gap-6">
+            <div className="relative cursor-pointer group">
+              <div className="p-2.5 bg-zinc-800/50 rounded-xl text-zinc-400 group-hover:text-purple-400 group-hover:bg-purple-500/10 transition-all duration-300 border border-white/5">
+                <Bell size={20} />
+              </div>
+              <span className="absolute -top-1 -right-1 bg-purple-500 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-zinc-900 shadow-sm group-hover:scale-110 transition-transform shadow-purple-500/50">3</span>
+            </div>
+            <div className="flex items-center gap-3 pl-6 border-l border-white/10">
+              <div className="text-right hidden sm:block">
+                <div className="text-xs font-bold text-zinc-100">{user?.email?.split('@')[0]}</div>
+                <div className="text-[10px] font-bold text-purple-400/80 uppercase tracking-widest">Active Now</div>
+              </div>
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center text-white font-bold shadow-lg shadow-purple-500/20 uppercase transition-transform hover:scale-105 border border-white/10">
+                {user?.email?.[0]}
+              </div>
+            </div>
           </div>
         </header>
 

@@ -15,7 +15,6 @@ const KnowledgeBase: React.FC = () => {
   const [isSaving, setIsSaving] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Helper to get token
   const getHeaders = () => ({
     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
   });
@@ -117,134 +116,125 @@ const KnowledgeBase: React.FC = () => {
   };
 
   return (
-    <div className="kb-page" style={{ height: '100%', display: 'flex', flexDirection: 'column', gap: '32px' }}>
-      <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+    <div className="flex flex-col gap-8 h-full animate-in fade-in duration-700">
+      <div className="flex justify-between items-end">
         <div>
-          <h1 style={{ margin: 0, fontSize: '1.8rem', display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <Book className="text-sky-500" /> Brain Base
-          </h1>
-          <p style={{ margin: '8px 0 0', color: 'var(--text-dim)' }}>
-            Train your AI by uploading documents, adding FAQs, or pasting text facts.
-          </p>
+          <h1 className="text-3xl font-bold text-zinc-100 mb-2">Brain Base</h1>
+          <p className="text-zinc-400 font-medium">Train your AI with documents, FAQs, and business facts.</p>
         </div>
-        <div style={{ display: 'flex', gap: '12px' }}>
+        <div className="flex gap-4">
           <button 
             onClick={() => { setIsAdding(true); setAddMode('upload'); }}
-            className="glass-card hover-glow" 
-            style={{ padding: '10px 20px', borderRadius: '12px', display: 'flex', alignItems: 'center', gap: '8px', border: '1px solid var(--glass-border)', color: 'var(--text-main)', cursor: 'pointer' }}
+            className="flex items-center gap-2 px-5 py-3 bg-zinc-800/50 border border-white/5 rounded-xl text-zinc-300 font-bold hover:bg-zinc-800 hover:text-white transition-all shadow-sm"
           >
-            <UploadCloud size={18} className="text-sky-500" /> Upload Document
+            <UploadCloud size={18} className="text-purple-400" />
+            <span>Upload</span>
           </button>
           <button 
             onClick={() => { setIsAdding(true); setAddMode('faq'); }}
-            className="glass-card hover-glow" 
-            style={{ padding: '10px 20px', borderRadius: '12px', display: 'flex', alignItems: 'center', gap: '8px', border: '1px solid var(--glass-border)', color: 'var(--text-main)', cursor: 'pointer' }}
+            className="flex items-center gap-2 px-5 py-3 bg-zinc-800/50 border border-white/5 rounded-xl text-zinc-300 font-bold hover:bg-zinc-800 hover:text-white transition-all shadow-sm"
           >
-            <HelpCircle size={18} className="text-sky-500" /> Add FAQ
+            <HelpCircle size={18} className="text-purple-400" />
+            <span>Add FAQ</span>
           </button>
           <button 
             onClick={() => { setIsAdding(true); setAddMode('text'); }}
-            className="gradient-btn" 
-            style={{ padding: '10px 24px', borderRadius: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}
+            className="w3-button-primary shadow-glow-purple"
           >
-            <Plus size={18} /> Add Fact
+            <Plus size={18} />
+            <span>Add Fact</span>
           </button>
         </div>
       </div>
 
       {isAdding && (
-        <div className="glass-card animate-in fade-in slide-in-from-top-4 duration-300" style={{ padding: '32px', border: '1px solid var(--primary-soft)' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-            <h3 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '10px' }}>
-              {addMode === 'upload' && <><UploadCloud className="text-sky-500" /> Upload Business Document</>}
-              {addMode === 'faq' && <><HelpCircle className="text-sky-500" /> Add New FAQ</>}
-              {addMode === 'text' && <><FileText className="text-sky-500" /> Add General Knowledge</>}
+        <div className="w3-card p-10 border-purple-500/20 bg-zinc-900 animate-in slide-in-from-top-4 duration-500 shadow-xl">
+          <div className="flex justify-between items-center mb-8">
+            <h3 className="text-xl font-bold text-zinc-100 flex items-center gap-3">
+              {addMode === 'upload' && <><div className="p-2 bg-purple-500/10 rounded-lg text-purple-400 border border-purple-500/20"><UploadCloud size={20} /></div> Upload Document</>}
+              {addMode === 'faq' && <><div className="p-2 bg-purple-500/10 rounded-lg text-purple-400 border border-purple-500/20"><HelpCircle size={20} /></div> Add FAQ</>}
+              {addMode === 'text' && <><div className="p-2 bg-purple-500/10 rounded-lg text-purple-400 border border-purple-500/20"><FileText size={20} /></div> Add Knowledge Fact</>}
             </h3>
-            <button onClick={resetForm} style={{ background: 'transparent', border: 'none', color: 'var(--text-dim)', cursor: 'pointer' }}><X size={20} /></button>
+            <button onClick={resetForm} className="p-2 text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800 rounded-xl transition-all border border-transparent hover:border-white/5">
+              <X size={20} />
+            </button>
           </div>
 
           {addMode === 'upload' ? (
             <div 
               onClick={() => fileInputRef.current?.click()}
-              style={{ 
-                border: '2px dashed var(--glass-border)', 
-                borderRadius: '16px', 
-                padding: '48px', 
-                textAlign: 'center', 
-                cursor: 'pointer',
-                transition: 'all 0.3s'
-              }}
-              className="hover-glow"
+              className="border-2 border-dashed border-white/10 rounded-3xl p-16 text-center cursor-pointer hover:border-purple-500/50 hover:bg-purple-500/5 transition-all duration-300 group"
             >
               <input 
                 type="file" 
                 ref={fileInputRef} 
                 onChange={handleFileUpload} 
                 accept=".pdf,.txt" 
-                style={{ display: 'none' }} 
+                className="hidden"
               />
               {isSaving ? (
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
-                  <Loader2 size={40} className="animate-spin text-sky-500" />
-                  <p>Processing and analyzing document...</p>
+                <div className="flex flex-col items-center gap-6">
+                  <Loader2 size={48} className="animate-spin text-purple-500" />
+                  <p className="font-bold text-zinc-100 text-lg">Analyzing content...</p>
                 </div>
               ) : (
                 <>
-                  <UploadCloud size={48} className="text-sky-500" style={{ marginBottom: '16px', opacity: 0.6 }} />
-                  <h4 style={{ margin: '0 0 8px 0' }}>Click to select or drag & drop</h4>
-                  <p style={{ margin: 0, color: 'var(--text-dim)', fontSize: '0.9rem' }}>Supports PDF and TXT files. AI will extract all text automatically.</p>
+                  <div className="w-20 h-20 bg-purple-500/10 rounded-3xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform shadow-[0_0_20px_rgba(168,85,247,0.2)]">
+                    <UploadCloud size={40} className="text-purple-400" />
+                  </div>
+                  <h4 className="text-xl font-bold text-zinc-100 mb-2">Drop your file here</h4>
+                  <p className="text-zinc-400 font-medium max-w-sm mx-auto">Supports PDF and TXT. AI will process the text into searchable knowledge.</p>
                 </>
               )}
             </div>
           ) : addMode === 'faq' ? (
-            <div style={{ display: 'grid', gap: '20px' }}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-dim)' }}>Customer Question</label>
+            <div className="space-y-6 max-w-2xl">
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-zinc-500 uppercase tracking-widest ml-1">Question</label>
                 <input 
                   type="text" 
                   placeholder="e.g. Do you ship internationally?" 
                   value={newQuestion}
                   onChange={(e) => setNewQuestion(e.target.value)}
-                  className="glass-input"
-                  style={{ width: '100%', padding: '14px', borderRadius: '12px', background: 'var(--glass-border)', border: 'none' }}
+                  className="w3-input w-full shadow-sm"
                 />
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-dim)' }}>AI Answer</label>
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-zinc-500 uppercase tracking-widest ml-1">Answer</label>
                 <textarea 
-                  placeholder="Yes, we ship to over 50 countries including UK, Canada, and Australia..." 
+                  placeholder="Yes, we ship to over 50 countries..." 
                   value={newAnswer}
                   onChange={(e) => setNewAnswer(e.target.value)}
                   rows={4}
-                  style={{ width: '100%', padding: '14px', borderRadius: '12px', background: 'var(--glass-border)', border: 'none', resize: 'vertical' }}
+                  className="w3-input w-full shadow-sm resize-none"
                 />
               </div>
-              <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
-                <button onClick={handleAdd} disabled={isSaving} className="gradient-btn" style={{ padding: '12px 32px', borderRadius: '12px' }}>
-                  {isSaving ? <Loader2 size={18} className="animate-spin" /> : 'Save FAQ'}
+              <div className="flex justify-end gap-4 pt-4">
+                <button onClick={resetForm} className="px-6 py-3 text-zinc-500 font-bold hover:text-zinc-300">Cancel</button>
+                <button onClick={handleAdd} disabled={isSaving} className="w3-button-primary px-10">
+                  {isSaving ? <Loader2 size={20} className="animate-spin" /> : 'Save FAQ'}
                 </button>
               </div>
             </div>
           ) : (
-            <div style={{ display: 'grid', gap: '20px' }}>
-               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-dim)' }}>Title</label>
+            <div className="space-y-6 max-w-3xl">
+               <div className="grid grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="text-xs font-bold text-zinc-500 uppercase tracking-widest ml-1">Title</label>
                   <input 
                     type="text" 
                     placeholder="e.g. Return Policy" 
                     value={newTitle}
                     onChange={(e) => setNewTitle(e.target.value)}
-                    className="glass-input"
-                    style={{ width: '100%', padding: '14px', borderRadius: '12px', background: 'var(--glass-border)', border: 'none' }}
+                    className="w3-input w-full shadow-sm"
                   />
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-dim)' }}>Category</label>
+                <div className="space-y-2">
+                  <label className="text-xs font-bold text-zinc-500 uppercase tracking-widest ml-1">Category</label>
                   <select 
                     value={category}
                     onChange={(e) => setCategory(e.target.value)}
-                    style={{ padding: '14px', borderRadius: '12px', background: 'var(--glass-border)', border: 'none', color: 'var(--text-main)' }}
+                    className="w3-input w-full shadow-sm appearance-none cursor-pointer"
                   >
                     <option>General</option>
                     <option>Products / Services</option>
@@ -254,19 +244,20 @@ const KnowledgeBase: React.FC = () => {
                   </select>
                 </div>
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-dim)' }}>Content</label>
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-zinc-500 uppercase tracking-widest ml-1">Knowledge Content</label>
                 <textarea 
                   placeholder="Paste details here..." 
                   value={newContent}
                   onChange={(e) => setNewContent(e.target.value)}
-                  rows={5}
-                  style={{ width: '100%', padding: '14px', borderRadius: '12px', background: 'var(--glass-border)', border: 'none', resize: 'vertical' }}
+                  rows={6}
+                  className="w3-input w-full shadow-sm resize-none"
                 />
               </div>
-              <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
-                <button onClick={handleAdd} disabled={isSaving} className="gradient-btn" style={{ padding: '12px 32px', borderRadius: '12px' }}>
-                  {isSaving ? <Loader2 size={18} className="animate-spin" /> : 'Save Knowledge'}
+              <div className="flex justify-end gap-4 pt-4">
+                <button onClick={resetForm} className="px-6 py-3 text-zinc-500 font-bold hover:text-zinc-300">Cancel</button>
+                <button onClick={handleAdd} disabled={isSaving} className="w3-button-primary px-10">
+                  {isSaving ? <Loader2 size={20} className="animate-spin" /> : 'Save Fact'}
                 </button>
               </div>
             </div>
@@ -275,46 +266,36 @@ const KnowledgeBase: React.FC = () => {
       )}
 
       {isLoading ? (
-        <div style={{ display: 'flex', justifyContent: 'center', padding: '100px' }}>
-          <Loader2 size={40} className="animate-spin text-sky-500" />
+        <div className="flex justify-center py-32">
+          <Loader2 size={48} className="animate-spin text-purple-500" />
         </div>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '24px' }}>
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
           {items.map((item) => (
-            <div key={item.id} className="glass-card hover-glow" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px', position: 'relative' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                <div style={{ padding: '8px', background: 'var(--primary-soft)', borderRadius: '10px' }}>
-                  {item.category === 'FAQ' ? <MessageSquareQuote size={20} className="text-sky-500" /> : 
-                   item.category === 'Document' ? <UploadCloud size={20} className="text-sky-500" /> :
-                   <FileText size={20} className="text-sky-500" />}
+            <div key={item.id} className="w3-card group h-full flex flex-col hover:border-purple-500/30 transition-all duration-500 border-white/5">
+              <div className="flex justify-between items-start mb-6">
+                <div className="p-3 bg-purple-500/10 rounded-xl text-purple-400 group-hover:bg-purple-500/20 group-hover:text-purple-300 transition-all duration-500 border border-purple-500/20 shadow-inner">
+                  {item.category === 'FAQ' ? <MessageSquareQuote size={20} /> : 
+                   item.category === 'Document' ? <UploadCloud size={20} /> :
+                   <FileText size={20} />}
                 </div>
-                <span style={{ fontSize: '0.7rem', padding: '4px 8px', background: 'var(--glass-border)', borderRadius: '6px', color: 'var(--text-dim)', fontWeight: 600, textTransform: 'uppercase' }}>
+                <span className="text-[10px] font-bold text-zinc-400 bg-zinc-800 border border-white/5 px-2 py-1 rounded-md uppercase tracking-wider">
                   {item.category}
                 </span>
               </div>
-              <div>
-                <h3 style={{ margin: '0 0 8px', fontSize: '1.05rem', color: 'var(--text-main)' }}>{item.title}</h3>
-                <p style={{ 
-                  margin: 0, 
-                  fontSize: '0.88rem', 
-                  color: 'var(--text-dim)', 
-                  lineHeight: 1.6, 
-                  display: '-webkit-box', 
-                  WebkitLineClamp: 4, 
-                  WebkitBoxOrient: 'vertical', 
-                  overflow: 'hidden' 
-                }}>
+              <div className="flex-grow">
+                <h3 className="text-lg font-bold text-zinc-100 mb-3 group-hover:text-purple-400 transition-colors">{item.title}</h3>
+                <p className="text-sm text-zinc-400 leading-relaxed font-medium line-clamp-4">
                   {item.content}
                 </p>
               </div>
-              <div style={{ marginTop: 'auto', paddingTop: '16px', borderTop: '1px solid var(--glass-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.75rem', color: '#10b981', fontWeight: 600 }}>
-                  <Sparkles size={14} /> AI Ready
+              <div className="mt-8 pt-6 border-t border-white/5 flex justify-between items-center">
+                <div className="flex items-center gap-2 text-[10px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-full shadow-[0_0_10px_rgba(52,211,153,0.1)]">
+                  <Sparkles size={12} /> AI READY
                 </div>
                 <button 
                   onClick={() => handleDelete(item.id)}
-                  style={{ color: '#ef4444', background: 'transparent', border: 'none', padding: '4px', cursor: 'pointer', opacity: 0.6 }}
-                  className="hover-opacity-100"
+                  className="p-2 text-zinc-500 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-all"
                 >
                   <Trash2 size={18} />
                 </button>
@@ -323,17 +304,17 @@ const KnowledgeBase: React.FC = () => {
           ))}
           
           {items.length === 0 && !isAdding && (
-            <div className="glass-card" style={{ gridColumn: '1 / -1', padding: '80px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px' }}>
-               <div style={{ padding: '24px', background: 'var(--primary-soft)', borderRadius: '24px' }}>
-                  <Book size={48} className="text-sky-500" />
+            <div className="col-span-full w3-card py-24 text-center flex flex-col items-center justify-center border-dashed border-white/10 bg-zinc-900/30">
+               <div className="w-24 h-24 bg-zinc-800 border border-white/5 rounded-3xl flex items-center justify-center mb-8 shadow-inner">
+                  <Book size={48} className="text-purple-500/50" />
                </div>
-               <div style={{ maxWidth: '400px' }}>
-                 <h3 style={{ margin: '0 0 8px', fontSize: '1.4rem' }}>Your AI is waiting to learn</h3>
-                 <p style={{ margin: 0, color: 'var(--text-dim)', lineHeight: 1.6 }}>Upload your business documents or add FAQs to turn this AI into an expert on your business.</p>
+               <div className="max-w-md">
+                 <h3 className="text-2xl font-bold text-zinc-100 mb-3">AI Brain Base</h3>
+                 <p className="text-zinc-400 font-medium leading-relaxed mb-10">Upload business documents or add FAQs to turn this AI into an expert on your business.</p>
                </div>
-               <div style={{ display: 'flex', gap: '12px' }}>
-                 <button onClick={() => { setIsAdding(true); setAddMode('upload'); }} className="glass-card" style={{ padding: '12px 24px', borderRadius: '12px', cursor: 'pointer', border: '1px solid var(--glass-border)' }}>Upload PDF</button>
-                 <button onClick={() => { setIsAdding(true); setAddMode('faq'); }} className="gradient-btn" style={{ padding: '12px 32px', borderRadius: '12px' }}>Add My First FAQ</button>
+               <div className="flex gap-4">
+                 <button onClick={() => { setIsAdding(true); setAddMode('upload'); }} className="px-8 py-3.5 bg-zinc-800/50 border border-white/5 rounded-xl font-bold text-zinc-300 hover:bg-zinc-800 transition-all shadow-sm hover:text-white">Upload PDF</button>
+                 <button onClick={() => { setIsAdding(true); setAddMode('faq'); }} className="w3-button-primary px-10 shadow-glow-purple">Add First FAQ</button>
                </div>
             </div>
           )}

@@ -47,34 +47,35 @@ const AISettings: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="loading-container">
-        <RefreshCw className="animate-spin" size={32} style={{ color: '#0ea5e9' }} />
+      <div className="flex items-center justify-center h-full min-h-[400px]">
+        <RefreshCw className="animate-spin text-purple-500" size={32} />
       </div>
     );
   }
 
   return (
-    <div className="ai-settings-page">
-      <header className="ai-header">
-        <div className="title-section">
-          <div className="icon-box">
+    <div className="flex flex-col gap-8 h-full animate-in fade-in duration-700">
+      <header className="flex justify-between items-end">
+        <div className="flex items-center gap-6">
+          <div className="w-14 h-14 bg-purple-500/10 text-purple-400 rounded-2xl flex items-center justify-center border border-purple-500/20 shadow-inner">
             <Bot size={28} />
           </div>
-          <div className="text-box">
-            <h1>AI Persona</h1>
-            <p>Define how Maya interacts with your customers</p>
+          <div>
+            <h1 className="text-3xl font-bold text-zinc-100 mb-1">AI Persona</h1>
+            <p className="text-zinc-400 font-medium">Define how Maya interacts with your customers</p>
           </div>
         </div>
         
-        <div className="action-section">
+        <div className="flex items-center gap-6">
           {notification && (
-            <div className={`notification-pill ${notification.type}`}>
-              {notification.type === 'success' ? <Sparkles size={14} /> : <AlertCircle size={14} />}
+            <div className={`px-4 py-2 rounded-xl flex items-center gap-2 text-sm font-bold animate-in zoom-in duration-300 border
+              ${notification.type === 'success' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border-rose-500/20'}`}>
+              {notification.type === 'success' ? <Sparkles size={16} /> : <AlertCircle size={16} />}
               {notification.message}
             </div>
           )}
           <button 
-            className="save-btn"
+            className="w3-button-primary shadow-glow-purple"
             onClick={handleSave}
             disabled={isSaving}
           >
@@ -84,326 +85,67 @@ const AISettings: React.FC = () => {
         </div>
       </header>
 
-      <div className="ai-content-grid">
-        <div className="editor-card glass-card">
-          <div className="card-header">
-            <div className="label">
-              <Sparkles className="sparkle-icon" size={18} />
-              <span>System Instructions</span>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 pb-8">
+        <div className="lg:col-span-2 w3-card shadow-lg flex flex-col">
+          <div className="flex justify-between items-center mb-6">
+            <div className="flex items-center gap-2 text-sm font-bold text-zinc-100">
+              <Sparkles className="text-purple-400" size={18} />
+              <span className="uppercase tracking-widest text-[11px] text-zinc-400">System Instructions</span>
             </div>
-            <div className="engine-badge">Llama-3.3 Powered</div>
+            <div className="px-3 py-1 bg-zinc-800 border border-white/10 rounded-lg text-[10px] font-bold text-zinc-400 uppercase tracking-tighter">
+              Llama-3.3 Powered
+            </div>
           </div>
           
           <textarea
-            className="prompt-editor"
+            className="flex-grow w-full min-h-[500px] w3-input p-6 text-sm font-medium font-mono leading-relaxed resize-none focus:ring-4 focus:ring-purple-500/10 bg-zinc-950/50 border-white/5"
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
             placeholder="Describe Maya's personality and rules here..."
           />
           
-          <div className="pro-tip">
-            <AlertCircle size={18} />
-            <div className="tip-content">
-              <strong>Pro Tip:</strong> Use <span>${'{'}context{'}'}</span>, <span>${'{'}historyText{'}'}</span>, and <span>${'{'}messageText{'}'}</span> to keep Maya context-aware.
+          <div className="mt-6 flex gap-4 p-4 bg-purple-500/10 rounded-2xl border border-purple-500/20 backdrop-blur-sm">
+            <div className="p-2 bg-purple-500/20 rounded-lg text-purple-400 shadow-sm shrink-0 border border-purple-500/30">
+              <AlertCircle size={18} />
             </div>
+            <p className="text-xs text-purple-200/80 font-medium leading-relaxed">
+              <strong className="text-purple-300">Pro Tip:</strong> Use <code className="bg-zinc-900 px-1.5 py-0.5 rounded text-purple-400 border border-white/5">${'{'}context{'}'}</code>, <code className="bg-zinc-900 px-1.5 py-0.5 rounded text-purple-400 border border-white/5">${'{'}historyText{'}'}</code>, and <code className="bg-zinc-900 px-1.5 py-0.5 rounded text-purple-400 border border-white/5">${'{'}messageText{'}'}</code> to keep Maya context-aware.
+            </p>
           </div>
         </div>
 
-        <aside className="ai-sidebar">
-          <div className="info-card glass-card">
-            <h3><MessageSquare size={18} /> Personality Tips</h3>
-            <ul>
-              <li>
-                <strong>Tone:</strong> Be specific. Example: "Maya is warm, polite, and uses 'Akka/Anna' for respect."
-              </li>
-              <li>
-                <strong>Tamil/Tanglish:</strong> Instruct her to maintain the user's language style.
-              </li>
-              <li>
-                <strong>Guardrails:</strong> Define what she *cannot* do (e.g., "Don't promise discounts").
-              </li>
-            </ul>
+        <div className="space-y-8">
+          <div className="w3-card bg-gradient-to-br from-zinc-900 to-zinc-950 border-white/5 text-white overflow-hidden relative">
+            <div className="relative z-10">
+              <h3 className="text-lg font-bold flex items-center gap-2 mb-6">
+                <MessageSquare size={18} className="text-purple-400" /> Personality Tips
+              </h3>
+              <ul className="space-y-6">
+                <li className="flex flex-col gap-2">
+                  <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Tone</span>
+                  <p className="text-sm font-medium opacity-80 leading-relaxed text-zinc-300">"Maya is warm, polite, and uses 'Akka/Anna' for respect."</p>
+                </li>
+                <li className="flex flex-col gap-2">
+                  <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Language</span>
+                  <p className="text-sm font-medium opacity-80 leading-relaxed text-zinc-300">Instruct her to maintain the user's language style (Tamil/English).</p>
+                </li>
+                <li className="flex flex-col gap-2">
+                  <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Guardrails</span>
+                  <p className="text-sm font-medium opacity-80 leading-relaxed text-zinc-300">Define what she <strong className="text-rose-400">cannot</strong> do (e.g., "Don't promise discounts").</p>
+                </li>
+              </ul>
+            </div>
+            <Bot className="absolute -bottom-10 -right-10 w-48 h-48 text-white opacity-5" />
           </div>
 
-          <div className="help-card glass-card">
-            <h3>Need Help?</h3>
-            <p>
-              Maya uses these instructions as her primary "brain." Updates are instant for all new chats.
+          <div className="w3-card bg-purple-500/5 border-purple-500/10">
+            <h3 className="font-bold text-zinc-100 mb-4 flex items-center gap-2"><Sparkles size={16} className="text-purple-400" /> Need Help?</h3>
+            <p className="text-sm text-zinc-400 font-medium leading-relaxed">
+              Maya uses these instructions as her primary "brain." Updates are instant for all new incoming chats.
             </p>
           </div>
-        </aside>
+        </div>
       </div>
-
-      <style dangerouslySetInnerHTML={{ __html: `
-        .ai-settings-page {
-          padding: 24px;
-          animation: fadeIn 0.4s ease-out;
-          color: #1e293b;
-        }
-
-        .loading-container {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          height: 100%;
-          min-height: 400px;
-        }
-
-        .ai-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: 32px;
-          gap: 20px;
-        }
-
-        .title-section {
-          display: flex;
-          align-items: center;
-          gap: 16px;
-        }
-
-        .icon-box {
-          width: 56px;
-          height: 56px;
-          background: rgba(14, 165, 233, 0.1);
-          color: #0ea5e9;
-          border-radius: 16px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          border: 1px solid rgba(14, 165, 233, 0.2);
-        }
-
-        .text-box h1 {
-          font-size: 1.75rem;
-          margin: 0;
-          font-weight: 700;
-          letter-spacing: -0.02em;
-          color: #0f172a;
-        }
-
-        .text-box p {
-          margin: 4px 0 0;
-          color: #64748b;
-          font-size: 0.95rem;
-        }
-
-        .action-section {
-          display: flex;
-          align-items: center;
-          gap: 16px;
-        }
-
-        .save-btn {
-          background: #0ea5e9;
-          color: white;
-          border: none;
-          padding: 12px 24px;
-          border-radius: 12px;
-          font-weight: 600;
-          display: flex;
-          align-items: center;
-          gap: 10px;
-          cursor: pointer;
-          transition: all 0.2s;
-          box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
-        }
-
-        .save-btn:hover {
-          background: #0284c7;
-          transform: translateY(-2px);
-          box-shadow: 0 6px 16px rgba(14, 165, 233, 0.4);
-        }
-
-        .save-btn:disabled {
-          opacity: 0.7;
-          cursor: not-allowed;
-        }
-
-        .ai-content-grid {
-          display: grid;
-          grid-template-columns: 1fr 320px;
-          gap: 24px;
-        }
-
-        @media (max-width: 1024px) {
-          .ai-content-grid {
-            grid-template-columns: 1fr;
-          }
-        }
-
-        .editor-card {
-          padding: 24px;
-          background: #fff;
-          border: 1px solid #e2e8f0;
-          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-          border-radius: 20px;
-        }
-
-        .card-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: 20px;
-        }
-
-        .label {
-          display: flex;
-          align-items: center;
-          gap: 10px;
-          font-weight: 600;
-          font-size: 1.1rem;
-          color: #0f172a;
-        }
-
-        .sparkle-icon {
-          color: #f59e0b;
-        }
-
-        .engine-badge {
-          background: #f1f5f9;
-          border: 1px solid #e2e8f0;
-          padding: 4px 12px;
-          border-radius: 20px;
-          font-size: 0.75rem;
-          color: #64748b;
-        }
-
-        .prompt-editor {
-          width: 100%;
-          min-height: 500px;
-          background: #f8fafc;
-          border: 1px solid #e2e8f0;
-          border-radius: 16px;
-          padding: 20px;
-          color: #1e293b;
-          font-family: 'JetBrains Mono', 'Fira Code', monospace;
-          font-size: 0.95rem;
-          line-height: 1.6;
-          resize: vertical;
-          outline: none;
-          transition: border-color 0.2s;
-        }
-
-        .prompt-editor:focus {
-          border-color: #0ea5e9;
-          background: #fff;
-        }
-
-        .pro-tip {
-          margin-top: 20px;
-          background: #f0f9ff;
-          border: 1px solid #bae6fd;
-          padding: 16px;
-          border-radius: 12px;
-          display: flex;
-          gap: 12px;
-          color: #0369a1;
-        }
-
-        .tip-content {
-          font-size: 0.85rem;
-          line-height: 1.5;
-        }
-
-        .tip-content span {
-          background: #e0f2fe;
-          padding: 2px 6px;
-          border-radius: 4px;
-          font-family: monospace;
-          color: #0ea5e9;
-          font-weight: 600;
-        }
-
-        .ai-sidebar {
-          display: flex;
-          flex-direction: column;
-          gap: 24px;
-        }
-
-        .info-card, .help-card {
-          padding: 24px;
-          background: #fff;
-          border: 1px solid #e2e8f0;
-          border-radius: 20px;
-        }
-
-        .info-card h3, .help-card h3 {
-          margin: 0 0 16px;
-          font-size: 1.1rem;
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          color: #0f172a;
-        }
-
-        .info-card ul {
-          padding: 0;
-          margin: 0;
-          list-style: none;
-        }
-
-        .info-card li {
-          font-size: 0.85rem;
-          color: #475569;
-          margin-bottom: 12px;
-          line-height: 1.5;
-        }
-
-        .info-card li strong {
-          color: #0f172a;
-          display: block;
-          margin-bottom: 2px;
-        }
-
-        .help-card {
-          background: linear-gradient(135deg, #f0f9ff 0%, #fff 100%);
-        }
-
-        .help-card p {
-          margin: 0;
-          font-size: 0.85rem;
-          color: #64748b;
-          line-height: 1.6;
-        }
-
-        .notification-pill {
-          padding: 8px 16px;
-          border-radius: 20px;
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          font-size: 0.85rem;
-          font-weight: 500;
-        }
-
-        .notification-pill.success {
-          background: #ecfdf5;
-          color: #059669;
-          border: 1px solid #10b981;
-        }
-
-        .notification-pill.error {
-          background: #fef2f2;
-          color: #dc2626;
-          border: 1px solid #ef4444;
-        }
-
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(10px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-
-        .animate-spin {
-          animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(360deg); }
-        }
-      `}} />
     </div>
   );
 };

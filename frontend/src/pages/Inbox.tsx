@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { getLeads, getMessages } from '../api/crm.api';
 import type { Lead, Message } from '../models/crm.models';
-import { Send } from 'lucide-react';
+import { Send, MessageSquare } from 'lucide-react';
 import { io } from 'socket.io-client';
 
 const Inbox: React.FC = () => {
@@ -79,40 +79,37 @@ const Inbox: React.FC = () => {
   };
 
   return (
-    <div className="inbox-container" style={{ display: 'flex', gap: '16px', height: '100%' }}>
+    <div className="flex gap-6 h-full animate-in fade-in duration-700">
       {/* Lead Sidebar */}
-      <div className="lead-sidebar glass-card" style={{ width: '320px', display: 'flex', flexDirection: 'column' }}>
-        <div className="sidebar-header" style={{ padding: '16px', borderBottom: '1px solid var(--color-glass-border)' }}>
-          <h2 style={{ fontSize: '1.1rem' }}>Conversations</h2>
+      <div className="w-[340px] w3-card flex flex-col p-0 overflow-hidden border-white/5">
+        <div className="p-6 border-b border-white/5 bg-zinc-900/50">
+          <h2 className="text-lg font-bold text-zinc-100">Active Threads</h2>
         </div>
-        <div className="lead-list premium-scroll" style={{ flexGrow: 1, overflowY: 'auto' }}>
+        <div className="flex-grow overflow-y-auto premium-scroll">
           {leads.map((lead) => (
             <div 
               key={lead.id} 
-              className={`lead-item ${selectedLead?.id === lead.id ? 'active' : ''}`}
+              className={`flex gap-4 p-5 cursor-pointer border-b border-white/5 transition-all duration-300 relative group
+                ${selectedLead?.id === lead.id ? 'bg-purple-500/10' : 'hover:bg-zinc-800/50'}`}
               onClick={() => handleSelectLead(lead)}
-              style={{
-                display: 'flex', gap: '12px', padding: '16px', cursor: 'pointer',
-                borderBottom: '1px solid var(--color-glass-border)', transition: 'background 0.3s',
-                backgroundColor: selectedLead?.id === lead.id ? 'rgba(0, 0, 0, 0.05)' : 'transparent',
-                borderLeft: selectedLead?.id === lead.id ? '4px solid var(--color-primary)' : 'none'
-              }}
             >
-              <div className="lead-avatar" style={{
-                background: 'var(--color-primary)', width: '40px', height: '40px', borderRadius: '50%',
-                display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 600, color: '#fff'
-              }}>
+              {selectedLead?.id === lead.id && (
+                <div className="absolute left-0 top-0 bottom-0 w-1 bg-purple-500 shadow-[0_0_10px_rgba(168,85,247,0.5)]"></div>
+              )}
+              <div className="w-12 h-12 rounded-2xl bg-purple-500/10 flex items-center justify-center text-purple-400 font-bold text-lg shadow-inner border border-purple-500/20">
                 {lead.customer_name[0]}
               </div>
-              <div className="lead-info" style={{ flexGrow: 1, overflow: 'hidden' }}>
-                <div className="top" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span className="name" style={{ fontWeight: 500, fontSize: '0.95rem' }}>{lead.customer_name}</span>
-                  <span className="status-badge" style={{
-                    fontSize: '0.7rem', padding: '2px 6px', borderRadius: '4px',
-                    border: '1px solid var(--color-glass-border)', color: lead.lead_status === 'Hot' ? 'var(--hot)' : 'inherit'
-                  }}>{lead.lead_status}</span>
+              <div className="flex-grow overflow-hidden">
+                <div className="flex justify-between items-center mb-1">
+                  <span className={`font-bold truncate ${selectedLead?.id === lead.id ? 'text-purple-400' : 'text-zinc-200'}`}>
+                    {lead.customer_name}
+                  </span>
+                  <span className={`text-[10px] font-bold px-2 py-1 rounded-md uppercase tracking-tighter border
+                    ${lead.lead_status === 'Hot' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-zinc-800 text-zinc-400 border-white/5'}`}>
+                    {lead.lead_status}
+                  </span>
                 </div>
-                <div className="handle" style={{ fontSize: '0.8rem', color: 'var(--text-dim)' }}>@{lead.instagram_handle}</div>
+                <div className="text-xs text-zinc-500 font-medium truncate">@{lead.instagram_handle}</div>
               </div>
             </div>
           ))}
@@ -120,27 +117,34 @@ const Inbox: React.FC = () => {
       </div>
 
       {/* Chat Area */}
-      <div className="chat-area glass-card" style={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
+      <div className="flex-grow w3-card flex flex-col p-0 overflow-hidden border-white/5">
         {selectedLead ? (
           <>
-            <div className="chat-header" style={{ padding: '16px 24px', borderBottom: '1px solid var(--color-glass-border)', display: 'flex', justifyContent: 'space-between' }}>
-              <div>
-                <h3 style={{ margin: 0 }}>{selectedLead.customer_name}</h3>
-                <p style={{ margin: '4px 0 0', fontSize: '0.85rem', color: 'var(--text-dim)' }}>@{selectedLead.instagram_handle}</p>
+            <div className="p-6 border-b border-white/5 flex justify-between items-center bg-zinc-900/80 backdrop-blur-sm z-10">
+              <div className="flex items-center gap-4">
+                <div className="w-10 h-10 rounded-xl bg-zinc-800 flex items-center justify-center text-zinc-300 font-bold border border-white/5">
+                  {selectedLead.customer_name[0]}
+                </div>
+                <div>
+                  <h3 className="font-bold text-zinc-100 leading-tight">{selectedLead.customer_name}</h3>
+                  <p className="text-xs text-zinc-500 font-medium">@{selectedLead.instagram_handle}</p>
+                </div>
               </div>
-              <button className="action-btn" style={{ background: 'var(--glass)', border: '1px solid var(--color-glass-border)', color: 'var(--color-foreground)', padding: '8px 16px', borderRadius: '8px', cursor: 'pointer' }}>Human Handoff</button>
+              <button className="px-4 py-2 bg-zinc-800 text-zinc-300 rounded-xl text-xs font-bold hover:bg-zinc-700 hover:text-white transition-colors border border-white/5 shadow-sm">
+                Human Handoff
+              </button>
             </div>
 
-            <div className="chat-history premium-scroll" ref={chatHistoryRef} style={{ flexGrow: 1, padding: '24px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+            <div className="flex-grow p-8 overflow-y-auto premium-scroll flex flex-col gap-6 bg-zinc-950/50" ref={chatHistoryRef}>
               {messages.map((msg) => (
-                <div key={msg.id} className={`message-wrapper ${msg.direction === 'Outbound' ? 'outbound' : ''}`} style={{
-                  maxWidth: '70%', alignSelf: msg.direction === 'Outbound' ? 'flex-end' : 'flex-start'
-                }}>
-                  <div className="message-bubble" style={{
-                    padding: '12px 16px', borderRadius: '12px', background: msg.direction === 'Outbound' ? 'var(--color-primary)' : 'var(--color-glass-border)', color: msg.direction === 'Outbound' ? '#fff' : 'var(--color-foreground)'
-                  }}>
-                    <p className="text" style={{ margin: 0, lineHeight: 1.5 }}>{msg.message_text}</p>
-                    <span className="time" style={{ fontSize: '0.7rem', color: 'var(--text-dim)', display: 'block', marginTop: 4, textAlign: 'right' }}>
+                <div key={msg.id} className={`max-w-[80%] flex flex-col ${msg.direction === 'Outbound' ? 'self-end items-end' : 'self-start items-start'}`}>
+                  <div className={`p-4 rounded-2xl shadow-sm border ${
+                    msg.direction === 'Outbound' 
+                      ? 'bg-purple-600 border-purple-500 text-white rounded-tr-none shadow-purple-500/20' 
+                      : 'bg-zinc-900 border-white/10 text-zinc-200 rounded-tl-none'
+                  }`}>
+                    <p className="text-sm leading-relaxed font-medium">{msg.message_text}</p>
+                    <span className={`text-[10px] mt-2 block ${msg.direction === 'Outbound' ? 'opacity-80' : 'text-zinc-500'} text-right font-bold`}>
                       {(() => {
                         const d = new Date(msg.created_on);
                         return isNaN(d.getTime()) ? 'Just now' : d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -148,30 +152,36 @@ const Inbox: React.FC = () => {
                     </span>
                   </div>
                   {msg.ai_notes && (
-                    <div className="ai-logic" style={{ marginTop: '8px', fontSize: '0.75rem', color: 'var(--text-dim)', borderLeft: '2px solid var(--color-primary)', paddingLeft: '8px' }}>
-                      <span className="logic-tag" style={{ color: 'var(--color-primary)', fontWeight: 500, display: 'block' }}>AI Concept: {msg.action_taken}</span>
-                      <p className="logic-detail">{msg.ai_notes}</p>
+                    <div className="mt-3 max-w-[90%] text-[11px] text-zinc-400 bg-purple-500/5 p-3 rounded-xl border border-purple-500/20 backdrop-blur-sm">
+                      <span className="text-purple-400 font-bold block mb-1 uppercase tracking-widest text-[9px]">AI Reasoning: {msg.action_taken}</span>
+                      <p className="font-medium leading-relaxed">{msg.ai_notes}</p>
                     </div>
                   )}
                 </div>
               ))}
             </div>
 
-            <div className="chat-input" style={{ padding: '16px 24px', display: 'flex', gap: '12px', borderTop: '1px solid var(--color-glass-border)' }}>
-              <input 
-                type="text" 
-                placeholder="Type a message (Manual override)..." 
-                disabled 
-                style={{ flexGrow: 1, background: 'var(--color-glass-border)', border: '1px solid var(--color-glass-border)', borderRadius: '20px', padding: '8px 16px', color: 'var(--color-foreground)', outline: 'none' }}
-              />
-              <button className="send-btn" style={{ background: 'var(--color-primary)', border: 'none', borderRadius: '50%', width: '40px', height: '40px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <Send size={18} />
-              </button>
+            <div className="p-6 bg-zinc-900/80 border-t border-white/5 backdrop-blur-sm">
+              <div className="flex gap-3 bg-zinc-950 p-2 rounded-[1.25rem] border border-white/5 focus-within:border-purple-500/50 transition-all duration-300 shadow-inner">
+                <input 
+                  type="text" 
+                  placeholder="AI is managing this conversation..." 
+                  disabled 
+                  className="flex-grow px-4 py-2 bg-transparent text-sm font-medium text-zinc-500 outline-none"
+                />
+                <button className="w-10 h-10 bg-zinc-800 text-zinc-500 rounded-xl flex items-center justify-center border border-white/5 cursor-not-allowed">
+                  <Send size={18} />
+                </button>
+              </div>
             </div>
           </>
         ) : (
-          <div className="no-selection" style={{ flexGrow: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-dim)' }}>
-            <p>Select a conversation to view DMs</p>
+          <div className="flex-grow flex flex-col items-center justify-center text-zinc-500 p-12 text-center bg-zinc-950/30">
+            <div className="w-20 h-20 rounded-full bg-zinc-900 flex items-center justify-center mb-6 border border-white/5 shadow-inner">
+              <MessageSquare size={40} className="opacity-20 text-zinc-400" />
+            </div>
+            <p className="text-lg font-bold text-zinc-400">Select a Thread</p>
+            <p className="text-sm font-medium mt-1">Review AI interactions and manage handoffs.</p>
           </div>
         )}
       </div>

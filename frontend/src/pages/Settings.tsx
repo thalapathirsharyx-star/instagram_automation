@@ -11,21 +11,23 @@ import {
   X,
   Smartphone,
   ToggleRight,
-  Link2
+  Link2,
+  Zap,
+  RefreshCw
 } from 'lucide-react';
 
 const SettingsCard: React.FC<{ icon: any, title: string, subtitle: string, children: React.ReactNode }> = ({ icon: Icon, title, subtitle, children }) => (
-  <div className="glass-card" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
-    <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
-      <div style={{ padding: '10px', background: 'var(--glass-border)', borderRadius: '12px' }}>
-        <Icon size={24} className="text-primary" />
+  <div className="w3-card flex flex-col gap-6 group hover:border-purple-500/30 transition-all duration-500 border-white/5">
+    <div className="flex gap-4 items-center">
+      <div className="p-3 bg-purple-500/10 text-purple-400 rounded-xl group-hover:bg-purple-500/20 transition-all duration-500 shadow-inner border border-purple-500/20">
+        <Icon size={24} />
       </div>
       <div>
-        <h3 style={{ margin: 0, fontSize: '1.1rem' }}>{title}</h3>
-        <p style={{ margin: '4px 0 0', fontSize: '0.85rem', color: 'var(--text-dim)' }}>{subtitle}</p>
+        <h3 className="text-lg font-bold text-zinc-100 group-hover:text-purple-400 transition-colors">{title}</h3>
+        <p className="text-xs text-zinc-500 font-medium mt-0.5">{subtitle}</p>
       </div>
     </div>
-    <div className="card-content" style={{ display: 'flex', flexDirection: 'column', gap: '16px', flexGrow: 1 }}>
+    <div className="flex flex-col gap-6 flex-grow pt-4 border-t border-white/5">
       {children}
     </div>
   </div>
@@ -42,7 +44,6 @@ const Settings: React.FC = () => {
   const [connectionDetails, setConnectionDetails] = React.useState<{ name: string, id: string } | null>(null);
 
   React.useEffect(() => {
-    // Check current connection status on mount
     setIsLoadingStatus(true);
     getInstagramSettings().then(res => {
       if (res.Success && res.Data?.isConnected) {
@@ -57,7 +58,6 @@ const Settings: React.FC = () => {
 
     const fbAppId = import.meta.env.VITE_FB_APP_ID || '955338716906984';
 
-    // Load Facebook SDK
     if (!(window as any).FB) {
       (window as any).fbAsyncInit = function() {
         (window as any).FB.init({
@@ -94,7 +94,6 @@ const Settings: React.FC = () => {
         if (response.authResponse) {
           const accessToken = response.authResponse.accessToken;
           
-          // Send to backend
           connectInstagram(accessToken)
             .then(res => {
               if (res.Success) {
@@ -109,7 +108,7 @@ const Settings: React.FC = () => {
                 if (message.includes('META_NO_INSTAGRAM_LINKED')) {
                   setShowGuide(true);
                 } else if (message.includes('META_APP_RESTRICTED')) {
-                  alert(res.Message); // Display the detailed restriction message
+                  alert(res.Message);
                 } else {
                   alert('Connection Failed: ' + (res.Message || 'Unknown Error'));
                 }
@@ -128,17 +127,15 @@ const Settings: React.FC = () => {
   };
 
   return (
-    <div className="settings-page" style={{ height: '100%', display: 'flex', flexDirection: 'column', gap: '32px' }}>
-      <div className="page-header">
-        <h1 style={{ margin: 0, fontSize: '1.8rem' }}>Control Center</h1>
-        <p style={{ margin: '8px 0 0', color: 'var(--text-dim)' }}>Configure your CRM integration and automation preferences.</p>
+    <div className="flex flex-col gap-8 h-full animate-in fade-in duration-700">
+      <div className="flex justify-between items-end">
+        <div>
+          <h1 className="text-3xl font-bold text-zinc-100 mb-2">Control Center</h1>
+          <p className="text-zinc-400 font-medium">Configure your CRM integration and automation preferences.</p>
+        </div>
       </div>
 
-      <div className="settings-grid" style={{ 
-        display: 'grid', 
-        gridTemplateColumns: 'repeat(auto-fill, minmax(400px, 1fr))', 
-        gap: '24px' 
-      }}>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
         
         <SettingsCard 
           icon={Shield} 
@@ -146,20 +143,20 @@ const Settings: React.FC = () => {
           subtitle="Manage your Instagram and Facebook connections."
         >
           {isLoadingStatus ? (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px', background: 'var(--glass-border)', borderRadius: '12px', color: 'var(--text-dim)', fontSize: '0.85rem' }}>
-              <div className="animate-spin w-4 h-4 border-2 border-primary border-t-transparent rounded-full" />
-              Verifying connection status...
+            <div className="flex items-center gap-3 p-4 bg-zinc-900/50 rounded-2xl border border-white/5 text-zinc-400 font-bold text-xs uppercase tracking-widest">
+              <div className="animate-spin w-4 h-4 border-2 border-purple-500 border-t-transparent rounded-full" />
+              Verifying Connection...
             </div>
           ) : isConnected ? (
-            <div className="flex flex-col gap-4">
-              <div className="flex items-center gap-2 text-sky-600 font-medium text-sm">
-                <div className="w-2 h-2 rounded-full bg-sky-500 animate-pulse" />
+            <div className="space-y-6">
+              <div className="flex items-center gap-2 text-emerald-400 font-bold text-xs uppercase tracking-widest bg-emerald-500/10 px-3 py-1.5 rounded-lg w-fit border border-emerald-500/20">
+                <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                 Active Connection
               </div>
               
-              <div className="p-4 bg-gray-50 rounded-xl border border-gray-100">
-                <div className="text-sm font-semibold text-gray-900">{connectionDetails?.name}</div>
-                <div className="text-xs text-gray-500 font-mono mt-1">ID: {connectionDetails?.id}</div>
+              <div className="p-5 bg-zinc-900/50 rounded-2xl border border-white/5 shadow-inner">
+                <div className="text-sm font-bold text-zinc-100">{connectionDetails?.name}</div>
+                <div className="text-[10px] text-zinc-500 font-mono mt-1 uppercase tracking-widest">Business ID: {connectionDetails?.id}</div>
               </div>
 
               <button 
@@ -167,112 +164,100 @@ const Settings: React.FC = () => {
                   setIsConnected(false);
                   setConnectionDetails(null);
                 }}
-                className="text-xs text-red-500 hover:text-red-600 font-medium self-start transition-colors"
+                className="text-xs text-rose-400 hover:text-rose-500 font-bold uppercase tracking-widest transition-colors flex items-center gap-2"
               >
-                Disconnect and Reconnect
+                <X size={14} /> Disconnect Account
               </button>
             </div>
           ) : (
-            <>
-              <p style={{ fontSize: '0.85rem', color: 'var(--text-dim)', marginBottom: '16px' }}>
+            <div className="space-y-6">
+              <p className="text-sm text-zinc-400 font-medium leading-relaxed">
                 Connect your business account to start receiving and responding to Instagram DMs automatically.
               </p>
               <button 
                 onClick={handleConnect}
                 disabled={isConnecting}
-                className="gradient-btn" 
-                style={{ width: '100%', padding: '12px', borderRadius: '12px', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', opacity: isConnecting ? 0.7 : 1 }}
+                className="w3-button-primary w-full justify-center shadow-glow-purple"
               >
-                {isConnecting ? 'Establishing Connection...' : 'Connect Instagram Account'}
+                {isConnecting ? <RefreshCw className="animate-spin" size={18} /> : <Link2 size={18} />}
+                <span>{isConnecting ? 'Linking Account...' : 'Connect Instagram'}</span>
               </button>
               <button 
                 onClick={() => setShowGuide(true)}
-                style={{ background: 'transparent', border: 'none', color: 'var(--color-primary)', fontSize: '0.8rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px', margin: '8px auto 0' }}
+                className="w-full flex items-center justify-center gap-2 text-xs font-bold text-purple-400 hover:text-purple-300 transition-colors uppercase tracking-widest"
               >
-                <Info size={14} /> Need help linking your account?
+                <Info size={14} /> Link Instructions Guide
               </button>
-            </>
+            </div>
           )}
         </SettingsCard>
 
-        {/* --- ONBOARDING GUIDE MODAL --- */}
         {showGuide && (
-          <div className="modal-overlay" style={{
-            position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-            background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(8px)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '20px'
-          }}>
-            <div className="guide-modal glass-card" style={{
-              maxWidth: '550px', width: '100%', padding: '32px', position: 'relative',
-              background: 'var(--bg-card)', color: 'var(--color-foreground)', borderRadius: '24px',
-              border: '1px solid var(--color-glass-border)', boxShadow: '0 20px 40px rgba(0,0,0,0.2)'
-            }}>
+          <div className="fixed inset-0 bg-zinc-950/80 backdrop-blur-md flex items-center justify-center z-[1000] p-6 animate-in fade-in duration-300">
+            <div className="w3-card max-w-xl w-full p-10 relative animate-in zoom-in-95 duration-500 shadow-2xl bg-zinc-900 border-white/10">
               <button 
                 onClick={() => setShowGuide(false)}
-                style={{ position: 'absolute', top: '24px', right: '24px', background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--text-dim)' }}
+                className="absolute top-6 right-6 p-2 text-zinc-500 hover:text-white hover:bg-white/5 rounded-xl transition-all"
               >
                 <X size={20} />
               </button>
 
-              <div style={{ marginBottom: '24px' }}>
-                <h2 style={{ fontSize: '1.5rem', marginBottom: '8px' }}>Let's Link Your Account</h2>
-                <p style={{ color: 'var(--text-dim)', fontSize: '0.9rem' }}>Meta requires a few specific settings to be enabled before we can automate your DMs.</p>
+              <div className="mb-10">
+                <h2 className="text-2xl font-bold text-zinc-100 mb-2">Let's Link Your Account</h2>
+                <p className="text-zinc-400 font-medium leading-relaxed">Meta requires specific settings to be enabled before we can automate your DMs.</p>
               </div>
 
-              <div className="steps-container" style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+              <div className="space-y-8">
                 
-                {/* Step 1 */}
-                <div style={{ display: 'flex', gap: '16px' }}>
-                  <div style={{ padding: '8px', background: 'rgba(99, 102, 241, 0.1)', borderRadius: '12px', height: 'fit-content' }}>
-                    <Smartphone size={20} style={{ color: 'var(--color-primary)' }} />
+                <div className="flex gap-6">
+                  <div className="w-12 h-12 bg-purple-500/10 text-purple-400 rounded-2xl flex items-center justify-center shrink-0 border border-purple-500/20">
+                    <Smartphone size={24} />
                   </div>
                   <div>
-                    <h4 style={{ margin: '0 0 4px 0' }}>Step 1: Switch to Professional</h4>
-                    <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-dim)', lineHeight: 1.5 }}>
-                      Open Instagram App &gt; Settings &gt; Account Type. Switch to **Business** or **Creator**.
+                    <h4 className="font-bold text-zinc-100 mb-1">Step 1: Switch to Professional</h4>
+                    <p className="text-sm text-zinc-400 font-medium leading-relaxed">
+                      In the Instagram App &gt; Settings &gt; Account Type. Switch to <strong className="text-zinc-200">Business</strong> or <strong className="text-zinc-200">Creator</strong>.
                     </p>
                   </div>
                 </div>
 
-                {/* Step 2 */}
-                <div style={{ display: 'flex', gap: '16px' }}>
-                  <div style={{ padding: '8px', background: 'rgba(99, 102, 241, 0.1)', borderRadius: '12px', height: 'fit-content' }}>
-                    <Link2 size={20} style={{ color: 'var(--color-primary)' }} />
+                <div className="flex gap-6">
+                  <div className="w-12 h-12 bg-purple-500/10 text-purple-400 rounded-2xl flex items-center justify-center shrink-0 border border-purple-500/20">
+                    <Link2 size={24} />
                   </div>
                   <div>
-                    <h4 style={{ margin: '0 0 4px 0' }}>Step 2: Link to Facebook Page</h4>
-                    <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-dim)', lineHeight: 1.5 }}>
-                      Edit Profile &gt; Public Business Information &gt; **Page**. Select or create a Facebook Page.
+                    <h4 className="font-bold text-zinc-100 mb-1">Step 2: Link to Facebook Page</h4>
+                    <p className="text-sm text-zinc-400 font-medium leading-relaxed">
+                      Edit Profile &gt; Public Business Information &gt; Page. Select or create a Facebook Page.
                     </p>
                   </div>
                 </div>
 
-                {/* Step 3 */}
-                <div style={{ display: 'flex', gap: '16px' }}>
-                  <div style={{ padding: '8px', background: 'rgba(99, 102, 241, 0.1)', borderRadius: '12px', height: 'fit-content' }}>
-                    <ToggleRight size={20} style={{ color: 'var(--color-primary)' }} />
+                <div className="flex gap-6">
+                  <div className="w-12 h-12 bg-purple-500/10 text-purple-400 rounded-2xl flex items-center justify-center shrink-0 border border-purple-500/20">
+                    <ToggleRight size={24} />
                   </div>
                   <div>
-                    <h4 style={{ margin: '0 0 4px 0' }}>Step 3: Allow Message Access</h4>
-                    <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-dim)', lineHeight: 1.5 }}>
-                      Settings &gt; Privacy &gt; Messages. Turn **ON** "Allow Access to Messages" at the bottom.
+                    <h4 className="font-bold text-zinc-100 mb-1">Step 3: Allow Message Access</h4>
+                    <p className="text-sm text-zinc-400 font-medium leading-relaxed">
+                      Settings &gt; Privacy &gt; Messages. Turn <strong className="text-emerald-400 uppercase tracking-widest text-[10px]">ON</strong> "Allow Access to Messages" at the bottom.
                     </p>
                   </div>
                 </div>
 
               </div>
 
-              <div style={{ marginTop: '32px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <div className="mt-12 space-y-4">
                 <button 
                   onClick={handleConnect}
-                  className="gradient-btn"
-                  style={{ width: '100%', padding: '14px', borderRadius: '12px', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
+                  className="w3-button-primary w-full justify-center py-4"
                 >
-                  <CheckCircle2 size={18} /> I've Done These Steps
+                  <CheckCircle2 size={20} />
+                  <span>I've Done These Steps</span>
                 </button>
                 <button 
                    onClick={() => setShowGuide(false)}
-                   style={{ width: '100%', padding: '10px', background: 'transparent', border: 'none', color: 'var(--text-dim)', fontSize: '0.85rem', cursor: 'pointer' }}
+                   className="w-full py-3 text-sm font-bold text-zinc-500 hover:text-zinc-300 transition-colors"
                 >
                   Maybe Later
                 </button>
@@ -281,62 +266,63 @@ const Settings: React.FC = () => {
           </div>
         )}
 
-        {/* AI & Automation */}
         <SettingsCard 
           icon={Bot} 
           title="AI Automation" 
           subtitle="Configure how the AI interacts with your leads."
         >
-          <div className="toggle-option" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div className="flex justify-between items-center p-5 bg-zinc-900/50 rounded-2xl border border-white/5">
             <div>
-              <div style={{ fontSize: '0.95rem', fontWeight: 500 }}>Auto-Reply Discovery</div>
-              <p style={{ margin: '2px 0 0', fontSize: '0.75rem', color: 'var(--text-dim)' }}>Automatically answer basic lead inquiries.</p>
+              <div className="font-bold text-zinc-100 mb-1">Auto-Reply Discovery</div>
+              <p className="text-xs text-zinc-500 font-medium leading-relaxed">Automatically answer basic lead inquiries.</p>
             </div>
-            <div className="toggle active"></div>
+            <div className="w-12 h-6 bg-purple-500 rounded-full relative cursor-pointer shadow-[0_0_15px_rgba(168,85,247,0.4)]">
+              <div className="absolute right-1 top-1 w-4 h-4 bg-white rounded-full"></div>
+            </div>
           </div>
-          <div className="toggle-option" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div className="flex justify-between items-center p-5 bg-zinc-900/50 rounded-2xl border border-white/5">
             <div>
-              <div style={{ fontSize: '0.95rem', fontWeight: 500 }}>Human Handoff Alerts</div>
-              <p style={{ margin: '2px 0 0', fontSize: '0.75rem', color: 'var(--text-dim)' }}>Notify you when a lead needs urgent human attention.</p>
+              <div className="font-bold text-zinc-100 mb-1">Human Handoff Alerts</div>
+              <p className="text-xs text-zinc-500 font-medium leading-relaxed">Notify team when a lead needs human attention.</p>
             </div>
-            <div className="toggle active"></div>
+            <div className="w-12 h-6 bg-purple-500 rounded-full relative cursor-pointer shadow-[0_0_15px_rgba(168,85,247,0.4)]">
+              <div className="absolute right-1 top-1 w-4 h-4 bg-white rounded-full"></div>
+            </div>
           </div>
         </SettingsCard>
 
-        {/* Webhooks & API */}
         <SettingsCard 
           icon={Database} 
           title="Webhooks & API" 
           subtitle="Real-time data synchronization settings."
         >
-          <div className="field-group">
-            <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-dim)', marginBottom: '8px' }}>Webhook URL</label>
-            <div className="glass-input" style={{ background: 'var(--glass-border)', padding: '10px 16px', borderRadius: '8px', fontSize: '0.8rem', fontFamily: 'monospace', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+          <div className="space-y-4">
+            <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest ml-1">Webhook Endpoint</label>
+            <div className="bg-zinc-950 p-4 rounded-2xl border border-white/5 text-sm font-mono text-zinc-400 truncate shadow-inner">
               https://replyzens.com/v1/Instagram/Webhook
             </div>
+            <button className="flex items-center gap-2 text-xs font-bold text-purple-400 hover:text-purple-300 transition-colors uppercase tracking-widest">
+              <Zap size={14} /> Test Connectivity
+            </button>
           </div>
-          <button className="text-btn" style={{ background: 'transparent', border: 'none', color: 'var(--primary)', padding: 0, textAlign: 'left', fontSize: '0.85rem', cursor: 'pointer' }}>
-            Test Webhook Connectivity
-          </button>
         </SettingsCard>
 
-        {/* Account Profile */}
         <SettingsCard 
           icon={User} 
           title="Account Profile" 
           subtitle="Your personal account information."
         >
-          <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
-            <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '1.2rem' }}>
-              {user?.email?.[0].toUpperCase() || 'A'}
+          <div className="flex gap-4 items-center mb-4">
+            <div className="w-14 h-14 bg-purple-500/10 text-purple-400 rounded-2xl flex items-center justify-center border border-purple-500/20 font-bold text-xl shadow-inner uppercase">
+              {user?.email?.[0] || 'A'}
             </div>
             <div>
-              <div style={{ fontWeight: 600 }}>{user?.email || 'admin@replyzens.com'}</div>
-              <div style={{ fontSize: '0.8rem', color: 'var(--text-dim)' }}>Administrator</div>
+              <div className="font-bold text-zinc-100">{user?.email || 'admin@replyzens.com'}</div>
+              <div className="text-xs text-zinc-500 font-medium mt-0.5">Administrator Access</div>
             </div>
           </div>
-          <button className="glass-btn-secondary" style={{ padding: '8px 16px', borderRadius: '8px', border: '1px solid var(--glass-border)', background: 'var(--glass)', color: 'var(--foreground)', cursor: 'pointer', marginTop: '8px' }}>
-            Edit Profile
+          <button className="w-fit px-6 py-3 bg-zinc-800 border border-white/10 rounded-xl text-zinc-300 font-bold hover:bg-zinc-700 hover:text-white transition-all shadow-sm">
+            Edit Profile Details
           </button>
         </SettingsCard>
 

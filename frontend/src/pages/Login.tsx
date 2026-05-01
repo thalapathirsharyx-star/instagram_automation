@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { Mail, Lock, LogIn, AlertCircle, Loader2, Zap, Eye, EyeOff } from 'lucide-react';
+import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import { useAuth } from '../context/AuthContext';
 import api from '../lib/axios';
 
@@ -29,7 +30,6 @@ const Login: React.FC = () => {
         const { api_token, user } = response.data.result;
         setMessage({ text: 'Login Successful! Redirecting...', type: 'success' });
 
-        // Short delay to show the green success toast before navigating
         setTimeout(() => {
           login(api_token, user);
           navigate(from, { replace: true });
@@ -47,120 +47,125 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="login-page dot-grid bg-[#F3F4F6]">
-      <div className="background-decor pointer-events-none">
-        <div className="absolute top-0 left-0 w-full h-full bg-indigo-50/50 -z-10" />
-        <div className="blob blob-1 bg-sky-600/10 opacity-20"></div>
-        <div className="blob blob-2 bg-violet-600/10 opacity-20"></div>
+    <div className="min-h-screen w-full flex overflow-hidden bg-zinc-950 font-inter relative">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(168,85,247,0.15)_0%,transparent_50%)] pointer-events-none" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(59,130,246,0.15)_0%,transparent_50%)] pointer-events-none" />
+      
+      <div className="hidden lg:flex lg:w-1/2 items-center justify-center relative p-20 z-10">
+        <div className="relative w-full max-w-2xl flex flex-col items-center">
+          <div className="w-full transform hover:scale-[1.02] transition-transform duration-1000 ease-in-out">
+            <DotLottieReact
+              src="https://lottie.host/56e4fcc8-61f7-48de-ab64-9dc0e1c50e3a/aMDbskgDHA.lottie"
+              loop
+              autoplay
+              className="w-full h-full drop-shadow-[0_0_80px_rgba(168,85,247,0.3)] filter brightness-150 contrast-125 saturate-150 hue-rotate-30"
+            />
+          </div>
+          
+          <div className="mt-12 text-center max-w-lg">
+            <h2 className="text-4xl font-bold text-zinc-100 mb-4 leading-tight">
+              AI Powered <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">Instagram Growth</span>
+            </h2>
+            <p className="text-lg text-zinc-400 leading-relaxed font-medium">
+              Join the elite league of creators using ReplyZens to automate their DMs and scale revenue.
+            </p>
+          </div>
+        </div>
       </div>
 
-      <div className="login-container bg-white border border-slate-200 shadow-2xl shadow-sky-100 rounded-[2.5rem] p-12">
-        <div className="login-header text-center mb-10">
-          <div className="flex flex-col items-center gap-4 mb-6">
-            <div className="w-12 h-12 rounded-2xl bg-sky-600 flex items-center justify-center shadow-lg shadow-indigo-200">
-              <Zap className="w-6 h-6 text-white" fill="currentColor" />
+      <div className="w-full lg:w-1/2 flex flex-col items-center justify-center p-6 md:p-12 z-20">
+        <div className="w-full max-w-md bg-zinc-900/50 backdrop-blur-xl rounded-[2rem] p-10 md:p-14 shadow-2xl border border-white/5 relative">
+          <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-purple-500/50 to-transparent"></div>
+          <div className="mb-10 text-center">
+            <div className="w-16 h-16 rounded-2xl bg-purple-500/10 flex items-center justify-center shadow-[0_0_30px_rgba(168,85,247,0.3)] mx-auto mb-8 border border-purple-500/20">
+              <Zap className="w-8 h-8 text-purple-400" fill="currentColor" />
             </div>
-            <h1 className="text-3xl font-black tracking-tight text-slate-900">ReplyZens</h1>
+            <h1 className="text-3xl font-bold tracking-tight text-zinc-100 mb-2">Welcome Back</h1>
+            <p className="text-zinc-400 font-medium">Sign in to your AI workspace</p>
           </div>
-          <p className="subtitle text-slate-500">Welcome back! Please enter your details.</p>
-        </div>
 
-        {message && (
-          <div className={`${message.type === 'success'
-            ? 'bg-white/10 border-white/20 text-white'
-            : 'bg-destructive/10 border-destructive/20 text-destructive'
-            } border text-sm p-3 rounded-lg flex items-center gap-2 mb-6 transition-all duration-300`}>
-            {message.type === 'success' ? <LogIn size={16} /> : <AlertCircle size={16} />}
-            <span>{message.text}</span>
-          </div>
-        )}
-
-        <form onSubmit={handleLogin} className="login-form">
-          <div className="input-group">
-            <label htmlFor="email">Email</label>
-            <div className="input-wrapper">
-              <Mail size={18} className="input-icon" />
-              <input
-                type="email"
-                id="email"
-                className="bg-slate-50 border-slate-200 text-slate-900 focus:ring-sky-500 focus:border-sky-500"
-                placeholder="Enter your email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
+          {message && (
+            <div className={`${message.type === 'success'
+              ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
+              : 'bg-rose-500/10 border-rose-500/20 text-rose-400'
+              } border text-sm p-4 rounded-xl flex items-center gap-3 mb-8 animate-in fade-in slide-in-from-top-2 duration-300`}>
+              {message.type === 'success' ? <LogIn size={18} /> : <AlertCircle size={18} />}
+              <span className="font-semibold">{message.text}</span>
             </div>
-          </div>
+          )}
 
-          <div className="input-group">
-            <label htmlFor="password">Password</label>
-            <div className="input-wrapper">
-              <Lock size={18} className="input-icon" />
-              <input
-                type={showPassword ? "text" : "password"}
-                id="password"
-                className="bg-slate-50 border-slate-200 text-slate-900 focus:ring-sky-500 focus:border-sky-500 pr-12"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-              <button
-                type="button"
-                className="absolute right-4 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-sky-600 transition-colors"
-                onClick={() => setShowPassword(!showPassword)}
-              >
-                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-              </button>
+          <form onSubmit={handleLogin} className="space-y-6">
+            <div className="space-y-2">
+              <label className="text-sm font-semibold text-zinc-300 ml-1" htmlFor="email">Email Address</label>
+              <div className="relative group">
+                <Mail size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500 group-focus-within:text-purple-400 transition-colors z-10" />
+                <input
+                  type="email"
+                  id="email"
+                  className="w-full pl-12 pr-4 py-3.5 bg-zinc-950/50 border border-white/5 rounded-xl text-zinc-100 focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 outline-none transition-all duration-300 placeholder:text-zinc-600 shadow-inner"
+                  placeholder="name@company.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+              </div>
             </div>
+
+            <div className="space-y-2">
+              <div className="flex items-center justify-between ml-1">
+                <label className="text-sm font-semibold text-zinc-300" htmlFor="password">Password</label>
+                <a href="#" className="text-xs font-bold text-purple-400 hover:text-purple-300 transition-colors">Forgot password?</a>
+              </div>
+              <div className="relative group">
+                <Lock size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500 group-focus-within:text-purple-400 transition-colors z-10" />
+                <input
+                  type={showPassword ? "text" : "password"}
+                  id="password"
+                  className="w-full pl-12 pr-12 py-3.5 bg-zinc-950/50 border border-white/5 rounded-xl text-zinc-100 focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 outline-none transition-all duration-300 placeholder:text-zinc-600 shadow-inner"
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
+                <button
+                  type="button"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 p-1 text-zinc-500 hover:text-purple-400 transition-colors z-10"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3 ml-1 mt-2">
+              <input type="checkbox" id="remember" className="w-4 h-4 rounded border-zinc-700 bg-zinc-900/50 text-purple-500 focus:ring-purple-500/30 cursor-pointer accent-purple-500" />
+              <label htmlFor="remember" className="text-sm font-medium text-zinc-400 cursor-pointer">Remember me</label>
+            </div>
+
+            <button type="submit" className="w-full mt-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white rounded-xl py-3.5 font-bold text-base shadow-[0_0_20px_rgba(168,85,247,0.4)] transition-all duration-300 flex items-center justify-center gap-3 disabled:opacity-70 group border border-purple-500/50 hover:shadow-[0_0_30px_rgba(168,85,247,0.6)]" disabled={isLoading}>
+              {isLoading ? (
+                <>
+                  <Loader2 size={20} className="animate-spin" />
+                  <span>Signing in...</span>
+                </>
+              ) : (
+                <>
+                  <span>Sign In</span>
+                  <LogIn size={20} className="group-hover:translate-x-1 transition-transform duration-300" />
+                </>
+              )}
+            </button>
+          </form>
+
+          <div className="text-center mt-10 pt-8 border-t border-white/5">
+            <p className="text-zinc-500 font-medium">
+              Don't have an account?{' '}
+              <Link to="/signup" className="text-purple-400 font-bold hover:text-purple-300 transition-colors">
+                Create Account
+              </Link>
+            </p>
           </div>
-
-          <div className="form-options">
-            <label className="remember-me">
-              <input type="checkbox" />
-              <span>Remember me</span>
-            </label>
-            <a href="#" className="forgot-password">Forgot password?</a>
-          </div>
-
-          <button type="submit" className="login-button gradient-btn rounded-full mt-4 py-4" disabled={isLoading}>
-            {isLoading ? (
-              <>
-                <Loader2 size={18} className="animate-spin" />
-                <span>Verifying...</span>
-              </>
-            ) : (
-              <>
-                <span>Login to Dashboard</span>
-                <LogIn size={18} />
-              </>
-            )}
-          </button>
-        </form>
-
-        <div className="text-center mt-8">
-          <p className="text-slate-500 text-sm">
-            Don't have an account?{' '}
-            <Link to="/signup" className="text-sky-600 font-bold hover:underline">
-              Create one for free
-            </Link>
-          </p>
         </div>
-        {/* 
-        <div className="divider">
-          <span>Or continue with</span>
-        </div>
-
-        <div className="social-login">
-          <button className="social-button">
-            <Globe size={20} />
-            <span>Google</span>
-          </button>
-          <button className="social-button">
-            <Users size={20} />
-            <span>GitHub</span>
-          </button>
-        </div> */}
       </div>
     </div>
   );
