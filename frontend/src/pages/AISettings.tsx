@@ -54,7 +54,7 @@ const AISettings: React.FC = () => {
   }
 
   return (
-    <div className="flex flex-col gap-8 h-full animate-in fade-in duration-700">
+    <div className="flex flex-col gap-8 min-h-full animate-in fade-in duration-700 pb-10">
       <header className="flex justify-between items-end">
         <div className="flex items-center gap-6">
           <div className="w-14 h-14 bg-purple-500/10 text-purple-400 rounded-2xl flex items-center justify-center border border-purple-500/20 shadow-inner">

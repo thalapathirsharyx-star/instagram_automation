@@ -49,16 +49,7 @@ function AppContent() {
 
       <main className="content-area">
         <header className="top-header">
-          <div className="flex items-center gap-6 flex-grow">
-            <div className="relative group max-w-md w-full">
-              <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500 group-focus-within:text-purple-400 transition-colors" />
-              <input 
-                type="text" 
-                placeholder="Search leads, messages, or documents..." 
-                className="w3-input pl-12 w-full text-sm"
-              />
-            </div>
-          </div>
+          <div className="flex-grow"></div>
           <div className="flex items-center gap-6">
             <div className="relative cursor-pointer group">
               <div className="p-2.5 bg-zinc-800/50 rounded-xl text-zinc-400 group-hover:text-purple-400 group-hover:bg-purple-500/10 transition-all duration-300 border border-white/5">

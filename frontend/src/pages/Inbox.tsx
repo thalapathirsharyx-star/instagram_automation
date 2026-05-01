@@ -81,7 +81,7 @@ const Inbox: React.FC = () => {
   return (
     <div className="flex gap-6 h-full animate-in fade-in duration-700">
       {/* Lead Sidebar */}
-      <div className="w-[340px] w3-card flex flex-col p-0 overflow-hidden border-white/5">
+      <div className="w-[340px] shrink-0 bg-zinc-900/80 backdrop-blur-xl rounded-3xl flex flex-col overflow-hidden border border-white/5 shadow-xl">
         <div className="p-6 border-b border-white/5 bg-zinc-900/50">
           <h2 className="text-lg font-bold text-zinc-100">Active Threads</h2>
         </div>
@@ -89,13 +89,10 @@ const Inbox: React.FC = () => {
           {leads.map((lead) => (
             <div 
               key={lead.id} 
-              className={`flex gap-4 p-5 cursor-pointer border-b border-white/5 transition-all duration-300 relative group
-                ${selectedLead?.id === lead.id ? 'bg-purple-500/10' : 'hover:bg-zinc-800/50'}`}
+              className={`flex gap-4 p-4 mx-3 my-2 rounded-[1.25rem] cursor-pointer transition-all duration-300 relative group
+                ${selectedLead?.id === lead.id ? 'bg-purple-500/15 border border-purple-500/30 shadow-[0_0_15px_rgba(168,85,247,0.15)]' : 'border border-transparent hover:bg-zinc-800/50 hover:border-white/5'}`}
               onClick={() => handleSelectLead(lead)}
             >
-              {selectedLead?.id === lead.id && (
-                <div className="absolute left-0 top-0 bottom-0 w-1 bg-purple-500 shadow-[0_0_10px_rgba(168,85,247,0.5)]"></div>
-              )}
               <div className="w-12 h-12 rounded-2xl bg-purple-500/10 flex items-center justify-center text-purple-400 font-bold text-lg shadow-inner border border-purple-500/20">
                 {lead.customer_name[0]}
               </div>
@@ -117,7 +114,7 @@ const Inbox: React.FC = () => {
       </div>
 
       {/* Chat Area */}
-      <div className="flex-grow w3-card flex flex-col p-0 overflow-hidden border-white/5">
+      <div className="flex-grow min-w-0 bg-zinc-900/80 backdrop-blur-xl rounded-3xl flex flex-col overflow-hidden border border-white/5 shadow-xl">
         {selectedLead ? (
           <>
             <div className="p-6 border-b border-white/5 flex justify-between items-center bg-zinc-900/80 backdrop-blur-sm z-10">
@@ -138,10 +135,10 @@ const Inbox: React.FC = () => {
             <div className="flex-grow p-8 overflow-y-auto premium-scroll flex flex-col gap-6 bg-zinc-950/50" ref={chatHistoryRef}>
               {messages.map((msg) => (
                 <div key={msg.id} className={`max-w-[80%] flex flex-col ${msg.direction === 'Outbound' ? 'self-end items-end' : 'self-start items-start'}`}>
-                  <div className={`p-4 rounded-2xl shadow-sm border ${
+                  <div className={`p-4 rounded-[1.5rem] shadow-sm border ${
                     msg.direction === 'Outbound' 
-                      ? 'bg-purple-600 border-purple-500 text-white rounded-tr-none shadow-purple-500/20' 
-                      : 'bg-zinc-900 border-white/10 text-zinc-200 rounded-tl-none'
+                      ? 'bg-purple-600 border-purple-500 text-white rounded-tr-md shadow-purple-500/20' 
+                      : 'bg-zinc-900 border-white/10 text-zinc-200 rounded-tl-md'
                   }`}>
                     <p className="text-sm leading-relaxed font-medium">{msg.message_text}</p>
                     <span className={`text-[10px] mt-2 block ${msg.direction === 'Outbound' ? 'opacity-80' : 'text-zinc-500'} text-right font-bold`}>

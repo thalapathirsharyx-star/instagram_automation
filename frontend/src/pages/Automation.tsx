@@ -45,7 +45,7 @@ const Automation: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col gap-8 h-full animate-in fade-in duration-700">
+    <div className="flex flex-col gap-8 min-h-full animate-in fade-in duration-700 pb-10">
       <div className="flex justify-between items-end">
         <div>
           <h1 className="text-3xl font-bold text-zinc-100 mb-2">Automation Center</h1>
