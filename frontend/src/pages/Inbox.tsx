@@ -79,8 +79,16 @@ const Inbox: React.FC = () => {
   };
 
   return (
-    <div className="flex gap-6 h-full animate-in fade-in duration-700">
-      {/* Lead Sidebar */}
+    <div className="flex flex-col gap-8 h-full animate-in fade-in duration-700">
+      <div className="flex justify-between items-end">
+        <div>
+          <h1 className="text-3xl font-bold text-zinc-100 mb-2">Inbox</h1>
+          <p className="text-zinc-400 font-medium">Monitor and manage your AI-driven conversations.</p>
+        </div>
+      </div>
+
+      <div className="flex gap-6 flex-grow min-h-0">
+        {/* Lead Sidebar */}
       <div className="w-[340px] shrink-0 bg-zinc-900/80 backdrop-blur-xl rounded-3xl flex flex-col overflow-hidden border border-white/5 shadow-xl">
         <div className="p-6 border-b border-white/5 bg-zinc-900/50">
           <h2 className="text-lg font-bold text-zinc-100">Active Threads</h2>
@@ -134,7 +142,7 @@ const Inbox: React.FC = () => {
 
             <div className="flex-grow p-8 overflow-y-auto premium-scroll flex flex-col gap-6 bg-zinc-950/50" ref={chatHistoryRef}>
               {messages.map((msg) => (
-                <div key={msg.id} className={`max-w-[80%] flex flex-col ${msg.direction === 'Outbound' ? 'self-end items-end' : 'self-start items-start'}`}>
+                <div key={msg.id} className={`max-w-[60%] flex flex-col ${msg.direction === 'Outbound' ? 'self-end items-end' : 'self-start items-start'}`}>
                   <div className={`p-4 rounded-[1.5rem] shadow-sm border ${
                     msg.direction === 'Outbound' 
                       ? 'bg-purple-600 border-purple-500 text-white rounded-tr-md shadow-purple-500/20' 
@@ -181,6 +189,7 @@ const Inbox: React.FC = () => {
             <p className="text-sm font-medium mt-1">Review AI interactions and manage handoffs.</p>
           </div>
         )}
+        </div>
       </div>
     </div>
   );

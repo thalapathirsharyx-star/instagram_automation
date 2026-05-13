@@ -15,7 +15,7 @@ const Sidebar: React.FC = () => {
         <span>ReplyZens</span>
       </div>
 
-      <nav className="nav-links">
+      <nav className="nav-links premium-scroll">
         {user?.roleCode === 'SUPER_ADMIN' ? (
           <>
             <NavLink to="/admin/dashboard" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
@@ -69,8 +69,8 @@ const Sidebar: React.FC = () => {
         <div className="user-info">
           <div className="avatar">{user?.email?.[0].toUpperCase() || 'U'}</div>
           <div className="details ml-3 overflow-hidden">
-            <p className="font-semibold text-slate-900 truncate">{user?.email?.split('@')[0] || 'User'}</p>
-            <p className="text-xs text-slate-500 font-medium">{user?.role || 'Member'}</p>
+            <p className="font-semibold text-white truncate">{user?.email?.split('@')[0] || 'User'}</p>
+            <p className="text-xs text-zinc-400 font-medium">{user?.role || 'Member'}</p>
           </div>
         </div>
 

@@ -87,7 +87,7 @@ const Signup: React.FC = () => {
       </div>
 
       <div className="w-full lg:w-1/2 flex flex-col items-center justify-center p-6 md:p-12 z-20 overflow-y-auto premium-scroll">
-        <div className="w-full max-w-md bg-zinc-900/50 backdrop-blur-xl rounded-[2rem] p-10 md:p-14 shadow-2xl border border-white/5 relative my-8">
+        <div className="w-full max-w-lg bg-zinc-900/50 backdrop-blur-xl rounded-[2rem] p-10 md:p-12 shadow-2xl border border-white/5 relative my-8">
           <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-purple-500/50 to-transparent"></div>
           <div className="mb-10 text-center">
             <div className="w-16 h-16 rounded-2xl bg-purple-500/10 flex items-center justify-center shadow-[0_0_30px_rgba(168,85,247,0.3)] mx-auto mb-8 border border-purple-500/20">

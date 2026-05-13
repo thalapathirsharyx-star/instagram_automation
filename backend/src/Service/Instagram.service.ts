@@ -184,7 +184,9 @@ export class InstagramService {
     console.log(`[FAQ DEBUG] Normalized Query Words: ${JSON.stringify(queryWords)}`);
 
     for (const item of knowledgeItems) {
-      const titleWords = normalize(item.title).split(' ');
+      const titleWords = normalize(item.title).split(' ').filter(w => w !== 'pdf' && w !== 'docx' && w !== 'txt');
+      if (titleWords.length === 0) continue;
+
       // Check if ALL words in the FAQ title exist in the user's message (fuzzy)
       const matchCount = titleWords.filter(tw => queryWords.some(qw => qw.includes(tw) || tw.includes(qw))).length;
       const matchPercentage = matchCount / titleWords.length;
@@ -202,6 +204,8 @@ export class InstagramService {
 
         // Promote to lead if they match an FAQ
         lead.is_qualified = true;
+        lead.lead_status = 'Hot'; // Ensure they are marked as Hot lead
+        lead.lead_score = 10;
         await lead.save();
 
         await this.logOutboundMessage(lead, directResponse as any);
@@ -210,18 +214,56 @@ export class InstagramService {
       }
     }
 
-    // 2. Fallback to AI if no direct match
+    // 3. Preprocess Message
+    const normalizedMessage = context.message_text.toLowerCase().trim();
+
+    // 4. Rule-Based Scoring
+    let rule_score = 0;
+    const leadRules = company?.lead_rules || { 
+      keywords: ['price', 'size', 'available', 'buy', 'order', 'cost', 'shipping', 'delivery', 'stock'], 
+      score_threshold: 3 
+    };
+    
+    for (const kw of leadRules.keywords || []) {
+      if (normalizedMessage.includes(kw.toLowerCase())) {
+        if (kw.toLowerCase() === 'book' || kw.toLowerCase() === 'appointment') rule_score += 3;
+        else rule_score += 2;
+      }
+    }
+
+    // 5. Dynamic AI Classification
     const aiResponse = await this.generateAiReply(context.message_text, lead, companyId);
 
     if (aiResponse.reply) {
-      // Update Lead metadata if AI suggests changes
-      if (aiResponse.lead_status) lead.lead_status = aiResponse.lead_status;
-      // Only set to true, never back to false once qualified
-      if (aiResponse.is_qualified === true) lead.is_qualified = true;
+      // 6. Combine Logic (Decision Engine)
+      const ai_confidence = parseFloat(aiResponse.confidence) || 0;
+      const final_score = Math.min(10, rule_score + (ai_confidence * 7)); // Boost AI influence on score
+      const threshold = leadRules.score_threshold || 3;
+
+      const isLead = final_score >= threshold || aiResponse.lead === 'yes';
+
+      // 7. Update User State
+      lead.lead_score = final_score;
+      if (isLead) {
+        lead.lead_status = 'Hot';
+        lead.is_qualified = true;
+      }
+      
       if (aiResponse.tags) lead.tags = aiResponse.tags;
       if (aiResponse.notes) lead.notes = (lead.notes ? lead.notes + '\n' : '') + aiResponse.notes;
+      if (aiResponse.summary) lead.conversation_summary = aiResponse.summary;
+      if (aiResponse.intent) lead.last_intent = aiResponse.intent;
       await lead.save();
 
+      // 8. Trigger Actions
+      if (isLead) {
+        console.log(`[LEAD DETECTED] Score: ${final_score}. Intent: ${aiResponse.intent}. Notifying CRM/Business...`);
+        // Notification logic would go here
+      } else {
+        console.log(`[NOT LEAD] Score: ${final_score}. Continuing auto-reply...`);
+      }
+
+      // 9. Smart Auto-Reply
       await this.logOutboundMessage(lead, aiResponse);
       await this.sendInstagramMessage(lead.instagram_handle, aiResponse.reply, company?.instagram_access_token);
     }
@@ -234,22 +276,45 @@ export class InstagramService {
     const context = await this.getRelevantContext(messageText, companyId);
 
     const history = await this.getMessagesByLead(lead.id, lead.company_id);
-    const historyText = history.slice(-10).map(m => `${m.direction}: ${m.message_text}`).join('\n');
+    const historyText = history.slice(-25).map(m => `${m.direction}: ${m.message_text}`).join('\n');
+    
+    const previousIntelligence = `
+Previous Summary: ${lead.conversation_summary || 'None'}
+Previous Tags: ${(lead.tags || []).join(', ')}
+`;
 
     const company = await CompanyTable.findOne({ where: { id: companyId } });
 
+    const profile = company?.business_profile || { 
+      type: 'clothing brand', 
+      goal: 'sales and inquiries', 
+      lead_definition: 'customer who is interested in products, asking about price, size, availability, or wanting to purchase' 
+    };
+    const rules = company?.lead_rules || { 
+      keywords: ['price', 'size', 'available', 'buy', 'order', 'cost', 'shipping', 'delivery', 'stock'], 
+      intent_types: ['purchase', 'enquiry', 'support', 'casual'] 
+    };
+
     const defaultPrompt = `
-You are Maya, a warm and polite sales assistant for a clothing brand.
-You genuinely care about helping customers find the right product.
-You speak naturally in English, Tamil, and Tanglish.
+You are Maya, a warm and polite sales assistant and lead classifier for a \${profile.type.toUpperCase()} business.
+You genuinely care about helping customers find the right product or service.
+
+Business goal: \${profile.goal}
+Lead definition: \${profile.lead_definition}
+Keywords: \${rules.keywords.join(', ')}
 
 ═══════════════════════════════
-KNOWLEDGE BASE
+KNOWLEDGE BASE (Product Info)
 ═══════════════════════════════
 \${context}
 
 ═══════════════════════════════
-CHAT HISTORY
+PREVIOUS INTELLIGENCE (Context Memory)
+═══════════════════════════════
+\${previousIntelligence}
+
+═══════════════════════════════
+CHAT HISTORY (Recent)
 ═══════════════════════════════
 \${historyText}
 
@@ -257,6 +322,16 @@ CHAT HISTORY
 CUSTOMER'S MESSAGE
 ═══════════════════════════════
 "\${messageText}"
+
+═══════════════════════════════
+LEAD QUALIFICATION RULES
+═══════════════════════════════
+- Mark "lead": "yes" if the customer shows clear interest in any product mentioned in the KNOWLEDGE BASE.
+- If they ask about price, sizing, fabric, material, or availability of an item, they ARE a lead.
+- If they express intent to visit the store, book an appointment, or ask "how to order", they ARE a lead.
+- If they are just saying "hi", "thanks", "ok", or "cool", they are NOT a lead yet.
+- When in doubt if it's a product inquiry, prefer marking "lead": "yes" to ensure follow-up.
+- SUMMARY RULE: Your summary must be CUMULATIVE. Don't forget earlier topics. If they asked about shirts 10 mins ago and now pants, the summary must mention BOTH.
 
 ═══════════════════════════════
 LANGUAGE RULES (CRITICAL)
@@ -267,60 +342,20 @@ LANGUAGE RULES (CRITICAL)
 - English → reply in polite, friendly English.
 - Never switch language unless the customer does first.
 
-Polite Tanglish examples to match:
-  Customer: "anna price evlo?"
-  Maya: "Anna, ithu RM89 thaan 😊 Romba nalla quality, worth it irukku. Ungalukku enna size venum?"
-
-  Customer: "akka ithu nalla iruka?"
-  Maya: "Aama akka, ithu customers-ku romba pidikkum! Ungalukku suit aagum pola irukku. Oru size try pannalama? 🙏"
-
-  Customer: "என்ன விலை?"
-  Maya: "விலை RM89 மட்டுமே 😊 தரமான தயாரிப்பு, மதிப்புக்கு ஏற்றது. உங்களுக்கு என்ன அளவு வேண்டும்?"
-
-═══════════════════════════════
-POLITENESS RULES
-═══════════════════════════════
-- Always address the customer respectfully (anna / akka / sir / madam as appropriate).
-- Never pressure or rush the customer.
-- If they seem unsure, gently reassure them.
-- If they have a complaint, acknowledge it kindly before responding.
-- End every reply with a warm, soft question to keep the conversation going.
-- Use "please", "thank you", "of course" naturally in English replies.
-
-═══════════════════════════════
-LEAD QUALIFICATION RULES
-═══════════════════════════════
-- Hot   → asks price, size, payment, delivery or says "venum / I want / order"
-- Warm  → curious, asking product questions, comparing options
-- New   → first message, no clear signal yet
-- Cold  → very short replies, low engagement
-- Buyer → confirmed order or completed payment
-- Lost  → said not interested, too expensive, or gone silent
-
-═══════════════════════════════
-BEHAVIOR RULES
-═══════════════════════════════
-1. Answer only from the knowledge base. Never guess or make up product details.
-2. If something is not in the knowledge base, say warmly:
-3. Keep replies short and warm — 2 to 3 sentences is ideal.
-4. Use 1 or 2 emojis naturally — never overdo it.
-5. Always close with a gentle next step (size? color? shall I reserve one for you?).
-6. NEVER echo the user's statement back to them as your own. If the user says "I want a shirt", you MUST reply as the store (e.g. "We have great shirts!"). Do NOT say "I want a shirt".
-7. Be extremely careful in Tanglish to not use words like "ennakku" (to me) when describing the customer's needs. Use "ungalukku" (to you) instead.
-
 ═══════════════════════════════
 OUTPUT FORMAT (JSON ONLY)
 ═══════════════════════════════
 Return ONLY valid JSON. No extra text outside it.
 
 {
-  "reply": "your polite message to the customer",
+  "reply": "smart auto-reply based on intent (enquiry -> info from KB, purchase -> how to buy, casual -> greeting)",
   "action": "reply",
+  "lead": "yes/no",
+  "intent": "\${rules.intent_types.join('/')}",
+  "summary": "2-3 sentence overview of what the customer wants and current status. Mandatory even for greetings.",
+  "confidence": 0.0 to 1.0,
   "detected_language": "english" | "tamil" | "tanglish",
-  "lead_status": "New" | "Hot" | "Warm" | "Cold" | "Buyer" | "Lost",
-  "is_qualified": true | false,
-  "tags": ["interested", "pricing", "size_query", "support", "tamil_speaker", ...],
-  "notes": "1-line CRM summary in English, regardless of chat language"
+  "tags": ["interested", "pricing", "size_query", "support"]
 }
 `;
 
@@ -328,14 +363,27 @@ Return ONLY valid JSON. No extra text outside it.
 
     // Always append strict perspective rule to prevent echoing bugs even if they use a custom prompt
     if (company?.system_prompt) {
-      customPrompt += `\n\nCRITICAL RULE: Never echo the user's request from your own perspective. Respond as the store. Use "we" and "you" (or "ungalukku" in Tanglish). Never say "I want" if the user wants something. Return ONLY valid JSON format.`;
+      customPrompt += `\n\nCRITICAL RULE: Respond ONLY in valid JSON format.
+Include these fields:
+- "reply": your response to the customer
+- "lead": "yes" or "no"
+- "intent": "purchase/enquiry/support/casual"
+- "confidence": 0.0 to 1.0
+- "summary": a 2-3 sentence summary of the discussion so far
+- "tags": array of interest tags`;
     }
 
     // Replace placeholders in custom prompt
     const prompt = customPrompt
       .replace(/\${context}/g, context)
+      .replace(/\${previousIntelligence}/g, previousIntelligence)
       .replace(/\${historyText}/g, historyText)
-      .replace(/\${messageText}/g, messageText);
+      .replace(/\${messageText}/g, messageText)
+      .replace(/\${profile.type.toUpperCase\(\)}/g, profile.type ? profile.type.toUpperCase() : 'BUSINESS')
+      .replace(/\${profile.goal}/g, profile.goal || '')
+      .replace(/\${profile.lead_definition}/g, profile.lead_definition || '')
+      .replace(/\${rules.keywords.join\(\', \'\)}/g, rules.keywords ? rules.keywords.join(', ') : '')
+      .replace(/\${rules.intent_types.join\(\'\/\'\)}/g, rules.intent_types ? rules.intent_types.join('/') : '');
 
     try {
       const response = await axios.post(
@@ -357,10 +405,19 @@ Return ONLY valid JSON. No extra text outside it.
       );
 
       const aiData = JSON.parse(response.data.choices[0].message.content);
+      const isLead = aiData.lead === 'yes' || aiData.lead === true || aiData.is_qualified === true || aiData.lead_status === 'Hot';
+
       return {
         reply: aiData.reply || aiData.message || aiData.text || "I'll check on that for you!",
         action: aiData.action || 'reply',
-        notes: aiData.notes || ''
+        notes: aiData.notes || aiData.summary || '',
+        lead_status: isLead ? 'Hot' : 'New',
+        is_qualified: isLead,
+        tags: aiData.tags || [],
+        intent: aiData.intent || 'enquiry',
+        confidence: aiData.confidence || 0,
+        lead: isLead ? 'yes' : 'no',
+        summary: aiData.summary || aiData.notes || ''
       };
     } catch (error: any) {
       console.error('[AI ERROR] Groq failed:', error.response?.data || error.message);
@@ -374,16 +431,52 @@ Return ONLY valid JSON. No extra text outside it.
       if (!kbRepo || kbRepo.length === 0) return "No specific data provided.";
 
       const query = messageText.toLowerCase();
-      const relevant = kbRepo.filter(item =>
-        query.includes(item.title.toLowerCase()) ||
-        query.split(' ').some(w => w.length > 3 && item.content.toLowerCase().includes(w))
-      );
+      
+      // Rank knowledge items by relevance
+      const scoredItems = kbRepo.map(item => {
+        let score = 0;
+        const title = item.title.toLowerCase();
+        const content = item.content.toLowerCase();
+        
+        // Priority 1: Title match
+        if (query.includes(title) || title.includes(query)) score += 20;
+        
+        // Priority 2: Keyword matches (supporting non-English characters)
+        const queryWords = query.split(/[\s,.;:!?]+/).filter(w => w.length >= 2);
+        for (const word of queryWords) {
+          if (content.includes(word)) score += 5;
+          if (title.includes(word)) score += 10;
+          // Bonus for price-related numbers if query contains them
+          if (/\d+/.test(word) && content.includes(word)) score += 15;
+        }
 
-      return relevant.length > 0
-        ? relevant.map(i => `${i.title}: ${i.content}`).join('\n')
-        : kbRepo.slice(0, 2).map(i => `${i.title}: ${i.content}`).join('\n');
+        return { item, score };
+      });
+
+      const relevant = scoredItems
+        .filter(si => si.score > 0)
+        .sort((a, b) => b.score - a.score)
+        .map(si => si.item);
+
+      if (relevant.length > 0) {
+        console.log(`[CONTEXT] Found ${relevant.length} relevant items for query: ${query}`);
+        // Combine content but limit to avoid token bloat
+        let combined = '';
+        for (const item of relevant) {
+          const entry = `[Document: ${item.title}]\n${item.content}\n\n`;
+          if ((combined + entry).length < 8000) {
+            combined += entry;
+          } else break;
+        }
+        return combined;
+      }
+
+      // Fallback: Return the most recent items if no direct match found
+      console.log(`[CONTEXT] No direct match for "${query}". Returning fallback context.`);
+      return kbRepo.slice(0, 5).map(i => `[${i.title}]: ${i.content.slice(0, 1000)}`).join('\n');
     } catch (err) {
-      return "Clothing brand info.";
+      console.error('[CONTEXT ERROR]', err);
+      return "General business information.";
     }
   }
 

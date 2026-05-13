@@ -11,6 +11,10 @@ export interface Lead {
   lead_status: 'New' | 'Hot' | 'Buyer' | 'Lost' | 'Needs_Human';
   last_message_time: string;
   created_on: string;
+  conversation_summary?: string;
+  tags?: string[];
+  lead_score?: number;
+  last_intent?: string;
 }
 
 export interface Message {

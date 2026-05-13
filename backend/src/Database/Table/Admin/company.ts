@@ -90,4 +90,10 @@ export class company extends BaseTable {
 
   @Column({ type: 'text', nullable: true })
   welcome_message: string;
+
+  @Column({ type: 'jsonb', nullable: true })
+  business_profile: any;
+
+  @Column({ type: 'jsonb', nullable: true })
+  lead_rules: any;
 }

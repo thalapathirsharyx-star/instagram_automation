@@ -7,6 +7,7 @@ const Leads: React.FC = () => {
   const [leads, setLeads] = useState<Lead[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
 
   useEffect(() => {
     fetchLeads();
@@ -47,9 +48,9 @@ const Leads: React.FC = () => {
               className="w3-input pl-12 w-64 shadow-sm"
             />
           </div>
-          <button className="flex items-center gap-2 px-4 py-2.5 bg-zinc-800/50 border border-white/5 rounded-xl text-zinc-300 font-bold hover:bg-zinc-800 hover:text-white transition-all shadow-sm">
+          <button onClick={fetchLeads} className="flex items-center gap-2 px-5 py-3 bg-zinc-800/50 border border-white/5 rounded-xl text-zinc-300 font-bold hover:bg-zinc-800 hover:text-white transition-all shadow-sm">
             <Filter size={18} />
-            <span>Filter</span>
+            <span>Refresh</span>
           </button>
         </div>
       </div>
@@ -61,8 +62,8 @@ const Leads: React.FC = () => {
               <tr className="bg-zinc-900/50 border-b border-white/5">
                 <th className="px-8 py-5 text-[11px] font-bold text-zinc-500 uppercase tracking-widest">Customer Profile</th>
                 <th className="px-8 py-5 text-[11px] font-bold text-zinc-500 uppercase tracking-widest">Pipeline Status</th>
-                <th className="px-8 py-5 text-[11px] font-bold text-zinc-500 uppercase tracking-widest">Engagement</th>
-                <th className="px-8 py-5 text-[11px] font-bold text-zinc-500 uppercase tracking-widest">Last Signal</th>
+                <th className="px-8 py-5 text-[11px] font-bold text-zinc-500 uppercase tracking-widest">AI Score</th>
+                <th className="px-8 py-5 text-[11px] font-bold text-zinc-500 uppercase tracking-widest">Last Intent</th>
                 <th className="px-8 py-5 text-[11px] font-bold text-zinc-500 uppercase tracking-widest text-right">Actions</th>
               </tr>
             </thead>
@@ -101,20 +102,28 @@ const Leads: React.FC = () => {
                     </span>
                   </td>
                   <td className="px-8 py-5">
-                    <div className="flex items-center gap-2 text-zinc-400 font-medium">
-                      <MessageCircle size={14} className="text-zinc-600" />
-                      <span>--</span>
+                    <div className="flex items-center gap-2">
+                      <div className="w-12 h-2 bg-zinc-800 rounded-full overflow-hidden">
+                        <div 
+                          className="h-full bg-gradient-to-r from-purple-500 to-blue-500" 
+                          style={{ width: `${Math.min(Number(lead.lead_score || 0) * 10, 100)}%` }}
+                        />
+                      </div>
+                      <span className="text-xs font-bold text-zinc-300">{Number(lead.lead_score || 0).toFixed(0)}</span>
                     </div>
                   </td>
                   <td className="px-8 py-5">
-                    <div className="flex items-center gap-2 text-zinc-400 font-medium">
-                      <Calendar size={14} className="text-zinc-600" />
-                      <span>{new Date().toLocaleDateString()}</span>
+                    <div className="flex items-center gap-2 text-zinc-400 font-medium italic">
+                      <MessageCircle size={14} className="text-zinc-600" />
+                      <span>{lead.last_intent || 'General Inquiry'}</span>
                     </div>
                   </td>
                   <td className="px-8 py-5 text-right">
                     <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <button className="p-2.5 bg-zinc-800/50 border border-white/5 rounded-xl text-zinc-400 hover:text-purple-400 hover:bg-purple-500/10 hover:border-purple-500/20 transition-all shadow-sm" title="View Intelligence">
+                      <button 
+                        onClick={() => setSelectedLead(lead)}
+                        className="p-2.5 bg-zinc-800/50 border border-white/5 rounded-xl text-zinc-400 hover:text-purple-400 hover:bg-purple-500/10 hover:border-purple-500/20 transition-all shadow-sm" title="View Intelligence"
+                      >
                         <ExternalLink size={16} />
                       </button>
                       <button className="p-2.5 bg-zinc-800/50 border border-white/5 rounded-xl text-zinc-400 hover:text-zinc-200 hover:bg-zinc-700 transition-all shadow-sm">
@@ -128,6 +137,92 @@ const Leads: React.FC = () => {
           </table>
         </div>
       </div>
+
+      {/* Lead Intelligence Modal */}
+      {selectedLead && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-in fade-in duration-300">
+          <div className="w-full max-w-2xl bg-zinc-900 border border-white/10 rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
+            <div className="px-8 py-6 border-b border-white/5 flex justify-between items-center bg-gradient-to-r from-purple-500/10 to-transparent">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-purple-500 to-blue-600 flex items-center justify-center text-white font-bold text-xl shadow-lg border border-white/10">
+                  {selectedLead.customer_name[0]}
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold text-white">{selectedLead.customer_name}</h2>
+                  <p className="text-sm text-zinc-500 font-medium">@{selectedLead.instagram_handle}</p>
+                </div>
+              </div>
+              <button 
+                onClick={() => setSelectedLead(null)}
+                className="p-2 text-zinc-500 hover:text-white transition-colors"
+              >
+                <MoreHorizontal size={24} className="rotate-45" />
+              </button>
+            </div>
+            
+            <div className="p-8 space-y-8">
+              {/* Summary Section */}
+              <div className="space-y-3">
+                <h3 className="text-xs font-bold text-zinc-500 uppercase tracking-widest flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 rounded-full bg-purple-500 shadow-[0_0_8px_rgba(168,85,247,0.8)]" />
+                  Conversation Intelligence Summary
+                </h3>
+                <div className="p-5 rounded-2xl bg-zinc-800/50 border border-white/5 text-zinc-300 leading-relaxed font-medium">
+                  {selectedLead.conversation_summary || "The AI is still analyzing this conversation. A detailed summary will appear after more interactions."}
+                </div>
+              </div>
+
+              {/* Stats & Metadata */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="p-4 rounded-2xl bg-zinc-800/30 border border-white/5">
+                  <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-1">Lead Health Score</p>
+                  <p className="text-2xl font-bold text-white">{Number(selectedLead.lead_score || 0).toFixed(0)} <span className="text-xs text-zinc-500 font-medium">/ 10</span></p>
+                </div>
+                <div className="p-4 rounded-2xl bg-zinc-800/30 border border-white/5">
+                  <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-1">Detected Intent</p>
+                  <p className="text-lg font-bold text-purple-400 capitalize">{selectedLead.last_intent || 'Enquiry'}</p>
+                </div>
+              </div>
+
+              {/* Tags */}
+              {selectedLead.tags && selectedLead.tags.length > 0 && (
+                <div className="space-y-3">
+                  <h3 className="text-xs font-bold text-zinc-500 uppercase tracking-widest">Intelligence Tags</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedLead.tags.map((tag, idx) => (
+                      <span key={idx} className="px-3 py-1 bg-purple-500/10 text-purple-400 text-[10px] font-bold uppercase rounded-lg border border-purple-500/20">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="px-8 py-6 bg-zinc-800/30 border-t border-white/5 flex justify-between items-center">
+              <div className="flex items-center gap-2 text-zinc-500 text-xs font-medium">
+                <Calendar size={14} />
+                <span>Last updated: {new Date(selectedLead.last_message_time || Date.now()).toLocaleDateString()}</span>
+              </div>
+              <div className="flex gap-3">
+                <button 
+                  onClick={() => setSelectedLead(null)}
+                  className="px-6 py-2.5 bg-zinc-800 border border-white/5 rounded-xl text-zinc-300 font-bold hover:bg-zinc-700 transition-all shadow-sm"
+                >
+                  Close
+                </button>
+                <button 
+                  onClick={() => window.open(`https://instagram.com/direct/t/${selectedLead.instagram_handle}`, '_blank')}
+                  className="px-6 py-2.5 bg-gradient-to-r from-purple-500 to-blue-600 rounded-xl text-white font-bold hover:shadow-lg hover:shadow-purple-500/20 transition-all flex items-center gap-2"
+                >
+                  <ExternalLink size={16} />
+                  Contact on Instagram
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

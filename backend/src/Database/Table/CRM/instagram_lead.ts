@@ -34,4 +34,13 @@ export class instagram_lead extends BaseTable {
 
   @Column({ type: 'boolean', default: false })
   is_qualified: boolean;
+
+  @Column({ type: 'decimal', precision: 5, scale: 2, default: 0 })
+  lead_score: number;
+
+  @Column({ type: 'text', nullable: true })
+  last_intent: string;
+
+  @Column({ type: 'text', nullable: true })
+  conversation_summary: string;
 }
