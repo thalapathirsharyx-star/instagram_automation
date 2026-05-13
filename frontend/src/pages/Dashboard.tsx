@@ -74,6 +74,41 @@ const Dashboard: React.FC = () => {
     }
   };
 
+  const handleGenerateReport = async () => {
+    try {
+      const res = await getLeads();
+      const leads = res?.Data || [];
+      if (leads.length === 0) {
+        alert('No leads to export');
+        return;
+      }
+      
+      const headers = ['Name', 'Handle', 'Status', 'Score', 'Intent'];
+      const rows = leads.map((lead: any) => [
+        `"${lead.customer_name}"`,
+        `"${lead.instagram_handle}"`,
+        `"${lead.lead_status}"`,
+        lead.ai_score,
+        `"${lead.last_intent || ''}"`
+      ]);
+      
+      const csvContent = [headers, ...rows].map(e => e.join(",")).join("\n");
+      
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', `leads_report_${new Date().toISOString().slice(0,10)}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error('Error generating report:', error);
+      alert('Failed to generate report');
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-full">
@@ -90,7 +125,7 @@ const Dashboard: React.FC = () => {
           <h1 className="text-3xl font-bold text-zinc-100 mb-2">Overview</h1>
           <p className="text-zinc-400 font-medium">Monitoring your AI Instagram automation performance.</p>
         </div>
-        <button className="w3-button-primary">
+        <button onClick={handleGenerateReport} className="w3-button-primary">
           <TrendingUp size={18} />
           <span>Generate Report</span>
         </button>

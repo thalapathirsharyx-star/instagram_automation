@@ -12,6 +12,11 @@ export const getMessages = async (leadId: string): Promise<ApiResponse<Message[]
   return response.data;
 };
 
+export const sendMessage = async (leadId: string, text: string): Promise<ApiResponse<any>> => {
+  const response = await api.post<ApiResponse<any>>('/Instagram/SendMessage', { leadId, text });
+  return response.data;
+};
+
 export const processMessage = async (context: any): Promise<ApiResponse<any>> => {
   const response = await api.post<ApiResponse<any>>('/Instagram/Process', context);
   return response.data;

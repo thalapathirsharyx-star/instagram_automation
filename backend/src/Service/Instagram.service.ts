@@ -175,6 +175,23 @@ export class InstagramService {
 
     this.instagramGateway.emitNewMessage({ ...inboundMsg, lead });
 
+    // Handle Image Messages (Simple Approach)
+    if (context.message_text.startsWith('[IMAGE]')) {
+      const handoffResponse: any = {
+        reply: "I received your image! Let me connect you with a human to check it.",
+        action: 'human_required',
+        status_update: 'Handoff',
+        notes: 'User sent an image'
+      };
+
+      lead.lead_status = 'Handoff';
+      await lead.save();
+
+      await this.logOutboundMessage(lead, handoffResponse as any);
+      await this.sendInstagramMessage(lead.instagram_handle, handoffResponse.reply, company?.instagram_access_token);
+      return handoffResponse;
+    }
+
     // 1. Check for Direct FAQ Match (Fuzzy Word Match)
     const knowledgeItems = await knowledge_base.find({ where: { company_id: companyId } });
     console.log(`[FAQ DEBUG] Checking ${knowledgeItems.length} items in Brain Base for company ${companyId}`);
@@ -548,6 +565,30 @@ Include these fields:
     } catch (error: any) {
       console.error('[IG ERROR] Message failed to send:', error.response?.data || error.message);
     }
+  }
+
+  async sendManualMessage(companyId: string, leadId: string, text: string) {
+    const company = await CompanyTable.findOne({ where: { id: companyId } });
+    const lead = await instagram_lead.findOne({ where: { id: leadId, company_id: companyId } });
+    if (!lead) throw new Error('Lead not found');
+
+    await this.sendInstagramMessage(lead.instagram_handle, text, company?.instagram_access_token);
+    
+    const outboundMsg = new instagram_message();
+    outboundMsg.lead_id = lead.id;
+    outboundMsg.message_text = text;
+    outboundMsg.direction = 'Outbound';
+    outboundMsg.created_by_id = '00000000-0000-0000-0000-000000000000';
+    outboundMsg.created_on = new Date();
+    outboundMsg.company_id = companyId;
+    await outboundMsg.save();
+
+    this.instagramGateway.emitNewMessage({ ...outboundMsg, lead });
+
+    lead.last_message_time = new Date();
+    await lead.save();
+
+    return { success: true };
   }
 
   async getKnowledgeBase(companyId: string) {

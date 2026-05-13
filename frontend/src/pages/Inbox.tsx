@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { getLeads, getMessages } from '../api/crm.api';
+import { getLeads, getMessages, sendMessage } from '../api/crm.api';
 import type { Lead, Message } from '../models/crm.models';
 import { Send, MessageSquare } from 'lucide-react';
 import { io } from 'socket.io-client';
@@ -8,6 +8,8 @@ const Inbox: React.FC = () => {
   const [leads, setLeads] = useState<Lead[]>([]);
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
+  const [isManualMode, setIsManualMode] = useState(false);
+  const [messageText, setMessageText] = useState('');
   const chatHistoryRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -78,6 +80,16 @@ const Inbox: React.FC = () => {
     }
   };
 
+  const handleSendMessage = async () => {
+    if (!selectedLead || !messageText.trim()) return;
+    try {
+      await sendMessage(selectedLead.id, messageText);
+      setMessageText('');
+    } catch (error) {
+      console.error('Error sending message:', error);
+    }
+  };
+
   return (
     <div className="flex flex-col gap-8 h-full animate-in fade-in duration-700">
       <div className="flex justify-between items-end">
@@ -110,7 +122,9 @@ const Inbox: React.FC = () => {
                     {lead.customer_name}
                   </span>
                   <span className={`text-[10px] font-bold px-2 py-1 rounded-md uppercase tracking-tighter border
-                    ${lead.lead_status === 'Hot' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-zinc-800 text-zinc-400 border-white/5'}`}>
+                    ${lead.lead_status === 'Hot' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 
+                      lead.lead_status === 'Handoff' ? 'bg-rose-500/10 text-rose-400 border-rose-500/20' : 
+                      'bg-zinc-800 text-zinc-400 border-white/5'}`}>
                     {lead.lead_status}
                   </span>
                 </div>
@@ -135,8 +149,15 @@ const Inbox: React.FC = () => {
                   <p className="text-xs text-zinc-500 font-medium">@{selectedLead.instagram_handle}</p>
                 </div>
               </div>
-              <button className="px-4 py-2 bg-zinc-800 text-zinc-300 rounded-xl text-xs font-bold hover:bg-zinc-700 hover:text-white transition-colors border border-white/5 shadow-sm">
-                Human Handoff
+              <button 
+                onClick={() => setIsManualMode(!isManualMode)}
+                className={`px-4 py-2 rounded-xl text-xs font-bold transition-colors border shadow-sm ${
+                  isManualMode 
+                    ? 'bg-rose-500/10 text-rose-400 border-rose-500/20 hover:bg-rose-500/20' 
+                    : 'bg-zinc-800 text-zinc-300 border-white/5 hover:bg-zinc-700 hover:text-white'
+                }`}
+              >
+                {isManualMode ? 'AI Paused' : 'Human Handoff'}
               </button>
             </div>
 
@@ -148,7 +169,11 @@ const Inbox: React.FC = () => {
                       ? 'bg-purple-600 border-purple-500 text-white rounded-tr-md shadow-purple-500/20' 
                       : 'bg-zinc-900 border-white/10 text-zinc-200 rounded-tl-md'
                   }`}>
-                    <p className="text-sm leading-relaxed font-medium">{msg.message_text}</p>
+                    {msg.message_text.startsWith('[IMAGE]') ? (
+                      <img src={msg.message_text.replace('[IMAGE] ', '')} alt="Shared image" className="rounded-2xl max-w-full h-auto border border-white/10" />
+                    ) : (
+                      <p className="text-sm leading-relaxed font-medium">{msg.message_text}</p>
+                    )}
                     <span className={`text-[10px] mt-2 block ${msg.direction === 'Outbound' ? 'opacity-80' : 'text-zinc-500'} text-right font-bold`}>
                       {(() => {
                         const d = new Date(msg.created_on);
@@ -170,11 +195,22 @@ const Inbox: React.FC = () => {
               <div className="flex gap-3 bg-zinc-950 p-2 rounded-[1.25rem] border border-white/5 focus-within:border-purple-500/50 transition-all duration-300 shadow-inner">
                 <input 
                   type="text" 
-                  placeholder="AI is managing this conversation..." 
-                  disabled 
-                  className="flex-grow px-4 py-2 bg-transparent text-sm font-medium text-zinc-500 outline-none"
+                  placeholder={isManualMode ? "Type a message..." : "AI is managing this conversation..."} 
+                  disabled={!isManualMode} 
+                  value={messageText}
+                  onChange={(e) => setMessageText(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                  className={`flex-grow px-4 py-2 bg-transparent text-sm font-medium outline-none ${isManualMode ? 'text-zinc-100' : 'text-zinc-500'}`}
                 />
-                <button className="w-10 h-10 bg-zinc-800 text-zinc-500 rounded-xl flex items-center justify-center border border-white/5 cursor-not-allowed">
+                <button 
+                  onClick={handleSendMessage}
+                  disabled={!isManualMode || !messageText.trim()}
+                  className={`w-10 h-10 rounded-xl flex items-center justify-center border transition-all ${
+                    isManualMode && messageText.trim() 
+                      ? 'bg-purple-500 text-white border-purple-500 shadow-glow-purple hover:bg-purple-600' 
+                      : 'bg-zinc-800 text-zinc-500 border-white/5 cursor-not-allowed'
+                  }`}
+                >
                   <Send size={18} />
                 </button>
               </div>

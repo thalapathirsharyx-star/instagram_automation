@@ -2,8 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { Bot, Save, RefreshCw, MessageSquare, Sparkles, AlertCircle } from 'lucide-react';
 import { getAIPrompt, updateAIPrompt } from '../api/crm.api';
 
+const tonePrompts: Record<string, string> = {
+  Professional: "Maintain a professional, polite, and formal tone. Use proper language and avoid slang.",
+  Friendly: "Maintain a warm, friendly, and helpful tone. Use emojis and polite terms like 'Akka/Anna'.",
+  Salesy: "Maintain an energetic, persuasive, and sales-focused tone. Highlight product benefits and encourage purchase.",
+  Casual: "Maintain a relaxed, casual, and informal tone. Speak like a friend."
+};
+
 const AISettings: React.FC = () => {
   const [prompt, setPrompt] = useState('');
+  const [tone, setTone] = useState('Friendly');
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [notification, setNotification] = useState<{ type: 'success' | 'error', message: string } | null>(null);
@@ -30,6 +38,19 @@ const AISettings: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleToneSelect = (selectedTone: string) => {
+    setTone(selectedTone);
+    const toneInstruction = tonePrompts[selectedTone];
+    const tonePrefix = "Tone: ";
+    
+    const lines = prompt.split('\n');
+    const filteredLines = lines.filter(line => !line.startsWith(tonePrefix));
+    
+    // Add the new tone instruction at the top for visibility.
+    const newPrompt = [`${tonePrefix}${toneInstruction}`, ...filteredLines].join('\n').trim();
+    setPrompt(newPrompt);
   };
 
   const handleSave = async () => {
@@ -115,6 +136,28 @@ const AISettings: React.FC = () => {
         </div>
 
         <div className="space-y-8">
+          <div className="w3-card bg-gradient-to-br from-zinc-900 to-zinc-950 border-white/5 text-white">
+            <h3 className="text-lg font-bold flex items-center gap-2 mb-6">
+              <Sparkles size={18} className="text-purple-400" /> AI Tone Preset
+            </h3>
+            <p className="text-xs text-zinc-400 font-medium mb-4">Select a preset to quickly set the tone of Maya's responses.</p>
+            <div className="grid grid-cols-2 gap-3">
+              {['Professional', 'Friendly', 'Salesy', 'Casual'].map((t) => (
+                <button
+                  key={t}
+                  onClick={() => handleToneSelect(t)}
+                  className={`py-3 px-4 rounded-xl text-xs font-bold transition-all border ${
+                    tone === t 
+                      ? 'bg-purple-500 text-white border-purple-500 shadow-glow-purple' 
+                      : 'bg-zinc-800 text-zinc-300 border-white/5 hover:bg-zinc-700'
+                  }`}
+                >
+                  {t}
+                </button>
+              ))}
+            </div>
+          </div>
+
           <div className="w3-card bg-gradient-to-br from-zinc-900 to-zinc-950 border-white/5 text-white overflow-hidden relative">
             <div className="relative z-10">
               <h3 className="text-lg font-bold flex items-center gap-2 mb-6">

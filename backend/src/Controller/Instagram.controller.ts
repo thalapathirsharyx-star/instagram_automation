@@ -152,6 +152,13 @@ export class InstagramController extends AuthBaseController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Post('SendMessage')
+  async SendMessage(@Body() body: { leadId: string, text: string }, @Req() req: any) {
+    const result = await this._InstagramService.sendManualMessage(req.user?.company_id, body.leadId, body.text);
+    return { Success: true, Data: result };
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Get('Balance')
   async Balance(@Req() req: any) {
     const balance = await this._InstagramService.getWalletBalance(req.user?.company_id);
@@ -209,6 +216,13 @@ export class InstagramController extends AuthBaseController {
     } else if (messaging.message && !messaging.message.is_echo && senderId && text) {
       console.log(`[NEW MESSAGE] "${text}" from sender: ${senderId}`);
       await this._InstagramService.processIncomingMessage(senderId, text, mid, igBusinessId);
+    } else if (messaging.message && messaging.message.attachments && !messaging.message.is_echo && senderId) {
+      const attachment = messaging.message.attachments[0];
+      if (attachment.type === 'image') {
+        const imageUrl = attachment.payload.url;
+        console.log(`[NEW IMAGE] "${imageUrl}" from sender: ${senderId}`);
+        await this._InstagramService.processIncomingMessage(senderId, `[IMAGE] ${imageUrl}`, mid, igBusinessId);
+      }
     } else if (messaging.message && messaging.message.is_echo) {
       console.log('[SKIP] Echo (message sent by the page itself)');
     } else {
