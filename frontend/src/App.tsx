@@ -52,17 +52,17 @@ function AppContent() {
           <div className="flex-grow"></div>
           <div className="flex items-center gap-6">
             <div className="relative cursor-pointer group">
-              <div className="p-2.5 bg-zinc-800/50 rounded-xl text-zinc-400 group-hover:text-purple-400 group-hover:bg-purple-500/10 transition-all duration-300 border border-white/5">
+              <div className="p-2.5 bg-white/5 rounded-xl text-zinc-400 group-hover:text-purple-400 group-hover:bg-purple-500/10 transition-all duration-300 border border-white/5 group-hover:border-purple-500/20">
                 <Bell size={20} />
               </div>
-              <span className="absolute -top-1 -right-1 bg-purple-500 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-zinc-900 shadow-sm group-hover:scale-110 transition-transform shadow-purple-500/50">3</span>
+              <span className="absolute -top-1 -right-1 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-[#0f0f14] shadow-lg group-hover:scale-110 transition-transform shadow-purple-500/30">3</span>
             </div>
-            <div className="flex items-center gap-3 pl-6 border-l border-white/10">
+            <div className="flex items-center gap-3 pl-6 border-l border-white/5">
               <div className="text-right hidden sm:block">
-                <div className="text-xs font-bold text-zinc-100">{user?.email?.split('@')[0]}</div>
-                <div className="text-[10px] font-bold text-purple-400/80 uppercase tracking-widest">Active Now</div>
+                <div className="text-sm font-bold text-white">{user?.email?.split('@')[0]}</div>
+                <div className="text-[10px] font-bold text-purple-400 uppercase tracking-wider">Active Now</div>
               </div>
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center text-white font-bold shadow-lg shadow-purple-500/20 uppercase transition-transform hover:scale-105 border border-white/10">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center text-white font-bold shadow-lg shadow-purple-500/20 uppercase transition-transform hover:scale-105 border border-white/10 cursor-pointer">
                 {user?.email?.[0]}
               </div>
             </div>
