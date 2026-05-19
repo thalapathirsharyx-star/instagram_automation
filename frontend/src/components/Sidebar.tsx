@@ -11,8 +11,8 @@ const Sidebar: React.FC = () => {
     <aside className={`sidebar ${isCollapsed ? 'collapsed' : ''}`}>
       <div className="logo-container">
         <div className="logo">
-          <div className="logo-icon">
-            <Zap size={24} fill="white" />
+          <div className="logo-icon bg-transparent border-0 shadow-none p-0">
+            <img src="/replyzenslog.png" alt="ReplyZens Logo" className="w-10 h-10 object-contain" />
           </div>
           <span className="logo-text">ReplyZens</span>
         </div>

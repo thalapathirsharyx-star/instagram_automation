@@ -77,8 +77,8 @@ const Login: React.FC = () => {
         <div className="w-full max-w-lg bg-zinc-900/50 backdrop-blur-xl rounded-[2rem] p-10 md:p-12 shadow-2xl border border-white/5 relative">
           <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-purple-500/50 to-transparent"></div>
           <div className="mb-10 text-center">
-            <div className="w-16 h-16 rounded-2xl bg-purple-500/10 flex items-center justify-center shadow-[0_0_30px_rgba(168,85,247,0.3)] mx-auto mb-8 border border-purple-500/20">
-              <Zap className="w-8 h-8 text-purple-400" fill="currentColor" />
+            <div className="w-16 h-16 bg-transparent flex items-center justify-center mx-auto mb-8">
+              <img src="/replyzenslog.png" alt="ReplyZens Logo" className="w-16 h-16 object-contain" />
             </div>
             <h1 className="text-3xl font-bold tracking-tight text-zinc-100 mb-2">Welcome Back</h1>
             <p className="text-zinc-400 font-medium">Sign in to your AI workspace</p>

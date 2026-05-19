@@ -65,7 +65,7 @@ const AlertCircle = (props: any) => (
 
 const PhoneMockup: React.FC = () => {
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, scale: 0.9, rotateY: -10 }}
       animate={{ opacity: 1, scale: 1, rotateY: 5 }}
       transition={{ duration: 1, ease: "easeOut" }}
@@ -75,7 +75,7 @@ const PhoneMockup: React.FC = () => {
       <div className="relative w-[300px] h-[610px] mx-auto bg-slate-900 rounded-[3.5rem] p-3 shadow-2xl border-[6px] border-slate-800 ring-1 ring-slate-100/10">
         {/* Dynamic Island */}
         <div className="absolute top-7 left-1/2 -translate-x-1/2 w-24 h-7 bg-black rounded-full z-20 flex items-center justify-center">
-           <div className="w-1.5 h-1.5 rounded-full bg-slate-800 ml-auto mr-4" />
+          <div className="w-1.5 h-1.5 rounded-full bg-slate-800 ml-auto mr-4" />
         </div>
 
         {/* Screen Content */}
@@ -102,58 +102,58 @@ const PhoneMockup: React.FC = () => {
 
           {/* Chat Messages */}
           <div className="flex-1 p-4 space-y-4 overflow-y-auto">
-             <div className="flex justify-start">
-               <div className="max-w-[80%] bg-slate-100 p-2.5 rounded-2xl rounded-tl-none text-[11px] text-slate-800 leading-relaxed">
-                 Hi! Do you have the blue dress in size M back in stock? 👗
-               </div>
-             </div>
-             
-             <motion.div 
-               initial={{ opacity: 0, y: 5 }}
-               animate={{ opacity: 1, y: 0 }}
-               transition={{ delay: 1 }}
-               className="flex justify-end"
-             >
-               <div className="max-w-[80%] bg-sky-600 p-2.5 rounded-2xl rounded-tr-none text-[11px] text-white leading-relaxed shadow-sm">
-                 <div className="flex items-center gap-1.5 mb-1 opacity-80 text-[8px] font-bold uppercase tracking-wider">
-                   <Zap size={8} fill="currentColor" /> AI Assistant
-                 </div>
-                 Yes, Sarah! We just restocked 5 units this morning. Would you like me to hold one for you? ✨
-               </div>
-             </motion.div>
+            <div className="flex justify-start">
+              <div className="max-w-[80%] bg-slate-100 p-2.5 rounded-2xl rounded-tl-none text-[11px] text-slate-800 leading-relaxed">
+                Hi! Do you have the blue dress in size M back in stock? 👗
+              </div>
+            </div>
 
-             <motion.div 
-               initial={{ opacity: 0, y: 5 }}
-               animate={{ opacity: 1, y: 0 }}
-               transition={{ delay: 2.5 }}
-               className="flex justify-start"
-             >
-               <div className="max-w-[80%] bg-slate-100 p-2.5 rounded-2xl rounded-tl-none text-[11px] text-slate-800 leading-relaxed">
-                 OMG yes please! Can you send a payment link?
-               </div>
-             </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 5 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1 }}
+              className="flex justify-end"
+            >
+              <div className="max-w-[80%] bg-sky-600 p-2.5 rounded-2xl rounded-tr-none text-[11px] text-white leading-relaxed shadow-sm">
+                <div className="flex items-center gap-1.5 mb-1 opacity-80 text-[8px] font-bold uppercase tracking-wider">
+                  <Zap size={8} fill="currentColor" /> AI Assistant
+                </div>
+                Yes, Sarah! We just restocked 5 units this morning. Would you like me to hold one for you? ✨
+              </div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 5 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 2.5 }}
+              className="flex justify-start"
+            >
+              <div className="max-w-[80%] bg-slate-100 p-2.5 rounded-2xl rounded-tl-none text-[11px] text-slate-800 leading-relaxed">
+                OMG yes please! Can you send a payment link?
+              </div>
+            </motion.div>
           </div>
 
           {/* Footer Input */}
           <div className="h-16 border-t border-slate-50 px-4 flex items-center gap-3 pb-2">
             <div className="w-8 h-8 rounded-full bg-indigo-50 border border-sky-100/50 flex items-center justify-center text-sky-500">
-               <Zap size={14} fill="currentColor" />
+              <Zap size={14} fill="currentColor" />
             </div>
             <div className="flex-1 h-9 bg-slate-50 border border-slate-100 rounded-full px-4 flex items-center text-[10px] text-slate-400">
-               Auto-reply enabled...
+              Auto-reply enabled...
             </div>
           </div>
         </div>
       </div>
 
       {/* Floating Indicators */}
-      <motion.div 
+      <motion.div
         animate={{ y: [0, -10, 0] }}
         transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
         className="absolute -top-10 -right-16 bg-white p-3 rounded-2xl shadow-xl border border-slate-100 flex items-center gap-3 w-48 z-30"
       >
         <div className="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center text-green-500 shrink-0 border border-green-100">
-          <Check size={14}/>
+          <Check size={14} />
         </div>
         <div>
           <div className="text-[10px] font-bold text-slate-900 uppercase tracking-tight">Lead Qualified</div>
@@ -161,13 +161,13 @@ const PhoneMockup: React.FC = () => {
         </div>
       </motion.div>
 
-      <motion.div 
+      <motion.div
         animate={{ y: [0, 10, 0] }}
         transition={{ repeat: Infinity, duration: 5, ease: "easeInOut", delay: 0.5 }}
         className="absolute bottom-20 -left-16 bg-white p-3 rounded-2xl shadow-xl border border-slate-100 flex items-center gap-3 w-48 z-30"
       >
         <div className="w-8 h-8 rounded-full bg-indigo-50 flex items-center justify-center text-sky-500 shrink-0 border border-sky-100">
-          <Zap size={14} fill="currentColor"/>
+          <Zap size={14} fill="currentColor" />
         </div>
         <div>
           <div className="text-[10px] font-bold text-slate-900 uppercase tracking-tight">Auto-Filtered</div>
@@ -189,8 +189,8 @@ const Landing: React.FC = () => {
       <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 border-b border-slate-200/50 backdrop-blur-xl">
         <div className="max-w-6xl mx-auto px-6 h-[72px] flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2.5 group">
-            <div className="relative flex items-center justify-center w-8 h-8 rounded-lg bg-sky-600 text-white shadow-sm transition-transform duration-300">
-              <Zap className="w-4 h-4 text-current" fill="currentColor" />
+            <div className="relative flex items-center justify-center w-8 h-8 bg-transparent transition-transform duration-300">
+              <img src="/replyzenslog.png" alt="ReplyZens Logo" className="w-8 h-8 object-contain" />
             </div>
             <span className="text-xl font-bold tracking-tight text-slate-900">
               Reply<span className="text-sky-600">Zens</span>
@@ -202,7 +202,7 @@ const Landing: React.FC = () => {
             <a href="#how-it-works" className="text-sm font-medium text-slate-500 hover:text-slate-900 transition-colors">How it works</a>
             <a href="#faq" className="text-sm font-medium text-slate-500 hover:text-slate-900 transition-colors">FAQ</a>
             <div className="flex items-center gap-4 ml-4">
-              <button 
+              <button
                 onClick={() => navigate('/login')}
                 className="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors"
               >
@@ -210,7 +210,7 @@ const Landing: React.FC = () => {
               </button>
               <button
                 onClick={() => navigate('/signup')}
-                className="bg-slate-900 hover:bg-slate-800 text-sm font-semibold text-white px-5 py-2.5 rounded-lg shadow-sm shadow-slate-900/10 active:scale-95 transition-all"
+                className=" text-sm font-semibold text-white px-5 py-2.5 rounded-lg shadow-sm shadow-slate-900/10 active:scale-95 transition-all"
               >
                 Start Free Trial
               </button>
@@ -248,14 +248,14 @@ const Landing: React.FC = () => {
       </nav>
 
       <main className="pt-[72px]">
-        
+
         {/* 1. HERO SECTION */}
         <section className="relative pt-20 lg:pt-32 pb-24 z-10 overflow-hidden bg-white">
           <div className="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px] opacity-30 pointer-events-none" />
-          
+
           <div className="max-w-7xl mx-auto px-6 w-full relative z-10">
             <div className="grid lg:grid-cols-[1.1fr_0.9fr] gap-16 items-center">
-              
+
               {/* Text Content */}
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
@@ -291,9 +291,9 @@ const Landing: React.FC = () => {
                 </div>
 
                 <div className="flex flex-wrap items-center gap-5 text-sm font-medium text-slate-500">
-                  <span className="flex items-center gap-1.5"><Check size={16} className="text-sky-500"/> No credit card</span>
-                  <span className="flex items-center gap-1.5"><Check size={16} className="text-sky-500"/> 14-day free trial</span>
-                  <span className="flex items-center gap-1.5"><Check size={16} className="text-sky-500"/> Cancel anytime</span>
+                  <span className="flex items-center gap-1.5"><Check size={16} className="text-sky-500" /> No credit card</span>
+                  <span className="flex items-center gap-1.5"><Check size={16} className="text-sky-500" /> 14-day free trial</span>
+                  <span className="flex items-center gap-1.5"><Check size={16} className="text-sky-500" /> Cancel anytime</span>
                 </div>
               </motion.div>
 
@@ -304,7 +304,7 @@ const Landing: React.FC = () => {
 
             </div>
           </div>
-          
+
           {/* Subtle bottom gradient map */}
           <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-b from-transparent to-[#FAFAFA]" />
         </section>
@@ -312,73 +312,73 @@ const Landing: React.FC = () => {
         {/* 2. PROBLEM SECTION (PAIN) */}
         <section className="relative py-24 z-10 bg-[#FAFAFA]">
           <div className="max-w-3xl mx-auto px-6 text-center mb-16">
-            <motion.h2 
-               initial={{ opacity: 0, y: 20 }}
-               whileInView={{ opacity: 1, y: 0 }}
-               viewport={{ once: true, margin: "-100px" }}
-               className="text-3xl md:text-5xl font-bold tracking-tight text-slate-900 mb-6 leading-tight"
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              className="text-3xl md:text-5xl font-bold tracking-tight text-slate-900 mb-6 leading-tight"
             >
-              Your DMs are full. <br/>
+              Your DMs are full. <br />
               <span className="text-slate-400 font-medium">But your conversions aren't.</span>
             </motion.h2>
 
-            <motion.p 
-               initial={{ opacity: 0, y: 20 }}
-               whileInView={{ opacity: 1, y: 0 }}
-               viewport={{ once: true, margin: "-100px" }}
-               className="text-lg text-slate-500 max-w-2xl mx-auto"
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              className="text-lg text-slate-500 max-w-2xl mx-auto"
             >
-              Every day, new messages come in — questions, inquiries, order requests.<br/>
+              Every day, new messages come in — questions, inquiries, order requests.<br />
               But most of them go unanswered, delayed, or lost in the chaos.
             </motion.p>
           </div>
 
           <div className="max-w-6xl mx-auto px-6 grid lg:grid-cols-[1fr_1.2fr] gap-12 lg:gap-20 items-center">
-            
+
             {/* SaaS App Mockup / Chaos Visualization */}
-            <motion.div 
-               className="relative h-[420px] w-full rounded-2xl bg-white border border-slate-200/60 shadow-xl shadow-slate-200/50 overflow-hidden flex items-center justify-center p-6"
-               initial={{ opacity: 0, y: 20 }}
-               whileInView={{ opacity: 1, y: 0 }}
-               viewport={{ once: true }}
+            <motion.div
+              className="relative h-[420px] w-full rounded-2xl bg-white border border-slate-200/60 shadow-xl shadow-slate-200/50 overflow-hidden flex items-center justify-center p-6"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
             >
-               {/* Browser Toolbar Mockup */}
-               <div className="absolute top-0 left-0 right-0 h-10 border-b border-slate-100 bg-slate-50 flex items-center px-4 gap-2">
-                 <div className="w-2.5 h-2.5 rounded-full bg-slate-300" />
-                 <div className="w-2.5 h-2.5 rounded-full bg-slate-300" />
-                 <div className="w-2.5 h-2.5 rounded-full bg-slate-300" />
-               </div>
+              {/* Browser Toolbar Mockup */}
+              <div className="absolute top-0 left-0 right-0 h-10 border-b border-slate-100 bg-slate-50 flex items-center px-4 gap-2">
+                <div className="w-2.5 h-2.5 rounded-full bg-slate-300" />
+                <div className="w-2.5 h-2.5 rounded-full bg-slate-300" />
+                <div className="w-2.5 h-2.5 rounded-full bg-slate-300" />
+              </div>
 
-               {/* Center Lottie Focus */}
-               <div className="absolute inset-0 flex items-center justify-center opacity-80 mt-10">
-                 <DotLottieReact src="https://lottie.host/3b4f9ac2-8173-4c40-9dd0-0eac1d5263c9/fC41pUIMdc.lottie" loop autoplay />
-               </div>
+              {/* Center Lottie Focus */}
+              <div className="absolute inset-0 flex items-center justify-center opacity-80 mt-10">
+                <DotLottieReact src="https://lottie.host/3b4f9ac2-8173-4c40-9dd0-0eac1d5263c9/fC41pUIMdc.lottie" loop autoplay />
+              </div>
 
-               {/* Floating Alert Cards */}
-               <motion.div 
-                 animate={{ y: [0, -10, 0] }}
-                 transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
-                 className="absolute top-20 left-6 bg-white p-4 rounded-xl shadow-md border border-slate-100 flex items-start gap-3 w-64"
-               >
-                 <div className="w-8 h-8 rounded-full bg-red-50 flex items-center justify-center text-red-500 shrink-0"><AlertCircle size={16}/></div>
-                 <div className="space-y-1">
-                   <div className="text-sm font-semibold text-slate-800">Unread Message</div>
-                   <div className="text-xs text-slate-500">"Do you ship to Canada?"</div>
-                   <div className="text-[10px] text-slate-400 mt-2">Sent 4 hours ago</div>
-                 </div>
-               </motion.div>
+              {/* Floating Alert Cards */}
+              <motion.div
+                animate={{ y: [0, -10, 0] }}
+                transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
+                className="absolute top-20 left-6 bg-white p-4 rounded-xl shadow-md border border-slate-100 flex items-start gap-3 w-64"
+              >
+                <div className="w-8 h-8 rounded-full bg-red-50 flex items-center justify-center text-red-500 shrink-0"><AlertCircle size={16} /></div>
+                <div className="space-y-1">
+                  <div className="text-sm font-semibold text-slate-800">Unread Message</div>
+                  <div className="text-xs text-slate-500">"Do you ship to Canada?"</div>
+                  <div className="text-[10px] text-slate-400 mt-2">Sent 4 hours ago</div>
+                </div>
+              </motion.div>
 
-               <motion.div 
-                 animate={{ y: [0, 10, 0] }}
-                 transition={{ repeat: Infinity, duration: 5, ease: "easeInOut", delay: 1 }}
-                 className="absolute bottom-12 right-6 bg-white p-4 rounded-xl shadow-md border border-slate-100 flex items-start gap-3 w-64"
-               >
-                 <div className="w-8 h-8 rounded-full bg-amber-50 flex items-center justify-center text-amber-500 shrink-0"><TrendingDown size={16}/></div>
-                 <div className="space-y-1">
-                   <div className="text-sm font-semibold text-slate-800">Lead Abandoned</div>
-                   <div className="text-xs text-slate-500">User lost interest due to slow response time.</div>
-                 </div>
-               </motion.div>
+              <motion.div
+                animate={{ y: [0, 10, 0] }}
+                transition={{ repeat: Infinity, duration: 5, ease: "easeInOut", delay: 1 }}
+                className="absolute bottom-12 right-6 bg-white p-4 rounded-xl shadow-md border border-slate-100 flex items-start gap-3 w-64"
+              >
+                <div className="w-8 h-8 rounded-full bg-amber-50 flex items-center justify-center text-amber-500 shrink-0"><TrendingDown size={16} /></div>
+                <div className="space-y-1">
+                  <div className="text-sm font-semibold text-slate-800">Lead Abandoned</div>
+                  <div className="text-xs text-slate-500">User lost interest due to slow response time.</div>
+                </div>
+              </motion.div>
             </motion.div>
 
             {/* Pain Points List */}
@@ -389,7 +389,7 @@ const Landing: React.FC = () => {
                 { title: "Manual replies slow everything down", icon: Clock },
                 { title: "Opportunities slip through the cracks", icon: AlertCircleIcon }
               ].map((p, i) => (
-                <motion.div 
+                <motion.div
                   key={i}
                   initial={{ opacity: 0, x: 20 }}
                   whileInView={{ opacity: 1, x: 0 }}
@@ -404,7 +404,7 @@ const Landing: React.FC = () => {
                 </motion.div>
               ))}
 
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
                 viewport={{ once: true }}
@@ -422,28 +422,28 @@ const Landing: React.FC = () => {
         <section className="py-32 bg-slate-900 text-white relative overflow-hidden">
           {/* Subtle grid background for SaaS feel */}
           <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]" />
-          
+
           <div className="max-w-4xl mx-auto px-6 relative z-10 text-center mb-20">
-             <motion.h2
-               initial={{ opacity: 0, y: 20 }}
-               whileInView={{ opacity: 1, y: 0 }}
-               viewport={{ once: true }}
-               className="text-4xl md:text-5xl font-bold tracking-tight mb-6"
-             >
-               What if your inbox worked <span className="text-sky-400">for you?</span>
-             </motion.h2>
-             <p className="text-lg md:text-xl text-slate-400">
-               Instead of replying to everyone... <br/>
-               What if you only focused on the people who are ready to buy?
-             </p>
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="text-4xl md:text-5xl font-bold tracking-tight mb-6"
+            >
+              What if your inbox worked <span className="text-sky-400">for you?</span>
+            </motion.h2>
+            <p className="text-lg md:text-xl text-slate-400">
+              Instead of replying to everyone... <br />
+              What if you only focused on the people who are ready to buy?
+            </p>
           </div>
 
           {/* Core Feature Value Prop */}
-          <motion.div 
-             initial={{ opacity: 0, y: 30 }}
-             whileInView={{ opacity: 1, y: 0 }}
-             viewport={{ once: true }}
-             className="relative z-10 max-w-3xl mx-auto bg-slate-800/80 backdrop-blur-md border border-slate-700 p-10 md:p-12 rounded-[2rem] text-left shadow-2xl"
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="relative z-10 max-w-3xl mx-auto bg-slate-800/80 backdrop-blur-md border border-slate-700 p-10 md:p-12 rounded-[2rem] text-left shadow-2xl"
           >
             <h3 className="text-2xl md:text-3xl font-bold mb-4 text-white">Turn messages into qualified leads — automatically</h3>
             <p className="text-slate-300 mb-8 leading-relaxed">
@@ -451,19 +451,19 @@ const Landing: React.FC = () => {
             </p>
             <div className="grid sm:grid-cols-2 gap-4 mb-10">
               <div className="flex gap-3 items-center text-sm font-medium text-slate-200">
-                <div className="w-6 h-6 rounded-full bg-sky-500/20 flex items-center justify-center"><Check size={14} className="text-sky-400"/></div>
+                <div className="w-6 h-6 rounded-full bg-sky-500/20 flex items-center justify-center"><Check size={14} className="text-sky-400" /></div>
                 Messages are automatically sorted
               </div>
               <div className="flex gap-3 items-center text-sm font-medium text-slate-200">
-                <div className="w-6 h-6 rounded-full bg-sky-500/20 flex items-center justify-center"><Check size={14} className="text-sky-400"/></div>
+                <div className="w-6 h-6 rounded-full bg-sky-500/20 flex items-center justify-center"><Check size={14} className="text-sky-400" /></div>
                 High-intent users become leads
               </div>
               <div className="flex gap-3 items-center text-sm font-medium text-slate-200">
-                <div className="w-6 h-6 rounded-full bg-sky-500/20 flex items-center justify-center"><Check size={14} className="text-sky-400"/></div>
+                <div className="w-6 h-6 rounded-full bg-sky-500/20 flex items-center justify-center"><Check size={14} className="text-sky-400" /></div>
                 Low-value chats filtered out
               </div>
             </div>
-            
+
             <div className="border-t border-slate-700/50 pt-6">
               <div className="inline-flex items-center font-bold tracking-widest text-sm uppercase text-sky-400">
                 <Zap size={16} className="mr-2" /> Less noise. More conversions.
@@ -475,7 +475,7 @@ const Landing: React.FC = () => {
         {/* 4. FEATURES AS STORY (Zigzag Timeline) */}
         <section id="story" className="py-32 bg-[#FAFAFA] relative border-b border-slate-200/50">
           <div className="max-w-6xl mx-auto px-6 relative">
-            
+
             <div className="text-center mb-24">
               <h2 className="text-3xl md:text-5xl font-bold text-slate-900 tracking-tight">Features built to convert</h2>
               <p className="text-lg text-slate-500 mt-4">Automate the boring parts. Master the important ones.</p>
@@ -508,7 +508,7 @@ const Landing: React.FC = () => {
                   subtitle: "4. LEAD MANAGEMENT",
                   title: "Convert conversations into structured leads.",
                   desc: "Track their lifecycle and close deals effectively with organized, visual CRM pipelines.",
-                  lottie: "https://lottie.host/8166af2b-fc65-4b1d-91e7-d54e88e04a97/TIUNin8LAv.lottie" 
+                  lottie: "https://lottie.host/8166af2b-fc65-4b1d-91e7-d54e88e04a97/TIUNin8LAv.lottie"
                 },
                 {
                   subtitle: "5. ORDER & TRACKING",
@@ -524,13 +524,13 @@ const Landing: React.FC = () => {
                 }
               ].map((step, idx) => (
                 <div key={idx} className="relative flex flex-col md:flex-row items-center justify-between gap-12 md:gap-24">
-                  
+
                   {/* Timeline Node */}
                   <div className="hidden md:flex absolute left-1/2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white border-4 border-slate-100 shadow-sm -translate-x-1/2 z-10 items-center justify-center">
                     <div className="w-2.5 h-2.5 rounded-full bg-sky-500" />
                   </div>
 
-                  <motion.div 
+                  <motion.div
                     initial={{ opacity: 0, x: idx % 2 === 0 ? -30 : 30 }}
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true, margin: "-100px" }}
@@ -549,7 +549,7 @@ const Landing: React.FC = () => {
                     </p>
                   </motion.div>
 
-                  <motion.div 
+                  <motion.div
                     initial={{ opacity: 0, scale: 0.95 }}
                     whileInView={{ opacity: 1, scale: 1 }}
                     viewport={{ once: true, margin: "-100px" }}
@@ -585,7 +585,7 @@ const Landing: React.FC = () => {
                 { step: "03", title: "Let it work", desc: "Messages get sorted, replies get handled, leads get created 24/7." },
                 { step: "04", title: "Focus on closing", desc: "You only jump in to talk to people who are ready to buy." }
               ].map((s, i) => (
-                <motion.div 
+                <motion.div
                   key={i}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -606,84 +606,84 @@ const Landing: React.FC = () => {
 
         {/* 6. TRANSFORMATION SECTION */}
         <section className="py-24 bg-sky-900 text-white relative overflow-hidden">
-           {/* Abstract shapes */}
-           <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-sky-500/20 blur-[100px] rounded-full" />
-           <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-blue-500/20 blur-[100px] rounded-full" />
-           
-           <div className="max-w-5xl mx-auto px-6 text-center relative z-10">
-              <motion.h2 
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
+          {/* Abstract shapes */}
+          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-sky-500/20 blur-[100px] rounded-full" />
+          <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-blue-500/20 blur-[100px] rounded-full" />
+
+          <div className="max-w-5xl mx-auto px-6 text-center relative z-10">
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="text-3xl md:text-5xl font-bold tracking-tight mb-16"
+            >
+              From chaos to control
+            </motion.h2>
+
+            <div className="grid md:grid-cols-2 gap-6 lg:gap-10 mb-16">
+
+              {/* BEFORE */}
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
-                className="text-3xl md:text-5xl font-bold tracking-tight mb-16"
+                className="bg-slate-900/40 backdrop-blur-sm border border-slate-700/50 rounded-2xl p-8 flex flex-col"
               >
-                From chaos to control
-              </motion.h2>
-
-              <div className="grid md:grid-cols-2 gap-6 lg:gap-10 mb-16">
-                
-                {/* BEFORE */}
-                <motion.div 
-                  initial={{ opacity: 0, x: -20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  className="bg-slate-900/40 backdrop-blur-sm border border-slate-700/50 rounded-2xl p-8 flex flex-col"
-                >
-                  <div className="flex items-center gap-3 mb-8">
-                    <div className="px-3 py-1 bg-red-500/10 text-red-400 rounded-md text-xs font-bold tracking-wider uppercase border border-red-500/20">Before</div>
-                  </div>
-                  <ul className="space-y-5 text-slate-300 font-medium text-left">
-                    <li className="flex items-start gap-4">
-                      <div className="w-6 h-6 rounded-full bg-slate-800 flex items-center justify-center shrink-0 mt-0.5"><X size={14} className="text-red-400"/></div>
-                      <span>Endless unread messages clogging the main app.</span>
-                    </li>
-                    <li className="flex items-start gap-4">
-                      <div className="w-6 h-6 rounded-full bg-slate-800 flex items-center justify-center shrink-0 mt-0.5"><X size={14} className="text-red-400"/></div>
-                      <span>Manual replies taking up half your working day.</span>
-                    </li>
-                    <li className="flex items-start gap-4">
-                      <div className="w-6 h-6 rounded-full bg-slate-800 flex items-center justify-center shrink-0 mt-0.5"><X size={14} className="text-red-400"/></div>
-                      <span>Missed opportunities turning into lost revenue.</span>
-                    </li>
-                  </ul>
-                </motion.div>
-
-                {/* AFTER */}
-                <motion.div 
-                  initial={{ opacity: 0, x: 20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  className="bg-white border border-sky-100 rounded-2xl p-8 flex flex-col shadow-2xl shadow-black/10"
-                >
-                  <div className="flex items-center gap-3 mb-8">
-                    <div className="px-3 py-1 bg-indigo-50 text-sky-600 rounded-md text-xs font-bold tracking-wider uppercase border border-sky-100">After</div>
-                  </div>
-                  <ul className="space-y-5 text-slate-700 font-medium text-left">
-                    <li className="flex items-start gap-4">
-                      <div className="w-6 h-6 rounded-full bg-indigo-50 flex items-center justify-center shrink-0 mt-0.5 border border-sky-100"><Check size={14} className="text-sky-600"/></div>
-                      <span>Clean, organized inbox built specifically for sales.</span>
-                    </li>
-                    <li className="flex items-start gap-4">
-                      <div className="w-6 h-6 rounded-full bg-indigo-50 flex items-center justify-center shrink-0 mt-0.5 border border-sky-100"><Check size={14} className="text-sky-600"/></div>
-                      <span>Automated responses handling the bulk of inquiries.</span>
-                    </li>
-                    <li className="flex items-start gap-4">
-                      <div className="w-6 h-6 rounded-full bg-indigo-50 flex items-center justify-center shrink-0 mt-0.5 border border-sky-100"><Check size={14} className="text-sky-600"/></div>
-                      <span className="text-slate-900 font-semibold">More qualified leads, faster conversions.</span>
-                    </li>
-                  </ul>
-                </motion.div>
-              </div>
-
-              <motion.div 
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true }}
-                className="text-xl font-medium text-indigo-200"
-              >
-                Same DMs. <span className="text-white font-bold">Completely different results.</span>
+                <div className="flex items-center gap-3 mb-8">
+                  <div className="px-3 py-1 bg-red-500/10 text-red-400 rounded-md text-xs font-bold tracking-wider uppercase border border-red-500/20">Before</div>
+                </div>
+                <ul className="space-y-5 text-slate-300 font-medium text-left">
+                  <li className="flex items-start gap-4">
+                    <div className="w-6 h-6 rounded-full bg-slate-800 flex items-center justify-center shrink-0 mt-0.5"><X size={14} className="text-red-400" /></div>
+                    <span>Endless unread messages clogging the main app.</span>
+                  </li>
+                  <li className="flex items-start gap-4">
+                    <div className="w-6 h-6 rounded-full bg-slate-800 flex items-center justify-center shrink-0 mt-0.5"><X size={14} className="text-red-400" /></div>
+                    <span>Manual replies taking up half your working day.</span>
+                  </li>
+                  <li className="flex items-start gap-4">
+                    <div className="w-6 h-6 rounded-full bg-slate-800 flex items-center justify-center shrink-0 mt-0.5"><X size={14} className="text-red-400" /></div>
+                    <span>Missed opportunities turning into lost revenue.</span>
+                  </li>
+                </ul>
               </motion.div>
-           </div>
+
+              {/* AFTER */}
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                className="bg-white border border-sky-100 rounded-2xl p-8 flex flex-col shadow-2xl shadow-black/10"
+              >
+                <div className="flex items-center gap-3 mb-8">
+                  <div className="px-3 py-1 bg-indigo-50 text-sky-600 rounded-md text-xs font-bold tracking-wider uppercase border border-sky-100">After</div>
+                </div>
+                <ul className="space-y-5 text-slate-700 font-medium text-left">
+                  <li className="flex items-start gap-4">
+                    <div className="w-6 h-6 rounded-full bg-indigo-50 flex items-center justify-center shrink-0 mt-0.5 border border-sky-100"><Check size={14} className="text-sky-600" /></div>
+                    <span>Clean, organized inbox built specifically for sales.</span>
+                  </li>
+                  <li className="flex items-start gap-4">
+                    <div className="w-6 h-6 rounded-full bg-indigo-50 flex items-center justify-center shrink-0 mt-0.5 border border-sky-100"><Check size={14} className="text-sky-600" /></div>
+                    <span>Automated responses handling the bulk of inquiries.</span>
+                  </li>
+                  <li className="flex items-start gap-4">
+                    <div className="w-6 h-6 rounded-full bg-indigo-50 flex items-center justify-center shrink-0 mt-0.5 border border-sky-100"><Check size={14} className="text-sky-600" /></div>
+                    <span className="text-slate-900 font-semibold">More qualified leads, faster conversions.</span>
+                  </li>
+                </ul>
+              </motion.div>
+            </div>
+
+            <motion.div
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              className="text-xl font-medium text-indigo-200"
+            >
+              Same DMs. <span className="text-white font-bold">Completely different results.</span>
+            </motion.div>
+          </div>
         </section>
 
         {/* 7. SOCIAL PROOF (Testimonials) */}
@@ -729,7 +729,7 @@ const Landing: React.FC = () => {
             <div className="text-center mb-12">
               <h2 className="text-3xl font-bold text-slate-900 tracking-tight">Frequently Asked Questions</h2>
             </div>
-            
+
             <div className="flex flex-col">
               {[
                 { q: "Does this work with any Instagram account?", a: "Yes, any business account can be connected securely and easily via Meta's official API." },
@@ -753,7 +753,7 @@ const Landing: React.FC = () => {
             className="max-w-4xl mx-auto px-6"
           >
             <h2 className="text-4xl md:text-6xl font-bold mb-6 text-slate-900 tracking-tight text-balance leading-tight">
-              Stop replying to everyone.<br/> Start closing the right ones.
+              Stop replying to everyone.<br /> Start closing the right ones.
             </h2>
             <p className="text-lg md:text-xl text-slate-500 mb-10 max-w-2xl mx-auto">
               Let your CRM filter the noise and bring you the leads that matter.
@@ -767,11 +767,11 @@ const Landing: React.FC = () => {
                 Start Your Free Trial
                 <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
               </button>
-              
+
               <div className="flex flex-wrap justify-center items-center gap-4 text-sm font-medium text-slate-500">
-                <span className="flex items-center gap-1.5"><Check size={16} className="text-sky-400"/> No credit card</span>
-                <span className="flex items-center gap-1.5"><Check size={16} className="text-sky-400"/> 14-day free trial</span>
-                <span className="flex items-center gap-1.5"><Check size={16} className="text-sky-400"/> Cancel anytime</span>
+                <span className="flex items-center gap-1.5"><Check size={16} className="text-sky-400" /> No credit card</span>
+                <span className="flex items-center gap-1.5"><Check size={16} className="text-sky-400" /> 14-day free trial</span>
+                <span className="flex items-center gap-1.5"><Check size={16} className="text-sky-400" /> Cancel anytime</span>
               </div>
             </div>
           </motion.div>
@@ -783,12 +783,12 @@ const Landing: React.FC = () => {
       <footer className="bg-slate-50 border-t border-slate-200/60 pt-20 pb-10 px-6">
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-12 mb-16">
-            
+
             {/* Brand Column */}
             <div className="col-span-2 lg:col-span-2">
               <Link to="/" className="flex items-center gap-2.5 mb-6 group">
-                <div className="w-9 h-9 rounded-xl bg-sky-600 flex items-center justify-center text-white shadow-lg shadow-sky-600/20 group-hover:scale-105 transition-transform">
-                  <Zap className="w-5 h-5 text-current" fill="currentColor" />
+                <div className="w-9 h-9 bg-transparent flex items-center justify-center transition-transform duration-300 group-hover:scale-105">
+                  <img src="/replyzenslog.png" alt="ReplyZens Logo" className="w-9 h-9 object-contain" />
                 </div>
                 <span className="text-2xl font-bold tracking-tight text-slate-900 font-outfit uppercase">
                   Reply<span className="text-sky-600">Zens</span>
@@ -801,19 +801,19 @@ const Landing: React.FC = () => {
                 {/* Twitter */}
                 <a href="#" className="w-10 h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-400 hover:text-[#1DA1F2] hover:border-[#1DA1F2]/30 hover:shadow-sm transition-all group/social">
                   <svg className="w-5 h-5 fill-current group-hover/social:scale-110 transition-transform" viewBox="0 0 24 24">
-                    <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.84 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+                    <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.84 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z" />
                   </svg>
                 </a>
                 {/* Instagram */}
                 <a href="#" className="w-10 h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-400 hover:text-[#E4405F] hover:border-[#E4405F]/30 hover:shadow-sm transition-all group/social">
                   <svg className="w-5 h-5 fill-current group-hover/social:scale-110 transition-transform" viewBox="0 0 24 24">
-                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12s.014 3.667.072 4.947c.2 4.352 2.622 6.774 7.052 6.974 1.28.058 1.688.072 4.947.072 3.259 0 3.667-.014 4.947-.072 4.351-.2 6.772-2.622 6.972-7.052.058-1.28.072-1.688.072-4.947s-.014-3.667-.072-4.947c-.2-4.352-2.622-6.774-7.052-6.974C15.667.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>
+                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12s.014 3.667.072 4.947c.2 4.352 2.622 6.774 7.052 6.974 1.28.058 1.688.072 4.947.072 3.259 0 3.667-.014 4.947-.072 4.351-.2 6.772-2.622 6.972-7.052.058-1.28.072-1.688.072-4.947s-.014-3.667-.072-4.947c-.2-4.352-2.622-6.774-7.052-6.974C15.667.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z" />
                   </svg>
                 </a>
                 {/* LinkedIn */}
                 <a href="#" className="w-10 h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-400 hover:text-[#0077B5] hover:border-[#0077B5]/30 hover:shadow-sm transition-all group/social">
                   <svg className="w-5 h-5 fill-current group-hover/social:scale-110 transition-transform" viewBox="0 0 24 24">
-                    <path d="M4.98 3.5c0 1.381-1.11 2.5-2.48 2.5s-2.48-1.119-2.48-2.5c0-1.38 1.11-2.5 2.48-2.5s2.48 1.12 2.48 2.5zm.02 4.5h-5v16h5v-16zm7.982 0h-4.968v16h4.969v-8.399c0-4.67 6.029-5.052 6.029 0v8.399h4.988v-10.131c0-7.88-8.922-7.593-11.018-3.714v-2.155z"/>
+                    <path d="M4.98 3.5c0 1.381-1.11 2.5-2.48 2.5s-2.48-1.119-2.48-2.5c0-1.38 1.11-2.5 2.48-2.5s2.48 1.12 2.48 2.5zm.02 4.5h-5v16h5v-16zm7.982 0h-4.968v16h4.969v-8.399c0-4.67 6.029-5.052 6.029 0v8.399h4.988v-10.131c0-7.88-8.922-7.593-11.018-3.714v-2.155z" />
                   </svg>
                 </a>
               </div>
