@@ -726,11 +726,13 @@
 }
 
 :root.light .bg-zinc-900\/50 {
-  background-color: rgba(0, 0, 0, 0.02) !important;
+  background-color: #ffffff !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.08) !important;
 }
 
 :root.light .bg-zinc-950 {
-  background-color: rgba(0, 0, 0, 0.02) !important;
+  background-color: #ffffff !important;
   color: #0f172a !important;
 }
 
@@ -878,4 +880,15 @@
 :root.light .bg-gradient-to-br.from-purple-900\/40.to-indigo-900\/40 .w3-button-primary {
   background: #7c3aed !important;
   color: #ffffff !important;
+}
+
+/* Scoped Landing Page Sky-to-Purple Color Theme Overrides */
+.landing-page {
+  --color-sky-50: #faf5ff !important;
+  --color-sky-100: #f3e8ff !important;
+  --color-sky-200: #e9d5ff !important;
+  --color-sky-500: #d6a4ff !important;
+  --color-sky-600: #c178ff !important;
+  --color-sky-700: #aa4dfa !important;
+  --color-sky-900: #581c87 !important;
 }

@@ -189,8 +189,8 @@ const Landing: React.FC = () => {
       <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 border-b border-slate-200/50 backdrop-blur-xl">
         <div className="max-w-6xl mx-auto px-6 h-[72px] flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2.5 group">
-            <div className="relative flex items-center justify-center w-8 h-8 bg-transparent transition-transform duration-300">
-              <img src="/replyzenslog.png" alt="ReplyZens Logo" className="w-8 h-8 object-contain" />
+            <div className="relative flex items-center justify-center  bg-transparent transition-transform duration-300">
+              <img src="/replyzenslog.png" alt="ReplyZens Logo" className="w-20 h-20 object-contain" />
             </div>
             <span className="text-xl font-bold tracking-tight text-slate-900">
               Reply<span className="text-sky-600">Zens</span>
