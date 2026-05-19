@@ -4,17 +4,17 @@
 @plugin "tailwindcss-animate";
 
 @theme {
-  --color-background: #09090b;
-  --color-foreground: #fafafa;
-  --color-card: #18181b;
-  --color-card-foreground: #fafafa;
-  --color-border: #27272a;
-  --color-primary: #8b5cf6;
-  --color-primary-foreground: #ffffff;
-  --color-secondary: #27272a;
-  --color-secondary-foreground: #fafafa;
-  --color-muted: #27272a;
-  --color-muted-foreground: #a1a1aa;
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-border: hsl(var(--border));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
   
   --font-inter: "Inter", sans-serif;
 }
@@ -553,4 +553,329 @@
   flex-grow: 1;
   overflow-y: auto;
   padding-right: 12px;
+}
+
+/* Premium Light Theme overrides */
+:root.light {
+  --background: 240 5% 96%; /* #f4f4f5 */
+  --foreground: 240 10% 3.9%; /* #09090b */
+  --card: 0 0% 100%; /* white */
+  --card-foreground: 240 10% 3.9%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 240 10% 3.9%;
+  --primary: 262 83% 58%; /* #8b5cf6 */
+  --primary-foreground: 0 0% 100%;
+  --secondary: 240 4.8% 95.9%; /* #f4f4f5 */
+  --secondary-foreground: 240 5.9% 10%;
+  --muted: 240 4.8% 95.9%;
+  --muted-foreground: 240 3.8% 46.1%; /* #71717a */
+  --border: 240 5.9% 90%; /* #e4e4e7 */
+  --input: 240 5.9% 90%;
+  --ring: 262 83% 58%;
+  
+  --ai-gradient-start: #7c3aed;
+  --ai-gradient-end: #2563eb;
+  --ai-glow: rgba(124, 58, 237, 0.15);
+}
+
+:root.light .sidebar {
+  background: rgba(255, 255, 255, 0.8) !important;
+  border-color: rgba(0, 0, 0, 0.06) !important;
+  box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.5) !important;
+}
+
+:root.light .sidebar::after {
+  background: radial-gradient(circle at top left, rgba(124, 58, 237, 0.05), transparent 70%) !important;
+}
+
+:root.light .logo-text {
+  color: #0f172a !important;
+}
+
+:root.light .nav-item {
+  color: #64748b !important;
+}
+
+:root.light .nav-item:hover {
+  background: rgba(0, 0, 0, 0.03) !important;
+  color: #0f172a !important;
+  border-color: rgba(0, 0, 0, 0.02) !important;
+}
+
+:root.light .nav-item:hover svg {
+  color: #0f172a !important;
+}
+
+:root.light .nav-item.active {
+  background: rgba(124, 58, 237, 0.08) !important;
+  color: #7c3aed !important;
+  border-color: rgba(124, 58, 237, 0.15) !important;
+  box-shadow: 0 4px 15px -3px rgba(124, 58, 237, 0.1) !important;
+}
+
+:root.light .nav-item.active svg {
+  color: #7c3aed !important;
+}
+
+:root.light .sidebar-footer {
+  background: rgba(0, 0, 0, 0.01) !important;
+  border-color: rgba(0, 0, 0, 0.04) !important;
+}
+
+:root.light .logout-btn {
+  color: #64748b !important;
+}
+
+:root.light .logout-btn svg {
+  color: #64748b !important;
+}
+
+:root.light .logout-btn:hover {
+  background: rgba(239, 68, 68, 0.06) !important;
+  color: #ef4444 !important;
+}
+
+:root.light .logout-btn:hover svg {
+  color: #ef4444 !important;
+}
+
+:root.light .toggle-btn-inline {
+  background: rgba(0, 0, 0, 0.02) !important;
+  border-color: rgba(0, 0, 0, 0.05) !important;
+  color: #64748b !important;
+}
+
+:root.light .toggle-btn-inline:hover {
+  background: rgba(0, 0, 0, 0.05) !important;
+  color: #000 !important;
+  border-color: rgba(124, 58, 237, 0.3) !important;
+}
+
+:root.light .top-header {
+  background: rgba(255, 255, 255, 0.8) !important;
+  border-color: rgba(0, 0, 0, 0.06) !important;
+  box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.5) !important;
+}
+
+:root.light .search-bar {
+  background: rgba(0, 0, 0, 0.02) !important;
+  border-color: rgba(0, 0, 0, 0.05) !important;
+}
+
+:root.light .search-bar:focus-within {
+  border-color: rgba(124, 58, 237, 0.4) !important;
+  background: rgba(0, 0, 0, 0.03) !important;
+}
+
+:root.light .search-bar input {
+  color: #0f172a !important;
+}
+
+:root.light .text-white {
+  color: #0f172a !important;
+}
+
+:root.light .border-white\/5 {
+  border-color: rgba(0, 0, 0, 0.06) !important;
+}
+
+:root.light .bg-white\/5 {
+  background-color: rgba(0, 0, 0, 0.03) !important;
+}
+
+:root.light .border-l {
+  border-left-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+:root.light .crm-layout {
+  background-image: radial-gradient(circle at top center, rgba(124, 58, 237, 0.03) 0%, transparent 40%) !important;
+  background-color: #f4f4f5 !important;
+}
+
+:root.light .w3-card {
+  box-shadow: 0 4px 20px -8px rgba(0, 0, 0, 0.05) !important;
+}
+
+:root.light .w3-card:hover {
+  border-color: rgba(124, 58, 237, 0.3) !important;
+  box-shadow: 0 12px 30px -8px rgba(0, 0, 0, 0.1), 0 0 20px -5px var(--ai-glow) !important;
+}
+
+:root.light .text-zinc-100 {
+  color: #0f172a !important;
+}
+
+:root.light .text-zinc-300 {
+  color: #1e293b !important;
+}
+
+:root.light .text-zinc-400 {
+  color: #475569 !important;
+}
+
+:root.light .text-zinc-500 {
+  color: #64748b !important;
+}
+
+:root.light .text-purple-400 {
+  color: #7c3aed !important;
+}
+
+:root.light .bg-zinc-900 {
+  background-color: #ffffff !important;
+}
+
+:root.light .bg-zinc-900\/50 {
+  background-color: rgba(0, 0, 0, 0.02) !important;
+}
+
+:root.light .bg-zinc-950 {
+  background-color: rgba(0, 0, 0, 0.02) !important;
+  color: #0f172a !important;
+}
+
+:root.light .bg-zinc-950\/50 {
+  background-color: rgba(0, 0, 0, 0.02) !important;
+  color: #0f172a !important;
+}
+
+:root.light .bg-zinc-800 {
+  background-color: rgba(0, 0, 0, 0.03) !important;
+  color: #0f172a !important;
+  border-color: rgba(0, 0, 0, 0.06) !important;
+}
+
+:root.light .bg-zinc-800:hover {
+  background-color: rgba(0, 0, 0, 0.06) !important;
+  color: #0f172a !important;
+}
+
+:root.light .border-white\/10 {
+  border-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+:root.light .border-white\/5 {
+  border-color: rgba(0, 0, 0, 0.06) !important;
+}
+
+:root.light .text-xs.text-zinc-400 {
+  color: #64748b !important;
+}
+
+:root.light .text-purple-200 {
+  color: #5b21b6 !important;
+}
+
+:root.light .text-purple-200\/80 {
+  color: #6d28d9 !important;
+}
+
+:root.light .text-purple-300 {
+  color: #4c1d95 !important;
+}
+
+:root.light code.bg-zinc-900 {
+  background-color: rgba(0, 0, 0, 0.05) !important;
+  color: #7c3aed !important;
+}
+
+:root.light select {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+:root.light input.w3-input,
+:root.light textarea.w3-input {
+  background-color: rgba(0, 0, 0, 0.02) !important;
+  color: #0f172a !important;
+  border-color: rgba(0, 0, 0, 0.06) !important;
+}
+
+/* Gradients */
+:root.light .bg-gradient-to-br.from-purple-900.to-indigo-900 {
+  background-image: linear-gradient(to bottom right, #f5f3ff, #ede9fe) !important;
+  border-color: rgba(124, 58, 237, 0.15) !important;
+  color: #5b21b6 !important;
+}
+
+:root.light .bg-gradient-to-br.from-purple-900.to-indigo-900 .text-purple-200 {
+  color: #4c1d95 !important;
+}
+
+:root.light .bg-gradient-to-br.from-purple-900.to-indigo-900 .text-purple-100\/80 {
+  color: #5b21b6 !important;
+}
+
+:root.light .bg-gradient-to-br.from-purple-900\/40.to-indigo-900\/40 {
+  background-image: linear-gradient(to bottom right, #f5f3ff, #ede9fe) !important;
+  border-color: rgba(124, 58, 237, 0.15) !important;
+  color: #5b21b6 !important;
+}
+
+:root.light .bg-gradient-to-br.from-purple-900\/40.to-indigo-900\/40 .text-purple-200\/80 {
+  color: #5b21b6 !important;
+}
+
+:root.light .bg-gradient-to-br.from-purple-900\/40.to-indigo-900\/40 .text-purple-300 {
+  color: #4c1d95 !important;
+}
+
+:root.light .bg-gradient-to-br.from-purple-900\/40.to-indigo-900\/40 button {
+  background-color: rgba(124, 58, 237, 0.1) !important;
+  color: #7c3aed !important;
+  border-color: rgba(124, 58, 237, 0.2) !important;
+}
+
+:root.light .bg-gradient-to-br.from-purple-900\/40.to-indigo-900\/40 button:hover {
+  background-color: rgba(124, 58, 237, 0.15) !important;
+}
+
+:root.light .bg-gradient-to-br.from-zinc-900.to-zinc-950 {
+  background-image: none !important;
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+  border-color: rgba(0, 0, 0, 0.06) !important;
+}
+
+:root.light .bg-zinc-900\/80 {
+  background-color: rgba(255, 255, 255, 0.75) !important;
+}
+
+:root.light .bg-zinc-950\/30 {
+  background-color: rgba(0, 0, 0, 0.01) !important;
+}
+
+:root.light .text-zinc-200 {
+  color: #1e293b !important;
+}
+
+:root.light .logo {
+  color: #0f172a !important;
+}
+
+:root.light .logo-icon {
+  background: rgba(124, 58, 237, 0.08) !important;
+  border: 1px solid rgba(124, 58, 237, 0.15) !important;
+  box-shadow: none !important;
+}
+
+:root.light .logo-icon svg {
+  fill: #7c3aed !important;
+  stroke: #7c3aed !important;
+}
+
+:root.light .bg-zinc-800\/50 {
+  background-color: rgba(124, 58, 237, 0.05) !important;
+  color: #7c3aed !important;
+  border-color: rgba(124, 58, 237, 0.1) !important;
+}
+
+:root.light .bg-gradient-to-br.from-purple-500.to-indigo-600 {
+  color: #ffffff !important;
+}
+
+:root.light .bg-gradient-to-br.from-purple-900\/40.to-indigo-900\/40 .w3-button-primary {
+  background: #7c3aed !important;
+  color: #ffffff !important;
 }
