@@ -882,6 +882,16 @@
   color: #ffffff !important;
 }
 
+/* Additional overrides for UI elements */
+:root.light .bg-zinc-900\/60 {
+  background-color: rgba(0, 0, 0, 0.04) !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+:root.light .bg-purple-600 {
+  color: #ffffff !important;
+}
+
 /* Scoped Landing Page Sky-to-Purple Color Theme Overrides */
 .landing-page {
   --color-sky-50: #faf5ff !important;
