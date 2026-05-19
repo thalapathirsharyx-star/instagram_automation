@@ -13,7 +13,9 @@ import {
   ToggleRight,
   Link2,
   Zap,
-  RefreshCw
+  RefreshCw,
+  Sparkles,
+  AlertCircle
 } from 'lucide-react';
 
 const SettingsCard: React.FC<{ icon: any, title: string, subtitle: string, children: React.ReactNode }> = ({ icon: Icon, title, subtitle, children }) => (
@@ -42,6 +44,16 @@ const Settings: React.FC = () => {
   const [isLoadingStatus, setIsLoadingStatus] = React.useState(true);
   const [showGuide, setShowGuide] = React.useState(false);
   const [connectionDetails, setConnectionDetails] = React.useState<{ name: string, id: string } | null>(null);
+  const [isEditingProfile, setIsEditingProfile] = React.useState(false);
+  const [profileEmail, setProfileEmail] = React.useState(user?.email || '');
+  const [notification, setNotification] = React.useState<{ type: 'success' | 'error', message: string } | null>(null);
+
+  React.useEffect(() => {
+    if (notification) {
+      const timer = setTimeout(() => setNotification(null), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [notification]);
 
   React.useEffect(() => {
     setIsLoadingStatus(true);
@@ -133,6 +145,13 @@ const Settings: React.FC = () => {
           <h1 className="text-3xl font-bold text-zinc-100 mb-2">Control Center</h1>
           <p className="text-zinc-400 font-medium">Configure your CRM integration and automation preferences.</p>
         </div>
+        {notification && (
+          <div className={`px-4 py-2 rounded-xl flex items-center gap-2 text-sm font-bold animate-in zoom-in duration-300 border
+            ${notification.type === 'success' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border-rose-500/20'}`}>
+            {notification.type === 'success' ? <Sparkles size={16} /> : <AlertCircle size={16} />}
+            {notification.message}
+          </div>
+        )}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
@@ -312,18 +331,62 @@ const Settings: React.FC = () => {
           title="Account Profile" 
           subtitle="Your personal account information."
         >
-          <div className="flex gap-4 items-center mb-4">
-            <div className="w-14 h-14 bg-purple-500/10 text-purple-400 rounded-2xl flex items-center justify-center border border-purple-500/20 font-bold text-xl shadow-inner uppercase">
-              {user?.email?.[0] || 'A'}
+          {isEditingProfile ? (
+            <div className="space-y-4">
+              <div className="flex gap-4 items-center mb-2">
+                <div className="w-14 h-14 bg-purple-500/10 text-purple-400 rounded-2xl flex items-center justify-center border border-purple-500/20 font-bold text-xl shadow-inner uppercase">
+                  {profileEmail[0]?.toUpperCase() || 'A'}
+                </div>
+                <div className="flex-grow">
+                  <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest ml-1">Email Address</label>
+                  <input 
+                    type="email"
+                    value={profileEmail}
+                    onChange={(e) => setProfileEmail(e.target.value)}
+                    className="w-full bg-zinc-900/50 border border-white/5 rounded-xl px-4 py-2.5 text-sm text-white focus:border-purple-500/50 outline-none transition-all mt-1"
+                  />
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <button 
+                  onClick={() => {
+                    setIsEditingProfile(false);
+                    setNotification({ type: 'success', message: 'Profile updated successfully! (Mock)' });
+                  }}
+                  className="w-fit px-6 py-2.5 bg-purple-500 text-white rounded-xl font-bold hover:bg-purple-600 transition-all shadow-sm text-sm"
+                >
+                  Save Changes
+                </button>
+                <button 
+                  onClick={() => {
+                    setIsEditingProfile(false);
+                    setProfileEmail(user?.email || '');
+                  }}
+                  className="w-fit px-6 py-2.5 bg-zinc-800 border border-white/10 rounded-xl text-zinc-300 font-bold hover:bg-zinc-700 hover:text-white transition-all shadow-sm text-sm"
+                >
+                  Cancel
+                </button>
+              </div>
             </div>
-            <div>
-              <div className="font-bold text-zinc-100">{user?.email || 'admin@replyzens.com'}</div>
-              <div className="text-xs text-zinc-500 font-medium mt-0.5">Administrator Access</div>
-            </div>
-          </div>
-          <button className="w-fit px-6 py-3 bg-zinc-800 border border-white/10 rounded-xl text-zinc-300 font-bold hover:bg-zinc-700 hover:text-white transition-all shadow-sm">
-            Edit Profile Details
-          </button>
+          ) : (
+            <>
+              <div className="flex gap-4 items-center mb-4">
+                <div className="w-14 h-14 bg-purple-500/10 text-purple-400 rounded-2xl flex items-center justify-center border border-purple-500/20 font-bold text-xl shadow-inner uppercase">
+                  {user?.email?.[0] || 'A'}
+                </div>
+                <div>
+                  <div className="font-bold text-zinc-100">{user?.email || 'admin@replyzens.com'}</div>
+                  <div className="text-xs text-zinc-500 font-medium mt-0.5">{user?.role || 'Administrator Access'}</div>
+                </div>
+              </div>
+              <button 
+                onClick={() => setIsEditingProfile(true)}
+                className="w-fit px-6 py-3 bg-zinc-800 border border-white/10 rounded-xl text-zinc-300 font-bold hover:bg-zinc-700 hover:text-white transition-all shadow-sm"
+              >
+                Edit Profile Details
+              </button>
+            </>
+          )}
         </SettingsCard>
 
       </div>

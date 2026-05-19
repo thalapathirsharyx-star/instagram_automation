@@ -1,18 +1,28 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, Users, MessageSquare, Settings, LogOut, Book, Zap, Sparkles } from 'lucide-react';
+import { LayoutDashboard, Users, MessageSquare, Settings, LogOut, Book, Zap, Sparkles, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 const Sidebar: React.FC = () => {
   const { user, logout } = useAuth();
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   return (
-    <aside className="sidebar">
-      <div className="logo">
-        <div className="logo-icon">
-          <Zap size={24} fill="white" />
+    <aside className={`sidebar ${isCollapsed ? 'collapsed' : ''}`}>
+      <div className="logo-container">
+        <div className="logo">
+          <div className="logo-icon">
+            <Zap size={24} fill="white" />
+          </div>
+          <span className="logo-text">ReplyZens</span>
         </div>
-        <span>ReplyZens</span>
+        <button 
+          onClick={() => setIsCollapsed(!isCollapsed)} 
+          className="toggle-btn-inline"
+          aria-label="Toggle Sidebar"
+        >
+          {isCollapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
+        </button>
       </div>
 
       <nav className="nav-links premium-scroll">
@@ -74,8 +84,10 @@ const Sidebar: React.FC = () => {
           </div>
         </div>
 
-        <button onClick={logout} className="nav-item logout-btn w-full mt-4 flex items-center gap-3 text-red-500 hover:bg-red-500/10 hover:text-red-400 transition-all duration-300 border border-transparent hover:border-red-500/20">
-          <LogOut size={20} />
+        <div className="border-t border-white/5 my-2 w-full divider" />
+
+        <button onClick={logout} className="logout-btn w-full flex items-center gap-3">
+          <LogOut size={18} />
           <span>Logout</span>
         </button>
       </div>
