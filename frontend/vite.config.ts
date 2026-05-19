@@ -11,6 +11,6 @@ export default defineConfig({
     basicSsl()
   ],
   server: {
-    https: true
+    https: true as any
   }
 })

@@ -122,8 +122,8 @@ const Inbox: React.FC = () => {
                     {lead.customer_name}
                   </span>
                   <span className={`text-[10px] font-bold px-2 py-1 rounded-md uppercase tracking-tighter border
-                    ${lead.lead_status === 'Hot' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 
-                      lead.lead_status === 'Handoff' ? 'bg-rose-500/10 text-rose-400 border-rose-500/20' : 
+                    ${lead.lead_status === 'Buyer' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 
+                      lead.lead_status === 'Needs_Human' ? 'bg-rose-500/10 text-rose-400 border-rose-500/20' : 
                       'bg-zinc-800 text-zinc-400 border-white/5'}`}>
                     {lead.lead_status}
                   </span>

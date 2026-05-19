@@ -82,11 +82,11 @@ function AppContent() {
             </div>
             <div className="flex items-center gap-3 pl-6 border-l border-white/5">
               <div className="text-right hidden sm:block">
-                <div className="text-sm font-bold text-white">{user?.email?.split('@')[0]}</div>
+                <div className="text-sm font-bold text-white">{user?.email ? user.email.split('@')[0] : 'Guest'}</div>
                 <div className="text-[10px] font-bold text-purple-400 uppercase tracking-wider">Active Now</div>
               </div>
               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center text-white font-bold shadow-lg shadow-purple-500/20 uppercase transition-transform hover:scale-105 border border-white/10 cursor-pointer">
-                {user?.email?.[0]}
+                {user?.email ? user.email[0] : 'G'}
               </div>
             </div>
           </div>

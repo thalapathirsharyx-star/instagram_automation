@@ -360,7 +360,7 @@ const Landing: React.FC = () => {
                 transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
                 className="absolute top-20 left-6 bg-white p-4 rounded-xl shadow-md border border-slate-100 flex items-start gap-3 w-64"
               >
-                <div className="w-8 h-8 rounded-full bg-red-50 flex items-center justify-center text-red-500 shrink-0"><AlertCircle size={16} /></div>
+                <div className="w-8 h-8 rounded-full bg-red-50 flex items-center justify-center text-red-500 shrink-0"><AlertCircleIcon size={16} /></div>
                 <div className="space-y-1">
                   <div className="text-sm font-semibold text-slate-800">Unread Message</div>
                   <div className="text-xs text-slate-500">"Do you ship to Canada?"</div>
