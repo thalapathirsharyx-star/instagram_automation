@@ -45,7 +45,7 @@ const Leads: React.FC = () => {
               placeholder="Search leads..." 
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w3-input pl-12 w-64 shadow-sm"
+              className="w3-input !pl-12 w-64 shadow-sm"
             />
           </div>
           <button onClick={fetchLeads} className="flex items-center gap-2 px-5 py-3 bg-zinc-800/50 border border-white/5 rounded-xl text-zinc-300 font-bold hover:bg-zinc-800 hover:text-white transition-all shadow-sm">
