@@ -210,7 +210,7 @@ const Landing: React.FC = () => {
               </button>
               <button
                 onClick={() => navigate('/signup')}
-                className=" text-sm font-semibold text-white px-5 py-2.5 rounded-lg shadow-sm shadow-slate-900/10 active:scale-95 transition-all"
+                className="bg-sky-600 hover:bg-sky-700 text-sm font-semibold text-white px-5 py-2.5 rounded-lg shadow-sm shadow-slate-900/10 active:scale-95 transition-all"
               >
                 Start Free Trial
               </button>
