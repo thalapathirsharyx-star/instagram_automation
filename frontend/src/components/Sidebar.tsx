@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, Users, MessageSquare, Settings, LogOut, Book, Zap, Sparkles, ChevronLeft, ChevronRight } from 'lucide-react';
+import { LayoutDashboard, Users, MessageSquare, Settings, LogOut, Book, Zap, Sparkles, ChevronLeft, ChevronRight, CreditCard, Radio } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 const Sidebar: React.FC = () => {
@@ -36,6 +36,10 @@ const Sidebar: React.FC = () => {
               <Users size={20} />
               <span>Clients</span>
             </NavLink>
+            <NavLink to="/billing" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+              <CreditCard size={20} />
+              <span>Billing</span>
+            </NavLink>
             <NavLink to="/settings" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
               <Settings size={20} />
               <span>Settings</span>
@@ -63,34 +67,35 @@ const Sidebar: React.FC = () => {
               <Zap size={20} />
               <span>Automation</span>
             </NavLink>
-            <NavLink to="/ai-settings" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-              <Sparkles size={20} />
-              <span>AI Persona</span>
+            <NavLink to="/broadcasts" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+              <Radio size={20} />
+              <span>Broadcasts</span>
             </NavLink>
-            <NavLink to="/settings" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-              <Settings size={20} />
-              <span>Settings</span>
-            </NavLink>
+            {user?.roleCode === 'CLIENT_ADMIN' && (
+              <>
+                <NavLink to="/ai-settings" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+                  <Sparkles size={20} />
+                  <span>AI Persona</span>
+                </NavLink>
+                <NavLink to="/team" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+                  <Users size={20} />
+                  <span>Team</span>
+                </NavLink>
+                <NavLink to="/billing" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+                  <CreditCard size={20} />
+                  <span>Billing</span>
+                </NavLink>
+                <NavLink to="/settings" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+                  <Settings size={20} />
+                  <span>Settings</span>
+                </NavLink>
+              </>
+            )}
           </>
         )}
       </nav>
 
-      <div className="sidebar-footer">
-        <div className="user-info">
-          <div className="avatar">{user?.email?.[0].toUpperCase() || 'U'}</div>
-          <div className="details ml-3 overflow-hidden">
-            <p className="font-semibold text-white truncate">{user?.email?.split('@')[0] || 'User'}</p>
-            <p className="text-xs text-zinc-400 font-medium">{user?.role || 'Member'}</p>
-          </div>
-        </div>
 
-        <div className="border-t border-white/5 my-2 w-full divider" />
-
-        <button onClick={logout} className="logout-btn w-full flex items-center gap-3">
-          <LogOut size={18} />
-          <span>Logout</span>
-        </button>
-      </div>
     </aside>
   );
 };

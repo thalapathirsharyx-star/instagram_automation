@@ -42,6 +42,10 @@ import { InstagramService } from '@Service/Instagram.service';
 import { InstagramGateway } from './Gateway/Instagram.gateway';
 import { LegalController } from '@Controller/Legal.controller';
 import { HashingService } from '@Service/Hashing.service';
+import { TeamController } from '@Controller/Team.controller';
+import { TeamService } from '@Service/Team.service';
+import { BroadcastController } from '@Controller/Broadcast.controller';
+import { BroadcastService } from '@Service/Broadcast.service';
 
 @Module({
   imports: [
@@ -104,6 +108,8 @@ import { HashingService } from '@Service/Hashing.service';
     AdminStatsController,
     InstagramController,
     LegalController,
+    TeamController,
+    BroadcastController,
   ],
   providers: [
     AuthService,
@@ -130,6 +136,8 @@ import { HashingService } from '@Service/Hashing.service';
     CacheService,
     InstagramService,
     InstagramGateway,
+    TeamService,
+    BroadcastService,
     {
       provide: "REDIS_CLIENT",
       useFactory: () => {

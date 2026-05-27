@@ -14,6 +14,8 @@ import {
   BarChart, Bar, Cell
 } from 'recharts';
 
+import api from '../lib/axios';
+
 const AdminStatCard: React.FC<{ title: string; value: string | number; icon: any; trend: string; color?: string }> = ({ title, value, icon: Icon, trend, color = 'var(--primary)' }) => (
   <div className="glass-card hover-glow" style={{ padding: '24px', position: 'relative', overflow: 'hidden' }}>
     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
@@ -32,13 +34,41 @@ const AdminStatCard: React.FC<{ title: string; value: string | number; icon: any
 );
 
 const SuperAdminDashboard: React.FC = () => {
-  // Mock data for platform-wide metrics
+  const [stats, setStats] = useState<any>({
+    totalClients: 0,
+    totalRevenue: 0,
+    totalUsers: 0,
+    totalMessages: 0
+  });
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const response = await api.get('/Admin/Stats');
+        if (response.data?.Data) {
+          setStats(response.data.Data);
+        }
+      } catch (error) {
+        console.error('Failed to fetch admin stats:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchStats();
+  }, []);
+
+  // Mock data for platform-wide metrics (Can also be made dynamic later)
   const platformGrowth = [
-    { month: 'Jan', clients: 45, revenue: 4500 },
-    { month: 'Feb', clients: 52, revenue: 5200 },
-    { month: 'Mar', clients: 68, revenue: 7800 },
-    { month: 'Apr', clients: 85, revenue: 10200 },
+    { month: 'Jan', clients: Math.floor(stats.totalClients * 0.2), revenue: Math.floor(stats.totalRevenue * 0.1) },
+    { month: 'Feb', clients: Math.floor(stats.totalClients * 0.5), revenue: Math.floor(stats.totalRevenue * 0.3) },
+    { month: 'Mar', clients: Math.floor(stats.totalClients * 0.8), revenue: Math.floor(stats.totalRevenue * 0.7) },
+    { month: 'Apr', clients: stats.totalClients, revenue: stats.totalRevenue },
   ];
+
+  if (isLoading) {
+    return <div style={{ display: 'flex', height: '100%', alignItems: 'center', justifyContent: 'center', color: 'var(--text-dim)' }}>Loading Admin Data...</div>;
+  }
 
   return (
     <div className="dashboard-page" style={{ height: '100%', display: 'flex', flexDirection: 'column', gap: '32px', overflowY: 'auto', paddingRight: '8px' }}>
@@ -62,10 +92,10 @@ const SuperAdminDashboard: React.FC = () => {
         gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', 
         gap: '24px' 
       }}>
-        <AdminStatCard title="Total Clients" value="85" icon={ShieldCheck} trend="+12%" />
-        <AdminStatCard title="Platform Revenue" value="$42,500" icon={Wallet} trend="+18%" color="#10b981" />
-        <AdminStatCard title="Global Users" value="1,240" icon={Users} trend="+5%" color="#6366f1" />
-        <AdminStatCard title="API Requests" value="2.4M" icon={Globe} trend="+24%" color="#fbbf24" />
+        <AdminStatCard title="Total Clients" value={stats.totalClients.toLocaleString()} icon={ShieldCheck} trend="+12%" />
+        <AdminStatCard title="Platform Revenue" value={`$${stats.totalRevenue.toLocaleString()}`} icon={Wallet} trend="+18%" color="#10b981" />
+        <AdminStatCard title="Global Users" value={stats.totalUsers.toLocaleString()} icon={Users} trend="+5%" color="#6366f1" />
+        <AdminStatCard title="API Requests (Msgs)" value={stats.totalMessages.toLocaleString()} icon={Globe} trend="+24%" color="#fbbf24" />
       </div>
 
       <div className="charts-row" style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '24px' }}>

@@ -156,11 +156,13 @@ const Settings: React.FC = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
         
-        <SettingsCard 
-          icon={Shield} 
-          title="Meta Integration" 
-          subtitle="Manage your Instagram and Facebook connections."
-        >
+        {user?.roleCode !== 'SUPER_ADMIN' && (
+          <>
+            <SettingsCard 
+              icon={Shield} 
+              title="Meta Integration" 
+              subtitle="Manage your Instagram and Facebook connections."
+            >
           {isLoadingStatus ? (
             <div className="flex items-center gap-3 p-4 bg-zinc-900/50 rounded-2xl border border-white/5 text-zinc-400 font-bold text-xs uppercase tracking-widest">
               <div className="animate-spin w-4 h-4 border-2 border-purple-500 border-t-transparent rounded-full" />
@@ -325,6 +327,8 @@ const Settings: React.FC = () => {
             </button>
           </div>
         </SettingsCard>
+          </>
+        )}
 
         <SettingsCard 
           icon={User} 

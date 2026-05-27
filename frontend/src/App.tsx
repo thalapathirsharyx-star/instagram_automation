@@ -14,13 +14,17 @@ import { PrivacyPolicy, TermsOfService, DataDeletion } from './pages/Legal';
 import SuperAdminDashboard from './pages/SuperAdminDashboard';
 import ClientManagement from './pages/ClientManagement';
 import AISettings from './pages/AISettings';
-import { Search, Bell, Sun, Moon } from 'lucide-react';
+import Team from './pages/Team';
+import Billing from './pages/Billing';
+import Broadcasts from './pages/Broadcasts';
+import { Search, Bell, Sun, Moon, LogOut } from 'lucide-react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 
 function AppContent() {
   const location = useLocation();
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated, user, logout } = useAuth();
+  const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
     const saved = localStorage.getItem('theme');
@@ -64,7 +68,7 @@ function AppContent() {
       <Sidebar />
 
       <main className="content-area">
-        <header className="top-header">
+        <header className="top-header relative z-[100]">
           <div className="flex-grow"></div>
           <div className="flex items-center gap-6">
             <button 
@@ -78,16 +82,41 @@ function AppContent() {
               <div className="p-2.5 bg-white/5 rounded-xl text-zinc-400 group-hover:text-purple-400 group-hover:bg-purple-500/10 transition-all duration-300 border border-white/5 group-hover:border-purple-500/20">
                 <Bell size={20} />
               </div>
-              <span className="absolute -top-1 -right-1 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-[#0f0f14] shadow-lg group-hover:scale-110 transition-transform shadow-purple-500/30">3</span>
+              <span className={`absolute -top-1 -right-1 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full ${theme === 'light' ? 'border-0' : 'border-2 border-[#0f0f14]'} shadow-lg group-hover:scale-110 transition-transform shadow-purple-500/30`}>3</span>
             </div>
-            <div className="flex items-center gap-3 pl-6 border-l border-white/5">
-              <div className="text-right hidden sm:block">
-                <div className="text-sm font-bold text-white">{user?.email ? user.email.split('@')[0] : 'Guest'}</div>
-                <div className="text-[10px] font-bold text-purple-400 uppercase tracking-wider">Active Now</div>
+            <div className="relative" onMouseLeave={() => setShowProfileDropdown(false)}>
+              <div 
+                className="flex items-center gap-3 pl-6 border-l border-white/5 cursor-pointer"
+                onMouseEnter={() => setShowProfileDropdown(true)}
+              >
+                <div className="text-right hidden sm:block">
+                  <div className="text-sm font-bold text-white">{user?.email ? user.email.split('@')[0] : 'Guest'}</div>
+                  <div className="text-[10px] font-bold text-purple-400 uppercase tracking-wider">Active Now</div>
+                </div>
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center text-white font-bold shadow-lg shadow-purple-500/20 uppercase transition-transform hover:scale-105 border border-white/10">
+                  {user?.email ? user.email[0] : 'G'}
+                </div>
               </div>
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center text-white font-bold shadow-lg shadow-purple-500/20 uppercase transition-transform hover:scale-105 border border-white/10 cursor-pointer">
-                {user?.email ? user.email[0] : 'G'}
-              </div>
+
+              {showProfileDropdown && (
+                <div className="absolute right-0 top-full pt-2 w-48 z-50">
+                  <div className="bg-zinc-900 border border-white/10 rounded-xl shadow-xl overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+                    <div className="p-3 border-b border-white/10">
+                      <div className="text-sm font-bold text-white truncate">{user?.email}</div>
+                      <div className="text-xs text-zinc-500">{user?.role || 'Member'}</div>
+                    </div>
+                    <div className="p-1">
+                      <button 
+                        onClick={logout}
+                        className="w-full flex items-center gap-3 px-3 py-2 text-sm text-rose-400 hover:bg-rose-500/10 rounded-lg transition-colors font-medium"
+                      >
+                        <LogOut size={16} />
+                        Logout
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </header>
@@ -100,6 +129,7 @@ function AppContent() {
             <Route path="/inbox" element={<ProtectedRoute><Inbox /></ProtectedRoute>} />
             <Route path="/knowledge" element={<ProtectedRoute><KnowledgeBase /></ProtectedRoute>} />
             <Route path="/automation" element={<ProtectedRoute><Automation /></ProtectedRoute>} />
+            <Route path="/broadcasts" element={<ProtectedRoute><Broadcasts /></ProtectedRoute>} />
             <Route path="/ai-settings" element={<ProtectedRoute><AISettings /></ProtectedRoute>} />
             
             {/* Admin Routes */}
@@ -107,6 +137,8 @@ function AppContent() {
             <Route path="/admin/clients" element={<ProtectedRoute><ClientManagement /></ProtectedRoute>} />
             
             <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+            <Route path="/team" element={<ProtectedRoute><Team /></ProtectedRoute>} />
+            <Route path="/billing" element={<ProtectedRoute><Billing /></ProtectedRoute>} />
             
             {/* Redirect logic */}
             <Route path="/" element={<Navigate to={user?.roleCode === 'SUPER_ADMIN' ? "/admin/dashboard" : "/dashboard"} replace />} />

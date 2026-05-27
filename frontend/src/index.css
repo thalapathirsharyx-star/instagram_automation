@@ -251,12 +251,12 @@
   width: 250px;
   min-width: 250px;
   flex-shrink: 0;
-  height: calc(100vh - 40px);
-  margin: 20px;
+  height: 100vh;
+  margin: 0;
   background: rgba(12, 10, 16, 0.75);
   backdrop-filter: blur(24px) saturate(150%);
-  border-radius: 24px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 0;
+  border-right: 1px solid rgba(255, 255, 255, 0.05);
   display: flex;
   flex-direction: column;
   padding: 32px 16px;
@@ -502,22 +502,21 @@
   flex-grow: 1;
   display: flex;
   flex-direction: column;
-  padding: 20px;
-  padding-left: 0;
+  padding: 0;
   overflow: hidden;
 }
 
 .top-header {
   background: rgba(15, 15, 20, 0.7);
   backdrop-filter: blur(24px) saturate(150%);
-  border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 14px 28px;
-  margin-bottom: 20px;
-  box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  margin-bottom: 0;
+  box-shadow: 0 4px 20px -10px rgba(0, 0, 0, 0.3);
   transition: all 0.4s ease;
 }
 
@@ -552,7 +551,7 @@
 .router-container {
   flex-grow: 1;
   overflow-y: auto;
-  padding-right: 12px;
+  padding: 24px;
 }
 
 /* Premium Light Theme overrides */
@@ -579,9 +578,20 @@
 }
 
 :root.light .sidebar {
-  background: rgba(255, 255, 255, 0.8) !important;
-  border-color: rgba(0, 0, 0, 0.06) !important;
-  box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.5) !important;
+  background: #f8f9fa !important;
+  border-radius: 0 !important;
+  margin: 0 !important;
+  border: none !important;
+  border-right: 1px solid #e5e7eb !important;
+  box-shadow: none !important;
+}
+
+:root.light .content-area {
+  background: #ffffff !important;
+  border-radius: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  box-shadow: none !important;
 }
 
 :root.light .sidebar::after {
@@ -607,10 +617,10 @@
 }
 
 :root.light .nav-item.active {
-  background: rgba(124, 58, 237, 0.08) !important;
-  color: #7c3aed !important;
-  border-color: rgba(124, 58, 237, 0.15) !important;
-  box-shadow: 0 4px 15px -3px rgba(124, 58, 237, 0.1) !important;
+  background: #ffffff !important;
+  color: #0f172a !important;
+  border-color: #ffffff !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05) !important;
 }
 
 :root.light .nav-item.active svg {
@@ -652,9 +662,12 @@
 }
 
 :root.light .top-header {
-  background: rgba(255, 255, 255, 0.8) !important;
-  border-color: rgba(0, 0, 0, 0.06) !important;
-  box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.5) !important;
+  background: #ffffff !important;
+  border: none !important;
+  border-bottom: 1px solid #e5e7eb !important;
+  box-shadow: none !important;
+  padding: 14px 28px !important;
+  border-radius: 0 !important;
 }
 
 :root.light .search-bar {
@@ -688,8 +701,8 @@
 }
 
 :root.light .crm-layout {
-  background-image: radial-gradient(circle at top center, rgba(124, 58, 237, 0.03) 0%, transparent 40%) !important;
-  background-color: #f4f4f5 !important;
+  background-image: none !important;
+  background-color: #e5e7eb !important;
 }
 
 :root.light .w3-card {

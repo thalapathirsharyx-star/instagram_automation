@@ -445,7 +445,7 @@ const Landing: React.FC = () => {
             viewport={{ once: true }}
             className="relative z-10 max-w-3xl mx-auto bg-slate-800/80 backdrop-blur-md border border-slate-700 p-10 md:p-12 rounded-[2rem] text-left shadow-2xl"
           >
-            <h3 className="text-2xl md:text-3xl font-bold mb-4 text-white">Turn messages into qualified leads — automatically</h3>
+            <h3 className="text-2xl md:text-3xl font-bold mb-4 text-slate-50">Turn messages into qualified leads — automatically</h3>
             <p className="text-slate-300 mb-8 leading-relaxed">
               ReplyZens doesn't just manage your DMs. It filters, organizes, and prioritizes them — so you see only what matters.
             </p>
@@ -681,7 +681,7 @@ const Landing: React.FC = () => {
               viewport={{ once: true }}
               className="text-xl font-medium text-indigo-200"
             >
-              Same DMs. <span className="text-white font-bold">Completely different results.</span>
+              Same DMs. <span className="text-slate-50 font-bold">Completely different results.</span>
             </motion.div>
           </div>
         </section>
@@ -722,8 +722,150 @@ const Landing: React.FC = () => {
           </div>
         </section>
 
+        {/* 7.5 PRICING */}
+        <section id="pricing" className="py-24 bg-white border-t border-slate-100">
+          <div className="max-w-6xl mx-auto px-6">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl md:text-4xl font-bold text-slate-900 tracking-tight">Simple, transparent pricing</h2>
+              <p className="text-slate-500 mt-4">Start for free, scale when you grow. No hidden fees.</p>
+            </div>
 
-        {/* 8. FAQ */}
+            <div className="grid md:grid-cols-3 lg:grid-cols-5 gap-4 max-w-[1400px] mx-auto">
+              
+              {/* Free Plan */}
+              <div className="border border-slate-200 bg-[#FAFAFA] rounded-2xl p-6 flex flex-col hover:border-sky-200 transition-colors text-center md:text-left">
+                <h3 className="text-lg font-semibold text-slate-900 mb-2">Free</h3>
+                <p className="text-slate-500 text-xs mb-6 h-8">Explore basic automation for free</p>
+                <div className="mb-6 flex justify-center md:justify-start items-baseline">
+                  <span className="text-3xl font-bold text-slate-900">₹0</span>
+                  <span className="text-slate-500 ml-1 text-sm">/mo</span>
+                </div>
+                <div className="text-center md:text-left mb-6">
+                  <div className="text-lg font-bold text-slate-900">25</div>
+                  <div className="text-xs text-slate-500">Active Contacts / mo</div>
+                </div>
+                <button onClick={() => navigate('/signup')} className="w-full py-2.5 px-4 bg-slate-900 text-white font-semibold text-sm rounded-xl hover:bg-slate-800 transition-colors mb-6">
+                  Start For Free
+                </button>
+                <ul className="space-y-3 text-xs text-slate-600 flex-grow text-left">
+                  <li className="flex items-start gap-2"><Check size={14} className="text-sky-500 mt-0.5 shrink-0" /> Connect 1 IG Account</li>
+                  <li className="flex items-start gap-2"><Check size={14} className="text-sky-500 mt-0.5 shrink-0" /> Basic automations (up to 4)</li>
+                  <li className="flex items-start gap-2"><Check size={14} className="text-sky-500 mt-0.5 shrink-0" /> 1 user</li>
+                  <li className="flex items-start gap-2"><Check size={14} className="text-sky-500 mt-0.5 shrink-0" /> Basic unified inbox</li>
+                  <li className="flex items-start gap-2"><Check size={14} className="text-sky-500 mt-0.5 shrink-0" /> Self-serve Support</li>
+                  <li className="flex items-start gap-2"><Check size={14} className="text-sky-500 mt-0.5 shrink-0" /> ReplyZens branding</li>
+                </ul>
+              </div>
+
+              {/* Essential Plan */}
+              <div className="border border-slate-200 bg-[#FAFAFA] rounded-2xl p-6 flex flex-col hover:border-sky-200 transition-colors text-center md:text-left">
+                <h3 className="text-lg font-semibold text-slate-900 mb-2">Essential</h3>
+                <p className="text-slate-500 text-xs mb-6 h-8">For creators and growing brands</p>
+                <div className="mb-6 flex justify-center md:justify-start items-baseline">
+                  <span className="text-3xl font-bold text-slate-900">₹1,199</span>
+                  <span className="text-slate-500 ml-1 text-sm">/mo</span>
+                </div>
+                <div className="text-center md:text-left mb-6">
+                  <div className="text-lg font-bold text-slate-900">250</div>
+                  <div className="text-xs text-slate-500">Active Contacts / mo</div>
+                </div>
+                <button onClick={() => navigate('/signup')} className="w-full py-2.5 px-4 bg-slate-900 text-white font-semibold text-sm rounded-xl hover:bg-slate-800 transition-colors mb-6">
+                  Try 14 Days Free
+                </button>
+                <ul className="space-y-3 text-xs text-slate-600 flex-grow text-left">
+                  <li className="flex items-start gap-2"><Check size={14} className="text-sky-500 mt-0.5 shrink-0" /> Connect 2 IG Accounts</li>
+                  <li className="flex items-start gap-2"><Check size={14} className="text-sky-500 mt-0.5 shrink-0" /> Unlimited custom automations</li>
+                  <li className="flex items-start gap-2"><Check size={14} className="text-sky-500 mt-0.5 shrink-0" /> 2 users</li>
+                  <li className="flex items-start gap-2"><Check size={14} className="text-sky-500 mt-0.5 shrink-0" /> Inbox + organization & reminders</li>
+                  <li className="flex items-start gap-2"><Check size={14} className="text-sky-500 mt-0.5 shrink-0" /> Email Support</li>
+                  <li className="flex items-start gap-2"><Check size={14} className="text-sky-500 mt-0.5 shrink-0" /> No branding</li>
+                </ul>
+              </div>
+
+              {/* Pro Plan */}
+              <div className="border-2 border-sky-500 bg-white rounded-2xl p-6 flex flex-col relative shadow-xl shadow-sky-900/5 hover:-translate-y-1 transition-transform text-center md:text-left">
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-sky-500 text-white px-3 py-1 text-[10px] font-bold uppercase tracking-wider rounded-full whitespace-nowrap">ReplyZens AI</div>
+                <h3 className="text-lg font-semibold text-slate-900 mb-2">Pro</h3>
+                <p className="text-slate-500 text-xs mb-6 h-8">For scaling creators & businesses</p>
+                <div className="mb-6 flex justify-center md:justify-start items-baseline">
+                  <span className="text-3xl font-bold text-slate-900">₹2,499</span>
+                  <span className="text-slate-500 ml-1 text-sm">/mo</span>
+                </div>
+                <div className="text-center md:text-left mb-6">
+                  <div className="text-lg font-bold text-slate-900">2,500</div>
+                  <div className="text-xs text-slate-500">Active Contacts / mo</div>
+                </div>
+                <button onClick={() => navigate('/signup')} className="w-full py-2.5 px-4 bg-sky-600 text-white font-semibold text-sm rounded-xl hover:bg-sky-700 transition-colors mb-6">
+                  Try 14 Days Free
+                </button>
+                <ul className="space-y-3 text-xs text-slate-600 flex-grow text-left">
+                  <li className="flex items-start gap-2"><Check size={14} className="text-sky-500 mt-0.5 shrink-0" /> Connect 3 IG Accounts</li>
+                  <li className="flex items-start gap-2"><Check size={14} className="text-sky-500 mt-0.5 shrink-0" /> Advanced automations & broadcasts</li>
+                  <li className="flex items-start gap-2"><Check size={14} className="text-sky-500 mt-0.5 shrink-0" /> 3 users</li>
+                  <li className="flex items-start gap-2"><Check size={14} className="text-sky-500 mt-0.5 shrink-0" /> Custom inbox labels & rules</li>
+                  <li className="flex items-start gap-2"><Check size={14} className="text-sky-500 mt-0.5 shrink-0" /> Email Support</li>
+                  <li className="flex items-start gap-2"><Check size={14} className="text-sky-500 mt-0.5 shrink-0" /> Full AI Features</li>
+                  <li className="flex items-start gap-2"><Check size={14} className="text-sky-500 mt-0.5 shrink-0" /> No branding</li>
+                </ul>
+              </div>
+
+              {/* Business Plan */}
+              <div className="border border-slate-200 bg-[#FAFAFA] rounded-2xl p-6 flex flex-col hover:border-sky-200 transition-colors text-center md:text-left relative">
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-sky-100 text-sky-700 border border-sky-200 px-3 py-1 text-[10px] font-bold uppercase tracking-wider rounded-full whitespace-nowrap">ReplyZens AI</div>
+                <h3 className="text-lg font-semibold text-slate-900 mb-2">Business</h3>
+                <p className="text-slate-500 text-xs mb-6 h-8">For high-growth businesses</p>
+                <div className="mb-6 flex justify-center md:justify-start items-baseline">
+                  <span className="text-3xl font-bold text-slate-900">₹5,999</span>
+                  <span className="text-slate-500 ml-1 text-sm">/mo</span>
+                </div>
+                <div className="text-center md:text-left mb-6">
+                  <div className="text-lg font-bold text-slate-900">7,500</div>
+                  <div className="text-xs text-slate-500">Active Contacts / mo</div>
+                </div>
+                <button onClick={() => navigate('/signup')} className="w-full py-2.5 px-4 bg-slate-900 text-white font-semibold text-sm rounded-xl hover:bg-slate-800 transition-colors mb-6">
+                  Get Started
+                </button>
+                <ul className="space-y-3 text-xs text-slate-600 flex-grow text-left">
+                  <li className="flex items-start gap-2"><Check size={14} className="text-sky-500 mt-0.5 shrink-0" /> Unlimited IG Accounts</li>
+                  <li className="flex items-start gap-2"><Check size={14} className="text-sky-500 mt-0.5 shrink-0" /> Advanced automations & broadcasts</li>
+                  <li className="flex items-start gap-2"><Check size={14} className="text-sky-500 mt-0.5 shrink-0" /> 5 users</li>
+                  <li className="flex items-start gap-2"><Check size={14} className="text-sky-500 mt-0.5 shrink-0" /> Shared team Inbox & assignments</li>
+                  <li className="flex items-start gap-2"><Check size={14} className="text-sky-500 mt-0.5 shrink-0" /> Priority Support</li>
+                  <li className="flex items-start gap-2"><Check size={14} className="text-sky-500 mt-0.5 shrink-0" /> Full AI Features</li>
+                  <li className="flex items-start gap-2"><Check size={14} className="text-sky-500 mt-0.5 shrink-0" /> No branding</li>
+                </ul>
+              </div>
+
+              {/* Advanced Plan */}
+              <div className="border border-slate-200 bg-[#FAFAFA] rounded-2xl p-6 flex flex-col hover:border-sky-200 transition-colors text-center md:text-left relative">
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-sky-100 text-sky-700 border border-sky-200 px-3 py-1 text-[10px] font-bold uppercase tracking-wider rounded-full whitespace-nowrap">ReplyZens AI</div>
+                <h3 className="text-lg font-semibold text-slate-900 mb-2">Advanced</h3>
+                <p className="text-slate-500 text-xs mb-6 h-8">For high-volume operators</p>
+                <div className="mb-6 flex justify-center md:justify-start items-baseline">
+                  <span className="text-3xl font-bold text-slate-900">₹11,499</span>
+                  <span className="text-slate-500 ml-1 text-sm">/mo</span>
+                </div>
+                <div className="text-center md:text-left mb-6">
+                  <div className="text-lg font-bold text-slate-900">25,000</div>
+                  <div className="text-xs text-slate-500">Active Contacts / mo</div>
+                </div>
+                <button onClick={() => navigate('/signup')} className="w-full py-2.5 px-4 bg-slate-900 text-white font-semibold text-sm rounded-xl hover:bg-slate-800 transition-colors mb-6">
+                  Get Started
+                </button>
+                <ul className="space-y-3 text-xs text-slate-600 flex-grow text-left">
+                  <li className="flex items-start gap-2"><Check size={14} className="text-sky-500 mt-0.5 shrink-0" /> Unlimited IG Accounts</li>
+                  <li className="flex items-start gap-2"><Check size={14} className="text-sky-500 mt-0.5 shrink-0" /> Advanced automations & broadcasts</li>
+                  <li className="flex items-start gap-2"><Check size={14} className="text-sky-500 mt-0.5 shrink-0" /> 10 users</li>
+                  <li className="flex items-start gap-2"><Check size={14} className="text-sky-500 mt-0.5 shrink-0" /> Shared team Inbox & assignments</li>
+                  <li className="flex items-start gap-2"><Check size={14} className="text-sky-500 mt-0.5 shrink-0" /> Priority Support</li>
+                  <li className="flex items-start gap-2"><Check size={14} className="text-sky-500 mt-0.5 shrink-0" /> Full AI Features</li>
+                  <li className="flex items-start gap-2"><Check size={14} className="text-sky-500 mt-0.5 shrink-0" /> No branding</li>
+                </ul>
+              </div>
+
+            </div>
+          </div>
+        </section>        {/* 8. FAQ */}
         <section id="faq" className="py-24 bg-white border-t border-slate-100">
           <div className="max-w-3xl mx-auto px-6">
             <div className="text-center mb-12">

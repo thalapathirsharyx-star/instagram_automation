@@ -29,6 +29,9 @@ export class AuthService {
     if (UserData.status == false) {
       throw new Error('User suspended, contanct administration');
     }
+    if (UserData.company && UserData.company.status === false) {
+      throw new Error('Your company account has been suspended by the administration.');
+    }
     const isPasswordValid = await this._HashingService.Compare(password, UserData.password);
     if (!isPasswordValid) {
       throw new Error('Invalid password');
