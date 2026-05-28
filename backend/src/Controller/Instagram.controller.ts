@@ -7,7 +7,8 @@ import { ResponseEnum } from '@Helper/Enum/ResponseEnum';
 import { AuthBaseController } from './AuthBase.controller';
 
 import { JwtAuthGuard } from '@Service/Auth/JwtAuthGuard.service';
-import { UseGuards } from '@nestjs/common';
+import { UseGuards, HttpException, HttpStatus } from '@nestjs/common';
+import * as crypto from 'crypto';
 
 @Controller({ path: "Instagram", version: '1' })
 @ApiTags("Instagram")
@@ -27,7 +28,7 @@ export class InstagramController extends AuthBaseController {
     @Query('hub.verify_token') token: string,
     @Query('hub.challenge') challenge: string,
   ) {
-    const VERIFY_TOKEN = 'IG_CRM_VERIFY_TOKEN'; // This should ideally be in env
+    const VERIFY_TOKEN = process.env.IG_CRM_VERIFY_TOKEN || 'IG_CRM_VERIFY_TOKEN';
     if (mode && token === VERIFY_TOKEN) {
       return challenge;
     }
@@ -35,7 +36,21 @@ export class InstagramController extends AuthBaseController {
   }
 
   @Post('Webhook')
-  async HandleWebhook(@Body() body: any) {
+  async HandleWebhook(@Body() body: any, @Req() req: any) {
+    // 1. Verify Webhook Signature (Security)
+    const signature = req.headers['x-hub-signature-256'];
+    const appSecret = process.env.FB_APP_SECRET;
+    
+    if (signature && appSecret && req.rawBody) {
+      const expectedSignature = `sha256=${crypto.createHmac('sha256', appSecret).update(req.rawBody).digest('hex')}`;
+      if (signature !== expectedSignature) {
+        console.error('[SECURITY] Invalid webhook signature detected!');
+        throw new HttpException('Invalid signature', HttpStatus.FORBIDDEN);
+      }
+    } else {
+      console.warn('[SECURITY WARNING] Webhook received without signature validation. Ensure rawBody is enabled and FB_APP_SECRET is set.');
+    }
+
     // MEGA-LOG: See everything exactly as it arrives
     console.log('--- START WEBHOOK PAYLOAD ---');
     console.log(JSON.stringify(body, null, 2));
