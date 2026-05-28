@@ -1,7 +1,8 @@
 export interface ApiResponse<T> {
-  Type: string;
-  Message: string;
-  Data: T;
+  Type?: string;
+  Message?: string;
+  Success?: boolean;
+  Data?: T;
 }
 
 export interface Lead {

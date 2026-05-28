@@ -189,7 +189,7 @@ export default function PlaybookCanvas({ initialSteps, onClose, onSave }: Playbo
   const onEdgesChange = useCallback((changes: EdgeChange[]) => setEdges((eds) => applyEdgeChanges(changes, eds)), []);
   const onConnect = useCallback((params: Connection | Edge) => setEdges((eds) => addEdge({ ...params, animated: true, style: { stroke: '#a855f7', strokeWidth: 2 } }, eds)), []);
 
-  const addNode = (type: 'trigger' | 'action' | 'condition') => {
+  const addNode = (type: 'trigger' | 'action' | 'condition' | 'delay') => {
     const id = Date.now().toString();
     const lastNode = nodes[nodes.length - 1];
     const yPos = lastNode ? lastNode.position.y + 200 : 100;
