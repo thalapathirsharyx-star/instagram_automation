@@ -113,4 +113,13 @@ export class CompanyController extends JWTAuthController {
     }
   }
 
+  @Put('AutomationSettings')
+  async UpdateAutomationSettings(@Body() body: any, @Req() req: any) {
+    const user = req.user;
+    if (!user?.company_id) return this.SendResponse(ResponseEnum.Error, "No company associated.");
+    
+    await this._CompanyService.UpdateAutomationSettings(user.company_id, body, user.user_id);
+    return this.SendResponse(ResponseEnum.Success, "Automation settings updated.");
+  }
+
 }

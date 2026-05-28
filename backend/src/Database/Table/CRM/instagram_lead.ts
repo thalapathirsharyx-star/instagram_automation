@@ -43,4 +43,7 @@ export class instagram_lead extends BaseTable {
 
   @Column({ type: 'text', nullable: true })
   conversation_summary: string;
+
+  @Column({ type: 'boolean', default: false })
+  follow_up_sent: boolean;
 }

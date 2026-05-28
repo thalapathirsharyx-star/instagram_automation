@@ -18,7 +18,9 @@ import {
   Layers,
   HelpCircle,
   Activity,
-  Workflow
+  Workflow,
+  Moon,
+  Repeat
 } from 'lucide-react';
 import api from '../lib/axios';
 import PlaybookCanvas from '../components/PlaybookCanvas';
@@ -39,8 +41,15 @@ interface CommentTrigger {
 }
 
 const Automation: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'playbook' | 'comment' | 'welcome'>('playbook');
+  const [activeTab, setActiveTab] = useState<'playbook' | 'comment' | 'welcome' | 'advanced'>('playbook');
   const [welcomeMessage, setWelcomeMessage] = useState('');
+
+  // Advanced Settings State
+  const [autoFollowUp, setAutoFollowUp] = useState(false);
+  const [timezone, setTimezone] = useState('UTC');
+  const [workingHoursStart, setWorkingHoursStart] = useState('09:00');
+  const [workingHoursEnd, setWorkingHoursEnd] = useState('18:00');
+  const [oooMessage, setOooMessage] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [showCanvas, setShowCanvas] = useState(false);
@@ -123,7 +132,13 @@ const Automation: React.FC = () => {
       setIsLoading(true);
       const res = await api.get('/Instagram/Settings');
       if (res.data.Success) {
-        setWelcomeMessage(res.data.Data?.welcome_message || '');
+        const d = res.data.Data;
+        setWelcomeMessage(d?.welcome_message || '');
+        setAutoFollowUp(d?.auto_follow_up_enabled || false);
+        setTimezone(d?.timezone || 'UTC');
+        setWorkingHoursStart(d?.working_hours_start || '09:00');
+        setWorkingHoursEnd(d?.working_hours_end || '18:00');
+        setOooMessage(d?.ooo_message || '');
       }
     } catch (error) {
       console.error('Error fetching settings:', error);
@@ -142,6 +157,27 @@ const Automation: React.FC = () => {
     } catch (error) {
       console.error('Error saving welcome message:', error);
       showToast('Failed to save welcome message.', 'error');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleSaveAdvanced = async () => {
+    try {
+      setIsSaving(true);
+      const res = await api.post('/Instagram/Settings', { 
+        auto_follow_up_enabled: autoFollowUp,
+        timezone,
+        working_hours_start: workingHoursStart,
+        working_hours_end: workingHoursEnd,
+        ooo_message: oooMessage
+      });
+      if (res.data.Success) {
+        showToast('Advanced settings updated successfully!');
+      }
+    } catch (error) {
+      console.error('Error saving advanced settings:', error);
+      showToast('Failed to save settings.', 'error');
     } finally {
       setIsSaving(false);
     }
@@ -303,6 +339,17 @@ const Automation: React.FC = () => {
           >
             <MessageSquare size={16} />
             <span>Welcome Message</span>
+          </button>
+          <button 
+            onClick={() => setActiveTab('advanced')}
+            className={`px-5 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 flex items-center gap-2 ${
+              activeTab === 'advanced' 
+                ? 'bg-purple-600 text-white shadow-glow-purple' 
+                : 'text-zinc-400 hover:text-zinc-100'
+            }`}
+          >
+            <Settings size={16} />
+            <span>Advanced AI</span>
           </button>
         </div>
       </div>
@@ -740,6 +787,116 @@ const Automation: React.FC = () => {
           }}
         />
       )}
+      {/* ADVANCED TAB */}
+      {activeTab === 'advanced' && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 animate-in slide-in-from-bottom-4 duration-500">
+          
+          {/* Auto Follow-up */}
+          <div className="w3-card flex flex-col h-full border-white/5">
+            <div className="flex items-start gap-4 mb-6">
+              <div className="p-3 bg-purple-500/10 text-purple-400 rounded-xl shadow-inner border border-purple-500/20">
+                <Repeat size={24} />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-zinc-100">Drip Campaigns</h3>
+                <p className="text-xs text-zinc-400 mt-1">Automatically follow up with silent hot leads.</p>
+              </div>
+            </div>
+
+            <div className="flex-grow space-y-6">
+              <div className="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/10">
+                <div>
+                  <h4 className="text-sm font-medium text-zinc-100">Enable Auto Follow-Up</h4>
+                  <p className="text-xs text-zinc-400 mt-1">If a lead hasn't replied in 24 hrs, AI sends a check-in DM.</p>
+                </div>
+                <label className="relative inline-flex items-center cursor-pointer">
+                  <input type="checkbox" className="sr-only peer" checked={autoFollowUp} onChange={(e) => setAutoFollowUp(e.target.checked)} />
+                  <div className="w-11 h-6 bg-zinc-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-zinc-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-500"></div>
+                </label>
+              </div>
+              <div className="p-4 bg-blue-500/10 rounded-xl border border-blue-500/20">
+                <div className="flex gap-3">
+                  <Info className="text-blue-500 flex-shrink-0" size={18} />
+                  <p className="text-xs text-zinc-400 leading-relaxed">
+                    This directly increases sales by recovering abandoned conversations. The AI will send a gentle nudge ONLY if the customer was marked as a "Hot" lead and you sent the last message.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-8 pt-4 border-t border-white/5 flex justify-end">
+              <button
+                onClick={handleSaveAdvanced}
+                disabled={isSaving}
+                className="btn-primary w-full sm:w-auto"
+              >
+                {isSaving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
+                Save Changes
+              </button>
+            </div>
+          </div>
+
+          {/* Out of Office */}
+          <div className="w3-card flex flex-col h-full border-white/5">
+            <div className="flex items-start gap-4 mb-6">
+              <div className="p-3 bg-purple-500/10 text-purple-400 rounded-xl shadow-inner border border-purple-500/20">
+                <Moon size={24} />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-zinc-100">Away Mode (OOO)</h3>
+                <p className="text-xs text-zinc-400 mt-1">Set expectations when you are closed.</p>
+              </div>
+            </div>
+
+            <div className="flex-grow space-y-5">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-medium text-zinc-400 mb-1.5 uppercase tracking-wider">Start Time</label>
+                  <input type="time" value={workingHoursStart} onChange={e => setWorkingHoursStart(e.target.value)} className="w3-input" />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-zinc-400 mb-1.5 uppercase tracking-wider">End Time</label>
+                  <input type="time" value={workingHoursEnd} onChange={e => setWorkingHoursEnd(e.target.value)} className="w3-input" />
+                </div>
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-zinc-400 mb-1.5 uppercase tracking-wider">Timezone</label>
+                <select value={timezone} onChange={e => setTimezone(e.target.value)} className="w3-input text-sm text-zinc-100">
+                  <option value="UTC">UTC</option>
+                  <option value="America/New_York">Eastern Time (US)</option>
+                  <option value="America/Los_Angeles">Pacific Time (US)</option>
+                  <option value="Europe/London">London (UK)</option>
+                  <option value="Asia/Kolkata">India (IST)</option>
+                  <option value="Asia/Singapore">Singapore (SGT)</option>
+                  <option value="Australia/Sydney">Sydney (AEST)</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-zinc-400 mb-1.5 uppercase tracking-wider">Out of Office Fallback Message</label>
+                <textarea 
+                  value={oooMessage} 
+                  onChange={e => setOooMessage(e.target.value)}
+                  placeholder="e.g. We are currently closed. A human will review this chat tomorrow morning."
+                  className="w3-input min-h-[100px] text-sm resize-none text-zinc-100"
+                />
+              </div>
+            </div>
+
+            <div className="mt-6 pt-4 border-t border-white/5 flex justify-end">
+              <button
+                onClick={handleSaveAdvanced}
+                disabled={isSaving}
+                className="btn-primary w-full sm:w-auto"
+              >
+                {isSaving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
+                Save Changes
+              </button>
+            </div>
+          </div>
+          
+        </div>
+      )}
+
     </div>
   );
 };

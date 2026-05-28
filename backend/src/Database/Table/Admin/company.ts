@@ -111,4 +111,19 @@ export class company extends BaseTable {
 
   @Column({ type: 'text', nullable: true })
   ai_usage_reset_month: string; // e.g. "2026-05" — used to auto-reset monthly_ai_usage
+
+  @Column({ type: 'text', default: 'UTC' })
+  timezone: string;
+
+  @Column({ type: 'text', default: '00:00' })
+  working_hours_start: string;
+
+  @Column({ type: 'text', default: '23:59' })
+  working_hours_end: string;
+
+  @Column({ type: 'text', nullable: true })
+  ooo_message: string;
+
+  @Column({ type: 'boolean', default: false })
+  auto_follow_up_enabled: boolean;
 }

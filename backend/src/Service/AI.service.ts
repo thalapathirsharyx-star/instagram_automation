@@ -53,6 +53,43 @@ CRITICAL PLAYBOOK INSTRUCTION: If the customer's message triggers any of the abo
 `;
     }
 
+    let oooRule = '';
+    if (company?.working_hours_start && company?.working_hours_end && company?.timezone) {
+      try {
+        const formatter = new Intl.DateTimeFormat('en-US', {
+          timeZone: company.timezone,
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: false
+        });
+        const [hour, minute] = formatter.format(new Date()).split(':');
+        const currentTimeString = `${hour}:${minute}`;
+
+        // Standard check (start < end)
+        let isWorkingHours = false;
+        if (company.working_hours_start <= company.working_hours_end) {
+          isWorkingHours = currentTimeString >= company.working_hours_start && currentTimeString <= company.working_hours_end;
+        } else {
+          // Night shift (end < start)
+          isWorkingHours = currentTimeString >= company.working_hours_start || currentTimeString <= company.working_hours_end;
+        }
+        
+        if (!isWorkingHours) {
+          const fallbackMsg = company.ooo_message || "We're currently closed. I'm the AI assistant, but a human will reply during our working hours.";
+          oooRule = `
+═══════════════════════════════
+OUT OF OFFICE / AWAY MODE (ACTIVE)
+═══════════════════════════════
+The business is currently CLOSED (outside working hours).
+You MUST include this exact message in your reply to manage expectations:
+"${fallbackMsg}"
+`;
+        }
+      } catch (err: any) {
+        console.error('[OOO ERROR] Failed to parse timezone or working hours:', err.message);
+      }
+    }
+
     const defaultPrompt = `
 You are Maya, a warm and polite sales assistant and lead classifier for a \${profile.type.toUpperCase()} business.
 You genuinely care about helping customers find the right product or service.
@@ -91,6 +128,7 @@ LEAD QUALIFICATION RULES
 - When in doubt if it's a product inquiry, prefer marking "lead": "yes" to ensure follow-up.
 - SUMMARY RULE: Your summary must be CUMULATIVE. Don't forget earlier topics. If they asked about shirts 10 mins ago and now pants, the summary must mention BOTH.
 ${playbookRules}
+${oooRule}
 ═══════════════════════════════
 LANGUAGE RULES (CRITICAL)
 ═══════════════════════════════

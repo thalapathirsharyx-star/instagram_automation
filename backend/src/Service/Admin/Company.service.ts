@@ -155,4 +155,31 @@ export class CompanyService {
     await this._CacheService.Remove(`${CacheEnum.Company}:*`, CompanyData);
     return CompanyData;
   }
+
+  async UpdateAutomationSettings(Id: string, settings: any, UserId: string) {
+    const CompanyData = await company.findOne({ where: { id: Id } });
+    if (!CompanyData) throw new Error('Company not found');
+
+    if (settings.timezone !== undefined) CompanyData.timezone = settings.timezone;
+    if (settings.working_hours_start !== undefined) CompanyData.working_hours_start = settings.working_hours_start;
+    if (settings.working_hours_end !== undefined) CompanyData.working_hours_end = settings.working_hours_end;
+    if (settings.ooo_message !== undefined) CompanyData.ooo_message = settings.ooo_message;
+    if (settings.auto_follow_up_enabled !== undefined) CompanyData.auto_follow_up_enabled = settings.auto_follow_up_enabled;
+
+    CompanyData.updated_by_id = UserId;
+    CompanyData.updated_on = new Date();
+
+    await company.update(Id, {
+      timezone: CompanyData.timezone,
+      working_hours_start: CompanyData.working_hours_start,
+      working_hours_end: CompanyData.working_hours_end,
+      ooo_message: CompanyData.ooo_message,
+      auto_follow_up_enabled: CompanyData.auto_follow_up_enabled,
+      updated_by_id: UserId,
+      updated_on: CompanyData.updated_on
+    });
+
+    await this._CacheService.Remove(`${CacheEnum.Company}:*`, CompanyData);
+    return CompanyData;
+  }
 }

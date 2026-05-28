@@ -613,7 +613,12 @@ export class InstagramService {
         isConnected: !!company?.instagram_business_id,
         business_id: company?.instagram_business_id,
         page_name: company?.instagram_username || 'Connected Account',
-        welcome_message: company?.welcome_message
+        welcome_message: company?.welcome_message,
+        auto_follow_up_enabled: company?.auto_follow_up_enabled || false,
+        timezone: company?.timezone || 'UTC',
+        working_hours_start: company?.working_hours_start || '09:00',
+        working_hours_end: company?.working_hours_end || '18:00',
+        ooo_message: company?.ooo_message || ''
       }
     };
   }
@@ -621,7 +626,14 @@ export class InstagramService {
   async updateIntegrationSettings(companyId: string, data: any) {
     const company = await CompanyTable.findOneBy({ id: companyId as any });
     if (!company) throw new Error('Company not found');
+    
     if (data.welcome_message !== undefined) company.welcome_message = data.welcome_message;
+    if (data.auto_follow_up_enabled !== undefined) company.auto_follow_up_enabled = data.auto_follow_up_enabled;
+    if (data.timezone !== undefined) company.timezone = data.timezone;
+    if (data.working_hours_start !== undefined) company.working_hours_start = data.working_hours_start;
+    if (data.working_hours_end !== undefined) company.working_hours_end = data.working_hours_end;
+    if (data.ooo_message !== undefined) company.ooo_message = data.ooo_message;
+
     await company.save();
     return { Success: true };
   }

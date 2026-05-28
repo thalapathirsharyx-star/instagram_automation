@@ -1,6 +1,8 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { company as CompanyTable } from '@Database/Table/Admin/company';
-import { IsNull, Not } from 'typeorm';
+import { IsNull, Not, LessThan } from 'typeorm';
+import { instagram_lead } from '@Database/Table/CRM/instagram_lead';
+import { instagram_message } from '@Database/Table/CRM/instagram_message';
 import axios from 'axios';
 
 /**
@@ -15,6 +17,7 @@ export class TokenMonitorService implements OnModuleInit {
 
   private readonly TOKEN_CHECK_INTERVAL = 6 * 60 * 60 * 1000; // Every 6 hours
   private readonly USAGE_RESET_INTERVAL = 60 * 60 * 1000;      // Every 1 hour
+  private readonly FOLLOW_UP_INTERVAL = 30 * 60 * 1000;      // Every 30 minutes
 
   onModuleInit() {
     console.log('[TOKEN MONITOR] Service initialized. Starting background checks...');
@@ -22,9 +25,11 @@ export class TokenMonitorService implements OnModuleInit {
     // Run immediately on startup, then on interval
     this.checkAllTokens();
     this.resetMonthlyUsage();
+    this.processAutoFollowUps();
 
     setInterval(() => this.checkAllTokens(), this.TOKEN_CHECK_INTERVAL);
     setInterval(() => this.resetMonthlyUsage(), this.USAGE_RESET_INTERVAL);
+    setInterval(() => this.processAutoFollowUps(), this.FOLLOW_UP_INTERVAL);
   }
 
   /**
@@ -124,6 +129,77 @@ export class TokenMonitorService implements OnModuleInit {
       }
     } catch (err: any) {
       console.error('[USAGE RESET] Error during monthly reset:', err.message);
+    }
+  }
+
+  /**
+   * Identifies "Hot" leads that haven't responded in 24 hours and automatically sends
+   * a follow-up DM to re-engage them.
+   */
+  private async processAutoFollowUps() {
+    try {
+      const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+      
+      const abandonedLeads = await instagram_lead.find({
+        where: {
+          lead_status: 'Hot',
+          follow_up_sent: false,
+          last_message_time: LessThan(twentyFourHoursAgo)
+        },
+        relations: ['company']
+      });
+
+      if (abandonedLeads.length === 0) return;
+
+      for (const lead of abandonedLeads) {
+        if (!lead.company?.instagram_access_token) continue;
+        
+        // Only follow up if the LAST message in the thread was from US (Outbound)
+        // meaning they read it but went cold.
+        const lastMsg = await instagram_message.findOne({
+          where: { lead_id: lead.id },
+          order: { created_on: 'DESC' }
+        });
+
+        if (lastMsg && lastMsg.direction === 'Outbound') {
+          const followUpText = "Hey! Just checking in to see if you had any other questions or needed help with anything?";
+          
+          const url = `https://graph.facebook.com/v21.0/${lead.company.instagram_page_id}/messages`;
+          try {
+            await axios.post(
+              url,
+              {
+                recipient: { id: lead.instagram_handle },
+                message: { text: followUpText }
+              },
+              {
+                headers: { 'Authorization': `Bearer ${lead.company.instagram_access_token}` }
+              }
+            );
+
+            // Log the message in CRM
+            const newMsg = new instagram_message();
+            newMsg.company_id = lead.company_id;
+            newMsg.lead_id = lead.id;
+            newMsg.message_text = followUpText;
+            newMsg.direction = 'Outbound';
+            newMsg.action_taken = 'AUTO_FOLLOW_UP';
+            newMsg.created_by_id = '00000000-0000-0000-0000-000000000000';
+            newMsg.created_on = new Date();
+            await newMsg.save();
+
+            // Mark as sent so we don't spam them
+            lead.follow_up_sent = true;
+            await lead.save();
+
+            console.log(`[FOLLOW UP] Sent auto follow-up to lead ${lead.id}`);
+          } catch (err: any) {
+            console.error(`[FOLLOW UP ERROR] Failed to send to ${lead.id}:`, err.response?.data || err.message);
+          }
+        }
+      }
+    } catch (err: any) {
+      console.error('[FOLLOW UP ERROR] Fatal error during process:', err.message);
     }
   }
 }
