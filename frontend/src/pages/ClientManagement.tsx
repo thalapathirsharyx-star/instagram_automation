@@ -24,6 +24,9 @@ interface CompanyAdminData {
   leadCount: number;
   country?: { name: string };
   currency?: { code: string };
+  plan: string;
+  plan_expires_at: string | null;
+  monthly_ai_usage: number;
 }
 
 const StatusBadge: React.FC<{ status: boolean }> = ({ status }) => (
@@ -116,6 +119,7 @@ const ClientManagement: React.FC = () => {
               <tr style={{ borderBottom: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.01)' }}>
                 <th style={{ padding: '16px 24px', fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-dim)', textTransform: 'uppercase' }}>Company</th>
                 <th style={{ padding: '16px 24px', fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-dim)', textTransform: 'uppercase' }}>Details</th>
+                <th style={{ padding: '16px 24px', fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-dim)', textTransform: 'uppercase' }}>Plan & Usage</th>
                 <th style={{ padding: '16px 24px', fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-dim)', textTransform: 'uppercase' }}>Stats</th>
                 <th style={{ padding: '16px 24px', fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-dim)', textTransform: 'uppercase' }}>Status</th>
                 <th style={{ padding: '16px 24px', fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-dim)', textTransform: 'uppercase', textAlign: 'right' }}>Actions</th>
@@ -146,6 +150,23 @@ const ClientManagement: React.FC = () => {
                       </div>
                       <div style={{ fontSize: '0.8rem', color: 'var(--text-dim)', display: 'flex', alignItems: 'center', gap: '6px' }}>
                         <Calendar size={14} /> Registered: {new Date(client.created_on).toLocaleDateString()}
+                      </div>
+                    </div>
+                  </td>
+                  <td style={{ padding: '20px 24px' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${client.plan !== 'Free' ? 'bg-purple-500/10 text-purple-400 border border-purple-500/20' : 'bg-zinc-800 text-zinc-400 border border-zinc-700'}`}>
+                          {client.plan || 'Free'}
+                        </span>
+                        {client.plan_expires_at && (
+                          <span style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>
+                            Expires: {new Date(client.plan_expires_at).toLocaleDateString()}
+                          </span>
+                        )}
+                      </div>
+                      <div style={{ fontSize: '0.8rem', color: 'var(--text-dim)', marginTop: '4px' }}>
+                        AI Usage: <strong style={{ color: 'var(--text)' }}>{client.monthly_ai_usage || 0}</strong> msgs
                       </div>
                     </div>
                   </td>

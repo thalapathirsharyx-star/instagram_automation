@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, Users, MessageSquare, Settings, LogOut, Book, Zap, Sparkles, ChevronLeft, ChevronRight, CreditCard, Radio } from 'lucide-react';
+import { LayoutDashboard, Users, MessageSquare, Settings, LogOut, Book, Zap, Sparkles, ChevronLeft, ChevronRight, CreditCard, Radio, Activity, DollarSign, Key, Lock, IndianRupee, ClipboardList } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 const Sidebar: React.FC = () => {
   const { user, logout } = useAuth();
   const [isCollapsed, setIsCollapsed] = useState(false);
+
+  const hasProPlan = ['Pro', 'Business', 'Advanced'].includes(user?.company?.plan);
 
   return (
     <aside className={`sidebar ${isCollapsed ? 'collapsed' : ''}`}>
@@ -36,10 +38,27 @@ const Sidebar: React.FC = () => {
               <Users size={20} />
               <span>Clients</span>
             </NavLink>
-            <NavLink to="/billing" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-              <CreditCard size={20} />
-              <span>Billing</span>
+            <NavLink to="/admin/usage" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+              <Activity size={20} />
+              <span>API Usage</span>
             </NavLink>
+            <NavLink to="/admin/pricing" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+              <DollarSign size={20} />
+              <span>Plan Pricing</span>
+            </NavLink>
+            <NavLink to="/admin/llm-keys" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+              <Key size={20} />
+              <span>LLM API Keys</span>
+            </NavLink>
+            <NavLink to="/admin/revenue" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+              <IndianRupee size={20} />
+              <span>Revenue</span>
+            </NavLink>
+            <NavLink to="/admin/activity" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+              <ClipboardList size={20} />
+              <span>Activity Log</span>
+            </NavLink>
+
             <NavLink to="/settings" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
               <Settings size={20} />
               <span>Settings</span>
@@ -69,13 +88,13 @@ const Sidebar: React.FC = () => {
             </NavLink>
             <NavLink to="/broadcasts" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
               <Radio size={20} />
-              <span>Broadcasts</span>
+              <span>Broadcasts {!hasProPlan && <Lock size={12} className="inline ml-1 text-zinc-400" />}</span>
             </NavLink>
             {user?.roleCode === 'CLIENT_ADMIN' && (
               <>
                 <NavLink to="/ai-settings" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
                   <Sparkles size={20} />
-                  <span>AI Persona</span>
+                  <span>AI Persona {!hasProPlan && <Lock size={12} className="inline ml-1 text-zinc-400" />}</span>
                 </NavLink>
                 <NavLink to="/team" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
                   <Users size={20} />

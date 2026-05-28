@@ -3,6 +3,8 @@ import { ApiTags } from '@nestjs/swagger';
 import { BroadcastService } from '@Service/Broadcast.service';
 import { JWTAuthController } from '@Controller/JWTAuth.controller';
 import { ResponseEnum } from '@Helper/Enum/ResponseEnum';
+import { PLAN_LIMITS } from '@Config/PlanLimits';
+import { company as CompanyTable } from '@Database/Table/Admin/company';
 
 @Controller({ path: "Broadcast", version: '1' })
 @ApiTags("Broadcast")
@@ -38,6 +40,13 @@ export class BroadcastController extends JWTAuthController {
     if (!user?.company_id) {
       return this.SendResponse(ResponseEnum.Error, "No company associated with this account.");
     }
+    
+    const company = await CompanyTable.findOne({ where: { id: user.company_id } });
+    const limits = PLAN_LIMITS[company?.plan || 'Free'] || PLAN_LIMITS.Free;
+    if (!limits.hasBroadcasts) {
+      return this.SendResponse(ResponseEnum.Error, "Broadcasts are not supported on your current plan. Please upgrade to Pro or higher.");
+    }
+
     try {
       const data = await this._BroadcastService.createBroadcast(user.company_id, body);
       return { Type: ResponseEnum.Success, Message: 'Broadcast created', Data: data };
@@ -90,6 +99,13 @@ export class BroadcastController extends JWTAuthController {
     if (!user?.company_id) {
       return this.SendResponse(ResponseEnum.Error, "No company associated with this account.");
     }
+
+    const company = await CompanyTable.findOne({ where: { id: user.company_id } });
+    const limits = PLAN_LIMITS[company?.plan || 'Free'] || PLAN_LIMITS.Free;
+    if (!limits.hasBroadcasts) {
+      return this.SendResponse(ResponseEnum.Error, "Broadcasts are not supported on your current plan. Please upgrade to Pro or higher.");
+    }
+
     try {
       const result = await this._BroadcastService.sendBroadcast(user.company_id, id);
       return { Type: ResponseEnum.Success, Message: 'Broadcast sending started', Data: result };

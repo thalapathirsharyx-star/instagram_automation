@@ -2,6 +2,8 @@ import { Injectable, BadRequestException } from '@nestjs/common';
 import { user } from '@Database/Table/Admin/user';
 import { user_role } from '@Database/Table/Admin/user_role';
 import { HashingService } from './Hashing.service';
+import { PLAN_LIMITS } from '@Config/PlanLimits';
+import { company as CompanyTable } from '@Database/Table/Admin/company';
 
 @Injectable()
 export class TeamService {
@@ -25,6 +27,19 @@ export class TeamService {
   }
 
   async addTeamMember(companyId: string, data: any) {
+    const company = await CompanyTable.findOne({ where: { id: companyId } });
+    if (!company) {
+      throw new BadRequestException("Company not found");
+    }
+
+    const currentPlan = company.plan || 'Free';
+    const limits = PLAN_LIMITS[currentPlan] || PLAN_LIMITS.Free;
+
+    const currentMembersCount = await user.count({ where: { company_id: companyId } });
+    if (currentMembersCount >= limits.teamUsersLimit) {
+      throw new BadRequestException(`Team member limit reached. Your '${currentPlan}' plan allows up to ${limits.teamUsersLimit} users. Please upgrade your plan.`);
+    }
+
     let agentRole = await user_role.findOne({ where: { code: 'AGENT' } });
     if (!agentRole) {
       agentRole = new user_role();

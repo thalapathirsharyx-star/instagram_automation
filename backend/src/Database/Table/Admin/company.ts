@@ -96,4 +96,16 @@ export class company extends BaseTable {
 
   @Column({ type: 'jsonb', nullable: true })
   lead_rules: any;
+
+  @Column({ type: 'jsonb', nullable: true })
+  playbook_steps: any;
+
+  @Column({ type: 'text', default: 'Free' })
+  plan: string;
+
+  @Column({ type: 'timestamp', nullable: true })
+  plan_expires_at: Date;
+
+  @Column({ type: 'int', default: 0 })
+  monthly_ai_usage: number;
 }

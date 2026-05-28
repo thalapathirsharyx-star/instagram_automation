@@ -554,15 +554,15 @@
   padding: 24px;
 }
 
-/* Premium Light Theme overrides */
+/* Venture UI Kit Theme (Light Mode) */
 :root.light {
-  --background: 240 5% 96%; /* #f4f4f5 */
+  --background: 240 5% 98%; /* #fafafa */
   --foreground: 240 10% 3.9%; /* #09090b */
   --card: 0 0% 100%; /* white */
   --card-foreground: 240 10% 3.9%;
   --popover: 0 0% 100%;
   --popover-foreground: 240 10% 3.9%;
-  --primary: 262 83% 58%; /* #8b5cf6 */
+  --primary: 240 5.9% 10%; /* #18181b - Black */
   --primary-foreground: 0 0% 100%;
   --secondary: 240 4.8% 95.9%; /* #f4f4f5 */
   --secondary-foreground: 240 5.9% 10%;
@@ -570,11 +570,11 @@
   --muted-foreground: 240 3.8% 46.1%; /* #71717a */
   --border: 240 5.9% 90%; /* #e4e4e7 */
   --input: 240 5.9% 90%;
-  --ring: 262 83% 58%;
+  --ring: 240 5.9% 10%;
   
-  --ai-gradient-start: #7c3aed;
-  --ai-gradient-end: #2563eb;
-  --ai-glow: rgba(124, 58, 237, 0.15);
+  --ai-gradient-start: #18181b;
+  --ai-gradient-end: #09090b;
+  --ai-glow: rgba(0, 0, 0, 0.05);
 }
 
 :root.light .sidebar {
@@ -595,41 +595,43 @@
 }
 
 :root.light .sidebar::after {
-  background: radial-gradient(circle at top left, rgba(124, 58, 237, 0.05), transparent 70%) !important;
+  background: none !important;
 }
 
 :root.light .logo-text {
-  color: #0f172a !important;
+  color: #09090b !important;
 }
 
 :root.light .nav-item {
-  color: #64748b !important;
+  color: #71717a !important;
+  font-weight: 500 !important;
 }
 
 :root.light .nav-item:hover {
-  background: rgba(0, 0, 0, 0.03) !important;
-  color: #0f172a !important;
-  border-color: rgba(0, 0, 0, 0.02) !important;
+  background: rgba(0, 0, 0, 0.04) !important;
+  color: #18181b !important;
+  border-color: transparent !important;
 }
 
 :root.light .nav-item:hover svg {
-  color: #0f172a !important;
+  color: #18181b !important;
 }
 
 :root.light .nav-item.active {
-  background: #ffffff !important;
-  color: #0f172a !important;
-  border-color: #ffffff !important;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05) !important;
+  background: #f4f4f5 !important;
+  color: #09090b !important;
+  border-color: #e4e4e7 !important;
+  box-shadow: none !important;
+  font-weight: 600 !important;
 }
 
 :root.light .nav-item.active svg {
-  color: #7c3aed !important;
+  color: #09090b !important;
 }
 
 :root.light .sidebar-footer {
-  background: rgba(0, 0, 0, 0.01) !important;
-  border-color: rgba(0, 0, 0, 0.04) !important;
+  background: transparent !important;
+  border-color: #e4e4e7 !important;
 }
 
 :root.light .logout-btn {
@@ -676,8 +678,9 @@
 }
 
 :root.light .search-bar:focus-within {
-  border-color: rgba(124, 58, 237, 0.4) !important;
-  background: rgba(0, 0, 0, 0.03) !important;
+  border-color: #09090b !important;
+  background: #ffffff !important;
+  box-shadow: 0 0 0 1px #09090b !important;
 }
 
 :root.light .search-bar input {
@@ -706,12 +709,31 @@
 }
 
 :root.light .w3-card {
-  box-shadow: 0 4px 20px -8px rgba(0, 0, 0, 0.05) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03) !important;
+  border-radius: 12px !important;
+  border-color: #e4e4e7 !important;
 }
 
 :root.light .w3-card:hover {
-  border-color: rgba(124, 58, 237, 0.3) !important;
-  box-shadow: 0 12px 30px -8px rgba(0, 0, 0, 0.1), 0 0 20px -5px var(--ai-glow) !important;
+  border-color: #d4d4d8 !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03) !important;
+  transform: none !important;
+}
+
+:root.light .w3-button-primary {
+  background: #09090b !important;
+  border: 1px solid #000000 !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
+  border-radius: 8px !important;
+}
+
+:root.light .w3-button-primary:hover {
+  background: #27272a !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+}
+
+:root.light .w3-button-primary::after {
+  display: none !important;
 }
 
 :root.light .text-zinc-100 {
@@ -731,7 +753,7 @@
 }
 
 :root.light .text-purple-400 {
-  color: #7c3aed !important;
+  color: #18181b !important;
 }
 
 :root.light .bg-zinc-900 {

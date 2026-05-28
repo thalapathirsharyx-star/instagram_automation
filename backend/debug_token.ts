@@ -1,50 +1,14 @@
 import axios from 'axios';
-import * as dotenv from 'dotenv';
-import * as path from 'path';
 
-dotenv.config({ path: path.join(process.cwd(), '.env') });
-
-async function debug() {
-  const token = (process.env.IG_PAGE_ACCESS_TOKEN || '').trim();
-  const appId = process.env.FB_APP_ID;
-  const appSecret = process.env.FB_APP_SECRET;
-
-  console.log('--- DEBUGGING INSTAGRAM TOKEN ---');
-  console.log('App ID:', appId);
-  console.log('Token Length:', token.length);
-
+async function debugToken() {
+  const token = 'EAANk4CDchegBRp1flZCHhyOjaO4wPW07hjDRZAyndvocaDEZBm3hkEievGfGvFqhTYeL7I6GPN6zFwD30IhX3jyHhl0Uv4metx3wOJWxEYoxhi1sbTrgp9w7Qg55hmpVKr7PtYaRhROBBPaFBF0JULNeDF8NSm4FH3rWRRCjFiRTzeYA3IzFxWOeTJgV1Rhz5WO6DX6kXnrNhRoZCx0G';
+  
   try {
-    // 1. Debug Token
-    const debugRes = await axios.get(`https://graph.facebook.com/debug_token`, {
-      params: {
-        input_token: token,
-        access_token: `${appId}|${appSecret}`
-      }
-    });
-
-    console.log('\n--- TOKEN PERMISSIONS ---');
-    const data = debugRes.data.data;
-    console.log('Scopes:', data.scopes.join(', '));
-    console.log('Expires At:', new Date(data.expires_at * 1000).toLocaleString());
-    console.log('Is Valid:', data.is_valid);
-    
-    if (!data.scopes.includes('instagram_manage_messages')) {
-      console.log('\n❌ ERROR: "instagram_manage_messages" is MISSING from this token.');
-    } else {
-      console.log('\n✅ Token has "instagram_manage_messages".');
-    }
-
-    // 2. Check Page ID and Platform
-    const meRes = await axios.get(`https://graph.facebook.com/v20.0/me`, {
-      params: { fields: 'id,name' },
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    console.log('\n--- PAGE INFO ---');
-    console.log('Page:', meRes.data.name, `(${meRes.data.id})`);
-
-  } catch (err) {
-    console.error('\n❌ DEBUG FAILED:', err.response?.data || err.message);
+    const res = await axios.get(`https://graph.facebook.com/debug_token?input_token=${token}&access_token=${token}`);
+    console.log(JSON.stringify(res.data, null, 2));
+  } catch (err: any) {
+    console.error(err.response?.data || err.message);
   }
 }
 
-debug();
+debugToken();

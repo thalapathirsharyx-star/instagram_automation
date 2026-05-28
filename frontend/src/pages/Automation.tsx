@@ -16,9 +16,12 @@ import {
   Clock, 
   Settings,
   Layers,
-  HelpCircle
+  HelpCircle,
+  Activity,
+  Workflow
 } from 'lucide-react';
 import api from '../lib/axios';
+import PlaybookCanvas from '../components/PlaybookCanvas';
 
 interface PlaybookStep {
   id: string;
@@ -40,33 +43,19 @@ const Automation: React.FC = () => {
   const [welcomeMessage, setWelcomeMessage] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [showCanvas, setShowCanvas] = useState(false);
+  const [toastMessage, setToastMessage] = useState<{title: string, type: 'success' | 'error'} | null>(null);
+
+  const showToast = (title: string, type: 'success' | 'error' = 'success') => {
+    setToastMessage({ title, type });
+    setTimeout(() => setToastMessage(null), 3000);
+  };
 
   // Visual Playbook Builder State
-  const [playbookSteps, setPlaybookSteps] = useState<PlaybookStep[]>([
-    { id: '1', type: 'trigger', title: 'When user sends DM containing keyword', value: 'price, cost, buy' },
-    { id: '2', type: 'condition', title: 'Check if business hours', value: '9:00 AM - 6:00 PM' },
-    { id: '3', type: 'action', title: 'Send Automated Catalog & Pricing Menu', value: 'ReplyZens Pro Catalog Link' },
-    { id: '4', type: 'delay', title: 'Wait before next action', value: '2 hours' },
-    { id: '5', type: 'action', title: 'Send follow-up query', value: 'Did you find what you were looking for?' }
-  ]);
+  const [playbookSteps, setPlaybookSteps] = useState<PlaybookStep[]>([]);
 
   // Comment-to-DM Trigger State
-  const [commentTriggers, setCommentTriggers] = useState<CommentTrigger[]>([
-    { 
-      id: '1', 
-      postTitle: 'Reel: 10x Your Instagram Sales in 2026', 
-      keyword: 'GROW', 
-      replyMessage: 'Hey! Thanks for commenting. Here is your private signup link for ReplyZens Pro: https://replyzens.com/pro',
-      isActive: true 
-    },
-    { 
-      id: '2', 
-      postTitle: 'Post: How RAG works for Social Media Leads', 
-      keyword: 'BRAIN', 
-      replyMessage: 'Thanks for the support! Here is our comprehensive handbook on CRM RAG setups: https://replyzens.com/handbook',
-      isActive: true 
-    }
-  ]);
+  const [commentTriggers, setCommentTriggers] = useState<CommentTrigger[]>([]);
 
   // New Trigger Form State
   const [newPostTitle, setNewPostTitle] = useState('Latest Reel');
@@ -75,7 +64,59 @@ const Automation: React.FC = () => {
 
   useEffect(() => {
     fetchSettings();
+    fetchPlaybook();
+    fetchCommentTriggers();
   }, []);
+
+  const fetchCommentTriggers = async () => {
+    try {
+      const res = await api.get('/Instagram/CommentTriggers');
+      if (res.data.Success && Array.isArray(res.data.Data)) {
+        const mapped = res.data.Data.map((item: any) => ({
+          id: item.id,
+          postTitle: item.post_title,
+          keyword: item.keyword,
+          replyMessage: item.reply_message,
+          isActive: item.is_active
+        }));
+        setCommentTriggers(mapped);
+      }
+    } catch (error) {
+      console.error('Error fetching comment triggers:', error);
+    }
+  };
+
+  const fetchPlaybook = async () => {
+    try {
+      const res = await api.get('/Instagram/Playbook');
+      if (res.data.Success && Array.isArray(res.data.Data) && res.data.Data.length > 0) {
+        setPlaybookSteps(res.data.Data);
+      } else if (res.data.Success && (!res.data.Data || res.data.Data.length === 0)) {
+        // If empty, we can provide a default example or leave empty
+        setPlaybookSteps([
+          { id: '1', type: 'trigger', title: 'When user sends DM containing keyword', value: 'price, cost, buy' },
+          { id: '2', type: 'action', title: 'Send Automated Catalog & Pricing Menu', value: 'ReplyZens Pro Catalog Link' }
+        ]);
+      }
+    } catch (error) {
+      console.error('Error fetching playbook:', error);
+    }
+  };
+
+  const handleSavePlaybook = async () => {
+    try {
+      setIsSaving(true);
+      const res = await api.post('/Instagram/Playbook', { steps: playbookSteps });
+      if (res.data.Success) {
+        showToast('Playbook saved successfully!');
+      }
+    } catch (error) {
+      console.error('Error saving playbook:', error);
+      showToast('Failed to save playbook.', 'error');
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   const fetchSettings = async () => {
     try {
@@ -96,11 +137,11 @@ const Automation: React.FC = () => {
       setIsSaving(true);
       const res = await api.post('/Instagram/Welcome', { message: welcomeMessage });
       if (res.data.Success) {
-        alert('Welcome message updated successfully!');
+        showToast('Welcome message updated successfully!');
       }
     } catch (error) {
       console.error('Error saving welcome message:', error);
-      alert('Failed to save welcome message.');
+      showToast('Failed to save welcome message.', 'error');
     } finally {
       setIsSaving(false);
     }
@@ -109,16 +150,16 @@ const Automation: React.FC = () => {
   // Playbook Handlers
   const addPlaybookStep = (type: 'trigger' | 'condition' | 'action' | 'delay') => {
     const defaultTitles = {
-      trigger: 'Trigger: When keyword matches',
-      condition: 'Condition: Check lead profile',
-      action: 'Action: Send reply / tag lead',
-      delay: 'Delay: Wait duration'
+      trigger: 'Trigger:',
+      condition: 'Condition:',
+      action: 'Action:',
+      delay: 'Delay:'
     };
     const defaultValues = {
-      trigger: 'info, details',
-      condition: 'Is email present?',
-      action: 'Send lead qualification catalog',
-      delay: '15 minutes'
+      trigger: '',
+      condition: '',
+      action: '',
+      delay: ''
     };
     const newStep: PlaybookStep = {
       id: Date.now().toString(),
@@ -126,50 +167,101 @@ const Automation: React.FC = () => {
       title: defaultTitles[type],
       value: defaultValues[type]
     };
-    setPlaybookSteps([...playbookSteps, newStep]);
+    setPlaybookSteps(prev => [...prev, newStep]);
   };
 
   const updateStepValue = (id: string, value: string) => {
-    setPlaybookSteps(playbookSteps.map(step => step.id === id ? { ...step, value } : step));
+    setPlaybookSteps(prev => prev.map(step => step.id === id ? { ...step, value } : step));
   };
 
   const updateStepTitle = (id: string, title: string) => {
-    setPlaybookSteps(playbookSteps.map(step => step.id === id ? { ...step, title } : step));
+    setPlaybookSteps(prev => prev.map(step => step.id === id ? { ...step, title } : step));
   };
 
   const deleteStep = (id: string) => {
-    setPlaybookSteps(playbookSteps.filter(step => step.id !== id));
+    setPlaybookSteps(prev => prev.filter(step => step.id !== id));
   };
 
   // Comment Handlers
-  const addCommentTrigger = () => {
+  const addCommentTrigger = async () => {
     if (!newKeyword || !newReplyMessage) {
-      alert('Please fill in all trigger details.');
+      showToast('Please fill in all trigger details.', 'error');
       return;
     }
-    const newTrigger: CommentTrigger = {
-      id: Date.now().toString(),
-      postTitle: newPostTitle,
-      keyword: newKeyword.toUpperCase().trim(),
-      replyMessage: newReplyMessage,
-      isActive: true
-    };
-    setCommentTriggers([...commentTriggers, newTrigger]);
-    setNewKeyword('');
-    setNewReplyMessage('');
+    try {
+      const res = await api.post('/Instagram/CommentTriggers', {
+        postTitle: newPostTitle,
+        keyword: newKeyword.toUpperCase().trim(),
+        replyMessage: newReplyMessage
+      });
+      if (res.data.Success) {
+        const item = res.data.Data;
+        const newTrigger: CommentTrigger = {
+          id: item.id,
+          postTitle: item.post_title,
+          keyword: item.keyword,
+          replyMessage: item.reply_message,
+          isActive: item.is_active
+        };
+        setCommentTriggers([newTrigger, ...commentTriggers]);
+        setNewKeyword('');
+        setNewReplyMessage('');
+        showToast('Comment trigger created successfully!');
+      }
+    } catch (error) {
+      console.error('Error creating comment trigger:', error);
+      showToast('Failed to create trigger.', 'error');
+    }
   };
 
-  const toggleCommentTrigger = (id: string) => {
-    setCommentTriggers(commentTriggers.map(t => t.id === id ? { ...t, isActive: !t.isActive } : t));
+  const toggleCommentTrigger = async (id: string) => {
+    try {
+      const res = await api.post(`/Instagram/CommentTriggers/${id}/toggle`);
+      if (res.data.Success) {
+        setCommentTriggers(commentTriggers.map(t => 
+          t.id === id ? { ...t, isActive: res.data.Data.is_active } : t
+        ));
+        showToast('Trigger updated successfully!');
+      }
+    } catch (error) {
+      console.error('Error toggling comment trigger:', error);
+      showToast('Failed to update trigger status.', 'error');
+    }
   };
 
-  const deleteCommentTrigger = (id: string) => {
-    setCommentTriggers(commentTriggers.filter(t => t.id !== id));
+  const deleteCommentTrigger = async (id: string) => {
+    if (!window.confirm('Are you sure you want to delete this trigger?')) return;
+    try {
+      const res = await api.delete(`/Instagram/CommentTriggers/${id}`);
+      if (res.data.Success) {
+        setCommentTriggers(commentTriggers.filter(t => t.id !== id));
+        showToast('Trigger deleted successfully!');
+      }
+    } catch (error) {
+      console.error('Error deleting comment trigger:', error);
+      showToast('Failed to delete trigger.', 'error');
+    }
   };
 
   return (
-    <div className="flex flex-col gap-8 min-h-full animate-in fade-in duration-700 pb-10">
+    <div className="flex flex-col gap-8 min-h-full animate-in fade-in duration-700 pb-10 relative">
       
+      {/* Custom Toast Notification */}
+      {toastMessage && (
+        <div className="fixed top-6 right-6 z-[9999] px-5 py-3 rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border flex items-center gap-3 animate-in slide-in-from-top-4 fade-in duration-300 bg-white dark:bg-zinc-900 border-slate-200 dark:border-white/5 backdrop-blur-md">
+          {toastMessage.type === 'success' ? (
+            <div className="w-6 h-6 rounded-full bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20 shrink-0">
+              <span className="text-xs font-bold text-emerald-500">✓</span>
+            </div>
+          ) : (
+            <div className="w-6 h-6 rounded-full bg-red-500/10 flex items-center justify-center border border-red-500/20 shrink-0">
+              <span className="text-xs font-bold text-red-500">!</span>
+            </div>
+          )}
+          <span className="font-semibold text-sm text-slate-800 dark:text-zinc-100">{toastMessage.title}</span>
+        </div>
+      )}
+
       {/* HEADER & TABS */}
       <div className="flex flex-col gap-6 md:flex-row md:justify-between md:items-end">
         <div>
@@ -222,33 +314,46 @@ const Automation: React.FC = () => {
           {/* Main Visual Playbook Canvas */}
           <div className="lg:col-span-2 space-y-6">
             <div className="w3-card border-white/5">
-              <div className="flex justify-between items-center mb-8">
+              <div className="flex items-center justify-between mb-8">
                 <div>
                   <h3 className="text-xl font-bold text-zinc-100 flex items-center gap-3">
-                    <Layers className="text-purple-400" size={22} /> Lead Qualification Flow
+                    <Activity className="text-purple-400" size={22} /> Lead Qualification Flow
                   </h3>
                   <p className="text-sm text-zinc-400 mt-1 font-medium">Design the sequence AI uses to capture customer info.</p>
                 </div>
-                <div className="flex items-center gap-2">
-                  <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                  <span className="text-xs font-bold text-zinc-400 uppercase tracking-wider">Active</span>
+                <div className="flex items-center gap-3">
+                  <span className="flex items-center gap-2 text-xs font-bold text-emerald-400 bg-emerald-500/10 px-3 py-1.5 rounded-full">
+                    <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+                    ACTIVE
+                  </span>
+                  <button 
+                    onClick={() => setShowCanvas(true)}
+                    className="flex items-center gap-2 text-xs font-bold text-white bg-zinc-950 dark:bg-white dark:text-zinc-950 px-4 py-2 rounded-lg shadow-sm transition-all hover:bg-zinc-800 dark:hover:bg-zinc-200 border border-zinc-800 dark:border-transparent"
+                  >
+                    <Workflow size={14} /> Open Canvas
+                  </button>
                 </div>
               </div>
 
               {/* Visual Timeline Nodes */}
-              <div className="relative pl-8 border-l-2 border-dashed border-zinc-800/80 space-y-12 py-2 ml-4">
+              <div className="relative pl-8 space-y-12 py-2 ml-4">
                 {playbookSteps.map((step, idx) => {
-                  let badgeColor = "bg-purple-500/10 text-purple-400 border-purple-500/20";
-                  if (step.type === 'trigger') badgeColor = "bg-sky-500/10 text-sky-400 border-sky-500/20";
-                  if (step.type === 'condition') badgeColor = "bg-amber-500/10 text-amber-400 border-amber-500/20";
-                  if (step.type === 'delay') badgeColor = "bg-zinc-800 text-zinc-400 border-white/5";
+                  let badgeColor = "bg-purple-100 text-purple-700 border-transparent dark:bg-purple-500/10 dark:text-purple-400 dark:border-purple-500/20";
+                  if (step.type === 'trigger') badgeColor = "bg-sky-100 text-sky-700 border-transparent dark:bg-sky-500/10 dark:text-sky-400 dark:border-sky-500/20";
+                  if (step.type === 'condition') badgeColor = "bg-amber-100 text-amber-700 border-transparent dark:bg-amber-500/10 dark:text-amber-400 dark:border-amber-500/20";
+                  if (step.type === 'delay') badgeColor = "bg-zinc-100 text-zinc-700 border-transparent dark:bg-zinc-800 dark:text-zinc-400 dark:border-white/5";
 
                   return (
                     <div key={step.id} className="relative group/node">
                       
+                      {/* Dotted line to next node */}
+                      {idx !== playbookSteps.length - 1 && (
+                        <div className="absolute -left-[40px] top-7 bottom-[-3.5rem] w-px border-l-2 border-dashed border-slate-300 dark:border-white/10 z-0"></div>
+                      )}
+
                       {/* Node circle on timeline */}
-                      <div className="absolute -left-[41px] top-1.5 w-6 h-6 rounded-full bg-zinc-950 border-2 border-zinc-700 flex items-center justify-center group-hover/node:border-purple-500 transition-colors">
-                        <span className="text-[10px] font-bold text-zinc-400">{idx + 1}</span>
+                      <div className="absolute -left-[53px] top-1.5 w-6 h-6 rounded-full bg-slate-100 dark:bg-zinc-950 border-2 border-slate-300 dark:border-zinc-700 flex items-center justify-center group-hover/node:border-purple-500 transition-colors z-10">
+                        <span className="text-[10px] font-bold text-slate-500 dark:text-zinc-400">{idx + 1}</span>
                       </div>
 
                       {/* Node Card */}
@@ -262,6 +367,7 @@ const Automation: React.FC = () => {
                               type="text"
                               value={step.title}
                               onChange={(e) => updateStepTitle(step.id, e.target.value)}
+                              placeholder={`Enter ${step.type} title...`}
                               className="bg-transparent border-none text-zinc-200 font-bold focus:outline-none focus:ring-1 focus:ring-purple-500/30 rounded px-1 w-64 text-sm"
                             />
                           </div>
@@ -276,6 +382,7 @@ const Automation: React.FC = () => {
                           type="text"
                           value={step.value}
                           onChange={(e) => updateStepValue(step.id, e.target.value)}
+                          placeholder="Type your rule, keyword, or action here..."
                           className="w-full bg-zinc-950/50 border border-white/5 rounded-xl px-4 py-2.5 text-sm text-zinc-300 font-medium focus:ring-2 focus:ring-purple-500/20 focus:outline-none"
                         />
                       </div>
@@ -311,6 +418,16 @@ const Automation: React.FC = () => {
                 >
                   <Plus size={14} /> Delay
                 </button>
+                <div className="ml-auto">
+                  <button 
+                    onClick={handleSavePlaybook} 
+                    disabled={isSaving}
+                    className="w3-button-primary px-6 shadow-glow-purple h-full"
+                  >
+                    {isSaving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
+                    <span className="ml-2">Save Playbook</span>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -599,6 +716,29 @@ const Automation: React.FC = () => {
             </div>
           </div>
         </div>
+      )}
+      
+      {showCanvas && (
+        <PlaybookCanvas 
+          initialSteps={playbookSteps}
+          onClose={() => setShowCanvas(false)}
+          onSave={async (steps) => {
+            setPlaybookSteps(steps);
+            try {
+              setIsSaving(true);
+              const res = await api.post('/Instagram/Playbook', { steps });
+              if (res.data.Success) {
+                showToast('Playbook Flow saved successfully!');
+                setShowCanvas(false);
+              }
+            } catch (error) {
+              console.error('Error saving playbook:', error);
+              showToast('Failed to save playbook.', 'error');
+            } finally {
+              setIsSaving(false);
+            }
+          }}
+        />
       )}
     </div>
   );

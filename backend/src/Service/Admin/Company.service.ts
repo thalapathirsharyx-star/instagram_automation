@@ -122,4 +122,37 @@ export class CompanyService {
     await this._CacheService.Remove(`${CacheEnum.Company}:*`, CompanyData);
     return CompanyData;
   }
+
+  async UpdatePlan(Id: string, Plan: string, UserId: string) {
+    const CompanyData = await company.findOne({ where: { id: Id } });
+    if (!CompanyData) {
+      throw new Error('Company not found');
+    }
+
+    const expiresAt = new Date();
+    expiresAt.setDate(expiresAt.getDate() + 30);
+
+    CompanyData.plan = Plan;
+    CompanyData.plan_expires_at = Plan === 'Free' ? null : expiresAt;
+    CompanyData.monthly_ai_usage = 0;
+    CompanyData.updated_by_id = UserId;
+    CompanyData.updated_on = new Date();
+
+    await company.update(Id, { 
+      plan: Plan, 
+      plan_expires_at: CompanyData.plan_expires_at,
+      monthly_ai_usage: 0,
+      updated_by_id: UserId, 
+      updated_on: new Date() 
+    });
+
+    this._AuditLogService.AuditEmitEvent({
+      PerformedType: company.name,
+      ActionType: LogActionEnum.Update,
+      PrimaryId: [CompanyData.id]
+    });
+
+    await this._CacheService.Remove(`${CacheEnum.Company}:*`, CompanyData);
+    return CompanyData;
+  }
 }

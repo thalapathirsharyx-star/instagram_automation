@@ -6,6 +6,9 @@ import Inbox from './pages/Inbox';
 import Leads from './pages/Leads';
 import Settings from './pages/Settings';
 import KnowledgeBase from './pages/KnowledgeBase';
+import UploadDocument from './pages/UploadDocument';
+import AddFaq from './pages/AddFaq';
+import AddFact from './pages/AddFact';
 import Automation from './pages/Automation';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
@@ -13,6 +16,11 @@ import Landing from './pages/Landing';
 import { PrivacyPolicy, TermsOfService, DataDeletion } from './pages/Legal';
 import SuperAdminDashboard from './pages/SuperAdminDashboard';
 import ClientManagement from './pages/ClientManagement';
+import AdminUsage from './pages/AdminUsage';
+import AdminPricing from './pages/AdminPricing';
+import AdminRevenue from './pages/AdminRevenue';
+import AdminActivity from './pages/AdminActivity';
+import LLMKeys from './pages/LLMKeys';
 import AISettings from './pages/AISettings';
 import Team from './pages/Team';
 import Billing from './pages/Billing';
@@ -25,6 +33,7 @@ function AppContent() {
   const location = useLocation();
   const { isAuthenticated, user, logout } = useAuth();
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
+  const hasProPlan = ['Pro', 'Business', 'Advanced'].includes(user?.company?.plan);
   
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
     const saved = localStorage.getItem('theme');
@@ -90,8 +99,15 @@ function AppContent() {
                 onMouseEnter={() => setShowProfileDropdown(true)}
               >
                 <div className="text-right hidden sm:block">
-                  <div className="text-sm font-bold text-white">{user?.email ? user.email.split('@')[0] : 'Guest'}</div>
-                  <div className="text-[10px] font-bold text-purple-400 uppercase tracking-wider">Active Now</div>
+                  <div className="flex items-center justify-end gap-2 mb-0.5">
+                    <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-widest ${user?.roleCode === 'SUPER_ADMIN' ? 'bg-amber-500/10 text-amber-500 border border-amber-500/20' : 'bg-purple-500/10 text-purple-500 border border-purple-500/20'}`}>
+                      {user?.roleCode === 'SUPER_ADMIN' ? 'SUPER ADMIN' : `${user?.company?.plan || 'FREE'} PLAN`}
+                    </span>
+                    <div className="text-sm font-bold text-white">{user?.email ? user.email.split('@')[0] : 'Guest'}</div>
+                  </div>
+                  <div className="text-[10px] font-bold text-emerald-500 uppercase tracking-wider flex items-center justify-end gap-1.5 mt-0.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Active Now
+                  </div>
                 </div>
                 <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center text-white font-bold shadow-lg shadow-purple-500/20 uppercase transition-transform hover:scale-105 border border-white/10">
                   {user?.email ? user.email[0] : 'G'}
@@ -128,6 +144,9 @@ function AppContent() {
             <Route path="/leads" element={<ProtectedRoute><Leads /></ProtectedRoute>} />
             <Route path="/inbox" element={<ProtectedRoute><Inbox /></ProtectedRoute>} />
             <Route path="/knowledge" element={<ProtectedRoute><KnowledgeBase /></ProtectedRoute>} />
+            <Route path="/knowledge/upload" element={<ProtectedRoute><UploadDocument /></ProtectedRoute>} />
+            <Route path="/knowledge/add-faq" element={<ProtectedRoute><AddFaq /></ProtectedRoute>} />
+            <Route path="/knowledge/add-fact" element={<ProtectedRoute><AddFact /></ProtectedRoute>} />
             <Route path="/automation" element={<ProtectedRoute><Automation /></ProtectedRoute>} />
             <Route path="/broadcasts" element={<ProtectedRoute><Broadcasts /></ProtectedRoute>} />
             <Route path="/ai-settings" element={<ProtectedRoute><AISettings /></ProtectedRoute>} />
@@ -135,6 +154,11 @@ function AppContent() {
             {/* Admin Routes */}
             <Route path="/admin/dashboard" element={<ProtectedRoute><SuperAdminDashboard /></ProtectedRoute>} />
             <Route path="/admin/clients" element={<ProtectedRoute><ClientManagement /></ProtectedRoute>} />
+            <Route path="/admin/usage" element={<ProtectedRoute><AdminUsage /></ProtectedRoute>} />
+            <Route path="/admin/pricing" element={<ProtectedRoute><AdminPricing /></ProtectedRoute>} />
+            <Route path="/admin/revenue" element={<ProtectedRoute><AdminRevenue /></ProtectedRoute>} />
+            <Route path="/admin/activity" element={<ProtectedRoute><AdminActivity /></ProtectedRoute>} />
+            <Route path="/admin/llm-keys" element={<ProtectedRoute><LLMKeys /></ProtectedRoute>} />
             
             <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
             <Route path="/team" element={<ProtectedRoute><Team /></ProtectedRoute>} />

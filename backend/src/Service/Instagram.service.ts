@@ -3,9 +3,12 @@ import { instagram_lead } from '@Database/Table/CRM/instagram_lead';
 import { instagram_message } from '@Database/Table/CRM/instagram_message';
 import { knowledge_base } from '@Database/Table/CRM/knowledge_base';
 import { company as CompanyTable } from '@Database/Table/Admin/company';
+import { comment_trigger } from '@Database/Table/CRM/comment_trigger';
 import { InstagramMessageContext, InstagramActionResponse } from '@Model/Instagram.model';
 import { InstagramGateway } from '../Gateway/Instagram.gateway';
 import axios from 'axios';
+import { PLAN_LIMITS } from '@Config/PlanLimits';
+import { MoreThan } from 'typeorm';
 
 @Injectable()
 export class InstagramService {
@@ -47,6 +50,7 @@ export class InstagramService {
       });
 
       const pages = pagesRes.data.data;
+      console.log('[DEBUG IG CONNECT] Pages returned by Meta:', JSON.stringify(pages, null, 2));
       const targetPage = pages.find((p: any) => p.instagram_business_account);
 
       if (!targetPage) {
@@ -66,10 +70,14 @@ export class InstagramService {
       company.instagram_username = targetPage.name; // Save the name too!
       await company.save();
 
-      await axios.post(`https://graph.facebook.com/v21.0/${pageId}/subscribed_apps`, {
-        subscribed_fields: ['messages', 'messaging_postbacks'],
-        access_token: pageAccessToken
-      });
+      try {
+        await axios.post(`https://graph.facebook.com/v21.0/${pageId}/subscribed_apps`, {
+          subscribed_fields: ['messages', 'messaging_postbacks'],
+          access_token: pageAccessToken
+        });
+      } catch (err: any) {
+        console.warn('[WEBHOOK SUBSCRIBE WARNING] Could not auto-subscribe page to webhooks (often requires pages_messaging). This is usually fine if configured in the Meta Dashboard:', err.message);
+      }
 
       return {
         Success: true,
@@ -83,6 +91,31 @@ export class InstagramService {
       console.error('[CONNECT FAILED]', error);
       throw error;
     }
+  }
+
+  async disconnectInstagramAccount(companyId: string) {
+    console.log(`[DISCONNECT] Unlinking Instagram for Company: ${companyId}`);
+    const company = await CompanyTable.findOne({ where: { id: companyId as any } });
+    if (!company) throw new Error('Company not found');
+    
+    // Unsubscribe the app from the Facebook Page webhooks
+    if (company.instagram_page_id && company.instagram_access_token) {
+      try {
+        await axios.delete(`https://graph.facebook.com/v21.0/${company.instagram_page_id}/subscribed_apps`, {
+          params: { access_token: company.instagram_access_token }
+        });
+      } catch (err: any) {
+        console.warn('[DISCONNECT] Could not unsubscribe from webhooks:', err.message);
+      }
+    }
+
+    company.instagram_business_id = null as any;
+    company.instagram_page_id = null as any;
+    company.instagram_access_token = null as any;
+    company.instagram_username = null as any;
+    await company.save();
+    
+    return { Success: true };
   }
 
   async processIncomingMessage(input: InstagramMessageContext | string, text?: string, messageId?: string, igBusinessId?: string, skipDedupe = false): Promise<InstagramActionResponse | void> {
@@ -137,9 +170,62 @@ export class InstagramService {
     const company = await CompanyTable.findOne({ where: { instagram_business_id: igBusinessId } });
     const companyId = company?.id;
 
+    if (company) {
+      // 1. Expiration Check
+      if (company.plan !== 'Free' && company.plan_expires_at && new Date() > new Date(company.plan_expires_at)) {
+        console.log(`[BILLING] Company ${companyId} plan expired. Downgrading to Free.`);
+        company.plan = 'Free';
+        company.plan_expires_at = null;
+        await CompanyTable.update(companyId, { plan: 'Free', plan_expires_at: null });
+      }
+
+      // 2. AI Usage Check
+      const currentPlan = company.plan || 'Free';
+      const limits = PLAN_LIMITS[currentPlan] || PLAN_LIMITS.Free;
+      
+      if (company.monthly_ai_usage >= limits.aiMessagesLimit) {
+        console.warn(`[LIMIT EXCEEDED] Company ${companyId} hit AI usage limit of ${limits.aiMessagesLimit}`);
+        if (company.instagram_access_token) {
+          await this.sendInstagramMessage(
+            context.instagram_handle,
+            "Automated AI responses are temporarily offline due to usage limits.",
+            company.instagram_access_token
+          );
+        }
+        return;
+      }
+    }
+
     let lead = await instagram_lead.findOne({ where: { instagram_handle: context.instagram_handle, company_id: companyId } });
 
     if (!lead) {
+      // Check Active Contacts Limit
+      const currentPlan = company?.plan || 'Free';
+      const limits = PLAN_LIMITS[currentPlan] || PLAN_LIMITS.Free;
+
+      const startOfMonth = new Date();
+      startOfMonth.setDate(1);
+      startOfMonth.setHours(0, 0, 0, 0);
+
+      const activeContactsCount = await instagram_lead.count({
+        where: {
+          company_id: companyId,
+          created_on: MoreThan(startOfMonth)
+        }
+      });
+
+      if (activeContactsCount >= limits.activeContactsLimit) {
+        console.warn(`[LIMIT EXCEEDED] Company ${companyId} has reached the active contact limit of ${limits.activeContactsLimit} for the '${currentPlan}' plan.`);
+        if (company?.instagram_access_token) {
+          await this.sendInstagramMessage(
+            context.instagram_handle,
+            "Automated responses are temporarily offline due to channel capacity limits.",
+            company.instagram_access_token
+          );
+        }
+        return;
+      }
+
       lead = new instagram_lead();
       lead.company_id = companyId;
       lead.instagram_handle = context.instagram_handle;
@@ -159,8 +245,13 @@ export class InstagramService {
 
       // Send Welcome Message if configured
       if (company?.welcome_message) {
-        await this.sendInstagramMessage(lead.instagram_handle, company.welcome_message, company.instagram_access_token);
-        await this.logOutboundMessage(lead, { reply: company.welcome_message, action: 'welcome' } as any);
+        let textToSend = company.welcome_message;
+        const limits = PLAN_LIMITS[company?.plan || 'Free'] || PLAN_LIMITS.Free;
+        if (limits.hasBranding) {
+          textToSend += "\n\n⚡ Powered by ReplyZens";
+        }
+        await this.sendInstagramMessage(lead.instagram_handle, textToSend, company.instagram_access_token);
+        await this.logOutboundMessage(lead, { reply: textToSend, action: 'welcome' } as any);
       }
     }
 
@@ -177,8 +268,14 @@ export class InstagramService {
 
     // Handle Image Messages (Simple Approach)
     if (context.message_text.startsWith('[IMAGE]')) {
+      const currentPlan = company?.plan || 'Free';
+      const limits = PLAN_LIMITS[currentPlan] || PLAN_LIMITS.Free;
+      let replyText = "I received your image! Let me connect you with a human to check it.";
+      if (limits.hasBranding) {
+        replyText += "\n\n⚡ Powered by ReplyZens";
+      }
       const handoffResponse: any = {
-        reply: "I received your image! Let me connect you with a human to check it.",
+        reply: replyText,
         action: 'human_required',
         status_update: 'Handoff',
         notes: 'User sent an image'
@@ -201,19 +298,30 @@ export class InstagramService {
     console.log(`[FAQ DEBUG] Normalized Query Words: ${JSON.stringify(queryWords)}`);
 
     for (const item of knowledgeItems) {
-      const titleWords = normalize(item.title).split(' ').filter(w => w !== 'pdf' && w !== 'docx' && w !== 'txt');
+      const titleWords = normalize(item.title).split(' ').filter(w => w !== 'pdf' && w !== 'docx' && w !== 'txt' && w !== 'faq');
       if (titleWords.length === 0) continue;
 
-      // Check if ALL words in the FAQ title exist in the user's message (fuzzy)
+      // Check if words in the FAQ title exist in the user's message (fuzzy)
       const matchCount = titleWords.filter(tw => queryWords.some(qw => qw.includes(tw) || tw.includes(qw))).length;
-      const matchPercentage = matchCount / titleWords.length;
+      const matchPercentageTitle = matchCount / titleWords.length;
+      const matchPercentageQuery = matchCount / queryWords.length;
 
-      console.log(`[FAQ DEBUG] Comparing with "${item.title}" | Match: ${matchCount}/${titleWords.length} (${Math.round(matchPercentage * 100)}%)`);
+      console.log(`[FAQ DEBUG] Comparing with "${item.title}" | Title Match: ${Math.round(matchPercentageTitle * 100)}% | Query Match: ${Math.round(matchPercentageQuery * 100)}%`);
 
-      if (matchPercentage >= 0.8) { // 80% word match
+      // Match if 65% of title words are used, OR if 80% of the query words match the title
+      if (matchPercentageTitle >= 0.65 || matchPercentageQuery >= 0.8) {
         console.log(`[FAQ MATCH] Found fuzzy match: ${item.title}`);
+        
+        let replyText = item.content;
+        // Strip out the question part if the user saved the FAQ as "Q: ... A: ..."
+        const qIndex = replyText.toUpperCase().indexOf('Q:');
+        const aIndex = replyText.toUpperCase().indexOf('A:');
+        if (qIndex !== -1 && aIndex !== -1 && aIndex > qIndex) {
+          replyText = replyText.substring(aIndex + 2).trim();
+        }
+
         const directResponse: any = {
-          reply: item.content,
+          reply: replyText,
           action: 'faq',
           status_update: 'Qualified',
           notes: `Matched FAQ: ${item.title}`
@@ -225,14 +333,77 @@ export class InstagramService {
         lead.lead_score = 10;
         await lead.save();
 
+        let textToSend = directResponse.reply;
+        const currentPlan = company?.plan || 'Free';
+        const limits = PLAN_LIMITS[currentPlan] || PLAN_LIMITS.Free;
+        if (limits.hasBranding) {
+          textToSend += "\n\n⚡ Powered by ReplyZens";
+        }
+        directResponse.reply = textToSend;
         await this.logOutboundMessage(lead, directResponse as any);
-        await this.sendInstagramMessage(lead.instagram_handle, directResponse.reply, company?.instagram_access_token);
+        await this.sendInstagramMessage(lead.instagram_handle, textToSend, company?.instagram_access_token);
         return directResponse;
       }
     }
 
     // 3. Preprocess Message
     const normalizedMessage = context.message_text.toLowerCase().trim();
+
+    // 3.5 Execute Playbook Triggers (Deterministic Bypass)
+    const playbookSteps = company?.playbook_steps || [];
+    if (playbookSteps.length > 0) {
+      let currentTriggerMatched = false;
+      let matchedActions: string[] = [];
+      let playbookTitle = '';
+
+      for (let i = 0; i < playbookSteps.length; i++) {
+        const step = playbookSteps[i];
+        
+        if (step.type === 'trigger') {
+          // If we already matched a trigger and collected its actions, we stop evaluating further triggers
+          // This keeps it to the first matching trigger block
+          if (matchedActions.length > 0) break;
+
+          const keywords = step.value.split(',').map((k: string) => k.toLowerCase().trim()).filter((k: string) => k.length > 0);
+          currentTriggerMatched = keywords.some((kw: string) => normalizedMessage.includes(kw));
+        }
+        
+        if (step.type === 'action' && currentTriggerMatched) {
+          matchedActions.push(step.value);
+          if (!playbookTitle) playbookTitle = step.title;
+        }
+      }
+
+      if (matchedActions.length > 0) {
+        console.log(`[PLAYBOOK EXECUTED] Trigger matched! Executing ${matchedActions.length} actions.`);
+        
+        // Combine multiple actions into a single multi-line message to avoid rate limits
+        let combinedText = matchedActions.join('\n\n');
+        
+        const currentPlan = company?.plan || 'Free';
+        const limits = PLAN_LIMITS[currentPlan] || PLAN_LIMITS.Free;
+        if (limits.hasBranding) {
+          combinedText += "\n\n⚡ Powered by ReplyZens";
+        }
+
+        const directResponse: any = {
+          reply: combinedText,
+          action: 'playbook_automated',
+          status_update: 'Qualified',
+          notes: `Executed Playbook Action: ${playbookTitle} (+${matchedActions.length - 1} more)`
+        };
+
+        lead.is_qualified = true;
+        lead.lead_status = 'Hot';
+        lead.lead_score = Math.max(lead.lead_score || 0, 8); // boost score
+        await lead.save();
+
+        await this.logOutboundMessage(lead, directResponse as any);
+        await this.sendInstagramMessage(lead.instagram_handle, combinedText, company?.instagram_access_token);
+        
+        return directResponse;
+      }
+    }
 
     // 4. Rule-Based Scoring
     let rule_score = 0;
@@ -281,8 +452,21 @@ export class InstagramService {
       }
 
       // 9. Smart Auto-Reply
+      let textToSend = aiResponse.reply;
+      const currentPlan = company?.plan || 'Free';
+      const limits = PLAN_LIMITS[currentPlan] || PLAN_LIMITS.Free;
+      if (limits.hasBranding) {
+        textToSend += "\n\n⚡ Powered by ReplyZens";
+      }
+      aiResponse.reply = textToSend;
       await this.logOutboundMessage(lead, aiResponse);
-      await this.sendInstagramMessage(lead.instagram_handle, aiResponse.reply, company?.instagram_access_token);
+      await this.sendInstagramMessage(lead.instagram_handle, textToSend, company?.instagram_access_token);
+      
+      // 10. Increment AI Usage
+      if (company) {
+        company.monthly_ai_usage = (company.monthly_ai_usage || 0) + 1;
+        await CompanyTable.update(companyId, { monthly_ai_usage: company.monthly_ai_usage });
+      }
     }
 
     return aiResponse;
@@ -311,6 +495,20 @@ Previous Tags: ${(lead.tags || []).join(', ')}
       keywords: ['price', 'size', 'available', 'buy', 'order', 'cost', 'shipping', 'delivery', 'stock'], 
       intent_types: ['purchase', 'enquiry', 'support', 'casual'] 
     };
+
+    const playbookSteps = company?.playbook_steps || [];
+    let playbookRules = '';
+    if (playbookSteps.length > 0) {
+      playbookRules = `
+═══════════════════════════════
+CUSTOM AUTOMATION PLAYBOOK
+═══════════════════════════════
+You MUST follow these strict playbook rules defined by the business:
+${playbookSteps.map((step: any, index: number) => `${index + 1}. [${step.type.toUpperCase()}] ${step.title}: ${step.value}`).join('\n')}
+
+CRITICAL PLAYBOOK INSTRUCTION: If the customer's message triggers any of the above playbook rules, you MUST prioritize executing that action in your reply (e.g., providing the requested link).
+`;
+    }
 
     const defaultPrompt = `
 You are Maya, a warm and polite sales assistant and lead classifier for a \${profile.type.toUpperCase()} business.
@@ -349,7 +547,7 @@ LEAD QUALIFICATION RULES
 - If they are just saying "hi", "thanks", "ok", or "cool", they are NOT a lead yet.
 - When in doubt if it's a product inquiry, prefer marking "lead": "yes" to ensure follow-up.
 - SUMMARY RULE: Your summary must be CUMULATIVE. Don't forget earlier topics. If they asked about shirts 10 mins ago and now pants, the summary must mention BOTH.
-
+${playbookRules}
 ═══════════════════════════════
 LANGUAGE RULES (CRITICAL)
 ═══════════════════════════════
@@ -712,5 +910,165 @@ Include these fields:
       await company.save();
     }
     return { success: true };
+  }
+
+  async getPlaybook(companyId: string) {
+    const company = await CompanyTable.findOne({ where: { id: companyId as any } });
+    return { Success: true, Data: company?.playbook_steps || [] };
+  }
+
+  async updatePlaybook(companyId: string, steps: any) {
+    const company = await CompanyTable.findOne({ where: { id: companyId as any } });
+    if (!company) throw new Error('Company not found');
+    company.playbook_steps = steps;
+    await company.save();
+    return { Success: true };
+  }
+
+  async getCommentTriggers(companyId: string) {
+    return await comment_trigger.find({
+      where: { company_id: companyId },
+      order: { created_on: 'DESC' }
+    });
+  }
+
+  async createCommentTrigger(companyId: string, data: any) {
+    const trigger = new comment_trigger();
+    trigger.company_id = companyId;
+    trigger.post_title = data.postTitle || 'All Posts & Reels';
+    trigger.keyword = data.keyword.toUpperCase().trim();
+    trigger.reply_message = data.replyMessage;
+    trigger.is_active = true;
+    trigger.created_by_id = '00000000-0000-0000-0000-000000000000';
+    trigger.created_on = new Date();
+    await trigger.save();
+    return { Success: true, Data: trigger };
+  }
+
+  async deleteCommentTrigger(companyId: string, id: string) {
+    const trigger = await comment_trigger.findOne({ where: { id, company_id: companyId } });
+    if (!trigger) throw new Error('Trigger not found');
+    await trigger.remove();
+    return { Success: true };
+  }
+
+  async toggleCommentTrigger(companyId: string, id: string) {
+    const trigger = await comment_trigger.findOne({ where: { id, company_id: companyId } });
+    if (!trigger) throw new Error('Trigger not found');
+    trigger.is_active = !trigger.is_active;
+    await trigger.save();
+    return { Success: true, Data: trigger };
+  }
+
+  async processIncomingComment(changeValue: any, igBusinessId: string) {
+    const company = await CompanyTable.findOne({ where: { instagram_business_id: igBusinessId } });
+    if (!company) {
+      console.error(`[COMMENT WEBHOOK] No company found with instagram_business_id: ${igBusinessId}`);
+      return;
+    }
+
+    const triggers = await comment_trigger.find({ where: { company_id: company.id, is_active: true } });
+    const commentText = changeValue.text.toUpperCase();
+
+    const matchedTrigger = triggers.find(t => {
+      const keyword = t.keyword.toUpperCase().trim();
+      // Safe regex matching to prevent false positives inside words
+      const regex = new RegExp(`\\b${keyword}\\b`, 'i');
+      return regex.test(commentText);
+    });
+
+    if (!matchedTrigger) {
+      console.log(`[COMMENT WEBHOOK] Comment text "${changeValue.text}" did not match any active keywords.`);
+      return;
+    }
+
+    console.log(`[COMMENT WEBHOOK] Matched trigger keyword: "${matchedTrigger.keyword}" for comment ID: ${changeValue.id}`);
+
+    // Send DM directly to the commenter's user ID
+    // Note: We use the standard messages API (not private_replies) because private_replies
+    // is blocked in Meta Development Mode for comments from non-initiated users.
+    const commenterId = changeValue.from?.id;
+    const mediaId = changeValue.media?.id;
+    const commentId = changeValue.id;
+
+    // Strategy 1: Try private_replies (works in Live mode)
+    // Strategy 2: Fall back to public comment reply on the post (works in Dev mode too)
+    let replySent = false;
+
+    // Try private reply first
+    try {
+      const url = `https://graph.facebook.com/v21.0/${commentId}/private_replies`;
+      await axios.post(url, { message: matchedTrigger.reply_message }, {
+        headers: { 'Authorization': `Bearer ${company.instagram_access_token}` }
+      });
+      console.log(`[COMMENT WEBHOOK] ✅ Private reply sent to comment: ${commentId}`);
+      replySent = true;
+    } catch (err: any) {
+      console.warn(`[COMMENT WEBHOOK] Private reply blocked (likely Dev Mode), falling back to public comment reply...`);
+    }
+
+    // Fallback: Post a public comment reply directly on the comment thread
+    if (!replySent) {
+      try {
+        const url = `https://graph.facebook.com/v21.0/${commentId}/replies`;
+        await axios.post(url, {
+          message: `@${changeValue.from?.username || 'there'} ${matchedTrigger.reply_message}`
+        }, {
+          params: { access_token: company.instagram_access_token }
+        });
+        console.log(`[COMMENT WEBHOOK] ✅ Public comment reply sent on comment: ${commentId}`);
+        replySent = true;
+      } catch (error: any) {
+        console.error('[COMMENT WEBHOOK ERROR] Public comment reply also failed:', error.response?.data || error.message);
+        return;
+      }
+    }
+
+    if (!replySent) {
+      console.error('[COMMENT WEBHOOK ERROR] All reply strategies failed.');
+      return;
+    }
+
+    // Save user interaction as lead & message history in CRM
+    if (changeValue.from && changeValue.from.id) {
+      const senderId = changeValue.from.id;
+      const customerName = changeValue.from.username || 'Instagram User';
+
+      let lead = await instagram_lead.findOne({ where: { instagram_handle: senderId, company_id: company.id } });
+      if (!lead) {
+        lead = new instagram_lead();
+        lead.instagram_handle = senderId;
+        lead.customer_name = customerName;
+        lead.company_id = company.id;
+        lead.lead_status = 'New';
+        lead.is_qualified = false;
+        lead.created_by_id = '00000000-0000-0000-0000-000000000000';
+        lead.created_on = new Date();
+        await lead.save();
+      }
+
+      const commentMsg = new instagram_message();
+      commentMsg.lead_id = lead.id;
+      commentMsg.message_text = `[COMMENT ON REEL/POST] ${changeValue.text}`;
+      commentMsg.direction = 'Inbound';
+      commentMsg.created_by_id = '00000000-0000-0000-0000-000000000000';
+      commentMsg.created_on = new Date();
+      commentMsg.company_id = company.id;
+      await commentMsg.save();
+
+      const replyMsg = new instagram_message();
+      replyMsg.lead_id = lead.id;
+      replyMsg.message_text = matchedTrigger.reply_message;
+      replyMsg.direction = 'Outbound';
+      replyMsg.created_by_id = '00000000-0000-0000-0000-000000000000';
+      replyMsg.created_on = new Date();
+      replyMsg.company_id = company.id;
+      await replyMsg.save();
+
+      this.instagramGateway.emitNewMessage({ ...replyMsg, lead });
+
+      lead.last_message_time = new Date();
+      await lead.save();
+    }
   }
 }

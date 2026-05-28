@@ -6,6 +6,8 @@ import {
   sendBroadcast,
   getAudienceCount,
 } from '../api/broadcast.api';
+import { useAuth } from '../context/AuthContext';
+import UpgradeOverlay from '../components/UpgradeOverlay';
 import {
   Radio,
   Plus,
@@ -47,6 +49,9 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; icon: React.
 const LEAD_STATUSES = ['New', 'Hot', 'Buyer', 'Lost', 'Handoff'];
 
 const Broadcasts: React.FC = () => {
+  const { user } = useAuth();
+  const currentPlan = user?.company?.plan || 'Free';
+  const hasProPlan = ['Pro', 'Business', 'Advanced'].includes(currentPlan);
   const [broadcasts, setBroadcasts] = useState<BroadcastItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showCreate, setShowCreate] = useState(false);
@@ -55,6 +60,30 @@ const Broadcasts: React.FC = () => {
   const [error, setError] = useState('');
   const [audienceCount, setAudienceCount] = useState<number | null>(null);
   const [isCountLoading, setIsCountLoading] = useState(false);
+
+  // Custom modal states
+  const [confirmConfig, setConfirmConfig] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    onConfirm: () => void;
+    isLoading?: boolean;
+  }>({
+    isOpen: false,
+    title: '',
+    message: '',
+    onConfirm: () => {},
+  });
+
+  const [alertConfig, setAlertConfig] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+  }>({
+    isOpen: false,
+    title: '',
+    message: '',
+  });
 
   // Form state
   const [form, setForm] = useState({
@@ -93,7 +122,7 @@ const Broadcasts: React.FC = () => {
     setIsCreating(true);
     try {
       const res = await createBroadcast(form);
-      if (res.Type === 'Success') {
+      if (res.Type === 'Success' || (res as any).Type === 'S') {
         setForm({ name: '', message: '', filters: { lead_status: [], is_qualified: null } });
         setShowCreate(false);
         setAudienceCount(null);
@@ -108,31 +137,63 @@ const Broadcasts: React.FC = () => {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('Delete this broadcast? This cannot be undone.')) return;
-    try {
-      await deleteBroadcast(id);
-      fetchBroadcasts();
-    } catch (err) {
-      console.error('Delete failed', err);
-    }
+  const handleDelete = (id: string) => {
+    setConfirmConfig({
+      isOpen: true,
+      title: 'Delete Campaign',
+      message: 'Are you sure you want to delete this broadcast campaign? This action cannot be undone.',
+      onConfirm: async () => {
+        setConfirmConfig(prev => ({ ...prev, isLoading: true }));
+        try {
+          await deleteBroadcast(id);
+          fetchBroadcasts();
+          setConfirmConfig(prev => ({ ...prev, isOpen: false, isLoading: false }));
+        } catch (err) {
+          console.error('Delete failed', err);
+          setConfirmConfig(prev => ({ ...prev, isOpen: false, isLoading: false }));
+          setAlertConfig({
+            isOpen: true,
+            title: 'Delete Failed',
+            message: 'An error occurred while deleting the campaign.'
+          });
+        }
+      }
+    });
   };
 
-  const handleSend = async (id: string) => {
-    if (!confirm('Send this broadcast to all matching leads right now?')) return;
-    setIsSending(id);
-    try {
-      const res = await sendBroadcast(id);
-      if (res.Type === 'Success') {
-        fetchBroadcasts();
-      } else {
-        alert(res.Message || 'Failed to send');
+  const handleSend = (id: string) => {
+    setConfirmConfig({
+      isOpen: true,
+      title: 'Launch Broadcast',
+      message: 'Are you sure you want to send this broadcast message to all matching leads right now?',
+      onConfirm: async () => {
+        setConfirmConfig(prev => ({ ...prev, isLoading: true }));
+        setIsSending(id);
+        try {
+          const res = await sendBroadcast(id);
+          if (res.Type === 'Success' || (res as any).Type === 'S') {
+            fetchBroadcasts();
+            setConfirmConfig(prev => ({ ...prev, isOpen: false, isLoading: false }));
+          } else {
+            setConfirmConfig(prev => ({ ...prev, isOpen: false, isLoading: false }));
+            setAlertConfig({
+              isOpen: true,
+              title: 'Send Failed',
+              message: res.Message || 'Failed to dispatch the broadcast.'
+            });
+          }
+        } catch (err: any) {
+          setConfirmConfig(prev => ({ ...prev, isOpen: false, isLoading: false }));
+          setAlertConfig({
+            isOpen: true,
+            title: 'Send Failed',
+            message: err?.response?.data?.Message || 'An unexpected error occurred during dispatch.'
+          });
+        } finally {
+          setIsSending(null);
+        }
       }
-    } catch (err: any) {
-      alert(err?.response?.data?.Message || 'Send failed');
-    } finally {
-      setIsSending(null);
-    }
+    });
   };
 
   const handlePreviewAudience = async () => {
@@ -161,7 +222,8 @@ const Broadcasts: React.FC = () => {
   const getStatusConfig = (status: string) => STATUS_CONFIG[status] || STATUS_CONFIG.draft;
 
   return (
-    <div className="flex flex-col gap-8 min-h-full animate-in fade-in duration-700 pb-10">
+    <div className="relative flex flex-col gap-8 min-h-full animate-in fade-in duration-700 pb-10">
+      {!hasProPlan && <UpgradeOverlay feature="Broadcasts" />}
       
       {/* Header */}
       <div className="flex flex-col gap-4 md:flex-row md:justify-between md:items-end">
@@ -449,6 +511,60 @@ const Broadcasts: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Custom Confirmation Modal */}
+      {confirmConfig.isOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
+          <div className="w3-card max-w-md w-full border border-purple-500/20 bg-zinc-950 p-6 shadow-2xl animate-in zoom-in-95 duration-200">
+            <div className="flex items-center gap-3 text-amber-400 mb-4">
+              <AlertTriangle size={24} />
+              <h3 className="text-lg font-black text-zinc-100">{confirmConfig.title}</h3>
+            </div>
+            <p className="text-sm text-zinc-400 font-medium mb-6">{confirmConfig.message}</p>
+            <div className="flex justify-end gap-3 pt-4 border-t border-white/5">
+              <button
+                type="button"
+                onClick={() => setConfirmConfig(prev => ({ ...prev, isOpen: false }))}
+                disabled={confirmConfig.isLoading}
+                className="px-5 py-2 bg-zinc-900 hover:bg-zinc-800 border border-white/5 rounded-xl text-sm font-bold text-zinc-400 transition-colors disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={confirmConfig.onConfirm}
+                disabled={confirmConfig.isLoading}
+                className="px-6 py-2 bg-purple-650 hover:bg-purple-700 text-white font-bold text-sm rounded-xl shadow-lg shadow-purple-650/20 transition-all flex items-center gap-2 disabled:opacity-50"
+              >
+                {confirmConfig.isLoading && <Loader2 size={14} className="animate-spin" />}
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Custom Alert Modal */}
+      {alertConfig.isOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
+          <div className="w3-card max-w-md w-full border border-rose-500/20 bg-zinc-950 p-6 shadow-2xl animate-in zoom-in-95 duration-200">
+            <div className="flex items-center gap-3 text-rose-450 mb-4">
+              <AlertTriangle size={24} />
+              <h3 className="text-lg font-black text-zinc-100">{alertConfig.title}</h3>
+            </div>
+            <p className="text-sm text-zinc-400 font-medium mb-6">{alertConfig.message}</p>
+            <div className="flex justify-end pt-4 border-t border-white/5">
+              <button
+                type="button"
+                onClick={() => setAlertConfig(prev => ({ ...prev, isOpen: false }))}
+                className="px-6 py-2 bg-zinc-900 hover:bg-zinc-800 border border-white/5 rounded-xl text-sm font-bold text-zinc-350 transition-colors"
+              >
+                OK
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

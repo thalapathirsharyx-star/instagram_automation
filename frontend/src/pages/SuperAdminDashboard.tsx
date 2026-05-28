@@ -41,6 +41,7 @@ const SuperAdminDashboard: React.FC = () => {
     totalMessages: 0
   });
   const [isLoading, setIsLoading] = useState(true);
+  const [topClients, setTopClients] = useState<any[]>([]);
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -48,6 +49,14 @@ const SuperAdminDashboard: React.FC = () => {
         const response = await api.get('/Admin/Stats');
         if (response.data?.Data) {
           setStats(response.data.Data);
+        }
+        
+        // Fetch clients for usage widget
+        const clientsRes = await api.get('/Company/Admin/All');
+        if (clientsRes.data) {
+          // Sort by highest AI usage first, take top 5
+          const sortedClients = [...clientsRes.data].sort((a, b) => (b.monthly_ai_usage || 0) - (a.monthly_ai_usage || 0)).slice(0, 5);
+          setTopClients(sortedClients);
         }
       } catch (error) {
         console.error('Failed to fetch admin stats:', error);
@@ -123,24 +132,31 @@ const SuperAdminDashboard: React.FC = () => {
         </div>
 
         <div className="glass-card" style={{ padding: '24px' }}>
-          <h3 style={{ marginBottom: '24px' }}>System Logs</h3>
+          <h3 style={{ marginBottom: '24px' }}>Top AI Consumers</h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            {[
-              { msg: 'New client registration: TechFlow', time: '2m ago', type: 'info' },
-              { msg: 'Wallet low balance: Client #442', time: '15m ago', type: 'warning' },
-              { msg: 'Instagram Webhook Latency: 250ms', time: '1h ago', type: 'info' },
-              { msg: 'Subscription renewed: Apex Retail', time: '3h ago', type: 'success' },
-            ].map((log, i) => (
-              <div key={i} style={{ fontSize: '0.85rem', padding: '12px', borderBottom: '1px solid var(--glass-border)' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span style={{ fontWeight: 500 }}>{log.msg}</span>
-                  <span style={{ color: 'var(--text-dim)' }}>{log.time}</span>
+            {topClients.map((client, i) => (
+              <div key={i} style={{ fontSize: '0.85rem', padding: '12px', borderBottom: '1px solid var(--glass-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div>
+                  <div style={{ fontWeight: 600 }}>{client.name}</div>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--text-dim)', marginTop: '2px' }}>
+                    <span className={`px-1.5 py-0.5 rounded text-[8px] uppercase font-bold mr-2 ${client.plan !== 'Free' ? 'bg-purple-500/10 text-purple-400 border border-purple-500/20' : 'bg-zinc-800 text-zinc-400'}`}>
+                      {client.plan || 'Free'}
+                    </span>
+                    {client.email}
+                  </div>
+                </div>
+                <div style={{ textAlign: 'right' }}>
+                  <div style={{ fontWeight: 700, color: 'var(--primary)' }}>{client.monthly_ai_usage || 0}</div>
+                  <div style={{ fontSize: '0.7rem', color: 'var(--text-dim)', textTransform: 'uppercase' }}>Tokens</div>
                 </div>
               </div>
             ))}
+            {topClients.length === 0 && (
+              <div style={{ color: 'var(--text-dim)', textAlign: 'center', padding: '20px 0' }}>No active consumers yet.</div>
+            )}
           </div>
           <button style={{ width: '100%', marginTop: '20px', background: 'transparent', border: 'none', color: 'var(--primary)', fontWeight: 500, cursor: 'pointer' }}>
-            View Full Audit Logs
+            View All Clients
           </button>
         </div>
       </div>

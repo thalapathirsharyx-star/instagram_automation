@@ -34,6 +34,7 @@ import { AuditLogService } from '@Service/Admin/AuditLog.service';
 import { AuditLogController } from '@Controller/Admin/AuditLog.controller';
 import { AdminStatsController } from '@Controller/Admin/AdminStats.controller';
 import { MulterModule } from '@nestjs/platform-express';
+import { LLMKeyController } from '@Controller/Admin/LLMKey.controller';
 import { AutoNumberController } from '@Controller/Admin/AutoNumber.controller';
 import { Redis } from 'ioredis';
 import { CacheService } from '@Service/Cache.service';
@@ -106,6 +107,7 @@ import { BroadcastService } from '@Service/Broadcast.service';
     AuditLogController,
     AutoNumberController,
     AdminStatsController,
+    LLMKeyController,
     InstagramController,
     LegalController,
     TeamController,

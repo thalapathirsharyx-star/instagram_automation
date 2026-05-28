@@ -18,6 +18,9 @@
       ],
       "@Database/*": [
         "src/Database/*"
+      ],
+      "@Config/*": [
+        "src/Config/*"
       ]
     },
     "module": "commonjs",

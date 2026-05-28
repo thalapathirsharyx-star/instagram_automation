@@ -35,7 +35,7 @@ const SettingsCard: React.FC<{ icon: any, title: string, subtitle: string, child
   </div>
 );
 
-import { connectInstagram, getInstagramSettings, updateInstagramSettings } from '../api/crm.api';
+import { connectInstagram, getInstagramSettings, updateInstagramSettings, disconnectInstagram } from '../api/crm.api';
 
 const Settings: React.FC = () => {
   const { user } = useAuth();
@@ -131,7 +131,7 @@ const Settings: React.FC = () => {
           console.log('User cancelled login or did not fully authorize.');
           setIsConnecting(false);
         }
-      }, { scope: 'instagram_manage_messages,pages_manage_metadata,pages_show_list,instagram_basic' });
+      }, { scope: 'instagram_manage_messages,instagram_manage_comments,pages_manage_metadata,pages_read_engagement,pages_show_list,instagram_basic,business_management' });
     } catch (error) {
       console.error('FB Logic Error:', error);
       setIsConnecting(false);
@@ -181,9 +181,15 @@ const Settings: React.FC = () => {
               </div>
 
               <button 
-                onClick={() => {
-                  setIsConnected(false);
-                  setConnectionDetails(null);
+                onClick={async () => {
+                  try {
+                    await disconnectInstagram();
+                    setIsConnected(false);
+                    setConnectionDetails(null);
+                    showNotification('Account disconnected successfully.', 'success');
+                  } catch (e) {
+                    showNotification('Failed to disconnect account.', 'error');
+                  }
                 }}
                 className="text-xs text-rose-400 hover:text-rose-500 font-bold uppercase tracking-widest transition-colors flex items-center gap-2"
               >

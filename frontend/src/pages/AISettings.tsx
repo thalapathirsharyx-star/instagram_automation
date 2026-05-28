@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Bot, Save, RefreshCw, MessageSquare, Sparkles, AlertCircle } from 'lucide-react';
 import { getAIPrompt, updateAIPrompt } from '../api/crm.api';
+import { useAuth } from '../context/AuthContext';
+import UpgradeOverlay from '../components/UpgradeOverlay';
 
 const tonePrompts: Record<string, string> = {
   Professional: "Maintain a professional, polite, and formal tone. Use proper language and avoid slang.",
@@ -10,6 +12,9 @@ const tonePrompts: Record<string, string> = {
 };
 
 const AISettings: React.FC = () => {
+  const { user } = useAuth();
+  const currentPlan = user?.company?.plan || 'Free';
+  const hasProPlan = ['Pro', 'Business', 'Advanced'].includes(currentPlan);
   const [prompt, setPrompt] = useState('');
   const [tone, setTone] = useState('Friendly');
   const [isLoading, setIsLoading] = useState(true);
@@ -75,7 +80,8 @@ const AISettings: React.FC = () => {
   }
 
   return (
-    <div className="flex flex-col gap-8 min-h-full animate-in fade-in duration-700 pb-10">
+    <div className="relative flex flex-col gap-8 min-h-full animate-in fade-in duration-700 pb-10">
+      {!hasProPlan && <UpgradeOverlay feature="AI Persona" />}
       <header className="flex justify-between items-end">
         <div className="flex items-center gap-6">
           <div className="w-14 h-14 bg-purple-500/10 text-purple-400 rounded-2xl flex items-center justify-center border border-purple-500/20 shadow-inner">

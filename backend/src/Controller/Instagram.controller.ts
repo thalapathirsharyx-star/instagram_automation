@@ -105,6 +105,13 @@ export class InstagramController extends AuthBaseController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Post('Disconnect')
+  async Disconnect(@Req() req: any) {
+    const result = await this._InstagramService.disconnectInstagramAccount(req.user?.company_id);
+    return this.SendResponseData(result);
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Post('Settings')
   async UpdateSettings(@Body() data: any, @Req() req: any) {
     const result = await this._InstagramService.updateIntegrationSettings(req.user?.company_id, data);
@@ -235,6 +242,9 @@ export class InstagramController extends AuthBaseController {
     if (change.field === 'messages' && change.value && change.value.message) {
       console.log(`Message detected in changes: "${change.value.message.text}" from sender: ${change.value.sender.id}`);
       await this._InstagramService.processIncomingMessage(change.value.sender.id, change.value.message.text, change.value.message.mid, igBusinessId);
+    } else if (change.field === 'comments' && change.value && change.value.text) {
+      console.log(`[COMMENT WEBHOOK] Comment detected: "${change.value.text}" on media ID: ${change.value.media?.id}`);
+      await this._InstagramService.processIncomingComment(change.value, igBusinessId);
     }
   }
   @UseGuards(JwtAuthGuard)
@@ -251,5 +261,51 @@ export class InstagramController extends AuthBaseController {
     const companyId = req.user.company_id;
     const result = await this._InstagramService.updatePrompt(companyId, body.prompt);
     return { Data: result };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('Playbook')
+  async getPlaybook(@Req() req: any) {
+    const companyId = req.user.company_id;
+    return await this._InstagramService.getPlaybook(companyId);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('Playbook')
+  async updatePlaybook(@Req() req: any, @Body() body: { steps: any }) {
+    const companyId = req.user.company_id;
+    return await this._InstagramService.updatePlaybook(companyId, body.steps);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('CommentTriggers')
+  async getCommentTriggers(@Req() req: any) {
+    const companyId = req.user.company_id;
+    const result = await this._InstagramService.getCommentTriggers(companyId);
+    return { Success: true, Data: result };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('CommentTriggers')
+  async createCommentTrigger(@Req() req: any, @Body() body: any) {
+    const companyId = req.user.company_id;
+    const result = await this._InstagramService.createCommentTrigger(companyId, body);
+    return { Success: true, Data: result.Data };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Delete('CommentTriggers/:id')
+  async deleteCommentTrigger(@Req() req: any, @Param('id') id: string) {
+    const companyId = req.user.company_id;
+    const result = await this._InstagramService.deleteCommentTrigger(companyId, id);
+    return { Success: true };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('CommentTriggers/:id/toggle')
+  async toggleCommentTrigger(@Req() req: any, @Param('id') id: string) {
+    const companyId = req.user.company_id;
+    const result = await this._InstagramService.toggleCommentTrigger(companyId, id);
+    return { Success: true, Data: result.Data };
   }
 }
