@@ -277,6 +277,34 @@ export class InstagramService {
     inboundMsg.company_id = companyId;
     await inboundMsg.save();
 
+    // -- 2. STORY MENTION AUTOMATION --
+    if (context.message_text.startsWith('[STORY_MENTION]')) {
+      console.log(`[STORY MENTION DETECTED] for company ${companyId}`);
+      if (company?.story_mention_enabled && company.story_mention_message) {
+        // Send auto-reply
+        const currentPlan = company?.plan || 'Free';
+        const limits = PLAN_LIMITS[currentPlan] || PLAN_LIMITS.Free;
+        let textToSend = company.story_mention_message;
+        if (limits.hasBranding) {
+          textToSend += "\n\n⚡ Powered by ReplyZens";
+        }
+        
+        await this.logOutboundMessage(lead, {
+          reply: textToSend,
+          action: 'story_mention_auto_reply',
+          notes: 'Auto-reply to story mention.'
+        } as any);
+        await this.sendInstagramMessage(lead.instagram_handle, textToSend, company.instagram_access_token);
+        
+        // Boost score slightly for engagement
+        lead.lead_score = (lead.lead_score || 0) + 2;
+        await lead.save();
+        return;
+      } else {
+        return;
+      }
+    }
+
     this.instagramGateway.emitNewMessage({ ...inboundMsg, lead });
 
     // Handle Image Messages (Simple Approach)
@@ -615,6 +643,8 @@ export class InstagramService {
         page_name: company?.instagram_username || 'Connected Account',
         welcome_message: company?.welcome_message,
         auto_follow_up_enabled: company?.auto_follow_up_enabled || false,
+        story_mention_enabled: company?.story_mention_enabled || false,
+        story_mention_message: company?.story_mention_message || '',
         timezone: company?.timezone || 'UTC',
         working_hours_start: company?.working_hours_start || '09:00',
         working_hours_end: company?.working_hours_end || '18:00',
@@ -629,6 +659,8 @@ export class InstagramService {
     
     if (data.welcome_message !== undefined) company.welcome_message = data.welcome_message;
     if (data.auto_follow_up_enabled !== undefined) company.auto_follow_up_enabled = data.auto_follow_up_enabled;
+    if (data.story_mention_enabled !== undefined) company.story_mention_enabled = data.story_mention_enabled;
+    if (data.story_mention_message !== undefined) company.story_mention_message = data.story_mention_message;
     if (data.timezone !== undefined) company.timezone = data.timezone;
     if (data.working_hours_start !== undefined) company.working_hours_start = data.working_hours_start;
     if (data.working_hours_end !== undefined) company.working_hours_end = data.working_hours_end;

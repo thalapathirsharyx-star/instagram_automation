@@ -175,7 +175,7 @@ const Settings: React.FC = () => {
                 Active Connection
               </div>
               
-              <div className="p-5 bg-zinc-900/50 rounded-2xl border border-white/5 shadow-inner">
+              <div className="p-5 bg-zinc-800 rounded-2xl border border-white/5 shadow-inner">
                 <div className="text-sm font-bold text-zinc-100">{connectionDetails?.name}</div>
                 <div className="text-[10px] text-zinc-500 font-mono mt-1 uppercase tracking-widest">Business ID: {connectionDetails?.id}</div>
               </div>
@@ -191,9 +191,9 @@ const Settings: React.FC = () => {
                     showNotification('Failed to disconnect account.', 'error');
                   }
                 }}
-                className="text-xs text-rose-400 hover:text-rose-500 font-bold uppercase tracking-widest transition-colors flex items-center gap-2"
+                className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-white border border-rose-500/20 rounded-xl font-bold uppercase tracking-widest transition-all text-xs shadow-sm"
               >
-                <X size={14} /> Disconnect Account
+                <X size={16} /> Disconnect Account
               </button>
             </div>
           ) : (
@@ -298,23 +298,25 @@ const Settings: React.FC = () => {
           title="AI Automation" 
           subtitle="Configure how the AI interacts with your leads."
         >
-          <div className="flex justify-between items-center p-5 bg-zinc-900/50 rounded-2xl border border-white/5">
+          <div className="flex justify-between items-center p-5 bg-zinc-800 rounded-2xl border border-white/5 shadow-inner">
             <div>
               <div className="font-bold text-zinc-100 mb-1">Auto-Reply Discovery</div>
               <p className="text-xs text-zinc-500 font-medium leading-relaxed">Automatically answer basic lead inquiries.</p>
             </div>
-            <div className="w-12 h-6 bg-purple-500 rounded-full relative cursor-pointer shadow-[0_0_15px_rgba(168,85,247,0.4)]">
-              <div className="absolute right-1 top-1 w-4 h-4 bg-white rounded-full"></div>
-            </div>
+            <label className="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" className="sr-only peer" defaultChecked />
+              <div className="w-11 h-6 bg-zinc-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-zinc-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-500 shadow-inner"></div>
+            </label>
           </div>
-          <div className="flex justify-between items-center p-5 bg-zinc-900/50 rounded-2xl border border-white/5">
+          <div className="flex justify-between items-center p-5 bg-zinc-800 rounded-2xl border border-white/5 shadow-inner">
             <div>
               <div className="font-bold text-zinc-100 mb-1">Human Handoff Alerts</div>
               <p className="text-xs text-zinc-500 font-medium leading-relaxed">Notify team when a lead needs human attention.</p>
             </div>
-            <div className="w-12 h-6 bg-purple-500 rounded-full relative cursor-pointer shadow-[0_0_15px_rgba(168,85,247,0.4)]">
-              <div className="absolute right-1 top-1 w-4 h-4 bg-white rounded-full"></div>
-            </div>
+            <label className="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" className="sr-only peer" defaultChecked />
+              <div className="w-11 h-6 bg-zinc-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-zinc-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-500 shadow-inner"></div>
+            </label>
           </div>
         </SettingsCard>
 
@@ -325,7 +327,7 @@ const Settings: React.FC = () => {
         >
           <div className="space-y-4">
             <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest ml-1">Webhook Endpoint</label>
-            <div className="bg-zinc-950 p-4 rounded-2xl border border-white/5 text-sm font-mono text-zinc-400 truncate shadow-inner">
+            <div className="bg-zinc-800 p-4 rounded-2xl border border-white/5 text-sm font-mono text-zinc-500 truncate shadow-inner">
               https://replyzens.com/v1/Instagram/Webhook
             </div>
             <button className="flex items-center gap-2 text-xs font-bold text-purple-400 hover:text-purple-300 transition-colors uppercase tracking-widest">
@@ -353,7 +355,7 @@ const Settings: React.FC = () => {
                     type="email"
                     value={profileEmail}
                     onChange={(e) => setProfileEmail(e.target.value)}
-                    className="w-full bg-zinc-900/50 border border-white/5 rounded-xl px-4 py-2.5 text-sm text-white focus:border-purple-500/50 outline-none transition-all mt-1"
+                    className="w-full bg-zinc-800 border border-white/5 rounded-xl px-4 py-3 text-sm text-zinc-100 focus:border-purple-500/50 outline-none transition-all mt-1 shadow-inner"
                   />
                 </div>
               </div>

@@ -244,6 +244,10 @@ export class InstagramController extends AuthBaseController {
         const imageUrl = attachment.payload.url;
         console.log(`[NEW IMAGE] "${imageUrl}" from sender: ${senderId}`);
         await this._InstagramService.processIncomingMessage(senderId, `[IMAGE] ${imageUrl}`, mid, igBusinessId);
+      } else if (attachment.type === 'story_mention') {
+        const storyUrl = attachment.payload?.url || '';
+        console.log(`[STORY MENTION] from sender: ${senderId}`);
+        await this._InstagramService.processIncomingMessage(senderId, `[STORY_MENTION] ${storyUrl}`, mid, igBusinessId);
       }
     } else if (messaging.message && messaging.message.is_echo) {
       console.log('[SKIP] Echo (message sent by the page itself)');

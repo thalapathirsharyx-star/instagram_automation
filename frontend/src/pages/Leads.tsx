@@ -140,7 +140,7 @@ const Leads: React.FC = () => {
 
       {/* Lead Intelligence Modal */}
       {selectedLead && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-in fade-in duration-300">
+        <div className="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-in fade-in duration-300">
           <div className="w-full max-w-2xl bg-zinc-900 border border-white/10 rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
             <div className="px-8 py-6 border-b border-white/5 flex justify-between items-center bg-gradient-to-r from-purple-500/10 to-transparent">
               <div className="flex items-center gap-4">
@@ -167,18 +167,18 @@ const Leads: React.FC = () => {
                   <div className="w-1.5 h-1.5 rounded-full bg-purple-500 shadow-[0_0_8px_rgba(168,85,247,0.8)]" />
                   Conversation Intelligence Summary
                 </h3>
-                <div className="p-5 rounded-2xl bg-zinc-800/50 border border-white/5 text-zinc-300 leading-relaxed font-medium">
+                <div className="p-5 rounded-2xl bg-zinc-800 border border-white/5 text-zinc-300 leading-relaxed font-medium">
                   {selectedLead.conversation_summary || "The AI is still analyzing this conversation. A detailed summary will appear after more interactions."}
                 </div>
               </div>
 
               {/* Stats & Metadata */}
               <div className="grid grid-cols-2 gap-4">
-                <div className="p-4 rounded-2xl bg-zinc-800/30 border border-white/5">
+                <div className="p-4 rounded-2xl bg-zinc-800 border border-white/5">
                   <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-1">Lead Health Score</p>
                   <p className="text-2xl font-bold text-white">{Number(selectedLead.lead_score || 0).toFixed(0)} <span className="text-xs text-zinc-500 font-medium">/ 10</span></p>
                 </div>
-                <div className="p-4 rounded-2xl bg-zinc-800/30 border border-white/5">
+                <div className="p-4 rounded-2xl bg-zinc-800 border border-white/5">
                   <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-1">Detected Intent</p>
                   <p className="text-lg font-bold text-purple-400 capitalize">{selectedLead.last_intent || 'Enquiry'}</p>
                 </div>
@@ -199,7 +199,7 @@ const Leads: React.FC = () => {
               )}
             </div>
 
-            <div className="px-8 py-6 bg-zinc-800/30 border-t border-white/5 flex justify-between items-center">
+            <div className="px-8 py-6 bg-zinc-800 border-t border-white/5 flex justify-between items-center">
               <div className="flex items-center gap-2 text-zinc-500 text-xs font-medium">
                 <Calendar size={14} />
                 <span>Last updated: {new Date(selectedLead.last_message_time || Date.now()).toLocaleDateString()}</span>

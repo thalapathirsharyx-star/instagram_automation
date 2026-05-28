@@ -126,4 +126,10 @@ export class company extends BaseTable {
 
   @Column({ type: 'boolean', default: false })
   auto_follow_up_enabled: boolean;
+
+  @Column({ type: 'boolean', default: false })
+  story_mention_enabled: boolean;
+
+  @Column({ type: 'text', nullable: true })
+  story_mention_message: string;
 }

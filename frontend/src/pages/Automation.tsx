@@ -20,7 +20,8 @@ import {
   Activity,
   Workflow,
   Moon,
-  Repeat
+  Repeat,
+  Heart
 } from 'lucide-react';
 import api from '../lib/axios';
 import PlaybookCanvas from '../components/PlaybookCanvas';
@@ -46,6 +47,8 @@ const Automation: React.FC = () => {
 
   // Advanced Settings State
   const [autoFollowUp, setAutoFollowUp] = useState(false);
+  const [storyMentionEnabled, setStoryMentionEnabled] = useState(false);
+  const [storyMentionMessage, setStoryMentionMessage] = useState('');
   const [timezone, setTimezone] = useState('UTC');
   const [workingHoursStart, setWorkingHoursStart] = useState('09:00');
   const [workingHoursEnd, setWorkingHoursEnd] = useState('18:00');
@@ -135,6 +138,8 @@ const Automation: React.FC = () => {
         const d = res.data.Data;
         setWelcomeMessage(d?.welcome_message || '');
         setAutoFollowUp(d?.auto_follow_up_enabled || false);
+        setStoryMentionEnabled(d?.story_mention_enabled || false);
+        setStoryMentionMessage(d?.story_mention_message || '');
         setTimezone(d?.timezone || 'UTC');
         setWorkingHoursStart(d?.working_hours_start || '09:00');
         setWorkingHoursEnd(d?.working_hours_end || '18:00');
@@ -167,6 +172,8 @@ const Automation: React.FC = () => {
       setIsSaving(true);
       const res = await api.post('/Instagram/Settings', { 
         auto_follow_up_enabled: autoFollowUp,
+        story_mention_enabled: storyMentionEnabled,
+        story_mention_message: storyMentionMessage,
         timezone,
         working_hours_start: workingHoursStart,
         working_hours_end: workingHoursEnd,
@@ -894,6 +901,53 @@ const Automation: React.FC = () => {
             </div>
           </div>
           
+          {/* Story Mentions */}
+          <div className="w3-card flex flex-col h-full border-white/5">
+            <div className="flex items-start gap-4 mb-6">
+              <div className="p-3 bg-pink-500/10 text-pink-500 rounded-xl shadow-inner border border-pink-500/20">
+                <Heart size={24} />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-zinc-100">Story Mentions</h3>
+                <p className="text-xs text-zinc-400 mt-1">Reward followers who tag you in their Stories.</p>
+              </div>
+            </div>
+
+            <div className="flex-grow space-y-6">
+              <div className="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/10">
+                <div>
+                  <h4 className="text-sm font-medium text-zinc-100">Enable Story Replies</h4>
+                  <p className="text-xs text-zinc-400 mt-1">Instantly DM users who mention you.</p>
+                </div>
+                <label className="relative inline-flex items-center cursor-pointer">
+                  <input type="checkbox" className="sr-only peer" checked={storyMentionEnabled} onChange={(e) => setStoryMentionEnabled(e.target.checked)} />
+                  <div className="w-11 h-6 bg-zinc-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-zinc-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-pink-500"></div>
+                </label>
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-zinc-400 mb-1.5 uppercase tracking-wider">Automated DM Content</label>
+                <textarea 
+                  value={storyMentionMessage} 
+                  onChange={e => setStoryMentionMessage(e.target.value)}
+                  placeholder="Thanks for the shoutout! 💖 Here is a 10% discount code for your next purchase: STORY10"
+                  className="w3-input min-h-[100px] text-sm resize-none text-zinc-100"
+                />
+              </div>
+            </div>
+
+            <div className="mt-8 pt-4 border-t border-white/5 flex justify-end">
+              <button
+                onClick={handleSaveAdvanced}
+                disabled={isSaving}
+                className="btn-primary w-full sm:w-auto"
+              >
+                {isSaving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
+                Save Changes
+              </button>
+            </div>
+          </div>
+
         </div>
       )}
 
