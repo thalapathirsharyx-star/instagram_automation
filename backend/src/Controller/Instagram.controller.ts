@@ -91,7 +91,7 @@ export class InstagramController extends AuthBaseController {
     // and queue the user's data for deletion.
     
     return {
-      url: `${process.env.DOMAIN_NAME || 'https://replyzens.com'}/data-deletion`,
+      url: `${process.env.DOMAIN_NAME || 'https://replyzens.in'}/data-deletion`,
       confirmation_code: `DEL-${Math.random().toString(36).substring(7).toUpperCase()}`
     };
   }

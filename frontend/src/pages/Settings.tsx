@@ -309,7 +309,7 @@ const Settings: React.FC = () => {
           <div className="space-y-4">
             <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest ml-1">Webhook Endpoint</label>
             <div className="bg-zinc-800 p-4 rounded-2xl border border-white/5 text-sm font-mono text-zinc-500 truncate shadow-inner">
-              https://replyzens.com/v1/Instagram/Webhook
+              https://replyzens.in/api/v1/Instagram/Webhook
             </div>
             <button className="flex items-center gap-2 text-xs font-bold text-purple-400 hover:text-purple-300 transition-colors uppercase tracking-widest">
               <Zap size={14} /> Test Connectivity
@@ -368,7 +368,7 @@ const Settings: React.FC = () => {
                   {user?.email?.[0] || 'A'}
                 </div>
                 <div>
-                  <div className="font-bold text-zinc-100">{user?.email || 'admin@replyzens.com'}</div>
+                  <div className="font-bold text-zinc-100">{user?.email || 'admin@replyzens.in'}</div>
                   <div className="text-xs text-zinc-500 font-medium mt-0.5">{user?.role || 'Administrator Access'}</div>
                 </div>
               </div>

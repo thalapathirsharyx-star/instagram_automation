@@ -50,7 +50,7 @@ export const PrivacyPolicy: React.FC = () => (
     </section>
     <section>
       <h2>5. Contact Us</h2>
-      <p>If you have questions or comments about this policy, you may email us at support@replyzens.com.</p>
+      <p>If you have questions or comments about this policy, you may email us at support@replyzens.in.</p>
     </section>
   </LegalLayout>
 );
@@ -84,7 +84,7 @@ export const DataDeletion: React.FC = () => (
       <p>3. Click "Remove".</p>
 
       <h3>Option 2: Direct Request</h3>
-      <p>You can request your data to be deleted from our database by sending an email to <strong>support@replyzens.com</strong> with the subject "Data Deletion Request". Please include your Instagram handle and the email associated with your account. We will process your request within 48 hours.</p>
+      <p>You can request your data to be deleted from our database by sending an email to <strong>support@replyzens.in</strong> with the subject "Data Deletion Request". Please include your Instagram handle and the email associated with your account. We will process your request within 48 hours.</p>
     </section>
   </LegalLayout>
 );
