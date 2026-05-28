@@ -108,4 +108,7 @@ export class company extends BaseTable {
 
   @Column({ type: 'int', default: 0 })
   monthly_ai_usage: number;
+
+  @Column({ type: 'text', nullable: true })
+  ai_usage_reset_month: string; // e.g. "2026-05" — used to auto-reset monthly_ai_usage
 }

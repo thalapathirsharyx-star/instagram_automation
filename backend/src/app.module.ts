@@ -47,6 +47,9 @@ import { TeamController } from '@Controller/Team.controller';
 import { TeamService } from '@Service/Team.service';
 import { BroadcastController } from '@Controller/Broadcast.controller';
 import { BroadcastService } from '@Service/Broadcast.service';
+import { AIService } from '@Service/AI.service';
+import { KnowledgeBaseService } from '@Service/KnowledgeBase.service';
+import { TokenMonitorService } from '@Service/TokenMonitor.service';
 
 @Module({
   imports: [
@@ -140,6 +143,9 @@ import { BroadcastService } from '@Service/Broadcast.service';
     InstagramGateway,
     TeamService,
     BroadcastService,
+    AIService,
+    KnowledgeBaseService,
+    TokenMonitorService,
     {
       provide: "REDIS_CLIENT",
       useFactory: () => {

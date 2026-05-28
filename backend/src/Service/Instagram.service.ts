@@ -6,6 +6,8 @@ import { company as CompanyTable } from '@Database/Table/Admin/company';
 import { comment_trigger } from '@Database/Table/CRM/comment_trigger';
 import { InstagramMessageContext, InstagramActionResponse } from '@Model/Instagram.model';
 import { InstagramGateway } from '../Gateway/Instagram.gateway';
+import { AIService } from './AI.service';
+import { KnowledgeBaseService } from './KnowledgeBase.service';
 import axios from 'axios';
 import { PLAN_LIMITS } from '@Config/PlanLimits';
 import { MoreThan } from 'typeorm';
@@ -15,7 +17,11 @@ export class InstagramService {
   private processedMids = new Set<string>();
   private readonly CACHE_LIMIT = 500;
 
-  constructor(private readonly instagramGateway: InstagramGateway) { }
+  constructor(
+    private readonly instagramGateway: InstagramGateway,
+    private readonly aiService: AIService,
+    private readonly knowledgeBaseService: KnowledgeBaseService
+  ) { }
 
   /**
    * Automatically connects an Instagram account using a user access token.
@@ -122,7 +128,14 @@ export class InstagramService {
     if (messageId && this.processedMids.has(messageId) && !skipDedupe) {
       return;
     }
-    if (messageId) this.processedMids.add(messageId);
+    if (messageId) {
+      this.processedMids.add(messageId);
+      // Fix memory leak: Enforce CACHE_LIMIT
+      if (this.processedMids.size > this.CACHE_LIMIT) {
+        const iterator = this.processedMids.values();
+        this.processedMids.delete(iterator.next().value);
+      }
+    }
 
     // If the controller couldn't provide a sender ID/text (e.g. message_edit), we fetch it now
     if (typeof input === 'string' && input === 'FETCH_PENDING' && messageId) {
@@ -420,7 +433,7 @@ export class InstagramService {
     }
 
     // 5. Dynamic AI Classification
-    const aiResponse = await this.generateAiReply(context.message_text, lead, companyId);
+    const aiResponse = await this.aiService.generateAiReply(context.message_text, lead, companyId);
 
     if (aiResponse.reply) {
       // 6. Combine Logic (Decision Engine)
@@ -472,228 +485,7 @@ export class InstagramService {
     return aiResponse;
   }
 
-  private async generateAiReply(messageText: string, lead: instagram_lead, companyId: string): Promise<any> {
-    const GROQ_API_KEY = process.env.GROQ_API_KEY;
-    const context = await this.getRelevantContext(messageText, companyId);
 
-    const history = await this.getMessagesByLead(lead.id, lead.company_id);
-    const historyText = history.slice(-25).map(m => `${m.direction}: ${m.message_text}`).join('\n');
-    
-    const previousIntelligence = `
-Previous Summary: ${lead.conversation_summary || 'None'}
-Previous Tags: ${(lead.tags || []).join(', ')}
-`;
-
-    const company = await CompanyTable.findOne({ where: { id: companyId } });
-
-    const profile = company?.business_profile || { 
-      type: 'clothing brand', 
-      goal: 'sales and inquiries', 
-      lead_definition: 'customer who is interested in products, asking about price, size, availability, or wanting to purchase' 
-    };
-    const rules = company?.lead_rules || { 
-      keywords: ['price', 'size', 'available', 'buy', 'order', 'cost', 'shipping', 'delivery', 'stock'], 
-      intent_types: ['purchase', 'enquiry', 'support', 'casual'] 
-    };
-
-    const playbookSteps = company?.playbook_steps || [];
-    let playbookRules = '';
-    if (playbookSteps.length > 0) {
-      playbookRules = `
-═══════════════════════════════
-CUSTOM AUTOMATION PLAYBOOK
-═══════════════════════════════
-You MUST follow these strict playbook rules defined by the business:
-${playbookSteps.map((step: any, index: number) => `${index + 1}. [${step.type.toUpperCase()}] ${step.title}: ${step.value}`).join('\n')}
-
-CRITICAL PLAYBOOK INSTRUCTION: If the customer's message triggers any of the above playbook rules, you MUST prioritize executing that action in your reply (e.g., providing the requested link).
-`;
-    }
-
-    const defaultPrompt = `
-You are Maya, a warm and polite sales assistant and lead classifier for a \${profile.type.toUpperCase()} business.
-You genuinely care about helping customers find the right product or service.
-
-Business goal: \${profile.goal}
-Lead definition: \${profile.lead_definition}
-Keywords: \${rules.keywords.join(', ')}
-
-═══════════════════════════════
-KNOWLEDGE BASE (Product Info)
-═══════════════════════════════
-\${context}
-
-═══════════════════════════════
-PREVIOUS INTELLIGENCE (Context Memory)
-═══════════════════════════════
-\${previousIntelligence}
-
-═══════════════════════════════
-CHAT HISTORY (Recent)
-═══════════════════════════════
-\${historyText}
-
-═══════════════════════════════
-CUSTOMER'S MESSAGE
-═══════════════════════════════
-"\${messageText}"
-
-═══════════════════════════════
-LEAD QUALIFICATION RULES
-═══════════════════════════════
-- Mark "lead": "yes" if the customer shows clear interest in any product mentioned in the KNOWLEDGE BASE.
-- If they ask about price, sizing, fabric, material, or availability of an item, they ARE a lead.
-- If they express intent to visit the store, book an appointment, or ask "how to order", they ARE a lead.
-- If they are just saying "hi", "thanks", "ok", or "cool", they are NOT a lead yet.
-- When in doubt if it's a product inquiry, prefer marking "lead": "yes" to ensure follow-up.
-- SUMMARY RULE: Your summary must be CUMULATIVE. Don't forget earlier topics. If they asked about shirts 10 mins ago and now pants, the summary must mention BOTH.
-${playbookRules}
-═══════════════════════════════
-LANGUAGE RULES (CRITICAL)
-═══════════════════════════════
-- Detect the language of the customer's last message and reply in the SAME language.
-- Tamil script (e.g. "என்ன விலை?") → reply politely in Tamil script.
-- Tanglish (e.g. "anna price sollunga") → reply warmly in Tanglish, respectful tone.
-- English → reply in polite, friendly English.
-- Never switch language unless the customer does first.
-
-═══════════════════════════════
-OUTPUT FORMAT (JSON ONLY)
-═══════════════════════════════
-Return ONLY valid JSON. No extra text outside it.
-
-{
-  "reply": "smart auto-reply based on intent (enquiry -> info from KB, purchase -> how to buy, casual -> greeting)",
-  "action": "reply",
-  "lead": "yes/no",
-  "intent": "\${rules.intent_types.join('/')}",
-  "summary": "2-3 sentence overview of what the customer wants and current status. Mandatory even for greetings.",
-  "confidence": 0.0 to 1.0,
-  "detected_language": "english" | "tamil" | "tanglish",
-  "tags": ["interested", "pricing", "size_query", "support"]
-}
-`;
-
-    let customPrompt = company?.system_prompt || defaultPrompt;
-
-    // Always append strict perspective rule to prevent echoing bugs even if they use a custom prompt
-    if (company?.system_prompt) {
-      customPrompt += `\n\nCRITICAL RULE: Respond ONLY in valid JSON format.
-Include these fields:
-- "reply": your response to the customer
-- "lead": "yes" or "no"
-- "intent": "purchase/enquiry/support/casual"
-- "confidence": 0.0 to 1.0
-- "summary": a 2-3 sentence summary of the discussion so far
-- "tags": array of interest tags`;
-    }
-
-    // Replace placeholders in custom prompt
-    const prompt = customPrompt
-      .replace(/\${context}/g, context)
-      .replace(/\${previousIntelligence}/g, previousIntelligence)
-      .replace(/\${historyText}/g, historyText)
-      .replace(/\${messageText}/g, messageText)
-      .replace(/\${profile.type.toUpperCase\(\)}/g, profile.type ? profile.type.toUpperCase() : 'BUSINESS')
-      .replace(/\${profile.goal}/g, profile.goal || '')
-      .replace(/\${profile.lead_definition}/g, profile.lead_definition || '')
-      .replace(/\${rules.keywords.join\(\', \'\)}/g, rules.keywords ? rules.keywords.join(', ') : '')
-      .replace(/\${rules.intent_types.join\(\'\/\'\)}/g, rules.intent_types ? rules.intent_types.join('/') : '');
-
-    try {
-      const response = await axios.post(
-        'https://api.groq.com/openai/v1/chat/completions',
-        {
-          model: 'llama-3.3-70b-versatile',
-          messages: [
-            { role: 'system', content: prompt },
-            { role: 'user', content: messageText }
-          ],
-          response_format: { type: "json_object" }
-        },
-        {
-          headers: {
-            'Authorization': `Bearer ${GROQ_API_KEY}`,
-            'Content-Type': 'application/json'
-          }
-        }
-      );
-
-      const aiData = JSON.parse(response.data.choices[0].message.content);
-      const isLead = aiData.lead === 'yes' || aiData.lead === true || aiData.is_qualified === true || aiData.lead_status === 'Hot';
-
-      return {
-        reply: aiData.reply || aiData.message || aiData.text || "I'll check on that for you!",
-        action: aiData.action || 'reply',
-        notes: aiData.notes || aiData.summary || '',
-        lead_status: isLead ? 'Hot' : 'New',
-        is_qualified: isLead,
-        tags: aiData.tags || [],
-        intent: aiData.intent || 'enquiry',
-        confidence: aiData.confidence || 0,
-        lead: isLead ? 'yes' : 'no',
-        summary: aiData.summary || aiData.notes || ''
-      };
-    } catch (error: any) {
-      console.error('[AI ERROR] Groq failed:', error.response?.data || error.message);
-      return { reply: "I'll check on that for you!", action: 'human_required' };
-    }
-  }
-
-  private async getRelevantContext(messageText: string, companyId: string): Promise<string> {
-    try {
-      const kbRepo = await knowledge_base.find({ where: { company_id: companyId } });
-      if (!kbRepo || kbRepo.length === 0) return "No specific data provided.";
-
-      const query = messageText.toLowerCase();
-      
-      // Rank knowledge items by relevance
-      const scoredItems = kbRepo.map(item => {
-        let score = 0;
-        const title = item.title.toLowerCase();
-        const content = item.content.toLowerCase();
-        
-        // Priority 1: Title match
-        if (query.includes(title) || title.includes(query)) score += 20;
-        
-        // Priority 2: Keyword matches (supporting non-English characters)
-        const queryWords = query.split(/[\s,.;:!?]+/).filter(w => w.length >= 2);
-        for (const word of queryWords) {
-          if (content.includes(word)) score += 5;
-          if (title.includes(word)) score += 10;
-          // Bonus for price-related numbers if query contains them
-          if (/\d+/.test(word) && content.includes(word)) score += 15;
-        }
-
-        return { item, score };
-      });
-
-      const relevant = scoredItems
-        .filter(si => si.score > 0)
-        .sort((a, b) => b.score - a.score)
-        .map(si => si.item);
-
-      if (relevant.length > 0) {
-        console.log(`[CONTEXT] Found ${relevant.length} relevant items for query: ${query}`);
-        // Combine content but limit to avoid token bloat
-        let combined = '';
-        for (const item of relevant) {
-          const entry = `[Document: ${item.title}]\n${item.content}\n\n`;
-          if ((combined + entry).length < 8000) {
-            combined += entry;
-          } else break;
-        }
-        return combined;
-      }
-
-      // Fallback: Return the most recent items if no direct match found
-      console.log(`[CONTEXT] No direct match for "${query}". Returning fallback context.`);
-      return kbRepo.slice(0, 5).map(i => `[${i.title}]: ${i.content.slice(0, 1000)}`).join('\n');
-    } catch (err) {
-      console.error('[CONTEXT ERROR]', err);
-      return "General business information.";
-    }
-  }
 
   private async fetchUserProfile(instagramId: string, token: string) {
     try {
@@ -790,78 +582,19 @@ Include these fields:
   }
 
   async getKnowledgeBase(companyId: string) {
-    return await knowledge_base.find({ where: { company_id: companyId }, order: { created_on: 'DESC' } });
+    return await this.knowledgeBaseService.getKnowledgeBase(companyId);
   }
 
   async createKnowledgeItem(companyId: string, data: any) {
-    const item = new knowledge_base();
-    item.company_id = companyId;
-    item.title = data.title;
-    item.content = data.content;
-    item.category = data.category || 'General';
-    item.created_by_id = '00000000-0000-0000-0000-000000000000';
-    item.created_on = new Date();
-    await item.save();
-    return { Success: true, Data: item };
+    return await this.knowledgeBaseService.createKnowledgeItem(companyId, data);
   }
 
   async deleteKnowledgeItem(companyId: string, id: string) {
-    const item = await knowledge_base.findOne({ where: { id, company_id: companyId } });
-    if (!item) throw new Error('Knowledge item not found');
-    await item.remove();
-    return { Success: true };
+    return await this.knowledgeBaseService.deleteKnowledgeItem(companyId, id);
   }
 
   async uploadKnowledgeFile(companyId: string, file: any) {
-    let content = '';
-    const fileName = file.originalname;
-
-    if (fileName.endsWith('.pdf')) {
-      const pdfModule = require('pdf-parse');
-
-      try {
-        // Support for modern pdf-parse (v2.x) class-based API
-        if (pdfModule.PDFParse) {
-          const parser = new pdfModule.PDFParse({
-            data: file.buffer,
-            verbosity: 0
-          });
-          await parser.load();
-          const result = await parser.getText();
-          content = result.text;
-        }
-        // Support for classic pdf-parse (v1.x) function-based API
-        else {
-          const parseFunction = typeof pdfModule === 'function' ? pdfModule : pdfModule.default;
-          if (typeof parseFunction === 'function') {
-            const data = await parseFunction(file.buffer);
-            content = data.text;
-          } else {
-            throw new Error('PDF parsing library structure is unrecognized.');
-          }
-        }
-      } catch (e: any) {
-        console.error('[PDF PARSE ERROR]', e.message);
-        throw new Error(`Failed to parse PDF: ${e.message}`);
-      }
-    } else if (fileName.endsWith('.txt')) {
-      content = file.buffer.toString('utf-8');
-    } else {
-      throw new Error('Unsupported file format. Please upload PDF or TXT.');
-    }
-
-    if (!content.trim()) throw new Error('File is empty.');
-
-    const item = new knowledge_base();
-    item.company_id = companyId;
-    item.title = fileName;
-    item.content = content.trim();
-    item.category = 'Document';
-    item.created_by_id = '00000000-0000-0000-0000-000000000000';
-    item.created_on = new Date();
-    await item.save();
-
-    return { Success: true, Data: item };
+    return await this.knowledgeBaseService.uploadKnowledgeFile(companyId, file);
   }
 
   async updateWelcomeMessage(companyId: string, message: string) {
