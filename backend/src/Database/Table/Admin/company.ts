@@ -132,4 +132,10 @@ export class company extends BaseTable {
 
   @Column({ type: 'text', nullable: true })
   story_mention_message: string;
+
+  @Column({ type: 'boolean', default: true })
+  auto_reply_enabled: boolean;
+
+  @Column({ type: 'boolean', default: true })
+  human_handoff_alerts: boolean;
 }

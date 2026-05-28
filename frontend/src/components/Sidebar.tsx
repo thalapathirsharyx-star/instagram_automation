@@ -103,8 +103,7 @@ const Sidebar: React.FC = () => {
                 <NavLink to="/billing" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
                   <CreditCard size={20} />
                   <span>Billing</span>
-                </NavLink>
-                <NavLink to="/settings" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+                </NavLink>                <NavLink to="/settings" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
                   <Settings size={20} />
                   <span>Settings</span>
                 </NavLink>

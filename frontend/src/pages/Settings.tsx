@@ -47,6 +47,12 @@ const Settings: React.FC = () => {
   const [isEditingProfile, setIsEditingProfile] = React.useState(false);
   const [profileEmail, setProfileEmail] = React.useState(user?.email || '');
   const [notification, setNotification] = React.useState<{ type: 'success' | 'error', message: string } | null>(null);
+  const [autoReplyEnabled, setAutoReplyEnabled] = React.useState(true);
+  const [humanHandoffAlerts, setHumanHandoffAlerts] = React.useState(true);
+
+  const showNotification = (message: string, type: 'success' | 'error' = 'success') => {
+    setNotification({ message, type });
+  };
 
   React.useEffect(() => {
     if (notification) {
@@ -64,6 +70,8 @@ const Settings: React.FC = () => {
           name: res.Data.page_name,
           id: res.Data.business_id
         });
+        if (res.Data.auto_reply_enabled !== undefined) setAutoReplyEnabled(res.Data.auto_reply_enabled);
+        if (res.Data.human_handoff_alerts !== undefined) setHumanHandoffAlerts(res.Data.human_handoff_alerts);
       }
     }).catch(err => console.error('Failed to fetch IG settings:', err))
       .finally(() => setIsLoadingStatus(false));
@@ -292,33 +300,6 @@ const Settings: React.FC = () => {
             </div>
           </div>
         )}
-
-        <SettingsCard 
-          icon={Bot} 
-          title="AI Automation" 
-          subtitle="Configure how the AI interacts with your leads."
-        >
-          <div className="flex justify-between items-center p-5 bg-zinc-800 rounded-2xl border border-white/5 shadow-inner">
-            <div>
-              <div className="font-bold text-zinc-100 mb-1">Auto-Reply Discovery</div>
-              <p className="text-xs text-zinc-500 font-medium leading-relaxed">Automatically answer basic lead inquiries.</p>
-            </div>
-            <label className="relative inline-flex items-center cursor-pointer">
-              <input type="checkbox" className="sr-only peer" defaultChecked />
-              <div className="w-11 h-6 bg-zinc-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-zinc-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-500 shadow-inner"></div>
-            </label>
-          </div>
-          <div className="flex justify-between items-center p-5 bg-zinc-800 rounded-2xl border border-white/5 shadow-inner">
-            <div>
-              <div className="font-bold text-zinc-100 mb-1">Human Handoff Alerts</div>
-              <p className="text-xs text-zinc-500 font-medium leading-relaxed">Notify team when a lead needs human attention.</p>
-            </div>
-            <label className="relative inline-flex items-center cursor-pointer">
-              <input type="checkbox" className="sr-only peer" defaultChecked />
-              <div className="w-11 h-6 bg-zinc-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-zinc-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-500 shadow-inner"></div>
-            </label>
-          </div>
-        </SettingsCard>
 
         <SettingsCard 
           icon={Database} 

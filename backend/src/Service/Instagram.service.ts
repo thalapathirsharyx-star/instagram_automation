@@ -645,6 +645,8 @@ export class InstagramService {
         auto_follow_up_enabled: company?.auto_follow_up_enabled || false,
         story_mention_enabled: company?.story_mention_enabled || false,
         story_mention_message: company?.story_mention_message || '',
+        auto_reply_enabled: company?.auto_reply_enabled !== false, // default true
+        human_handoff_alerts: company?.human_handoff_alerts !== false, // default true
         timezone: company?.timezone || 'UTC',
         working_hours_start: company?.working_hours_start || '09:00',
         working_hours_end: company?.working_hours_end || '18:00',
@@ -661,6 +663,8 @@ export class InstagramService {
     if (data.auto_follow_up_enabled !== undefined) company.auto_follow_up_enabled = data.auto_follow_up_enabled;
     if (data.story_mention_enabled !== undefined) company.story_mention_enabled = data.story_mention_enabled;
     if (data.story_mention_message !== undefined) company.story_mention_message = data.story_mention_message;
+    if (data.auto_reply_enabled !== undefined) company.auto_reply_enabled = data.auto_reply_enabled;
+    if (data.human_handoff_alerts !== undefined) company.human_handoff_alerts = data.human_handoff_alerts;
     if (data.timezone !== undefined) company.timezone = data.timezone;
     if (data.working_hours_start !== undefined) company.working_hours_start = data.working_hours_start;
     if (data.working_hours_end !== undefined) company.working_hours_end = data.working_hours_end;

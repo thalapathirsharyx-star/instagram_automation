@@ -49,6 +49,8 @@ const Automation: React.FC = () => {
   const [autoFollowUp, setAutoFollowUp] = useState(false);
   const [storyMentionEnabled, setStoryMentionEnabled] = useState(false);
   const [storyMentionMessage, setStoryMentionMessage] = useState('');
+  const [autoReplyEnabled, setAutoReplyEnabled] = useState(true);
+  const [humanHandoffAlerts, setHumanHandoffAlerts] = useState(true);
   const [timezone, setTimezone] = useState('UTC');
   const [workingHoursStart, setWorkingHoursStart] = useState('09:00');
   const [workingHoursEnd, setWorkingHoursEnd] = useState('18:00');
@@ -140,6 +142,8 @@ const Automation: React.FC = () => {
         setAutoFollowUp(d?.auto_follow_up_enabled || false);
         setStoryMentionEnabled(d?.story_mention_enabled || false);
         setStoryMentionMessage(d?.story_mention_message || '');
+        if (d?.auto_reply_enabled !== undefined) setAutoReplyEnabled(d.auto_reply_enabled);
+        if (d?.human_handoff_alerts !== undefined) setHumanHandoffAlerts(d.human_handoff_alerts);
         setTimezone(d?.timezone || 'UTC');
         setWorkingHoursStart(d?.working_hours_start || '09:00');
         setWorkingHoursEnd(d?.working_hours_end || '18:00');
@@ -174,6 +178,8 @@ const Automation: React.FC = () => {
         auto_follow_up_enabled: autoFollowUp,
         story_mention_enabled: storyMentionEnabled,
         story_mention_message: storyMentionMessage,
+        auto_reply_enabled: autoReplyEnabled,
+        human_handoff_alerts: humanHandoffAlerts,
         timezone,
         working_hours_start: workingHoursStart,
         working_hours_end: workingHoursEnd,
@@ -796,8 +802,55 @@ const Automation: React.FC = () => {
       )}
       {/* ADVANCED TAB */}
       {activeTab === 'advanced' && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 animate-in slide-in-from-bottom-4 duration-500">
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 mb-8">
           
+          {/* AI Automation */}
+          <div className="w3-card flex flex-col h-full border-white/5">
+            <div className="flex items-start gap-4 mb-6">
+              <div className="p-3 bg-purple-500/10 text-purple-400 rounded-xl shadow-inner border border-purple-500/20">
+                <Bot size={24} />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-zinc-100">AI Routing & Discovery</h3>
+                <p className="text-xs text-zinc-400 mt-1">Configure how the AI interacts with new leads.</p>
+              </div>
+            </div>
+
+            <div className="flex-grow space-y-4">
+              <div className="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/10">
+                <div>
+                  <h4 className="text-sm font-medium text-zinc-100">Auto-Reply Discovery</h4>
+                  <p className="text-xs text-zinc-400 mt-1">Automatically answer basic lead inquiries using Brain Base.</p>
+                </div>
+                <label className="relative inline-flex items-center cursor-pointer">
+                  <input type="checkbox" className="sr-only peer" checked={autoReplyEnabled} onChange={(e) => setAutoReplyEnabled(e.target.checked)} />
+                  <div className="w-11 h-6 bg-zinc-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-zinc-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-500"></div>
+                </label>
+              </div>
+              <div className="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/10">
+                <div>
+                  <h4 className="text-sm font-medium text-zinc-100">Human Handoff Alerts</h4>
+                  <p className="text-xs text-zinc-400 mt-1">Notify your team when a lead requires human attention.</p>
+                </div>
+                <label className="relative inline-flex items-center cursor-pointer">
+                  <input type="checkbox" className="sr-only peer" checked={humanHandoffAlerts} onChange={(e) => setHumanHandoffAlerts(e.target.checked)} />
+                  <div className="w-11 h-6 bg-zinc-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-zinc-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-500"></div>
+                </label>
+              </div>
+            </div>
+
+            <div className="mt-8 pt-4 border-t border-white/5 flex justify-end">
+              <button
+                onClick={handleSaveAdvanced}
+                disabled={isSaving}
+                className="btn-primary w-full sm:w-auto"
+              >
+                {isSaving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
+                Save Changes
+              </button>
+            </div>
+          </div>
+
           {/* Auto Follow-up */}
           <div className="w3-card flex flex-col h-full border-white/5">
             <div className="flex items-start gap-4 mb-6">
