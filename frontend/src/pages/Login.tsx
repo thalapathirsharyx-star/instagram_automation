@@ -48,11 +48,11 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen w-full flex overflow-hidden bg-zinc-950 font-inter relative">
+    <div className="dark min-h-screen w-full flex overflow-hidden font-inter relative" style={{ backgroundColor: '#09090b', color: '#f4f4f5' }}>
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(168,85,247,0.15)_0%,transparent_50%)] pointer-events-none" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(59,130,246,0.15)_0%,transparent_50%)] pointer-events-none" />
       
-      <div className="dark hidden lg:flex lg:w-1/2 items-center justify-center relative p-20 z-10" style={{ backgroundColor: '#0c0a0f' }}>
+      <div className="hidden lg:flex lg:w-1/2 items-center justify-center relative p-20 z-10">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(139,92,246,0.12)_0%,transparent_70%)] pointer-events-none" />
         <div className="relative w-full max-w-2xl flex flex-col items-center">
           <div className="w-full transform hover:scale-[1.01] transition-transform duration-1000 ease-in-out">
