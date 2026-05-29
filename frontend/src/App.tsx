@@ -25,7 +25,7 @@ import AISettings from './pages/AISettings';
 import Team from './pages/Team';
 import Billing from './pages/Billing';
 import Broadcasts from './pages/Broadcasts';
-import { Search, Bell, Sun, Moon, LogOut } from 'lucide-react';
+import { Bell, Sun, Moon, LogOut } from 'lucide-react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 
@@ -33,12 +33,17 @@ function AppContent() {
   const location = useLocation();
   const { isAuthenticated, user, logout } = useAuth();
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
-  const hasProPlan = ['Pro', 'Business', 'Advanced'].includes(user?.company?.plan);
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
   
   useEffect(() => {
-    document.documentElement.classList.remove('dark');
-    document.documentElement.classList.add('light');
-  }, []);
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+      document.documentElement.classList.remove('light');
+    } else {
+      document.documentElement.classList.add('light');
+      document.documentElement.classList.remove('dark');
+    }
+  }, [theme]);
   
   const publicRoutes = ['/', '/login', '/signup', '/privacy', '/terms', '/data-deletion'];
   const isPublicPage = publicRoutes.includes(location.pathname);

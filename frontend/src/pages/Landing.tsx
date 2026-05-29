@@ -287,14 +287,7 @@ const CodeSetupTabs: React.FC = () => {
                 <div className="flex flex-col gap-2">
                   <div className="flex justify-between text-[10px] font-bold text-zinc-400">
                     <span>Maya Assistant Training</span>
-                    <motion.span
-                      animate={{ 
-                        textContent: ["0%", "45%", "85%", "100%"]
-                      }}
-                      transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
-                    >
-                      100%
-                    </motion.span>
+                    <TrainingPercentage />
                   </div>
                   <div className="w-full h-2 bg-white/5 rounded-full overflow-hidden">
                     <motion.div 
@@ -738,6 +731,22 @@ const InteractivePhoneMockup: React.FC = () => {
       </AnimatePresence>
     </div>
   );
+};
+
+const TrainingPercentage: React.FC = () => {
+  const [percent, setPercent] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setPercent((prev) => {
+        if (prev >= 100) return 0;
+        return prev + 1;
+      });
+    }, 35);
+    return () => clearInterval(interval);
+  }, []);
+
+  return <span>{percent}%</span>;
 };
 
 const Landing: React.FC = () => {
