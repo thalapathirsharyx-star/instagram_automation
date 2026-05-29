@@ -18,6 +18,11 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           port: ${{ secrets.SERVER_PORT || '22' }}
           script: |
+            # Load Node/NVM environment for non-interactive shell
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+            export PATH="$HOME/.nvm/versions/node/$(ls $HOME/.nvm/versions/node/ | tail -1)/bin:$PATH"
+
             # 1. Navigate to project root & Pull Latest Code
             cd /var/www/Thalapathi/Replyzens
             git config --global --add safe.directory /var/www/Thalapathi/Replyzens
