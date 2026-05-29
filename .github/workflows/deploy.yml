@@ -20,13 +20,14 @@ jobs:
           script: |
             # 1. Navigate to project root & Pull Latest Code
             cd /var/www/Thalapathi/Replyzens
+            git config --global --add safe.directory /var/www/Thalapathi/Replyzens
             git pull origin main
 
             # 2. Build Frontend
             echo "--- Building Frontend ---"
             cd /var/www/Thalapathi/Replyzens/frontend
             npm install
-            npm run build
+            node node_modules/typescript/bin/tsc -b && node node_modules/vite/bin/vite.js build
 
             # 3. Build Backend
             echo "--- Building Backend ---"
