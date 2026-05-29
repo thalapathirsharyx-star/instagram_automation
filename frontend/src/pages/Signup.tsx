@@ -65,14 +65,15 @@ const Signup: React.FC = () => {
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(168,85,247,0.15)_0%,transparent_50%)] pointer-events-none" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(59,130,246,0.15)_0%,transparent_50%)] pointer-events-none" />
       
-      <div className="hidden lg:flex lg:w-1/2 items-center justify-center relative p-20 z-10">
+      <div className="dark hidden lg:flex lg:w-1/2 items-center justify-center relative p-20 z-10" style={{ backgroundColor: '#0c0a0f' }}>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(139,92,246,0.12)_0%,transparent_70%)] pointer-events-none" />
         <div className="relative w-full max-w-2xl flex flex-col items-center">
-          <div className="w-full transform hover:scale-[1.02] transition-transform duration-1000 ease-in-out">
+          <div className="w-full transform hover:scale-[1.01] transition-transform duration-1000 ease-in-out">
             <DotLottieReact
               src="https://lottie.host/56e4fcc8-61f7-48de-ab64-9dc0e1c50e3a/aMDbskgDHA.lottie"
               loop
               autoplay
-              className="w-full h-full drop-shadow-[0_0_80px_rgba(168,85,247,0.3)] filter brightness-150 contrast-125 saturate-150 hue-rotate-30"
+              className="w-full h-full drop-shadow-[0_0_80px_rgba(168,85,247,0.25)] filter brightness-110 saturate-110"
             />
           </div>
           
