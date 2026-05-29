@@ -35,20 +35,10 @@ function AppContent() {
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   const hasProPlan = ['Pro', 'Business', 'Advanced'].includes(user?.company?.plan);
   
-  const [theme, setTheme] = useState<'dark' | 'light'>(() => {
-    const saved = localStorage.getItem('theme');
-    if (saved === 'light' || saved === 'dark') return saved;
-    return 'dark';
-  });
-
   useEffect(() => {
-    if (theme === 'light') {
-      document.documentElement.classList.add('light');
-    } else {
-      document.documentElement.classList.remove('light');
-    }
-    localStorage.setItem('theme', theme);
-  }, [theme]);
+    document.documentElement.classList.remove('dark');
+    document.documentElement.classList.add('light');
+  }, []);
   
   const publicRoutes = ['/', '/login', '/signup', '/privacy', '/terms', '/data-deletion'];
   const isPublicPage = publicRoutes.includes(location.pathname);

@@ -1,180 +1,742 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import {
   Zap,
   Menu,
   X,
-  Users,
-  MessageSquare,
-  Clock,
   ChevronDown,
-  ChevronUp,
   CheckCircle2,
   ArrowRight,
-  TrendingDown,
-  Filter,
   Check,
-  AlertCircle as AlertCircleIcon
+  Shield,
+  Sparkles,
+  Play,
+  FolderSync,
+  Layers,
+  Database,
+  Lock,
+  Upload,
+  FileText,
+  TrendingUp
 } from 'lucide-react';
-import { clsx, type ClassValue } from "clsx";
-import { twMerge } from "tailwind-merge";
 
-function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
-}
+const Instagram = ({ size = 24, className = "" }: { size?: number; className?: string }) => (
+  <svg 
+    xmlns="http://www.w3.org/2000/svg" 
+    width={size} 
+    height={size} 
+    viewBox="0 0 24 24" 
+    fill="none" 
+    stroke="currentColor" 
+    strokeWidth="2" 
+    strokeLinecap="round" 
+    strokeLinejoin="round" 
+    className={`lucide lucide-instagram ${className}`}
+  >
+    <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/>
+    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+    <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>
+  </svg>
+);
 
 const FAQItem = ({ question, answer }: { question: string, answer: string }) => {
   const [isOpen, setIsOpen] = useState(false);
   return (
-    <div className="border-b border-slate-200/60 py-6">
+    <motion.div 
+      layout
+      variants={{
+        hidden: { opacity: 0, y: 15 },
+        show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 120, damping: 18 } }
+      }}
+      className={`border border-black/5 dark:border-white/5 rounded-2xl p-6 bg-zinc-500/5 dark:bg-white/[0.02] hover:bg-zinc-500/10 dark:hover:bg-white/[0.04] transition-all duration-300 relative overflow-hidden shadow-sm dark:shadow-none ${
+        isOpen ? 'ring-1 ring-brand-purple/20 border-brand-purple/30' : ''
+      }`}
+    >
+      {/* Glowing vertical indicator stripe */}
+      <div 
+        className={`absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-brand-pink to-brand-purple transition-all duration-500 origin-top ${
+          isOpen ? 'scale-y-100 opacity-100' : 'scale-y-0 opacity-0'
+        }`}
+      />
+
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between text-left group transition-all"
+        className="w-full flex items-center justify-between text-left group transition-all outline-none"
       >
-        <span className="text-lg font-semibold text-slate-800 group-hover:text-sky-600">{question}</span>
-        {isOpen ? <ChevronUp className="text-sky-600" /> : <ChevronDown className="text-slate-400 group-hover:text-sky-400" />}
+        <span className="text-base font-bold text-zinc-800 dark:text-zinc-200 group-hover:text-brand-purple dark:group-hover:text-brand-pink transition-colors">
+          {question}
+        </span>
+        <motion.div
+          animate={{ rotate: isOpen ? 180 : 0, scale: isOpen ? 1.1 : 1 }}
+          transition={{ type: "spring", stiffness: 200, damping: 15 }}
+          className={`w-8 h-8 rounded-full flex items-center justify-center border transition-all ${
+            isOpen 
+              ? 'border-brand-purple/30 bg-brand-purple/10 text-brand-purple' 
+              : 'border-zinc-200 dark:border-white/10 text-zinc-500 dark:text-zinc-400 group-hover:border-zinc-300 dark:group-hover:border-white/20'
+          }`}
+        >
+          <ChevronDown size={16} />
+        </motion.div>
       </button>
-      <AnimatePresence>
+
+      <AnimatePresence initial={false}>
         {isOpen && (
           <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
+            initial={{ height: 0, opacity: 0, marginTop: 0 }}
+            animate={{ height: "auto", opacity: 1, marginTop: 16 }}
+            exit={{ height: 0, opacity: 0, marginTop: 0 }}
+            transition={{ type: "spring", stiffness: 180, damping: 20 }}
             className="overflow-hidden"
           >
-            <p className="pt-4 pb-2 text-slate-500 leading-relaxed font-medium">
+            <motion.p 
+              initial={{ y: 8, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: 8, opacity: 0 }}
+              transition={{ duration: 0.25, delay: 0.05 }}
+              className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed font-medium"
+            >
               {answer}
-            </p>
+            </motion.p>
           </motion.div>
         )}
       </AnimatePresence>
+    </motion.div>
+  );
+};
+
+const CodeSetupTabs: React.FC = () => {
+  const [activeTab, setActiveTab] = useState<'connect' | 'train' | 'automate' | 'crm'>('connect');
+
+  // Automatically cycle through tabs every 8 seconds to show the live animations
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setActiveTab((prev) => {
+        if (prev === 'connect') return 'train';
+        if (prev === 'train') return 'automate';
+        if (prev === 'automate') return 'crm';
+        return 'connect';
+      });
+    }, 8000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const tabs = {
+    connect: {
+      title: "1. Link Instagram",
+      heading: "Connect in one click",
+      desc: "Connect your Instagram Business account instantly. Simply click connect, authenticate via Meta's secure verification popup, and you're ready to start. No complex settings required.",
+    },
+    train: {
+      title: "2. Teach Your Assistant",
+      heading: "Teach Maya about your products",
+      desc: "Paste your catalog descriptions, type your frequently asked questions, or upload a product PDF. Maya learns instantly to answer pricing, sizing, and shipping questions.",
+    },
+    automate: {
+      title: "3. Set Up Auto-Answers",
+      heading: "Create rules for automatic replies",
+      desc: "Specify how Maya replies. Create simple rules for specific questions, automatically collect buyer details (like sizes or emails), or chat manually yourself.",
+    },
+    crm: {
+      title: "4. Track Your Sales",
+      heading: "Organize customer leads automatically",
+      desc: "Never lose track of a potential buyer. ReplyZens automatically organizes your customer chats, tags warm leads, and saves them in a clean visual tracker.",
+    }
+  };
+
+  return (
+    <div className="grid lg:grid-cols-[1fr_1.2fr] gap-8 items-stretch bg-card/40 border border-white/5 p-6 md:p-8 rounded-3xl backdrop-blur-md min-h-[480px]">
+      {/* Tab Selectors & Info */}
+      <div className="flex flex-col justify-between gap-6">
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-wrap gap-2">
+            {Object.keys(tabs).map((tabKey) => (
+              <button
+                key={tabKey}
+                onClick={() => setActiveTab(tabKey as 'connect' | 'train' | 'automate' | 'crm')}
+                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                  activeTab === tabKey
+                    ? 'bg-brand-purple/10 text-brand-purple border border-brand-purple/20 shadow-lg shadow-brand-purple/5'
+                    : 'text-zinc-400 hover:text-zinc-200 border border-transparent'
+                }`}
+              >
+                {tabs[tabKey as keyof typeof tabs].title}
+              </button>
+            ))}
+          </div>
+
+          <div className="mt-4">
+            <h3 className="text-xl md:text-2xl font-bold text-white mb-3">
+              {tabs[activeTab].heading}
+            </h3>
+            <p className="text-sm text-zinc-400 leading-relaxed font-medium">
+              {tabs[activeTab].desc}
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-3 text-xs font-bold text-brand-pink mt-4">
+          <Zap size={14} className="animate-pulse" />
+          Setup takes less than 3 minutes — no technical skills required.
+        </div>
+      </div>
+
+      {/* Visual Animation Panel */}
+      <div className="dark relative rounded-2xl bg-[#0B0D13] border border-white/5 overflow-hidden shadow-2xl p-6 min-h-[300px] flex flex-col justify-center items-center">
+        {/* Top bar mockup */}
+        <div className="absolute top-0 left-0 right-0 h-9 bg-[#11141D] border-b border-white/5 flex items-center px-4 justify-between">
+          <div className="flex gap-1.5">
+            <div className="w-2.5 h-2.5 rounded-full bg-red-500/30" />
+            <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/30" />
+            <div className="w-2.5 h-2.5 rounded-full bg-green-500/30" />
+          </div>
+          <span className="text-[9px] text-zinc-500 font-bold uppercase tracking-wider select-none">
+            {activeTab === 'connect' && "Step 1: Connect Account"}
+            {activeTab === 'train' && "Step 2: AI Training"}
+            {activeTab === 'automate' && "Step 3: Auto-Replies"}
+            {activeTab === 'crm' && "Step 4: Sales Tracking"}
+          </span>
+        </div>
+
+        {/* Content Area with Animations */}
+        <div className="w-full pt-6 flex-grow flex items-center justify-center">
+          <AnimatePresence mode="wait">
+            {activeTab === 'connect' && (
+              <motion.div
+                key="connect"
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ duration: 0.3 }}
+                className="w-full flex flex-col items-center gap-6"
+              >
+                <div className="flex items-center gap-8 relative">
+                  {/* Instagram Logo */}
+                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-[#f9ce34] via-[#ee2a7b] to-[#6228d7] flex items-center justify-center shadow-lg shadow-pink-500/10">
+                    <Instagram size={32} className="text-white" />
+                  </div>
+
+                  {/* Pulsing Connector Line */}
+                  <div className="flex items-center justify-center relative w-20">
+                    <div className="w-full h-1 bg-white/10 rounded-full overflow-hidden">
+                      <motion.div 
+                        className="h-full bg-gradient-to-r from-brand-pink to-brand-purple"
+                        animate={{ x: [-80, 80] }}
+                        transition={{ repeat: Infinity, duration: 1.5, ease: "linear" }}
+                        style={{ width: "30px" }}
+                      />
+                    </div>
+                    <div className="absolute bg-[#11141D] border border-white/10 p-1.5 rounded-full">
+                      <Lock size={12} className="text-brand-purple" />
+                    </div>
+                  </div>
+
+                  {/* ReplyZens Logo */}
+                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-brand-pink to-brand-purple flex items-center justify-center shadow-lg shadow-brand-purple/20">
+                    <Zap size={32} className="text-white" />
+                  </div>
+                </div>
+
+                <div className="flex flex-col items-center gap-2 mt-2">
+                  <motion.button
+                    initial={{ backgroundColor: "rgba(139, 92, 246, 0.1)", color: "#8b5cf6" }}
+                    animate={{ 
+                      backgroundColor: ["rgba(139, 92, 246, 0.1)", "rgba(16, 185, 129, 0.1)", "rgba(16, 185, 129, 0.1)"],
+                      color: ["#8b5cf6", "#10b981", "#10b981"],
+                      borderColor: ["rgba(139, 92, 246, 0.2)", "rgba(16, 185, 129, 0.2)", "rgba(16, 185, 129, 0.2)"]
+                    }}
+                    transition={{ repeat: Infinity, duration: 4, repeatDelay: 1 }}
+                    className="px-6 py-2.5 rounded-xl border text-xs font-bold flex items-center gap-2 shadow-sm"
+                  >
+                    <Instagram size={14} />
+                    Link Instagram Page
+                  </motion.button>
+                  <motion.span 
+                    animate={{ opacity: [0, 1, 1, 0] }}
+                    transition={{ repeat: Infinity, duration: 4, repeatDelay: 1 }}
+                    className="text-[10px] text-emerald-500 font-bold flex items-center gap-1"
+                  >
+                    <Check size={10} strokeWidth={3} /> Connected Successfully!
+                  </motion.span>
+                </div>
+              </motion.div>
+            )}
+
+            {activeTab === 'train' && (
+              <motion.div
+                key="train"
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ duration: 0.3 }}
+                className="w-full max-w-sm flex flex-col gap-5"
+              >
+                {/* Simulated File Box */}
+                <div className="bg-[#11141D] border border-white/5 rounded-2xl p-4 flex items-center gap-4">
+                  <div className="w-10 h-10 rounded-xl bg-brand-pink/10 border border-brand-pink/20 flex items-center justify-center text-brand-pink shrink-0">
+                    <FileText size={20} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-xs font-bold text-white truncate">product_shipping_faq.pdf</div>
+                    <div className="text-[10px] text-zinc-500 mt-0.5">Size: 1.2 MB</div>
+                  </div>
+                  <Upload size={16} className="text-zinc-400 animate-bounce" />
+                </div>
+
+                {/* Progress Bar & Status */}
+                <div className="flex flex-col gap-2">
+                  <div className="flex justify-between text-[10px] font-bold text-zinc-400">
+                    <span>Maya Assistant Training</span>
+                    <motion.span
+                      animate={{ 
+                        textContent: ["0%", "45%", "85%", "100%"]
+                      }}
+                      transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
+                    >
+                      100%
+                    </motion.span>
+                  </div>
+                  <div className="w-full h-2 bg-white/5 rounded-full overflow-hidden">
+                    <motion.div 
+                      className="h-full bg-gradient-to-r from-brand-pink to-brand-purple"
+                      initial={{ width: "0%" }}
+                      animate={{ width: "100%" }}
+                      transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
+                    />
+                  </div>
+                </div>
+
+                {/* Simulated Brain Synced Checkboxes */}
+                <div className="grid grid-cols-2 gap-2 mt-1">
+                  {[
+                    "Shoe sizes & inventory",
+                    "Return policy facts",
+                    "Shipping fees & rates",
+                    "FAQ answers trained"
+                  ].map((text, i) => (
+                    <motion.div
+                      key={i}
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: i * 0.4, duration: 0.3 }}
+                      className="flex items-center gap-1.5 text-[10px] font-bold text-zinc-400"
+                    >
+                      <CheckCircle2 size={12} className="text-emerald-500 shrink-0" />
+                      <span>{text}</span>
+                    </motion.div>
+                  ))}
+                </div>
+              </motion.div>
+            )}
+
+            {activeTab === 'automate' && (
+              <motion.div
+                key="automate"
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ duration: 0.3 }}
+                className="w-full max-w-sm flex flex-col gap-3"
+              >
+                {/* Chat Header */}
+                <div className="flex items-center justify-between border-b border-white/5 pb-2.5 mb-1">
+                  <div className="flex items-center gap-2">
+                    <div className="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-[10px] font-extrabold text-zinc-300">
+                      JS
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-[10px] font-bold text-zinc-300">@john_smith</span>
+                      <span className="text-[8px] text-emerald-400 font-semibold flex items-center gap-0.5">● Active</span>
+                    </div>
+                  </div>
+                  <span className="text-[8px] text-zinc-500 font-bold uppercase bg-white/5 px-2 py-0.5 rounded-full border border-white/5">
+                    Customer Chat
+                  </span>
+                </div>
+
+                {/* Message Bubble 1 (Customer) */}
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.5 }}
+                  className="bg-white/5 border border-white/5 rounded-2xl rounded-tl-none p-3 max-w-[85%] self-start"
+                >
+                  <p className="text-[11px] text-zinc-300 font-medium">
+                    Hi! Do you have the white sneaker in size 10? How much is it?
+                  </p>
+                </motion.div>
+
+                {/* AI Processing / Typing Indicator */}
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ 
+                    opacity: [0, 1, 1, 0],
+                  }}
+                  transition={{ 
+                    duration: 2, 
+                    repeat: Infinity,
+                    repeatDelay: 3,
+                    times: [0, 0.1, 0.9, 1] 
+                  }}
+                  className="flex items-center gap-1 bg-brand-purple/10 border border-brand-purple/10 rounded-full px-3 py-1.5 w-max self-end mr-2"
+                >
+                  <span className="text-[8px] font-bold text-brand-purple mr-1">Maya is typing</span>
+                  <div className="flex gap-0.5">
+                    <span className="w-1 h-1 bg-brand-purple rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                    <span className="w-1 h-1 bg-brand-purple rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                    <span className="w-1 h-1 bg-brand-purple rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                  </div>
+                </motion.div>
+
+                {/* Message Bubble 2 (Maya AI Reply) */}
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 2.5 }}
+                  className="bg-brand-purple text-white rounded-2xl rounded-tr-none p-3 max-w-[85%] self-end relative"
+                >
+                  <p className="text-[11px] font-medium leading-relaxed">
+                    Yes! We have 3 pairs left in size 10. The price is ₹2,499 with free shipping. Would you like a direct payment checkout link?
+                  </p>
+                  <div className="absolute -bottom-4 right-1 flex items-center gap-1 text-[8px] font-extrabold text-brand-pink bg-[#0B0D13] px-2 py-0.5 rounded-full border border-white/5">
+                    <Sparkles size={8} /> Auto-Answered by AI
+                  </div>
+                </motion.div>
+              </motion.div>
+            )}
+
+            {activeTab === 'crm' && (
+              <motion.div
+                key="crm"
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ duration: 0.3 }}
+                className="w-full max-w-sm flex flex-col gap-3"
+              >
+                {/* Lead List Header */}
+                <div className="flex items-center justify-between pb-2 border-b border-white/5">
+                  <span className="text-xs font-bold text-white">Live Customer Tracker</span>
+                  <span className="text-[9px] font-bold text-zinc-500 flex items-center gap-1 bg-[#11141D] border border-white/5 px-2 py-0.5 rounded-md">
+                    <TrendingUp size={10} className="text-brand-pink" /> 3 New Leads Today
+                  </span>
+                </div>
+
+                {/* Lead Items */}
+                <div className="flex flex-col gap-2">
+                  {/* Lead 1 */}
+                  <div className="bg-[#11141D] border border-white/5 p-2.5 rounded-xl flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className="w-6 h-6 rounded-full bg-brand-purple/10 border border-brand-purple/20 flex items-center justify-center text-[9px] font-bold text-brand-purple">
+                        AJ
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="text-[10px] font-bold text-zinc-300">@alex_jones</span>
+                        <span className="text-[8px] text-zinc-500">Asked about pricing</span>
+                      </div>
+                    </div>
+                    <span className="text-[8px] font-extrabold bg-brand-pink/10 text-brand-pink border border-brand-pink/10 px-2 py-0.5 rounded-md">
+                      Warm Lead 🔥
+                    </span>
+                  </div>
+
+                  {/* Lead 2 */}
+                  <div className="bg-[#11141D] border border-white/5 p-2.5 rounded-xl flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className="w-6 h-6 rounded-full bg-brand-pink/10 border border-brand-pink/20 flex items-center justify-center text-[9px] font-bold text-brand-pink">
+                        SM
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="text-[10px] font-bold text-zinc-300">@sara.miller</span>
+                        <span className="text-[8px] text-zinc-500">Requested checkout link</span>
+                      </div>
+                    </div>
+                    <span className="text-[8px] font-extrabold bg-emerald-500/10 text-emerald-400 border border-emerald-500/10 px-2 py-0.5 rounded-md">
+                      Converted 👑
+                    </span>
+                  </div>
+
+                  {/* Animated Incoming Lead Row */}
+                  <motion.div
+                    initial={{ opacity: 0, height: 0, y: -10 }}
+                    animate={{ opacity: 1, height: "auto", y: 0 }}
+                    transition={{ delay: 1, duration: 0.4 }}
+                    className="bg-[#11141D] border border-brand-purple/30 p-2.5 rounded-xl flex items-center justify-between shadow-lg shadow-brand-purple/5"
+                  >
+                    <div className="flex items-center gap-2">
+                      <div className="w-6 h-6 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-[9px] font-bold text-emerald-400">
+                        JD
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="text-[10px] font-bold text-zinc-300">@johndoe</span>
+                        <span className="text-[8px] text-zinc-400">Purchased Pro Plan</span>
+                      </div>
+                    </div>
+                    <div className="flex flex-col items-end gap-1">
+                      <span className="text-[8px] font-extrabold bg-emerald-500 text-white px-2 py-0.5 rounded-md">
+                        +₹2,499
+                      </span>
+                      <span className="text-[7px] font-bold text-brand-purple">Saved to Sheets</span>
+                    </div>
+                  </motion.div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </div>
     </div>
   );
 };
 
-// SVG Icon Component extracted
-const AlertCircle = (props: any) => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
-    <circle cx="12" cy="12" r="10"></circle>
-    <line x1="12" y1="8" x2="12" y2="12"></line>
-    <line x1="12" y1="16" x2="12.01" y2="16"></line>
-  </svg>
-);
-
-const PhoneMockup: React.FC = () => {
+const NoiseFilterMockup: React.FC = () => {
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.9, rotateY: -10 }}
-      animate={{ opacity: 1, scale: 1, rotateY: 5 }}
-      transition={{ duration: 1, ease: "easeOut" }}
-      className="relative hidden lg:block perspective-1000"
-    >
-      {/* Chassis */}
-      <div className="relative w-[300px] h-[610px] mx-auto bg-slate-900 rounded-[3.5rem] p-3 shadow-2xl border-[6px] border-slate-800 ring-1 ring-slate-100/10">
+    <div className="dark w-full bg-[#0B0D13] border border-white/5 rounded-3xl overflow-hidden shadow-2xl shadow-black/40 flex flex-col h-[400px]">
+      {/* Browser Bar */}
+      <div className="h-10 bg-[#11141D] border-b border-white/5 flex items-center justify-between px-4">
+        <div className="flex gap-1.5">
+          <div className="w-2.5 h-2.5 rounded-full bg-white/10" />
+          <div className="w-2.5 h-2.5 rounded-full bg-white/10" />
+          <div className="w-2.5 h-2.5 rounded-full bg-white/10" />
+        </div>
+        <div className="flex items-center gap-1.5 px-3 py-1 bg-black/20 rounded-lg border border-white/5">
+          <Shield size={10} className="text-success" />
+          <span className="text-[9px] text-zinc-400 font-mono">noise-filter-engine.bin</span>
+        </div>
+        <div className="w-4" />
+      </div>
+
+      {/* Main Panel Content */}
+      <div className="flex-1 p-5 flex flex-col gap-4 overflow-y-auto premium-scroll">
+        
+        {/* Spam / Casual Chat - FILTERED */}
+        <div className="flex items-start gap-3 p-3 bg-white/[0.02] border border-white/5 rounded-2xl opacity-40 hover:opacity-60 transition-opacity">
+          <div className="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center text-xs font-bold text-zinc-400">AJ</div>
+          <div className="flex-1">
+            <div className="flex items-center justify-between mb-1">
+              <span className="text-xs font-bold text-zinc-300">@alex_jones</span>
+              <span className="text-[9px] font-bold text-zinc-500 uppercase tracking-wider bg-white/5 px-2 py-0.5 rounded-md">Casual</span>
+            </div>
+            <p className="text-[11px] text-zinc-400 font-medium">"Wow nice post, check out my profile!"</p>
+          </div>
+          <div className="text-[9px] font-bold text-zinc-500 uppercase px-2 py-1 bg-white/5 rounded-lg border border-white/5 self-center">
+            Filtered
+          </div>
+        </div>
+
+        {/* Lead with Intent - ESCALATED */}
+        <div className="flex items-start gap-3 p-3 bg-brand-purple/5 border border-brand-purple/20 rounded-2xl relative shadow-lg shadow-brand-purple/5">
+          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-brand-pink to-brand-purple flex items-center justify-center text-xs font-bold text-white shadow-md">SM</div>
+          <div className="flex-1">
+            <div className="flex items-center justify-between mb-1">
+              <span className="text-xs font-bold text-white">@sophia_m</span>
+              <span className="text-[9px] font-bold text-brand-pink bg-brand-pink/10 px-2 py-0.5 rounded-md border border-brand-pink/20 uppercase tracking-wider">High Intent</span>
+            </div>
+            <p className="text-[11px] text-zinc-300 font-medium">"Hey! Do you ship to Australia? I want to buy the premium package."</p>
+          </div>
+          <div className="text-[9px] font-bold text-brand-purple uppercase px-2 py-1 bg-brand-purple/10 rounded-lg border border-brand-purple/20 self-center animate-pulse">
+            Active Lead
+          </div>
+        </div>
+
+        {/* Spam / Casual Chat - FILTERED */}
+        <div className="flex items-start gap-3 p-3 bg-white/[0.02] border border-white/5 rounded-2xl opacity-40 hover:opacity-60 transition-opacity">
+          <div className="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center text-xs font-bold text-zinc-400">K9</div>
+          <div className="flex-1">
+            <div className="flex items-center justify-between mb-1">
+              <span className="text-xs font-bold text-zinc-300">@kristina99</span>
+              <span className="text-[9px] font-bold text-zinc-500 uppercase tracking-wider bg-white/5 px-2 py-0.5 rounded-md">Spam</span>
+            </div>
+            <p className="text-[11px] text-zinc-400 font-medium">"Earn 500$ daily working from home, dm me."</p>
+          </div>
+          <div className="text-[9px] font-bold text-zinc-500 uppercase px-2 py-1 bg-white/5 rounded-lg border border-white/5 self-center">
+            Blocked
+          </div>
+        </div>
+
+      </div>
+
+      <div className="h-11 bg-[#11141D] border-t border-white/5 flex items-center justify-between px-5 text-[10px] font-mono text-zinc-500">
+        <span>Filtered 293 Spam Messages today</span>
+        <span className="text-brand-purple font-bold">Accuracy: 98.6%</span>
+      </div>
+    </div>
+  );
+};
+
+const InteractivePhoneMockup: React.FC = () => {
+  const [messages, setMessages] = useState<Array<{ sender: 'user' | 'ai'; text: string }>>([]);
+  const [typing, setTyping] = useState(false);
+  const [syncStatus, setSyncStatus] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    const runAnimation = async () => {
+      if (!active) return;
+      setMessages([]);
+      setTyping(false);
+      setSyncStatus(false);
+
+      // Step 1: User message 1
+      await new Promise(r => setTimeout(r, 1200));
+      if (!active) return;
+      setMessages([{ sender: 'user', text: "Hey! Do you ship to Canada? 🇨🇦" }]);
+
+      // Step 2: AI Typing
+      await new Promise(r => setTimeout(r, 1000));
+      if (!active) return;
+      setTyping(true);
+
+      // Step 3: AI Message 1
+      await new Promise(r => setTimeout(r, 1500));
+      if (!active) return;
+      setTyping(false);
+      setMessages(prev => [...prev, {
+        sender: 'ai',
+        text: "Yes, we ship standard worldwide! 🌍 Shipping to Canada is ₹499. Would you like me to hold one?"
+      }]);
+
+      // Step 4: User message 2
+      await new Promise(r => setTimeout(r, 2000));
+      if (!active) return;
+      setMessages(prev => [...prev, { sender: 'user', text: "Yes please! The standard hoodie in black, size L." }]);
+
+      // Step 5: AI Typing
+      await new Promise(r => setTimeout(r, 1000));
+      if (!active) return;
+      setTyping(true);
+
+      // Step 6: AI Message 2 + Sync
+      await new Promise(r => setTimeout(r, 1500));
+      if (!active) return;
+      setTyping(false);
+      setMessages(prev => [...prev, {
+        sender: 'ai',
+        text: "Done! 💳 Checkout link: replyzens.com/checkout/hoodie-l"
+      }]);
+
+      // Step 7: CRM Sync Banner
+      await new Promise(r => setTimeout(r, 1200));
+      if (!active) return;
+      setSyncStatus(true);
+
+      // Hold before reset
+      await new Promise(r => setTimeout(r, 6000));
+      if (active) {
+        runAnimation();
+      }
+    };
+
+    runAnimation();
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  return (
+    <div className="dark relative mx-auto py-6 px-10">
+      {/* Outer Phone Container with overflow-hidden */}
+      <div className="relative w-[280px] h-[520px] sm:w-[300px] sm:h-[560px] bg-[#09090B] rounded-[48px] p-3 shadow-2xl border-[6px] border-zinc-800 ring-1 ring-white/10 overflow-hidden font-sans select-none">
         {/* Dynamic Island */}
-        <div className="absolute top-7 left-1/2 -translate-x-1/2 w-24 h-7 bg-black rounded-full z-20 flex items-center justify-center">
-          <div className="w-1.5 h-1.5 rounded-full bg-slate-800 ml-auto mr-4" />
+        <div className="absolute top-5 left-1/2 -translate-x-1/2 w-24 h-5 bg-black rounded-full z-20 flex items-center justify-center">
+          <div className="w-1.5 h-1.5 rounded-full bg-zinc-800 ml-auto mr-3" />
         </div>
 
         {/* Screen Content */}
-        <div className="w-full h-full bg-white rounded-[2.8rem] overflow-hidden relative flex flex-col font-sans">
-          {/* Mock Instagram Header */}
-          <div className="h-14 border-b border-slate-100 px-5 flex items-center justify-between pt-6">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-yellow-400 via-red-500 to-purple-600 p-0.5">
-                <div className="w-full h-full rounded-full bg-white border-2 border-white overflow-hidden">
-                  <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=user1" alt="user" />
+        <div className="w-full h-full bg-[#0D0E12] rounded-[38px] overflow-hidden relative flex flex-col pt-8 border border-white/5">
+          {/* Instagram DM Header */}
+          <div className="h-12 border-b border-white/5 px-4 flex items-center gap-2.5 bg-black/15">
+            <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-yellow-400 via-red-500 to-purple-600 p-0.5 shrink-0">
+              <div className="w-full h-full rounded-full bg-[#0D0E12] p-0.5">
+                <div className="w-full h-full rounded-full bg-zinc-700 flex items-center justify-center text-[8px] font-bold text-white uppercase">
+                  JD
                 </div>
               </div>
-              <div className="flex flex-col">
-                <span className="text-[10px] font-bold text-slate-900 leading-tight">Sarah Jordan</span>
-                <span className="text-[8px] text-green-500 font-medium leading-none">Active now</span>
-              </div>
             </div>
-            <div className="flex gap-2.5">
-              <div className="w-1.5 h-1.5 rounded-full bg-slate-200" />
-              <div className="w-1.5 h-1.5 rounded-full bg-slate-200" />
-              <div className="w-1.5 h-1.5 rounded-full bg-slate-200" />
+            <div className="flex flex-col text-left">
+              <span className="text-[10px] font-bold text-zinc-100 leading-tight">Jordan.design</span>
+              <span className="text-[7px] text-success font-medium flex items-center gap-1 leading-none mt-0.5">
+                <span className="w-1 h-1 rounded-full bg-success animate-pulse" /> Active now
+              </span>
             </div>
           </div>
 
-          {/* Chat Messages */}
-          <div className="flex-1 p-4 space-y-4 overflow-y-auto">
-            <div className="flex justify-start">
-              <div className="max-w-[80%] bg-slate-100 p-2.5 rounded-2xl rounded-tl-none text-[11px] text-slate-800 leading-relaxed">
-                Hi! Do you have the blue dress in size M back in stock? 👗
-              </div>
-            </div>
+          {/* Message Feed */}
+          <div className="flex-1 p-3.5 space-y-3 overflow-y-auto premium-scroll flex flex-col">
+            <AnimatePresence>
+              {messages.map((msg, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  transition={{ duration: 0.3 }}
+                  className={`flex max-w-[85%] ${msg.sender === 'ai' ? 'self-end justify-end' : 'self-start'}`}
+                >
+                  <div
+                    className={`p-2.5 rounded-2xl text-[9px] font-medium leading-relaxed text-left ${
+                      msg.sender === 'ai'
+                        ? 'bg-brand-purple text-white rounded-tr-none shadow-md shadow-brand-purple/10'
+                        : 'bg-zinc-800/80 text-zinc-200 rounded-tl-none border border-white/5'
+                    }`}
+                  >
+                    {msg.sender === 'ai' && (
+                      <div className="flex items-center gap-1 text-[6px] font-bold uppercase tracking-wider text-brand-pink mb-1 justify-start">
+                        <Zap size={7} className="fill-current" /> AI Assistant
+                      </div>
+                    )}
+                    {msg.text}
+                  </div>
+                </motion.div>
+              ))}
 
-            <motion.div
-              initial={{ opacity: 0, y: 5 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1 }}
-              className="flex justify-end"
-            >
-              <div className="max-w-[80%] bg-sky-600 p-2.5 rounded-2xl rounded-tr-none text-[11px] text-white leading-relaxed shadow-sm">
-                <div className="flex items-center gap-1.5 mb-1 opacity-80 text-[8px] font-bold uppercase tracking-wider">
-                  <Zap size={8} fill="currentColor" /> AI Assistant
-                </div>
-                Yes, Sarah! We just restocked 5 units this morning. Would you like me to hold one for you? ✨
-              </div>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 5 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 2.5 }}
-              className="flex justify-start"
-            >
-              <div className="max-w-[80%] bg-slate-100 p-2.5 rounded-2xl rounded-tl-none text-[11px] text-slate-800 leading-relaxed">
-                OMG yes please! Can you send a payment link?
-              </div>
-            </motion.div>
+              {typing && (
+                <motion.div
+                  initial={{ opacity: 0, y: 5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0 }}
+                  className="self-end bg-brand-purple text-white p-2.5 rounded-2xl rounded-tr-none flex items-center gap-1.5 shadow-md shadow-brand-purple/10"
+                >
+                  <div className="flex items-center gap-1 text-[6px] font-bold uppercase tracking-wider text-brand-pink">
+                    <Zap size={7} className="fill-current" /> Typing
+                  </div>
+                  <div className="flex gap-1">
+                    <span className="w-1 h-1 bg-white rounded-full animate-bounce delay-100" />
+                    <span className="w-1 h-1 bg-white rounded-full animate-bounce delay-200" />
+                    <span className="w-1 h-1 bg-white rounded-full animate-bounce delay-300" />
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
 
-          {/* Footer Input */}
-          <div className="h-16 border-t border-slate-50 px-4 flex items-center gap-3 pb-2">
-            <div className="w-8 h-8 rounded-full bg-indigo-50 border border-sky-100/50 flex items-center justify-center text-sky-500">
-              <Zap size={14} fill="currentColor" />
-            </div>
-            <div className="flex-1 h-9 bg-slate-50 border border-slate-100 rounded-full px-4 flex items-center text-[10px] text-slate-400">
-              Auto-reply enabled...
-            </div>
+          {/* Mock Status Footer */}
+          <div className="h-8 border-t border-white/5 bg-black/20 px-3 flex items-center justify-between text-[8px] font-mono text-zinc-500">
+            <span>Filter: Active</span>
+            <span className="text-brand-pink font-bold">Auto-replies On</span>
           </div>
         </div>
       </div>
 
-      {/* Floating Indicators */}
-      <motion.div
-        animate={{ y: [0, -10, 0] }}
-        transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
-        className="absolute -top-10 -right-16 bg-white p-3 rounded-2xl shadow-xl border border-slate-100 flex items-center gap-3 w-48 z-30"
-      >
-        <div className="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center text-green-500 shrink-0 border border-green-100">
-          <Check size={14} />
-        </div>
-        <div>
-          <div className="text-[10px] font-bold text-slate-900 uppercase tracking-tight">Lead Qualified</div>
-          <div className="text-[9px] text-slate-500">High Purchase Intent</div>
-        </div>
-      </motion.div>
-
-      <motion.div
-        animate={{ y: [0, 10, 0] }}
-        transition={{ repeat: Infinity, duration: 5, ease: "easeInOut", delay: 0.5 }}
-        className="absolute bottom-20 -left-16 bg-white p-3 rounded-2xl shadow-xl border border-slate-100 flex items-center gap-3 w-48 z-30"
-      >
-        <div className="w-8 h-8 rounded-full bg-indigo-50 flex items-center justify-center text-sky-500 shrink-0 border border-sky-100">
-          <Zap size={14} fill="currentColor" />
-        </div>
-        <div>
-          <div className="text-[10px] font-bold text-slate-900 uppercase tracking-tight">Auto-Filtered</div>
-          <div className="text-[9px] text-slate-500">Reduced Workload by 85%</div>
-        </div>
-      </motion.div>
-    </motion.div>
+      {/* CRM Sync Floating Tag (Placed outside overflow-hidden chassis, completely clear on the right side) */}
+      <AnimatePresence>
+        {syncStatus && (
+          <motion.div
+            initial={{ opacity: 0, x: 20, scale: 0.9 }}
+            animate={{ opacity: 1, x: 0, scale: 1 }}
+            exit={{ opacity: 0, x: 20, scale: 0.9 }}
+            className="absolute top-[35%] -right-6 sm:-right-12 bg-[#120F22]/95 border border-brand-purple/30 backdrop-blur-md p-2.5 rounded-xl shadow-2xl flex items-center gap-2.5 w-44 z-30"
+          >
+            <div className="w-7 h-7 rounded-lg bg-brand-purple/10 border border-brand-purple/20 flex items-center justify-center text-brand-pink shrink-0">
+              <Database size={11} />
+            </div>
+            <div className="text-left">
+              <div className="text-[9px] font-bold text-zinc-200 leading-tight">CRM Sync Event</div>
+              <div className="text-[7px] text-success font-semibold leading-none mt-0.5">Synced Lead to Sheets</div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
   );
 };
 
@@ -183,41 +745,46 @@ const Landing: React.FC = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <div className="landing-page bg-[#FAFAFA] text-slate-900 font-outfit selection:bg-sky-100 selection:text-sky-900">
+    <div className="landing-page bg-background text-foreground font-inter selection:bg-brand-purple/30 selection:text-white min-h-screen relative overflow-hidden">
+      
+      {/* Background Decorative Mesh Gradients (Formcarry-inspired styling) */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[500px] bg-gradient-to-b from-brand-purple/10 to-transparent blur-[120px] pointer-events-none" />
+      <div className="absolute top-[800px] right-0 w-[400px] h-[400px] bg-brand-pink/5 blur-[100px] pointer-events-none" />
 
       {/* NAVBAR */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 border-b border-slate-200/50 backdrop-blur-xl">
+      <nav className="fixed top-0 left-0 right-0 z-50 glass border-b border-border">
         <div className="max-w-6xl mx-auto px-6 h-[72px] flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2.5 group">
-            <div className="relative flex items-center justify-center  bg-transparent transition-transform duration-300">
-              <img src="/replyzenslog.png" alt="ReplyZens Logo" className="w-20 h-20 object-contain" />
-            </div>
-            <span className="text-xl font-bold tracking-tight text-slate-900">
-              Reply<span className="text-sky-600">Zens</span>
+            <img src="/favicon.svg" alt="ReplyZens Logo" className="w-9 h-9 object-contain transition-transform duration-300 group-hover:scale-105" />
+            <span className="text-xl font-bold tracking-tight text-white uppercase font-outfit">
+              Reply<span className="text-brand-pink">Zens</span>
             </span>
           </Link>
 
           <div className="hidden md:flex items-center gap-8">
-            <a href="#story" className="text-sm font-medium text-slate-500 hover:text-slate-900 transition-colors">Features</a>
-            <a href="#how-it-works" className="text-sm font-medium text-slate-500 hover:text-slate-900 transition-colors">How it works</a>
-            <a href="#faq" className="text-sm font-medium text-slate-500 hover:text-slate-900 transition-colors">FAQ</a>
+            <a href="#setup" className="text-sm font-medium text-zinc-400 hover:text-white transition-colors">Setup</a>
+            <a href="#features" className="text-sm font-medium text-zinc-400 hover:text-white transition-colors">Features</a>
+            <a href="#noise-filter" className="text-sm font-medium text-zinc-400 hover:text-white transition-colors">Spam Shield</a>
+            <a href="#pricing" className="text-sm font-medium text-zinc-400 hover:text-white transition-colors">Pricing</a>
+            <a href="#faq" className="text-sm font-medium text-zinc-400 hover:text-white transition-colors">FAQ</a>
+            
             <div className="flex items-center gap-4 ml-4">
               <button
                 onClick={() => navigate('/login')}
-                className="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors"
+                className="text-sm font-semibold text-zinc-400 hover:text-white transition-colors"
               >
                 Log in
               </button>
               <button
                 onClick={() => navigate('/signup')}
-                className="bg-sky-600 hover:bg-sky-700 text-sm font-semibold text-white px-5 py-2.5 rounded-lg shadow-sm shadow-slate-900/10 active:scale-95 transition-all"
+                className="w3-button-primary bg-gradient-to-r from-brand-pink to-brand-purple text-white px-5 py-2 rounded-xl text-xs shadow-lg shadow-brand-pink/15 active:scale-95 transition-all"
               >
                 Start Free Trial
               </button>
             </div>
           </div>
 
-          <button className="md:hidden text-slate-600 p-2" onClick={() => setMobileOpen(!mobileOpen)}>
+          <button className="md:hidden text-zinc-400 p-2" onClick={() => setMobileOpen(!mobileOpen)}>
             {mobileOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
@@ -228,16 +795,24 @@ const Landing: React.FC = () => {
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
-              className="md:hidden bg-white border-t border-slate-100 shadow-xl"
+              className="md:hidden bg-card border-t border-border shadow-xl"
             >
               <div className="px-6 py-8 flex flex-col gap-6">
-                <a href="#story" className="text-base font-semibold text-slate-700" onClick={() => setMobileOpen(false)}>Features</a>
-                <a href="#how-it-works" className="text-base font-semibold text-slate-700" onClick={() => setMobileOpen(false)}>How it works</a>
-                <a href="#faq" className="text-base font-semibold text-slate-700" onClick={() => setMobileOpen(false)}>FAQ</a>
-                <div className="h-px bg-slate-100 my-2" />
+                <a href="#setup" className="text-base font-semibold text-zinc-300" onClick={() => setMobileOpen(false)}>Setup</a>
+                <a href="#features" className="text-base font-semibold text-zinc-300" onClick={() => setMobileOpen(false)}>Features</a>
+                <a href="#noise-filter" className="text-base font-semibold text-zinc-300" onClick={() => setMobileOpen(false)}>Spam Shield</a>
+                <a href="#pricing" className="text-base font-semibold text-zinc-300" onClick={() => setMobileOpen(false)}>Pricing</a>
+                <a href="#faq" className="text-base font-semibold text-zinc-300" onClick={() => setMobileOpen(false)}>FAQ</a>
+                <div className="h-px bg-white/5 my-2" />
+                <button
+                  onClick={() => { navigate('/login'); setMobileOpen(false); }}
+                  className="w-full text-center py-3 border border-white/10 rounded-xl text-zinc-300 font-semibold"
+                >
+                  Log in
+                </button>
                 <button
                   onClick={() => { navigate('/signup'); setMobileOpen(false); }}
-                  className="bg-slate-900 text-white font-semibold py-3.5 rounded-xl w-full"
+                  className="bg-gradient-to-r from-brand-pink to-brand-purple text-white font-semibold py-3.5 rounded-xl w-full"
                 >
                   Start Free Trial
                 </button>
@@ -250,710 +825,427 @@ const Landing: React.FC = () => {
       <main className="pt-[72px]">
 
         {/* 1. HERO SECTION */}
-        <section className="relative pt-20 lg:pt-32 pb-24 z-10 overflow-hidden bg-white">
-          <div className="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px] opacity-30 pointer-events-none" />
-
-          <div className="max-w-7xl mx-auto px-6 w-full relative z-10">
-            <div className="grid lg:grid-cols-[1.1fr_0.9fr] gap-16 items-center">
-
-              {/* Text Content */}
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.6, ease: "easeOut" }}
-                className="text-left"
-              >
-                {/* Product Badge */}
-                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-indigo-50 border border-sky-100 mb-8">
-                  <span className="w-2 h-2 rounded-full bg-sky-600 animate-pulse" />
-                  <span className="text-xs font-semibold text-sky-700">Instagram CRM Automation</span>
-                </div>
-
-                <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-8 text-slate-900 leading-[1.05]">
-                  Scale your Instagram DMs without <span className="text-sky-600">scaling yourself</span>
-                </h1>
-
-                <p className="text-lg md:text-xl text-slate-500 font-medium leading-relaxed mb-10 max-w-2xl">
-                  Our CRM filters noise, categorizes leads, and automates common replies—so you can focus on building relationships and closing deals.
-                </p>
-
-                <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto mb-8">
-                  <button
-                    onClick={() => navigate('/signup')}
-                    className="bg-sky-600 hover:bg-sky-700 text-white px-8 py-4 rounded-xl text-base font-semibold flex items-center justify-center gap-2 shadow-lg shadow-sky-600/20 active:scale-95 transition-all w-full sm:w-auto min-w-[200px] group"
-                  >
-                    Start Free Trial
-                    <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
-                  </button>
-                  <button className="px-8 py-4 rounded-xl text-base font-semibold bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all w-full sm:w-auto min-w-[200px] shadow-sm">
-                    Watch Demo
-                  </button>
-                </div>
-
-                <div className="flex flex-wrap items-center gap-5 text-sm font-medium text-slate-500">
-                  <span className="flex items-center gap-1.5"><Check size={16} className="text-sky-500" /> No credit card</span>
-                  <span className="flex items-center gap-1.5"><Check size={16} className="text-sky-500" /> 14-day free trial</span>
-                  <span className="flex items-center gap-1.5"><Check size={16} className="text-sky-500" /> Cancel anytime</span>
-                </div>
-              </motion.div>
-
-              {/* iPhone Mockup */}
-              <div className="flex items-center justify-center lg:justify-end">
-                <PhoneMockup />
+        <section className="relative pt-20 lg:pt-32 pb-20 z-10 overflow-hidden">
+          <div className="max-w-6xl mx-auto px-6 grid lg:grid-cols-[1.2fr_0.8fr] gap-12 lg:gap-16 items-center relative z-10">
+            {/* Left Content Column */}
+            <div className="flex flex-col items-center lg:items-start text-center lg:text-left">
+              {/* Tag / Badge */}
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-pink/10 border border-brand-pink/20 mb-6 animate-fade-in">
+                <span className="w-1.5 h-1.5 rounded-full bg-brand-pink animate-pulse" />
+                <span className="text-[10px] font-bold uppercase tracking-wider text-brand-pink">Formcarry-Inspired DM API</span>
               </div>
 
+              {/* Headline */}
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight mb-6 text-white leading-[1.1] text-balance">
+                Never worry about the backend of your <span className="gradient-text-ai">Instagram DMs</span> again.
+              </h1>
+
+              {/* Subtext */}
+              <p className="text-sm sm:text-base text-zinc-400 font-medium leading-relaxed max-w-xl mb-8 text-balance">
+                Connect your account securely, set intelligent auto-replies, block spam with AI, qualify buyers instantly, and synchronize customer data directly to your favorite CRM.
+              </p>
+
+              {/* CTA Buttons */}
+              <div className="flex flex-col sm:flex-row items-center gap-4 w-full max-w-md lg:max-w-none mb-10">
+                <button
+                  onClick={() => navigate('/signup')}
+                  className="w-full sm:w-auto w3-button-primary bg-gradient-to-r from-brand-pink to-brand-purple font-bold px-8 py-4 rounded-xl text-sm shadow-xl shadow-brand-pink/20 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2 group"
+                >
+                  Get Started
+                  <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+                </button>
+                <a
+                  href="#setup"
+                  className="w-full sm:w-auto px-8 py-4 rounded-xl text-sm font-semibold bg-white/5 border border-white/10 text-zinc-300 hover:bg-white/10 hover:border-white/20 transition-all flex items-center justify-center gap-2"
+                >
+                  <Play size={14} fill="currentColor" />
+                  How It Works
+                </a>
+              </div>
+
+              {/* Features Quick List */}
+              <div className="flex flex-wrap justify-center lg:justify-start items-center gap-5 text-[11px] font-bold text-zinc-500 border-t border-white/5 pt-6 w-full">
+                <span className="flex items-center gap-1.5"><CheckCircle2 size={13} className="text-success" /> Meta Partner Verified</span>
+                <span className="flex items-center gap-1.5"><CheckCircle2 size={13} className="text-success" /> 3-Minute Setup</span>
+                <span className="flex items-center gap-1.5"><CheckCircle2 size={13} className="text-success" /> 98.6% Spam Shield</span>
+              </div>
+            </div>
+
+            {/* Right Column: Animated Live Phone Mockup */}
+            <div className="flex items-center justify-center relative w-full lg:h-full">
+              <div className="absolute w-[350px] h-[350px] bg-brand-purple/10 blur-[80px] pointer-events-none rounded-full" />
+              <InteractivePhoneMockup />
             </div>
           </div>
-
-          {/* Subtle bottom gradient map */}
-          <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-b from-transparent to-[#FAFAFA]" />
         </section>
 
-        {/* 2. PROBLEM SECTION (PAIN) */}
-        <section className="relative py-24 z-10 bg-[#FAFAFA]">
-          <div className="max-w-3xl mx-auto px-6 text-center mb-16">
-            <motion.h2
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-100px" }}
-              className="text-3xl md:text-5xl font-bold tracking-tight text-slate-900 mb-6 leading-tight"
-            >
-              Your DMs are full. <br />
-              <span className="text-slate-400 font-medium">But your conversions aren't.</span>
-            </motion.h2>
+        {/* 2. SETUP TIMELINE SECTION (Easiest way to setup HTML form equivalent) */}
+        <section id="setup" className="py-24 border-t border-white/5 relative bg-black/10">
+          <div className="max-w-6xl mx-auto px-6">
+            <div className="text-center max-w-2xl mx-auto mb-16">
+              <span className="text-xs font-bold uppercase tracking-widest text-brand-purple">Creator & Business Friendly</span>
+              <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-white mt-3 mb-4 leading-tight">
+                Easiest way to automate your Instagram.
+              </h2>
+              <p className="text-sm md:text-base text-zinc-400 font-medium leading-relaxed">
+                Set up auto-replies, teach your AI assistant about your products, and organize customer requests in minutes. No technical experience needed.
+              </p>
+            </div>
 
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-100px" }}
-              className="text-lg text-slate-500 max-w-2xl mx-auto"
-            >
-              Every day, new messages come in — questions, inquiries, order requests.<br />
-              But most of them go unanswered, delayed, or lost in the chaos.
-            </motion.p>
+            <CodeSetupTabs />
           </div>
+        </section>
 
-          <div className="max-w-6xl mx-auto px-6 grid lg:grid-cols-[1fr_1.2fr] gap-12 lg:gap-20 items-center">
-
-            {/* SaaS App Mockup / Chaos Visualization */}
-            <motion.div
-              className="relative h-[420px] w-full rounded-2xl bg-white border border-slate-200/60 shadow-xl shadow-slate-200/50 overflow-hidden flex items-center justify-center p-6"
+        {/* 3. CORE BENEFITS SECTION (Savior, yeah time-savior equivalent) */}
+        <section id="features" className="py-24 border-t border-white/5 relative">
+          <div className="max-w-6xl mx-auto px-6">
+            <motion.div 
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="text-center max-w-2xl mx-auto mb-16"
             >
-              {/* Browser Toolbar Mockup */}
-              <div className="absolute top-0 left-0 right-0 h-10 border-b border-slate-100 bg-slate-50 flex items-center px-4 gap-2">
-                <div className="w-2.5 h-2.5 rounded-full bg-slate-300" />
-                <div className="w-2.5 h-2.5 rounded-full bg-slate-300" />
-                <div className="w-2.5 h-2.5 rounded-full bg-slate-300" />
-              </div>
-
-              {/* Center Lottie Focus */}
-              <div className="absolute inset-0 flex items-center justify-center opacity-80 mt-10">
-                <DotLottieReact src="https://lottie.host/3b4f9ac2-8173-4c40-9dd0-0eac1d5263c9/fC41pUIMdc.lottie" loop autoplay />
-              </div>
-
-              {/* Floating Alert Cards */}
-              <motion.div
-                animate={{ y: [0, -10, 0] }}
-                transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
-                className="absolute top-20 left-6 bg-white p-4 rounded-xl shadow-md border border-slate-100 flex items-start gap-3 w-64"
-              >
-                <div className="w-8 h-8 rounded-full bg-red-50 flex items-center justify-center text-red-500 shrink-0"><AlertCircleIcon size={16} /></div>
-                <div className="space-y-1">
-                  <div className="text-sm font-semibold text-slate-800">Unread Message</div>
-                  <div className="text-xs text-slate-500">"Do you ship to Canada?"</div>
-                  <div className="text-[10px] text-slate-400 mt-2">Sent 4 hours ago</div>
-                </div>
-              </motion.div>
-
-              <motion.div
-                animate={{ y: [0, 10, 0] }}
-                transition={{ repeat: Infinity, duration: 5, ease: "easeInOut", delay: 1 }}
-                className="absolute bottom-12 right-6 bg-white p-4 rounded-xl shadow-md border border-slate-100 flex items-start gap-3 w-64"
-              >
-                <div className="w-8 h-8 rounded-full bg-amber-50 flex items-center justify-center text-amber-500 shrink-0"><TrendingDown size={16} /></div>
-                <div className="space-y-1">
-                  <div className="text-sm font-semibold text-slate-800">Lead Abandoned</div>
-                  <div className="text-xs text-slate-500">User lost interest due to slow response time.</div>
-                </div>
-              </motion.div>
+              <span className="text-xs font-bold uppercase tracking-widest text-brand-pink">Time-Savior Infrastructure</span>
+              <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-white mt-3 mb-4 leading-tight">
+                Features that save days of work.
+              </h2>
+              <p className="text-sm md:text-base text-zinc-400 font-medium leading-relaxed">
+                Automate your Instagram customer pipeline instantly. Integration with Google Sheets, email auto-responders, and filters configured in minutes.
+              </p>
             </motion.div>
 
-            {/* Pain Points List */}
-            <div className="flex flex-col gap-6">
-              {[
-                { title: "Important leads get buried under 'Hi' messages", icon: MessageSquare },
-                { title: "You waste hours switching between apps", icon: Users },
-                { title: "Manual replies slow everything down", icon: Clock },
-                { title: "Opportunities slip through the cracks", icon: AlertCircleIcon }
-              ].map((p, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, x: 20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true, margin: "-50px" }}
-                  transition={{ delay: i * 0.1, duration: 0.5 }}
-                  className="flex gap-4 items-center bg-white border border-slate-200/60 p-5 rounded-xl shadow-sm hover:shadow-md transition-shadow"
-                >
-                  <div className="w-10 h-10 rounded-lg bg-slate-50 border border-slate-100 flex shrink-0 items-center justify-center text-slate-600">
-                    <p.icon size={18} />
-                  </div>
-                  <h3 className="text-base font-semibold text-slate-800">{p.title}</h3>
-                </motion.div>
-              ))}
-
-              <motion.div
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true }}
-                className="mt-8 p-6 bg-indigo-50 border border-sky-100 rounded-xl"
-              >
-                <p className="text-base font-semibold text-sky-900 leading-relaxed">
-                  You're not losing customers because of demand — <span className="text-sky-600">you're losing them because you can't keep up.</span>
-                </p>
-              </motion.div>
-            </div>
-          </div>
-        </section>
-
-        {/* 3. TRANSITION & CORE SOLUTION */}
-        <section className="py-32 bg-slate-900 text-white relative overflow-hidden">
-          {/* Subtle grid background for SaaS feel */}
-          <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]" />
-
-          <div className="max-w-4xl mx-auto px-6 relative z-10 text-center mb-20">
-            <motion.h2
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="text-4xl md:text-5xl font-bold tracking-tight mb-6"
-            >
-              What if your inbox worked <span className="text-sky-400">for you?</span>
-            </motion.h2>
-            <p className="text-lg md:text-xl text-slate-400">
-              Instead of replying to everyone... <br />
-              What if you only focused on the people who are ready to buy?
-            </p>
-          </div>
-
-          {/* Core Feature Value Prop */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="relative z-10 max-w-3xl mx-auto bg-slate-800/80 backdrop-blur-md border border-slate-700 p-10 md:p-12 rounded-[2rem] text-left shadow-2xl"
-          >
-            <h3 className="text-2xl md:text-3xl font-bold mb-4 text-slate-50">Turn messages into qualified leads — automatically</h3>
-            <p className="text-slate-300 mb-8 leading-relaxed">
-              ReplyZens doesn't just manage your DMs. It filters, organizes, and prioritizes them — so you see only what matters.
-            </p>
-            <div className="grid sm:grid-cols-2 gap-4 mb-10">
-              <div className="flex gap-3 items-center text-sm font-medium text-slate-200">
-                <div className="w-6 h-6 rounded-full bg-sky-500/20 flex items-center justify-center"><Check size={14} className="text-sky-400" /></div>
-                Messages are automatically sorted
-              </div>
-              <div className="flex gap-3 items-center text-sm font-medium text-slate-200">
-                <div className="w-6 h-6 rounded-full bg-sky-500/20 flex items-center justify-center"><Check size={14} className="text-sky-400" /></div>
-                High-intent users become leads
-              </div>
-              <div className="flex gap-3 items-center text-sm font-medium text-slate-200">
-                <div className="w-6 h-6 rounded-full bg-sky-500/20 flex items-center justify-center"><Check size={14} className="text-sky-400" /></div>
-                Low-value chats filtered out
-              </div>
-            </div>
-
-            <div className="border-t border-slate-700/50 pt-6">
-              <div className="inline-flex items-center font-bold tracking-widest text-sm uppercase text-sky-400">
-                <Zap size={16} className="mr-2" /> Less noise. More conversions.
-              </div>
-            </div>
-          </motion.div>
-        </section>
-
-        {/* 4. FEATURES AS STORY (Zigzag Timeline) */}
-        <section id="story" className="py-32 bg-[#FAFAFA] relative border-b border-slate-200/50">
-          <div className="max-w-6xl mx-auto px-6 relative">
-
-            <div className="text-center mb-24">
-              <h2 className="text-3xl md:text-5xl font-bold text-slate-900 tracking-tight">Features built to convert</h2>
-              <p className="text-lg text-slate-500 mt-4">Automate the boring parts. Master the important ones.</p>
-            </div>
-
-            {/* Central Vertical Line (hidden on very small screens, visible md+) */}
-            <div className="hidden md:block absolute left-1/2 top-48 bottom-0 w-px bg-slate-200 -translate-x-1/2" />
-
-            <div className="space-y-32">
-              {[
-                {
-                  subtitle: "1. UNIFIED INBOX",
-                  title: "All your Instagram conversations — in one clean dashboard.",
-                  desc: "Say goodbye to the cluttered mobile app. View, manage, and reply to all DMs from a professional desktop interface.",
-                  lottie: "https://lottie.host/8166af2b-fc65-4b1d-91e7-d54e88e04a97/TIUNin8LAv.lottie"
-                },
-                {
-                  subtitle: "2. SMART FILTERING",
-                  title: "Not every message deserves your attention.",
-                  desc: "Automatically detect and highlight real buyers. Filter out the noise so you focus only on revenue generation.",
-                  lottie: "https://lottie.host/3b2e0942-a601-4b7a-acea-236ae63297c2/75iGGQpYNH.lottie"
-                },
-                {
-                  subtitle: "3. AI AUTO-REPLIES",
-                  title: "Handle 80% of common questions instantly.",
-                  desc: "Deliver perfect, natural replies for pricing, availability, and delivery info without lifting a finger.",
-                  lottie: "https://lottie.host/3b4f9ac2-8173-4c40-9dd0-0eac1d5263c9/fC41pUIMdc.lottie"
-                },
-                {
-                  subtitle: "4. LEAD MANAGEMENT",
-                  title: "Convert conversations into structured leads.",
-                  desc: "Track their lifecycle and close deals effectively with organized, visual CRM pipelines.",
-                  lottie: "https://lottie.host/8166af2b-fc65-4b1d-91e7-d54e88e04a97/TIUNin8LAv.lottie"
-                },
-                {
-                  subtitle: "5. ORDER & TRACKING",
-                  title: "Send updates directly in chat.",
-                  desc: "Share beautiful order updates, package photos, and tracking links seamlessly with your customers.",
-                  lottie: "https://lottie.host/82732e6c-84bd-40e8-bcad-fb6808599b92/WLrfOMZkHh.lottie"
-                },
-                {
-                  subtitle: "6. TEAM COLLABORATION",
-                  title: "Work together without confusion.",
-                  desc: "Assign chats, track responses, and maintain a clear audit trail for multiple agents in real-time.",
-                  lottie: "https://lottie.host/3b2e0942-a601-4b7a-acea-236ae63297c2/75iGGQpYNH.lottie"
+            {/* Features Cards Grid */}
+            <motion.div 
+              variants={{
+                hidden: {},
+                show: {
+                  transition: {
+                    staggerChildren: 0.1
+                  }
                 }
-              ].map((step, idx) => (
-                <div key={idx} className="relative flex flex-col md:flex-row items-center justify-between gap-12 md:gap-24">
+              }}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true, margin: "-100px" }}
+              className="grid md:grid-cols-2 lg:grid-cols-4 gap-6"
+            >
+              {[
+                {
+                  title: "Maya AI Auto-Replies",
+                  desc: "Configure auto-responses to handle FAQ, pricing, sizes, and shipping options instantly.",
+                  icon: Sparkles,
+                  color: "text-brand-pink bg-brand-pink/10 border-brand-pink/20"
+                },
+                {
+                  title: "Smart Field Validations",
+                  desc: "Extract clean buyer emails, sizes, handles, and postal codes right out of conversational messages.",
+                  icon: FolderSync,
+                  color: "text-brand-purple bg-brand-purple/10 border-brand-purple/20"
+                },
+                {
+                  title: "Webhook Integrations",
+                  desc: "Instantly route qualified lead events to Google Sheets, Slack, Webhooks, or Zapier.",
+                  icon: Database,
+                  color: "text-success bg-success/10 border-success/20"
+                },
+                {
+                  title: "File & Image Sync",
+                  desc: "Collect screenshot proofs of payment, receipts, and order media directly in the unified inbox.",
+                  icon: Layers,
+                  color: "text-warning bg-warning/10 border-warning/20"
+                }
+              ].map((item, index) => (
+                <motion.div 
+                  key={index} 
+                  variants={{
+                    hidden: { opacity: 0, y: 30 },
+                    show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 100, damping: 15 } }
+                  }}
+                  whileHover={{ 
+                    y: -8, 
+                    transition: { duration: 0.3, ease: "easeOut" } 
+                  }}
+                  className="group bg-card/30 border border-white/5 p-6 rounded-2xl transition-all duration-300 relative overflow-hidden flex flex-col justify-between h-full hover:shadow-[0_20px_50px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_20px_50px_rgba(0,0,0,0.3)] hover:border-brand-purple/20 shadow-sm dark:shadow-none"
+                >
+                  {/* Glowing background blob specific to the card theme */}
+                  <div className={`absolute -right-12 -bottom-12 w-24 h-24 rounded-full blur-[40px] opacity-0 group-hover:opacity-30 transition-opacity duration-500 pointer-events-none ${
+                    index === 0 ? 'bg-brand-pink' :
+                    index === 1 ? 'bg-brand-purple' :
+                    index === 2 ? 'bg-emerald-500' : 'bg-amber-500'
+                  }`} />
 
-                  {/* Timeline Node */}
-                  <div className="hidden md:flex absolute left-1/2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white border-4 border-slate-100 shadow-sm -translate-x-1/2 z-10 items-center justify-center">
-                    <div className="w-2.5 h-2.5 rounded-full bg-sky-500" />
-                  </div>
+                  {/* Border top accent line */}
+                  <div className={`absolute top-0 left-0 right-0 h-[2px] w-0 group-hover:w-full transition-all duration-500 bg-gradient-to-r ${
+                    index === 0 ? 'from-brand-pink/50 to-brand-purple/50' :
+                    index === 1 ? 'from-brand-purple/50 to-indigo-500/50' :
+                    index === 2 ? 'from-emerald-500/50 to-teal-500/50' : 'from-amber-500/50 to-orange-500/50'
+                  }`} />
 
-                  <motion.div
-                    initial={{ opacity: 0, x: idx % 2 === 0 ? -30 : 30 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true, margin: "-100px" }}
-                    transition={{ duration: 0.6 }}
-                    className={cn(
-                      "w-full md:w-1/2 flex flex-col justify-center",
-                      idx % 2 === 0 ? "md:items-end text-left md:text-right pr-0 md:pr-12" : "md:items-start text-left pl-0 md:pl-12 md:order-2"
-                    )}
-                  >
-                    <span className="inline-block text-xs font-bold tracking-[0.2em] text-sky-600 mb-4 bg-indigo-50 px-3 py-1 rounded-full">
-                      {step.subtitle}
-                    </span>
-                    <h3 className="text-2xl md:text-3xl font-bold text-slate-900 mb-4 leading-tight">{step.title}</h3>
-                    <p className="text-base text-slate-500 leading-relaxed max-w-sm">
-                      {step.desc}
-                    </p>
-                  </motion.div>
-
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    viewport={{ once: true, margin: "-100px" }}
-                    transition={{ duration: 0.6, delay: 0.1 }}
-                    className={cn(
-                      "w-full md:w-1/2 h-[320px] bg-white rounded-[2rem] border border-slate-200/60 shadow-lg shadow-slate-200/40 flex items-center justify-center p-6 relative overflow-hidden",
-                      idx % 2 === 0 ? "" : "md:order-1"
-                    )}
-                  >
-                    <div className="absolute inset-0 bg-gradient-to-br from-slate-50 to-transparent" />
-                    <div className="w-full h-full relative z-10">
-                      <DotLottieReact src={step.lottie} loop autoplay className="w-full h-full object-contain" />
+                  <div>
+                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center border mb-6 transition-all duration-300 ${item.color} group-hover:scale-110 shadow-md group-hover:shadow-[0_0_15px_rgba(139,92,246,0.15)]`}>
+                      <item.icon size={20} />
                     </div>
-                  </motion.div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* 5. HOW IT WORKS */}
-        <section id="how-it-works" className="py-24 bg-white border-b border-slate-100">
-          <div className="max-w-6xl mx-auto px-6">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-4xl font-bold text-slate-900 tracking-tight">Up and running in minutes</h2>
-              <p className="text-slate-500 mt-4">A simple integration process that takes virtually no technical knowledge.</p>
-            </div>
-
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {[
-                { step: "01", title: "Connect Instagram", desc: "Securely link your account via Meta. Your messages sync instantly." },
-                { step: "02", title: "Set your rules", desc: "Define filters, keywords, and AI auto-replies in our visual builder." },
-                { step: "03", title: "Let it work", desc: "Messages get sorted, replies get handled, leads get created 24/7." },
-                { step: "04", title: "Focus on closing", desc: "You only jump in to talk to people who are ready to buy." }
-              ].map((s, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.1 }}
-                  className="bg-[#FAFAFA] border border-slate-200/60 p-6 rounded-2xl hover:border-indigo-200 transition-colors"
-                >
-                  <div className="w-10 h-10 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-sm font-bold text-slate-900 mb-6 shadow-sm">
-                    {s.step}
+                    <h3 className="text-base font-bold text-zinc-800 dark:text-white mb-3 group-hover:text-brand-purple dark:group-hover:text-brand-pink transition-colors">{item.title}</h3>
+                    <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed font-medium">{item.desc}</p>
                   </div>
-                  <h3 className="text-lg font-semibold text-slate-900 mb-2">{s.title}</h3>
-                  <p className="text-sm text-slate-500 leading-relaxed">{s.desc}</p>
                 </motion.div>
               ))}
-            </div>
-          </div>
-        </section>
-
-        {/* 6. TRANSFORMATION SECTION */}
-        <section className="py-24 bg-sky-900 text-white relative overflow-hidden">
-          {/* Abstract shapes */}
-          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-sky-500/20 blur-[100px] rounded-full" />
-          <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-blue-500/20 blur-[100px] rounded-full" />
-
-          <div className="max-w-5xl mx-auto px-6 text-center relative z-10">
-            <motion.h2
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="text-3xl md:text-5xl font-bold tracking-tight mb-16"
-            >
-              From chaos to control
-            </motion.h2>
-
-            <div className="grid md:grid-cols-2 gap-6 lg:gap-10 mb-16">
-
-              {/* BEFORE */}
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                className="bg-slate-900/40 backdrop-blur-sm border border-slate-700/50 rounded-2xl p-8 flex flex-col"
-              >
-                <div className="flex items-center gap-3 mb-8">
-                  <div className="px-3 py-1 bg-red-500/10 text-red-400 rounded-md text-xs font-bold tracking-wider uppercase border border-red-500/20">Before</div>
-                </div>
-                <ul className="space-y-5 text-slate-300 font-medium text-left">
-                  <li className="flex items-start gap-4">
-                    <div className="w-6 h-6 rounded-full bg-slate-800 flex items-center justify-center shrink-0 mt-0.5"><X size={14} className="text-red-400" /></div>
-                    <span>Endless unread messages clogging the main app.</span>
-                  </li>
-                  <li className="flex items-start gap-4">
-                    <div className="w-6 h-6 rounded-full bg-slate-800 flex items-center justify-center shrink-0 mt-0.5"><X size={14} className="text-red-400" /></div>
-                    <span>Manual replies taking up half your working day.</span>
-                  </li>
-                  <li className="flex items-start gap-4">
-                    <div className="w-6 h-6 rounded-full bg-slate-800 flex items-center justify-center shrink-0 mt-0.5"><X size={14} className="text-red-400" /></div>
-                    <span>Missed opportunities turning into lost revenue.</span>
-                  </li>
-                </ul>
-              </motion.div>
-
-              {/* AFTER */}
-              <motion.div
-                initial={{ opacity: 0, x: 20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                className="bg-white border border-sky-100 rounded-2xl p-8 flex flex-col shadow-2xl shadow-black/10"
-              >
-                <div className="flex items-center gap-3 mb-8">
-                  <div className="px-3 py-1 bg-indigo-50 text-sky-600 rounded-md text-xs font-bold tracking-wider uppercase border border-sky-100">After</div>
-                </div>
-                <ul className="space-y-5 text-slate-700 font-medium text-left">
-                  <li className="flex items-start gap-4">
-                    <div className="w-6 h-6 rounded-full bg-indigo-50 flex items-center justify-center shrink-0 mt-0.5 border border-sky-100"><Check size={14} className="text-sky-600" /></div>
-                    <span>Clean, organized inbox built specifically for sales.</span>
-                  </li>
-                  <li className="flex items-start gap-4">
-                    <div className="w-6 h-6 rounded-full bg-indigo-50 flex items-center justify-center shrink-0 mt-0.5 border border-sky-100"><Check size={14} className="text-sky-600" /></div>
-                    <span>Automated responses handling the bulk of inquiries.</span>
-                  </li>
-                  <li className="flex items-start gap-4">
-                    <div className="w-6 h-6 rounded-full bg-indigo-50 flex items-center justify-center shrink-0 mt-0.5 border border-sky-100"><Check size={14} className="text-sky-600" /></div>
-                    <span className="text-slate-900 font-semibold">More qualified leads, faster conversions.</span>
-                  </li>
-                </ul>
-              </motion.div>
-            </div>
-
-            <motion.div
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-              className="text-xl font-medium text-indigo-200"
-            >
-              Same DMs. <span className="text-slate-50 font-bold">Completely different results.</span>
             </motion.div>
           </div>
         </section>
 
-        {/* 7. SOCIAL PROOF (Testimonials) */}
-        <section id="testimonials" className="py-24 bg-[#FAFAFA]">
-          <div className="max-w-6xl mx-auto px-6">
-            <div className="grid md:grid-cols-3 gap-6">
-              {[
-                {
-                  quote: "We stopped missing leads completely. The system handles most replies, and we just close.",
-                  role: "Fashion Brand Owner"
-                },
-                {
-                  quote: "Our response time dropped from hours to seconds.",
-                  role: "E-commerce Seller"
-                },
-                {
-                  quote: "Finally, a CRM that actually fits how Instagram businesses work.",
-                  role: "Skincare Founder"
-                }
-              ].map((t, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.1 }}
-                  className="bg-white border border-slate-200/60 p-8 rounded-2xl flex flex-col justify-between shadow-sm"
-                >
-                  <p className="text-slate-600 font-medium leading-relaxed text-base mb-8">"{t.quote}"</p>
-                  <div className="pt-6 border-t border-slate-100">
-                    <h4 className="font-semibold text-slate-900 text-sm">{t.role}</h4>
-                  </div>
-                </motion.div>
-              ))}
+        {/* 4. SPAM / NOISE SHIELD SECTION (Best in class spam protection equivalent) */}
+        <section id="noise-filter" className="py-24 border-t border-white/5 bg-black/10 relative">
+          <div className="max-w-6xl mx-auto px-6 grid lg:grid-cols-[1.1fr_1fr] gap-12 lg:gap-20 items-center">
+            <div>
+              <span className="text-xs font-bold uppercase tracking-widest text-brand-purple">Spam, No Thanks.</span>
+              <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-white mt-3 mb-4 leading-tight">
+                Best in class noise protection.
+              </h2>
+              <p className="text-sm md:text-base text-zinc-400 font-medium leading-relaxed mb-6">
+                Don't waste hours filtering spam, bot emojis, or generic comments. ReplyZens processes and filters low-intent chat noise, keeping your unified CRM inbox pristine and focused on raw buyers.
+              </p>
+              <div className="flex gap-4 items-center mb-8">
+                <div className="w-10 h-10 rounded-xl bg-success/10 border border-success/20 flex items-center justify-center text-success shrink-0">
+                  <Check size={18} />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-white">98.6% Spam Detection Rate</h3>
+                  <p className="text-xs text-zinc-500 font-medium">Powered by customized Meta NLP filters</p>
+                </div>
+              </div>
+              <button
+                onClick={() => navigate('/signup')}
+                className="w3-button-primary bg-zinc-800 text-white border border-white/10 hover:bg-zinc-700/80 px-6 py-3 rounded-xl text-xs font-bold transition-all"
+              >
+                Protect Your Inbox
+              </button>
             </div>
+
+            <NoiseFilterMockup />
           </div>
         </section>
 
-        {/* 7.5 PRICING */}
-        <section id="pricing" className="py-24 bg-white border-t border-slate-100">
+        {/* 5. TRANSPARENT PRICING SECTION (Pricing equivalent) */}
+        <section id="pricing" className="py-24 border-t border-white/5 relative">
           <div className="max-w-6xl mx-auto px-6">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-4xl font-bold text-slate-900 tracking-tight">Simple, transparent pricing</h2>
-              <p className="text-slate-500 mt-4">Start for free, scale when you grow. No hidden fees.</p>
+            <div className="text-center max-w-2xl mx-auto mb-16">
+              <span className="text-xs font-bold uppercase tracking-widest text-brand-pink">Simple & Transparent</span>
+              <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-white mt-3 mb-4 leading-tight">
+                Pricing that scales with you.
+              </h2>
+              <p className="text-sm md:text-base text-zinc-400 font-medium leading-relaxed">
+                Start completely free with zero credit card required. Upgrade as your automated volume increases.
+              </p>
             </div>
 
-            <div className="grid md:grid-cols-3 gap-8 max-w-[1000px] mx-auto">
+            <div className="grid md:grid-cols-3 gap-8 max-w-[960px] mx-auto">
               
               {/* Free Plan */}
-              <div className="border border-slate-200 bg-[#FAFAFA] rounded-2xl p-6 flex flex-col hover:border-sky-200 transition-colors text-center md:text-left">
-                <h3 className="text-lg font-semibold text-slate-900 mb-2">Free</h3>
-                <p className="text-slate-500 text-xs mb-6 h-8">Explore basic automation for free</p>
-                <div className="mb-6 flex justify-center md:justify-start items-baseline">
-                  <span className="text-3xl font-bold text-slate-900">₹0</span>
-                  <span className="text-slate-500 ml-1 text-sm">/mo</span>
+              <div className="bg-card/20 border border-white/5 rounded-3xl p-8 flex flex-col justify-between hover:border-white/10 transition-colors">
+                <div>
+                  <h3 className="text-lg font-bold text-white mb-2">Free</h3>
+                  <p className="text-xs text-zinc-500 h-8 font-medium">Explore basic automation features</p>
+                  <div className="mb-8 mt-4 flex items-baseline">
+                    <span className="text-3xl font-extrabold text-white">₹0</span>
+                    <span className="text-zinc-500 text-xs font-bold ml-1">/mo</span>
+                  </div>
+                  <div className="mb-6">
+                    <div className="text-xl font-bold text-white">25</div>
+                    <div className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider mt-0.5">Active Contacts / mo</div>
+                  </div>
                 </div>
-                <div className="text-center md:text-left mb-6">
-                  <div className="text-lg font-bold text-slate-900">25</div>
-                  <div className="text-xs text-slate-500">Active Contacts / mo</div>
+                <div>
+                  <button onClick={() => navigate('/signup')} className="w-full py-3 bg-white/5 border border-white/10 hover:bg-white/10 text-zinc-300 text-xs font-bold rounded-xl transition-all mb-8">
+                    Start For Free
+                  </button>
+                  <ul className="space-y-4 text-xs text-zinc-400">
+                    <li className="flex items-start gap-2.5"><Check size={14} className="text-success mt-0.5" /> Connect 1 IG Account</li>
+                    <li className="flex items-start gap-2.5"><Check size={14} className="text-success mt-0.5" /> 4 Basic Automations</li>
+                    <li className="flex items-start gap-2.5"><Check size={14} className="text-success mt-0.5" /> 1 Team User</li>
+                  </ul>
                 </div>
-                <button onClick={() => navigate('/signup')} className="w-full py-2.5 px-4 bg-slate-900 text-white font-semibold text-sm rounded-xl hover:bg-slate-800 transition-colors mb-6">
-                  Start For Free
-                </button>
-                <ul className="space-y-3 text-xs text-slate-600 flex-grow text-left">
-                  <li className="flex items-start gap-2"><Check size={14} className="text-sky-500 mt-0.5 shrink-0" /> Connect 1 IG Account</li>
-                  <li className="flex items-start gap-2"><Check size={14} className="text-sky-500 mt-0.5 shrink-0" /> Basic automations (up to 4)</li>
-                  <li className="flex items-start gap-2"><Check size={14} className="text-sky-500 mt-0.5 shrink-0" /> 1 user</li>
-                  <li className="flex items-start gap-2"><Check size={14} className="text-sky-500 mt-0.5 shrink-0" /> Basic unified inbox</li>
-                  <li className="flex items-start gap-2"><Check size={14} className="text-sky-500 mt-0.5 shrink-0" /> Self-serve Support</li>
-                  <li className="flex items-start gap-2"><Check size={14} className="text-sky-500 mt-0.5 shrink-0" /> ReplyZens branding</li>
-                </ul>
               </div>
 
-
-
               {/* Pro Plan */}
-              <div className="border-2 border-sky-500 bg-white rounded-2xl p-6 flex flex-col relative shadow-xl shadow-sky-900/5 hover:-translate-y-1 transition-transform text-center md:text-left">
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-sky-500 text-white px-3 py-1 text-[10px] font-bold uppercase tracking-wider rounded-full whitespace-nowrap">ReplyZens AI</div>
-                <h3 className="text-lg font-semibold text-slate-900 mb-2">Pro</h3>
-                <p className="text-slate-500 text-xs mb-6 h-8">For scaling creators & businesses</p>
-                <div className="mb-6 flex justify-center md:justify-start items-baseline">
-                  <span className="text-3xl font-bold text-slate-900">₹2,499</span>
-                  <span className="text-slate-500 ml-1 text-sm">/mo</span>
+              <div className="dark bg-gradient-to-b from-[#1E1735] to-[#120F22] border-2 border-brand-purple rounded-3xl p-8 flex flex-col justify-between relative overflow-visible shadow-xl shadow-brand-purple/5">
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-brand-purple text-white px-3 py-1 text-[9px] font-extrabold uppercase tracking-wider rounded-full whitespace-nowrap">
+                  Most Popular
                 </div>
-                <div className="text-center md:text-left mb-6">
-                  <div className="text-lg font-bold text-slate-900">2,500</div>
-                  <div className="text-xs text-slate-500">Active Contacts / mo</div>
+                <div>
+                  <h3 className="text-lg font-bold text-white mb-2">Pro</h3>
+                  <p className="text-xs text-brand-pink h-8 font-medium">For scaling creators & agencies</p>
+                  <div className="mb-8 mt-4 flex items-baseline">
+                    <span className="text-3xl font-extrabold text-white">₹2,499</span>
+                    <span className="text-zinc-400 text-xs font-bold ml-1">/mo</span>
+                  </div>
+                  <div className="mb-6">
+                    <div className="text-xl font-bold text-white">2,500</div>
+                    <div className="text-[10px] text-zinc-400 font-bold uppercase tracking-wider mt-0.5">Active Contacts / mo</div>
+                  </div>
                 </div>
-                <button onClick={() => navigate('/signup')} className="w-full py-2.5 px-4 bg-sky-600 text-white font-semibold text-sm rounded-xl hover:bg-sky-700 transition-colors mb-6">
-                  Try 14 Days Free
-                </button>
-                <ul className="space-y-3 text-xs text-slate-600 flex-grow text-left">
-                  <li className="flex items-start gap-2"><Check size={14} className="text-sky-500 mt-0.5 shrink-0" /> Connect 3 IG Accounts</li>
-                  <li className="flex items-start gap-2"><Check size={14} className="text-sky-500 mt-0.5 shrink-0" /> Advanced automations & broadcasts</li>
-                  <li className="flex items-start gap-2"><Check size={14} className="text-sky-500 mt-0.5 shrink-0" /> 3 users</li>
-                  <li className="flex items-start gap-2"><Check size={14} className="text-sky-500 mt-0.5 shrink-0" /> Custom inbox labels & rules</li>
-                  <li className="flex items-start gap-2"><Check size={14} className="text-sky-500 mt-0.5 shrink-0" /> Email Support</li>
-                  <li className="flex items-start gap-2"><Check size={14} className="text-sky-500 mt-0.5 shrink-0" /> Full AI Features</li>
-                  <li className="flex items-start gap-2"><Check size={14} className="text-sky-500 mt-0.5 shrink-0" /> No branding</li>
-                </ul>
+                <div>
+                  <button onClick={() => navigate('/signup')} className="w-full py-3 bg-brand-purple hover:bg-brand-purple/90 text-white text-xs font-bold rounded-xl transition-all mb-8 shadow-lg shadow-brand-purple/20">
+                    Try 14 Days Free
+                  </button>
+                  <ul className="space-y-4 text-xs text-zinc-300">
+                    <li className="flex items-start gap-2.5"><Check size={14} className="text-brand-pink mt-0.5" /> Connect 3 IG Accounts</li>
+                    <li className="flex items-start gap-2.5"><Check size={14} className="text-brand-pink mt-0.5" /> Advanced AI Automations</li>
+                    <li className="flex items-start gap-2.5"><Check size={14} className="text-brand-pink mt-0.5" /> 3 Team Users</li>
+                    <li className="flex items-start gap-2.5"><Check size={14} className="text-brand-pink mt-0.5" /> Full AI Features & Sync</li>
+                  </ul>
+                </div>
               </div>
 
               {/* Business Plan */}
-              <div className="border border-slate-200 bg-[#FAFAFA] rounded-2xl p-6 flex flex-col hover:border-sky-200 transition-colors text-center md:text-left relative">
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-sky-100 text-sky-700 border border-sky-200 px-3 py-1 text-[10px] font-bold uppercase tracking-wider rounded-full whitespace-nowrap">ReplyZens AI</div>
-                <h3 className="text-lg font-semibold text-slate-900 mb-2">Business</h3>
-                <p className="text-slate-500 text-xs mb-6 h-8">For high-growth businesses</p>
-                <div className="mb-6 flex justify-center md:justify-start items-baseline">
-                  <span className="text-3xl font-bold text-slate-900">₹5,999</span>
-                  <span className="text-slate-500 ml-1 text-sm">/mo</span>
+              <div className="bg-card/20 border border-white/5 rounded-3xl p-8 flex flex-col justify-between hover:border-white/10 transition-colors">
+                <div>
+                  <h3 className="text-lg font-bold text-white mb-2">Business</h3>
+                  <p className="text-xs text-zinc-500 h-8 font-medium">For high-growth enterprise brands</p>
+                  <div className="mb-8 mt-4 flex items-baseline">
+                    <span className="text-3xl font-extrabold text-white">₹5,999</span>
+                    <span className="text-zinc-500 text-xs font-bold ml-1">/mo</span>
+                  </div>
+                  <div className="mb-6">
+                    <div className="text-xl font-bold text-white">7,500</div>
+                    <div className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider mt-0.5">Active Contacts / mo</div>
+                  </div>
                 </div>
-                <div className="text-center md:text-left mb-6">
-                  <div className="text-lg font-bold text-slate-900">7,500</div>
-                  <div className="text-xs text-slate-500">Active Contacts / mo</div>
+                <div>
+                  <button onClick={() => navigate('/signup')} className="w-full py-3 bg-white/5 border border-white/10 hover:bg-white/10 text-zinc-300 text-xs font-bold rounded-xl transition-all mb-8">
+                    Start Trial
+                  </button>
+                  <ul className="space-y-4 text-xs text-zinc-400">
+                    <li className="flex items-start gap-2.5"><Check size={14} className="text-success mt-0.5" /> Unlimited IG Accounts</li>
+                    <li className="flex items-start gap-2.5"><Check size={14} className="text-success mt-0.5" /> Dedicated Sync Server</li>
+                    <li className="flex items-start gap-2.5"><Check size={14} className="text-success mt-0.5" /> Unlimited Team Users</li>
+                    <li className="flex items-start gap-2.5"><Check size={14} className="text-success mt-0.5" /> Priority 24/7 VIP Support</li>
+                  </ul>
                 </div>
-                <button onClick={() => navigate('/signup')} className="w-full py-2.5 px-4 bg-slate-900 text-white font-semibold text-sm rounded-xl hover:bg-slate-800 transition-colors mb-6">
-                  Get Started
-                </button>
-                <ul className="space-y-3 text-xs text-slate-600 flex-grow text-left">
-                  <li className="flex items-start gap-2"><Check size={14} className="text-sky-500 mt-0.5 shrink-0" /> Unlimited IG Accounts</li>
-                  <li className="flex items-start gap-2"><Check size={14} className="text-sky-500 mt-0.5 shrink-0" /> Advanced automations & broadcasts</li>
-                  <li className="flex items-start gap-2"><Check size={14} className="text-sky-500 mt-0.5 shrink-0" /> 5 users</li>
-                  <li className="flex items-start gap-2"><Check size={14} className="text-sky-500 mt-0.5 shrink-0" /> Shared team Inbox & assignments</li>
-                  <li className="flex items-start gap-2"><Check size={14} className="text-sky-500 mt-0.5 shrink-0" /> Priority Support</li>
-                  <li className="flex items-start gap-2"><Check size={14} className="text-sky-500 mt-0.5 shrink-0" /> Full AI Features</li>
-                  <li className="flex items-start gap-2"><Check size={14} className="text-sky-500 mt-0.5 shrink-0" /> No branding</li>
-                </ul>
               </div>
 
-
-
-            </div>
-          </div>
-        </section>        {/* 8. FAQ */}
-        <section id="faq" className="py-24 bg-white border-t border-slate-100">
-          <div className="max-w-3xl mx-auto px-6">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-slate-900 tracking-tight">Frequently Asked Questions</h2>
-            </div>
-
-            <div className="flex flex-col">
-              {[
-                { q: "Does this work with any Instagram account?", a: "Yes, any business account can be connected securely and easily via Meta's official API." },
-                { q: "Will customers know replies are automated?", a: "No — responses feel natural and human-like. You have full control over the tone of the AI." },
-                { q: "Can my team use it together?", a: "Yes, multiple team members can collaborate in one inbox without stepping on each other's toes." },
-                { q: "Is my data secure?", a: "Yes, we use secure Meta integrations and follow all standard data privacy practices to ensure your data stays safe." }
-              ].map((faq, i) => (
-                <FAQItem key={i} question={faq.q} answer={faq.a} />
-              ))}
             </div>
           </div>
         </section>
 
-
-        {/* 9. FINAL CTA (CLIMAX) */}
-        <section className="py-32 text-center bg-white border-t border-slate-100">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="max-w-4xl mx-auto px-6"
-          >
-            <h2 className="text-4xl md:text-6xl font-bold mb-6 text-slate-900 tracking-tight text-balance leading-tight">
-              Stop replying to everyone.<br /> Start closing the right ones.
-            </h2>
-            <p className="text-lg md:text-xl text-slate-500 mb-10 max-w-2xl mx-auto">
-              Let your CRM filter the noise and bring you the leads that matter.
-            </p>
-
-            <div className="flex flex-col items-center">
-              <button
-                onClick={() => navigate('/signup')}
-                className="bg-sky-600 hover:bg-sky-700 text-white px-10 py-5 rounded-xl font-semibold text-lg shadow-lg shadow-sky-600/20 active:scale-95 transition-all inline-flex items-center gap-3 group mb-6"
-              >
-                Start Your Free Trial
-                <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
-              </button>
-
-              <div className="flex flex-wrap justify-center items-center gap-4 text-sm font-medium text-slate-500">
-                <span className="flex items-center gap-1.5"><Check size={16} className="text-sky-400" /> No credit card</span>
-                <span className="flex items-center gap-1.5"><Check size={16} className="text-sky-400" /> 14-day free trial</span>
-                <span className="flex items-center gap-1.5"><Check size={16} className="text-sky-400" /> Cancel anytime</span>
-              </div>
+        {/* 6. FAQ ACCORDION SECTION (Frequently Asked Questions equivalent) */}
+        <section id="faq" className="py-24 border-t border-white/5 bg-black/10 relative">
+          <div className="max-w-3xl mx-auto px-6">
+            <div className="text-center mb-16">
+              <span className="text-xs font-bold uppercase tracking-widest text-brand-purple">Have Questions?</span>
+              <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-white mt-3 leading-tight">
+                Frequently Asked Questions
+              </h2>
             </div>
-          </motion.div>
+
+            <motion.div 
+              variants={{
+                hidden: {},
+                show: {
+                  transition: {
+                    staggerChildren: 0.1
+                  }
+                }
+              }}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true, margin: "-100px" }}
+              className="flex flex-col gap-4"
+            >
+              {[
+                { q: "What is ReplyZens?", a: "ReplyZens is an Instagram DM automation and CRM platform. It connects with your Instagram business page via official Meta APIs and acts as a backend dashboard to automate customer replies, score lead intent, filter noise, and sync customer data to Google Sheets." },
+                { q: "Is it safe to connect my Instagram account?", a: "Yes, 100%. We utilize Meta's official Graph API and OAuth protocol. Your account details remain completely private, and we strictly follow Instagram Platform Policies." },
+                { q: "Does the AI support languages other than English?", a: "Yes, our integrated AI Assistant (Maya) automatically detects and answers messages in over 40 languages including Spanish, German, French, Portuguese, Hindi, and more." },
+                { q: "Can I cancel or upgrade my subscription plan anytime?", a: "Yes, you can upgrade, downgrade, or cancel your subscription plan at any time directly through your billing portal. There are no locking periods or cancellation fees." }
+              ].map((faq, i) => (
+                <FAQItem key={i} question={faq.q} answer={faq.a} />
+              ))}
+            </motion.div>
+          </div>
+        </section>
+
+        {/* 7. FINAL CTA (Collect Form Submissions equivalent) */}
+        <section className="py-32 border-t border-white/5 relative overflow-hidden text-center">
+          <div className="absolute inset-0 bg-gradient-to-b from-brand-purple/5 to-transparent pointer-events-none" />
+          <div className="max-w-4xl mx-auto px-6 relative z-10">
+            <h2 className="text-4xl md:text-6xl font-extrabold text-white mb-6 leading-tight tracking-tight">
+              Create your DM API and start automating today.
+            </h2>
+            <p className="text-base md:text-lg text-zinc-400 max-w-xl mx-auto mb-10">
+              Set up your custom rules and let our backend protect your inbox, handle questions, and qualify leads 24/7.
+            </p>
+            <button
+              onClick={() => navigate('/signup')}
+              className="w3-button-primary bg-gradient-to-r from-brand-pink to-brand-purple font-bold px-10 py-5 rounded-xl text-sm shadow-xl shadow-brand-pink/20 hover:scale-[1.02] active:scale-95 transition-all inline-flex items-center gap-2 group"
+            >
+              Get Started In 2 Minutes
+              <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+            </button>
+          </div>
         </section>
 
       </main>
 
       {/* FOOTER */}
-      <footer className="bg-slate-50 border-t border-slate-200/60 pt-20 pb-10 px-6">
+      <footer className="border-t border-white/5 bg-[#07080C] pt-20 pb-12 px-6 relative z-10">
         <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-12 mb-16">
-
-            {/* Brand Column */}
-            <div className="col-span-2 lg:col-span-2">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-10 mb-16">
+            
+            {/* Logo and Brand Summary */}
+            <div className="col-span-2">
               <Link to="/" className="flex items-center gap-2.5 mb-6 group">
-                <div className="w-9 h-9 bg-transparent flex items-center justify-center transition-transform duration-300 group-hover:scale-105">
-                  <img src="/replyzenslog.png" alt="ReplyZens Logo" className="w-9 h-9 object-contain" />
-                </div>
-                <span className="text-2xl font-bold tracking-tight text-slate-900 font-outfit uppercase">
-                  Reply<span className="text-sky-600">Zens</span>
+                <img src="/favicon.svg" alt="ReplyZens Logo" className="w-8 h-8 object-contain transition-transform duration-300 group-hover:scale-105" />
+                <span className="text-lg font-bold tracking-tight text-white uppercase font-outfit">
+                  Reply<span className="text-brand-pink">Zens</span>
                 </span>
               </Link>
-              <p className="text-slate-500 font-medium text-sm leading-relaxed max-w-xs mb-8">
-                The world's most advanced Instagram CRM for professional brands. Scale your DMs, qualify your leads, and grow your revenue without the manual workload.
+              <p className="text-zinc-500 text-xs leading-relaxed max-w-sm">
+                The modern Instagram DM API and CRM for digital creators, scaling agencies, and high-growth e-commerce brands. Automatically route inquiries and scale your conversions.
               </p>
-              <div className="flex items-center gap-3">
-                {/* Twitter */}
-                <a href="#" className="w-10 h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-400 hover:text-[#1DA1F2] hover:border-[#1DA1F2]/30 hover:shadow-sm transition-all group/social">
-                  <svg className="w-5 h-5 fill-current group-hover/social:scale-110 transition-transform" viewBox="0 0 24 24">
-                    <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.84 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z" />
-                  </svg>
-                </a>
-                {/* Instagram */}
-                <a href="#" className="w-10 h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-400 hover:text-[#E4405F] hover:border-[#E4405F]/30 hover:shadow-sm transition-all group/social">
-                  <svg className="w-5 h-5 fill-current group-hover/social:scale-110 transition-transform" viewBox="0 0 24 24">
-                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12s.014 3.667.072 4.947c.2 4.352 2.622 6.774 7.052 6.974 1.28.058 1.688.072 4.947.072 3.259 0 3.667-.014 4.947-.072 4.351-.2 6.772-2.622 6.972-7.052.058-1.28.072-1.688.072-4.947s-.014-3.667-.072-4.947c-.2-4.352-2.622-6.774-7.052-6.974C15.667.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z" />
-                  </svg>
-                </a>
-                {/* LinkedIn */}
-                <a href="#" className="w-10 h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-400 hover:text-[#0077B5] hover:border-[#0077B5]/30 hover:shadow-sm transition-all group/social">
-                  <svg className="w-5 h-5 fill-current group-hover/social:scale-110 transition-transform" viewBox="0 0 24 24">
-                    <path d="M4.98 3.5c0 1.381-1.11 2.5-2.48 2.5s-2.48-1.119-2.48-2.5c0-1.38 1.11-2.5 2.48-2.5s2.48 1.12 2.48 2.5zm.02 4.5h-5v16h5v-16zm7.982 0h-4.968v16h4.969v-8.399c0-4.67 6.029-5.052 6.029 0v8.399h4.988v-10.131c0-7.88-8.922-7.593-11.018-3.714v-2.155z" />
-                  </svg>
-                </a>
-              </div>
             </div>
 
-            {/* Product Links */}
+            {/* Product Column */}
             <div>
-              <h4 className="text-slate-900 font-bold text-sm uppercase tracking-wider mb-6">Product</h4>
-              <ul className="space-y-4">
-                <li><a href="#story" className="text-slate-500 hover:text-sky-600 font-medium text-sm transition-colors">Features</a></li>
-                <li><a href="#how-it-works" className="text-slate-500 hover:text-sky-600 font-medium text-sm transition-colors">How it works</a></li>
-                <li><button onClick={() => navigate('/login')} className="text-slate-500 hover:text-sky-600 font-medium text-sm transition-colors">Live Demo</button></li>
-                <li><a href="#" className="text-slate-500 hover:text-sky-600 font-medium text-sm transition-colors">Pricing</a></li>
+              <h4 className="text-white text-xs font-bold uppercase tracking-wider mb-6">Product</h4>
+              <ul className="space-y-4 text-xs font-medium text-zinc-500">
+                <li><a href="#features" className="hover:text-brand-purple transition-colors">Features</a></li>
+                <li><a href="#setup" className="hover:text-brand-purple transition-colors">Integration Setup</a></li>
+                <li><a href="#pricing" className="hover:text-brand-purple transition-colors">Pricing Plans</a></li>
+                <li><a href="#noise-filter" className="hover:text-brand-purple transition-colors">Noise Filter</a></li>
               </ul>
             </div>
 
-            {/* Resources Links */}
+            {/* Developers Column */}
             <div>
-              <h4 className="text-slate-900 font-bold text-sm uppercase tracking-wider mb-6">Resources</h4>
-              <ul className="space-y-4">
-                <li><a href="#" className="text-slate-500 hover:text-sky-600 font-medium text-sm transition-colors">Documentation</a></li>
-                <li><a href="#" className="text-slate-500 hover:text-sky-600 font-medium text-sm transition-colors">Help Center</a></li>
-                <li><a href="#" className="text-slate-500 hover:text-sky-600 font-medium text-sm transition-colors">Community</a></li>
-                <li><a href="#" className="text-slate-500 hover:text-sky-600 font-medium text-sm transition-colors">API Status</a></li>
+              <h4 className="text-white text-xs font-bold uppercase tracking-wider mb-6">Developer API</h4>
+              <ul className="space-y-4 text-xs font-medium text-zinc-500">
+                <li><a href="#" className="hover:text-brand-purple transition-colors">Webhooks</a></li>
+                <li><a href="#" className="hover:text-brand-purple transition-colors">API Docs</a></li>
+                <li><a href="#" className="hover:text-brand-purple transition-colors">Integrations</a></li>
+                <li><a href="#" className="hover:text-brand-purple transition-colors">System Status</a></li>
               </ul>
             </div>
 
-            {/* Legal Links */}
+            {/* Legal Column */}
             <div>
-              <h4 className="text-slate-900 font-bold text-sm uppercase tracking-wider mb-6">Legal</h4>
-              <ul className="space-y-4">
-                <li><Link to="/privacy" className="text-slate-500 hover:text-sky-600 font-medium text-sm transition-colors">Privacy Policy</Link></li>
-                <li><Link to="/terms" className="text-slate-500 hover:text-sky-600 font-medium text-sm transition-colors">Terms of Service</Link></li>
-                <li><a href="#" className="text-slate-500 hover:text-sky-600 font-medium text-sm transition-colors">Cookie Policy</a></li>
+              <h4 className="text-white text-xs font-bold uppercase tracking-wider mb-6">Legal</h4>
+              <ul className="space-y-4 text-xs font-medium text-zinc-500">
+                <li><Link to="/privacy" className="hover:text-brand-purple transition-colors">Privacy Policy</Link></li>
+                <li><Link to="/terms" className="hover:text-brand-purple transition-colors">Terms of Service</Link></li>
+                <li><Link to="/data-deletion" className="hover:text-brand-purple transition-colors">Data Deletion</Link></li>
               </ul>
             </div>
+
           </div>
 
-          {/* Bottom Bar */}
-          <div className="pt-10 border-t border-slate-200/60 flex flex-col md:flex-row items-center justify-between gap-6">
-            <p className="text-slate-400 font-medium text-sm">
-              © 2026 ReplyZens Inc. All rights reserved. Built for professional Instagram businesses.
-            </p>
+          <div className="pt-8 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4 text-zinc-600 text-[10px] font-bold">
+            <span>© 2026 ReplyZens Inc. All rights reserved.</span>
+            <span>Built with ❤ for professional Instagram automation.</span>
           </div>
         </div>
       </footer>
+
     </div>
   );
 };

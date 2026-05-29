@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Mail, Lock, User, Building2, UserPlus, AlertCircle, Loader2, Zap, Eye, EyeOff } from 'lucide-react';
+import { Mail, Lock, User, Building2, UserPlus, AlertCircle, Loader2, Eye, EyeOff } from 'lucide-react';
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import { useAuth } from '../context/AuthContext';
 import api from '../lib/axios';
@@ -43,9 +43,10 @@ const Signup: React.FC = () => {
       } else {
         setMessage({ text: response.data.Message || 'Signup failed', type: 'error' });
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Signup error:', err);
-      const messageText = err.response?.data?.Message || err.message || 'An error occurred during signup';
+      const error = err as { response?: { data?: { Message?: string } }; message?: string };
+      const messageText = error.response?.data?.Message || error.message || 'An error occurred during signup';
       setMessage({ text: messageText, type: 'error' });
     } finally {
       setIsLoading(false);
@@ -91,7 +92,7 @@ const Signup: React.FC = () => {
           <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-purple-500/50 to-transparent"></div>
           <div className="mb-10 text-center">
             <div className="w-16 h-16 bg-transparent flex items-center justify-center mx-auto mb-8">
-              <img src="/replyzenslog.png" alt="ReplyZens Logo" className="w-16 h-16 object-contain" />
+              <img src="/favicon.svg" alt="ReplyZens Logo" className="w-16 h-16 object-contain" />
             </div>
             <h1 className="text-3xl font-bold tracking-tight text-white mb-2">Create Account</h1>
             <p className="text-zinc-400 font-medium">Join us today and start growing</p>
