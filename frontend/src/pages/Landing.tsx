@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 import {
   Zap,
   Menu,
@@ -18,7 +20,15 @@ import {
   Lock,
   Upload,
   FileText,
-  TrendingUp
+  TrendingUp,
+  Phone,
+  Video,
+  Info,
+  ChevronLeft,
+  Camera,
+  Mic,
+  Image,
+  Smile
 } from 'lucide-react';
 
 const Instagram = ({ size = 24, className = "" }: { size?: number; className?: string }) => (
@@ -558,7 +568,12 @@ const NoiseFilterMockup: React.FC = () => {
 };
 
 const InteractivePhoneMockup: React.FC = () => {
-  const [messages, setMessages] = useState<Array<{ sender: 'user' | 'ai'; text: string }>>([]);
+  const welcomeMessage = {
+    sender: 'ai' as const,
+    text: "Welcome to jordan.design! 👋 Let us know if you have any questions about pricing, sizing, or shipping."
+  };
+
+  const [messages, setMessages] = useState<Array<{ sender: 'user' | 'ai'; text: string }>>([welcomeMessage]);
   const [typing, setTyping] = useState(false);
   const [syncStatus, setSyncStatus] = useState(false);
 
@@ -566,14 +581,14 @@ const InteractivePhoneMockup: React.FC = () => {
     let active = true;
     const runAnimation = async () => {
       if (!active) return;
-      setMessages([]);
+      setMessages([welcomeMessage]);
       setTyping(false);
       setSyncStatus(false);
 
       // Step 1: User message 1
-      await new Promise(r => setTimeout(r, 1200));
+      await new Promise(r => setTimeout(r, 1600));
       if (!active) return;
-      setMessages([{ sender: 'user', text: "Hey! Do you ship to Canada? 🇨🇦" }]);
+      setMessages(prev => [...prev, { sender: 'user', text: "Hey! Do you ship to Canada? 🇨🇦" }]);
 
       // Step 2: AI Typing
       await new Promise(r => setTimeout(r, 1000));
@@ -590,7 +605,7 @@ const InteractivePhoneMockup: React.FC = () => {
       }]);
 
       // Step 4: User message 2
-      await new Promise(r => setTimeout(r, 2000));
+      await new Promise(r => setTimeout(r, 2200));
       if (!active) return;
       setMessages(prev => [...prev, { sender: 'user', text: "Yes please! The standard hoodie in black, size L." }]);
 
@@ -614,7 +629,7 @@ const InteractivePhoneMockup: React.FC = () => {
       setSyncStatus(true);
 
       // Hold before reset
-      await new Promise(r => setTimeout(r, 6000));
+      await new Promise(r => setTimeout(r, 6500));
       if (active) {
         runAnimation();
       }
@@ -627,86 +642,172 @@ const InteractivePhoneMockup: React.FC = () => {
   }, []);
 
   return (
-    <div className="dark relative mx-auto py-6 px-10">
-      {/* Outer Phone Container with overflow-hidden */}
-      <div className="relative w-[280px] h-[520px] sm:w-[300px] sm:h-[560px] bg-[#09090B] rounded-[48px] p-3 shadow-2xl border-[6px] border-zinc-800 ring-1 ring-white/10 overflow-hidden font-sans select-none">
-        {/* Dynamic Island */}
-        <div className="absolute top-5 left-1/2 -translate-x-1/2 w-24 h-5 bg-black rounded-full z-20 flex items-center justify-center">
-          <div className="w-1.5 h-1.5 rounded-full bg-zinc-800 ml-auto mr-3" />
+    <div className="dark relative mx-auto py-6 px-4 sm:px-6">
+      {/* Physical Volume Buttons on the Left */}
+      <div className="absolute left-[14px] sm:left-[22px] top-28 w-[3px] h-6 bg-[#2d2d30] rounded-l-md border-y border-l border-white/10 z-10" />
+      <div className="absolute left-[14px] sm:left-[22px] top-38 w-[3px] h-10 bg-[#2d2d30] rounded-l-md border-y border-l border-white/10 z-10" />
+      <div className="absolute left-[14px] sm:left-[22px] top-50 w-[3px] h-10 bg-[#2d2d30] rounded-l-md border-y border-l border-white/10 z-10" />
+      
+      {/* Physical Power Button on the Right */}
+      <div className="absolute right-[14px] sm:right-[22px] top-42 w-[3px] h-14 bg-[#2d2d30] rounded-r-md border-y border-r border-white/10 z-10" />
+
+      {/* Outer Phone Container - Styled with Metallic Bezel and Premium Drop Shadows */}
+      <div className="relative w-[280px] h-[540px] sm:w-[300px] sm:h-[580px] bg-gradient-to-b from-[#3a3a40] via-[#1a1a1c] to-[#0a0a0c] rounded-[46px] p-2.5 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.8)] ring-1 ring-white/20 overflow-hidden font-sans select-none z-10">
+        
+        {/* Dynamic Island with Subtle Camera Lens Reflection */}
+        <div className="absolute top-4 left-1/2 -translate-x-1/2 w-24 h-5 bg-[#000] rounded-full z-30 flex items-center justify-center border border-zinc-900 shadow-inner">
+          <div className="w-1.5 h-1.5 rounded-full bg-[#071328] border-[0.5px] border-zinc-800 shadow-[inset_0_0_2px_rgba(0,255,200,0.5)] mr-3 ml-auto opacity-70" />
         </div>
 
+        {/* Screen Glass Shine / Reflection Overlay */}
+        <div className="absolute inset-2.5 bg-gradient-to-tr from-transparent via-white/[0.02] to-white/[0.06] pointer-events-none z-20 rounded-[38px] mix-blend-overlay" />
+
         {/* Screen Content */}
-        <div className="w-full h-full bg-[#0D0E12] rounded-[38px] overflow-hidden relative flex flex-col pt-8 border border-white/5">
-          {/* Instagram DM Header */}
-          <div className="h-12 border-b border-white/5 px-4 flex items-center gap-2.5 bg-black/15">
-            <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-yellow-400 via-red-500 to-purple-600 p-0.5 shrink-0">
-              <div className="w-full h-full rounded-full bg-[#0D0E12] p-0.5">
-                <div className="w-full h-full rounded-full bg-zinc-700 flex items-center justify-center text-[8px] font-bold text-white uppercase">
-                  JD
-                </div>
+        <div className="w-full h-full bg-[#050508] rounded-[38px] overflow-hidden relative flex flex-col pt-7 border border-white/10">
+          
+          {/* iOS Status Bar */}
+          <div className="h-5 px-5 flex items-center justify-between text-[8px] font-semibold text-zinc-300 z-20 relative bg-[#050508]/80 select-none shrink-0">
+            <span>9:41</span>
+            <div className="flex items-center gap-1.5">
+              {/* Signal Bars */}
+              <div className="flex items-end gap-[1px] h-1.5">
+                <div className="w-[1px] h-[2px] bg-zinc-300 rounded-2xs" />
+                <div className="w-[1px] h-[3px] bg-zinc-300 rounded-2xs" />
+                <div className="w-[1px] h-[4px] bg-zinc-300 rounded-2xs" />
+                <div className="w-[1px] h-[5px] bg-zinc-300 rounded-2xs" />
               </div>
-            </div>
-            <div className="flex flex-col text-left">
-              <span className="text-[10px] font-bold text-zinc-100 leading-tight">Jordan.design</span>
-              <span className="text-[7px] text-success font-medium flex items-center gap-1 leading-none mt-0.5">
-                <span className="w-1 h-1 rounded-full bg-success animate-pulse" /> Active now
-              </span>
+              
+              {/* Wifi Icon */}
+              <svg className="w-2 h-2 text-zinc-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                <path d="M12 20h.01M8.5 16.5a5 5 0 0 1 7 0M5 13a10 10 0 0 1 14 0M1.5 9.5a15 15 0 0 1 21 0" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              
+              {/* Battery Icon */}
+              <div className="w-3.5 h-1.5 border border-zinc-400 rounded-[2px] p-[0.5px] flex items-center relative">
+                <div className="h-full w-2 bg-emerald-500 rounded-[0.5px]" />
+                <div className="w-[0.5px] h-0.75 bg-zinc-400 rounded-r-[0.5px] absolute -right-[1.5px]" />
+              </div>
             </div>
           </div>
 
-          {/* Message Feed */}
-          <div className="flex-1 p-3.5 space-y-3 overflow-y-auto premium-scroll flex flex-col">
+          {/* Instagram DM Header */}
+          <div className="h-12 border-b border-white/5 px-3 flex items-center justify-between bg-[#0B0A0F]/90 backdrop-blur-md shrink-0">
+            <div className="flex items-center gap-1.5">
+              <ChevronLeft size={16} className="text-zinc-300 hover:text-white cursor-pointer shrink-0" />
+              
+              {/* Profile Image Container with Story Gradient Ring */}
+              <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#f9ce34] via-[#ee2a7b] to-[#6228d7] p-[1.5px] shrink-0">
+                <div className="w-full h-full rounded-full bg-[#050508] p-[1px]">
+                  <div className="w-full h-full rounded-full bg-gradient-to-br from-brand-pink to-brand-purple flex items-center justify-center text-[7px] font-extrabold text-white font-outfit">
+                    JD
+                  </div>
+                </div>
+              </div>
+              
+              <div className="flex flex-col text-left">
+                <div className="flex items-center gap-0.5">
+                  <span className="text-[9px] font-bold text-zinc-100 leading-tight truncate max-w-[70px] sm:max-w-[90px]">jordan.design</span>
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#0095F6] flex items-center justify-center shrink-0 shadow-sm scale-75">
+                    <svg className="w-1.5 h-1.5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4">
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                  </span>
+                </div>
+                <span className="text-[6.5px] text-emerald-400 font-semibold flex items-center gap-0.5 leading-none mt-0.5">
+                  <span className="w-1 h-1 rounded-full bg-emerald-400 animate-pulse" /> Active now
+                </span>
+              </div>
+            </div>
+            
+            <div className="flex items-center gap-3 pr-1.5">
+              <Phone size={13} className="text-zinc-300 hover:text-white cursor-pointer transition-colors shrink-0" />
+              <Video size={13} className="text-zinc-300 hover:text-white cursor-pointer transition-colors shrink-0" />
+              <Info size={13} className="text-zinc-300 hover:text-white cursor-pointer transition-colors shrink-0" />
+            </div>
+          </div>
+
+          {/* Message Feed with Midnight Glow Background */}
+          <div className="flex-1 p-3 space-y-3.5 overflow-y-auto premium-scroll flex flex-col bg-gradient-to-b from-[#050508] via-[#08070D] to-[#050508]">
             <AnimatePresence>
               {messages.map((msg, i) => (
                 <motion.div
                   key={i}
-                  initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                  initial={{ opacity: 0, y: 12, scale: 0.96 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
-                  transition={{ duration: 0.3 }}
-                  className={`flex max-w-[85%] ${msg.sender === 'ai' ? 'self-end justify-end' : 'self-start'}`}
+                  transition={{ duration: 0.35, ease: "easeOut" }}
+                  className={`flex w-full ${msg.sender === 'ai' ? 'justify-end' : 'justify-start'}`}
                 >
-                  <div
-                    className={`p-2.5 rounded-2xl text-[9px] font-medium leading-relaxed text-left ${
-                      msg.sender === 'ai'
-                        ? 'bg-brand-purple text-white rounded-tr-none shadow-md shadow-brand-purple/10'
-                        : 'bg-zinc-800/80 text-zinc-200 rounded-tl-none border border-white/5'
-                    }`}
-                  >
-                    {msg.sender === 'ai' && (
-                      <div className="flex items-center gap-1 text-[6px] font-bold uppercase tracking-wider text-brand-pink mb-1 justify-start">
-                        <Zap size={7} className="fill-current" /> AI Assistant
+                  <div className={`flex items-end gap-1.5 max-w-[85%] ${msg.sender === 'ai' ? 'flex-row-reverse' : 'flex-row'}`}>
+                    {/* User profile icon to the left of incoming messages */}
+                    {msg.sender === 'user' && (
+                      <div className="w-5 h-5 rounded-full bg-zinc-800 flex items-center justify-center text-[7px] font-bold text-zinc-300 border border-white/5 shrink-0 select-none">
+                        US
                       </div>
                     )}
-                    {msg.text}
+                    
+                    <div className="flex flex-col">
+                      <div
+                        className={`px-3 py-2 rounded-[18px] text-[9.5px] font-medium leading-normal text-left ${
+                          msg.sender === 'ai'
+                            ? 'bg-gradient-to-tr from-brand-pink via-[#8B5CF6] to-brand-purple text-white rounded-tr-none shadow-md shadow-brand-purple/10'
+                            : 'bg-zinc-800/90 text-zinc-100 rounded-tl-none border border-white/5 shadow-sm'
+                        }`}
+                      >
+                        {msg.text}
+                      </div>
+                      
+                      {msg.sender === 'ai' && (
+                        <span className="text-[6px] font-bold text-brand-pink/90 mt-1 flex items-center gap-0.5 justify-end mr-0.5 select-none uppercase tracking-wide">
+                          <Sparkles size={6} className="text-brand-pink fill-brand-pink animate-pulse" /> Auto-reply
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </motion.div>
               ))}
 
               {typing && (
                 <motion.div
-                  initial={{ opacity: 0, y: 5 }}
+                  initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0 }}
-                  className="self-end bg-brand-purple text-white p-2.5 rounded-2xl rounded-tr-none flex items-center gap-1.5 shadow-md shadow-brand-purple/10"
+                  className="self-end flex flex-col items-end max-w-[85%]"
                 >
-                  <div className="flex items-center gap-1 text-[6px] font-bold uppercase tracking-wider text-brand-pink">
-                    <Zap size={7} className="fill-current" /> Typing
+                  <div className="bg-gradient-to-tr from-brand-pink via-[#8B5CF6] to-brand-purple text-white px-3.5 py-2.5 rounded-[18px] rounded-tr-none flex items-center gap-1.5 shadow-md shadow-brand-purple/10">
+                    <div className="flex gap-1 py-0.5">
+                      <span className="w-1 h-1 bg-white rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                      <span className="w-1 h-1 bg-white rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                      <span className="w-1 h-1 bg-white rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                    </div>
                   </div>
-                  <div className="flex gap-1">
-                    <span className="w-1 h-1 bg-white rounded-full animate-bounce delay-100" />
-                    <span className="w-1 h-1 bg-white rounded-full animate-bounce delay-200" />
-                    <span className="w-1 h-1 bg-white rounded-full animate-bounce delay-300" />
-                  </div>
+                  <span className="text-[6px] font-bold text-brand-purple mt-1 flex items-center gap-0.5 self-end mr-1 select-none uppercase tracking-wide">
+                    <Zap size={6} className="text-brand-purple fill-brand-purple animate-pulse" /> Agent typing
+                  </span>
                 </motion.div>
               )}
             </AnimatePresence>
           </div>
 
-          {/* Mock Status Footer */}
-          <div className="h-8 border-t border-white/5 bg-black/20 px-3 flex items-center justify-between text-[8px] font-mono text-zinc-500">
-            <span>Filter: Active</span>
-            <span className="text-brand-pink font-bold">Auto-replies On</span>
+          {/* Instagram Message Input Bar */}
+          <div className="p-2.5 pb-4 border-t border-white/5 bg-[#050508] shrink-0 flex items-center gap-2">
+            {/* Blue camera button */}
+            <div className="w-6.5 h-6.5 rounded-full bg-[#0095F6] flex items-center justify-center text-white shrink-0 cursor-pointer hover:bg-blue-600 transition-colors">
+              <Camera size={11} className="stroke-[2.5]" />
+            </div>
+            
+            {/* Input Field Pill */}
+            <div className="flex-1 bg-[#1C1C1E] border border-white/5 rounded-full h-7 px-2.5 flex items-center justify-between">
+              <span className="text-[9px] text-zinc-500 font-medium select-none">Message...</span>
+              <div className="flex items-center gap-2 text-zinc-400 pr-0.5">
+                <Mic size={11} className="cursor-pointer hover:text-white transition-colors" />
+                <Image size={11} className="cursor-pointer hover:text-white transition-colors" />
+                <Smile size={11} className="cursor-pointer hover:text-white transition-colors" />
+              </div>
+            </div>
           </div>
+
+          {/* Home swipe indicator at bottom */}
+          <div className="absolute bottom-1 w-20 h-1 bg-white/20 rounded-full left-1/2 -translate-x-1/2 pointer-events-none z-30" />
         </div>
       </div>
 
@@ -733,6 +834,8 @@ const InteractivePhoneMockup: React.FC = () => {
   );
 };
 
+
+
 const TrainingPercentage: React.FC = () => {
   const [percent, setPercent] = useState(0);
 
@@ -749,9 +852,414 @@ const TrainingPercentage: React.FC = () => {
   return <span>{percent}%</span>;
 };
 
+const PIPELINE_STEPS = [
+  {
+    id: 1,
+    title: "1. The Midnight Question",
+    subtitle: "Alex DMs Sarah at 1:00 AM",
+    desc: "Alex is scrolling Instagram late at night and sees Sarah's Canva Template pack. He sends a DM asking if it's still on sale and leaves his email: alex@gmail.com.",
+  },
+  {
+    id: 2,
+    title: "2. AI Assistant Steps In",
+    subtitle: "Maya reads & drafts a reply while Sarah sleeps",
+    desc: "While Sarah is asleep, the AI assistant instantly reads Alex's message. It understands he wants to buy, extracts his email, checks stock, and writes a friendly checkout reply.",
+  },
+  {
+    id: 3,
+    title: "3. The Win-Win Sync",
+    subtitle: "Alex buys instantly, Sarah wakes up to a synced lead",
+    desc: "Alex receives the reply in seconds and purchases the template. Meanwhile, his handle, email, and order choice are synced directly to Sarah's Google Sheets lead sheet.",
+  }
+];
+
+const PipelineFlowSection: React.FC = () => {
+  const [activeStep, setActiveStep] = useState<number>(1);
+  const [isHovered, setIsHovered] = useState<boolean>(false);
+
+  // Auto cycle steps every 7 seconds unless hovered
+  useEffect(() => {
+    if (isHovered) return;
+    const timer = setInterval(() => {
+      setActiveStep((prev) => (prev === 3 ? 1 : prev + 1));
+    }, 7000);
+    return () => clearInterval(timer);
+  }, [isHovered]);
+
+  return (
+    <section id="how-it-works" className="py-24 border-t border-white/5 relative bg-gradient-to-b from-black/20 to-black/5" onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
+      <div className="max-w-6xl mx-auto px-6">
+        {/* Section Title */}
+        <div className="text-center max-w-2xl mx-auto mb-16">
+          <span className="text-xs font-bold uppercase tracking-widest text-brand-pink">How ReplyZens Works</span>
+          <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-white mt-3 mb-4 leading-tight">
+            From raw message to structured CRM lead in seconds.
+          </h2>
+          <p className="text-sm md:text-base text-zinc-400 font-medium leading-relaxed">
+            See how our intelligent DM pipeline routes, processes, and synchronizes your customer inquiries automatically.
+          </p>
+        </div>
+
+        {/* Pipeline Interface Container */}
+        <div className="grid lg:grid-cols-[1.1fr_0.9fr] gap-10 items-stretch bg-card/20 border border-white/5 p-6 md:p-8 rounded-3xl backdrop-blur-md">
+          
+          {/* Left Side: Step Details & Console Simulator */}
+          <div className="flex flex-col justify-between gap-6">
+            
+            {/* Step Selection Buttons */}
+            <div className="flex flex-wrap gap-2.5">
+              {PIPELINE_STEPS.map((step) => (
+                <button
+                  key={step.id}
+                  onClick={() => setActiveStep(step.id)}
+                  className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer text-left flex items-center gap-2 ${
+                    activeStep === step.id
+                      ? 'bg-brand-purple/10 text-brand-purple border border-brand-purple/20 shadow-lg shadow-brand-purple/5'
+                      : 'text-zinc-400 hover:text-zinc-200 border border-transparent'
+                  }`}
+                >
+                  <span className={`w-4 h-4 rounded-full flex items-center justify-center text-[9px] font-extrabold ${
+                    activeStep === step.id ? 'bg-brand-purple text-white' : 'bg-zinc-800 text-zinc-400'
+                  }`}>
+                    {step.id}
+                  </span>
+                  {step.title.split('. ')[1]}
+                </button>
+              ))}
+            </div>
+
+            {/* Step Description */}
+            <div className="mt-2 text-left">
+              <span className="text-xs font-bold uppercase tracking-wider text-brand-purple">
+                {PIPELINE_STEPS[activeStep - 1].subtitle}
+              </span>
+              <h3 className="text-xl md:text-2xl font-bold text-white mt-1.5 mb-3">
+                {PIPELINE_STEPS[activeStep - 1].title}
+              </h3>
+              <p className="text-sm text-zinc-400 leading-relaxed font-medium">
+                {PIPELINE_STEPS[activeStep - 1].desc}
+              </p>
+            </div>
+
+            {/* Console Simulator Box */}
+            <div className="relative rounded-2xl bg-[#09090C] border border-white/5 overflow-hidden p-5 min-h-[220px] flex flex-col justify-center shadow-inner text-left font-sans">
+              
+              {/* Console Header */}
+              <div className="absolute top-0 left-0 right-0 h-8 bg-[#111116] border-b border-white/5 flex items-center px-4 justify-between">
+                <div className="flex gap-1.5">
+                  <div className="w-2 h-2 rounded-full bg-red-500/40" />
+                  <div className="w-2 h-2 rounded-full bg-yellow-500/40" />
+                  <div className="w-2 h-2 rounded-full bg-green-500/40" />
+                </div>
+                <span className="text-[8px] font-mono text-slate-500 uppercase tracking-widest flex items-center gap-1.5 select-none">
+                  <span className="w-1 h-1 rounded-full bg-emerald-500 animate-ping" />
+                  {activeStep === 1 && "1:00 AM: Incoming Message"}
+                  {activeStep === 2 && "Maya AI Reading Details"}
+                  {activeStep === 3 && "Sarah's Google Sheets (Auto-Synced)"}
+                </span>
+              </div>
+
+              {/* Console Content based on activeStep */}
+              <div className="pt-4 flex-grow flex flex-col justify-center">
+                <AnimatePresence mode="wait">
+                  {activeStep === 1 && (
+                    <motion.div
+                      key="step1"
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.3 }}
+                      className="space-y-3"
+                    >
+                      <div className="flex items-center gap-2 text-[9px] font-mono text-brand-pink bg-brand-pink/5 border border-brand-pink/10 px-2.5 py-1 w-max rounded-md select-none">
+                        <Zap size={10} /> Message Received from @alex_scrolls
+                      </div>
+                      
+                      {/* Customer IG Bubble Mockup */}
+                      <div className="flex items-start gap-2.5 max-w-[90%] bg-[#16161C] border border-white/5 p-3 rounded-2xl rounded-tl-none">
+                        <div className="w-6 h-6 rounded-full bg-[#3f3f46] flex items-center justify-center text-[8px] font-bold text-white uppercase shrink-0">
+                          AL
+                        </div>
+                        <div>
+                          <div className="text-[8px] font-bold text-slate-400">@alex_scrolls</div>
+                          <p className="text-[10px] text-slate-200 mt-0.5 leading-relaxed font-medium">
+                            "Hey! Is the Custom Canva Template bundle still on sale? I want to buy it. Send details to alex@gmail.com"
+                          </p>
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+
+                  {activeStep === 2 && (
+                    <motion.div
+                      key="step2"
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.3 }}
+                      className="grid md:grid-cols-2 gap-4"
+                    >
+                      {/* Text highlighting column */}
+                      <div className="bg-[#111116] border border-white/5 rounded-xl p-3 flex flex-col justify-between">
+                        <div className="text-[8.5px] font-bold text-slate-500 uppercase tracking-wider mb-2 select-none">Incoming Instagram Message</div>
+                        <p className="text-[10px] text-slate-300 font-medium leading-relaxed">
+                          "Hey! Is the <span className="bg-brand-pink/10 text-brand-pink border border-brand-pink/20 px-1 rounded">Custom Canva Template</span> still on sale? Send details to <span className="bg-brand-purple/10 text-brand-purple border border-brand-purple/20 px-1 rounded">alex@gmail.com</span>"
+                        </p>
+                      </div>
+
+                      {/* AI Parsing column */}
+                      <div className="bg-[#111116] border border-white/5 rounded-xl p-3 space-y-2">
+                        <div className="text-[8.5px] font-bold text-slate-500 uppercase tracking-wider mb-1 select-none">AI Extracted Details</div>
+                        
+                        <div className="flex justify-between items-center text-[9px] border-b border-white/5 pb-1">
+                          <span className="text-slate-500 font-medium">Customer Intent</span>
+                          <span className="text-slate-200 font-bold bg-brand-purple/10 px-1.5 py-0.5 rounded text-brand-purple border border-brand-purple/10">Wants to Buy</span>
+                        </div>
+                        
+                        <div className="flex justify-between items-center text-[9px] border-b border-white/5 pb-1">
+                          <span className="text-slate-500 font-medium">Product</span>
+                          <span className="text-slate-200 font-bold">Canva Template</span>
+                        </div>
+                        
+                        <div className="flex justify-between items-center text-[9px] border-b border-white/5 pb-1">
+                          <span className="text-slate-500 font-medium">Email</span>
+                          <span className="text-brand-pink font-bold">alex@gmail.com</span>
+                        </div>
+
+                        <div className="flex justify-between items-center text-[9px]">
+                          <span className="text-slate-500 font-medium">Spam Filter</span>
+                          <span className="text-emerald-400 font-bold flex items-center gap-0.5"><Check size={8} strokeWidth={3} /> Passed (Real Buyer)</span>
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+
+                  {activeStep === 3 && (
+                    <motion.div
+                      key="step3"
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.3 }}
+                      className="space-y-3"
+                    >
+                      {/* Synced row overlay mockup */}
+                      <div className="bg-[#111116] border border-brand-purple/20 rounded-xl p-3 flex flex-col gap-2 relative shadow-lg shadow-brand-purple/5">
+                        <div className="flex justify-between items-center">
+                          <span className="text-[8.5px] font-bold text-slate-500 uppercase tracking-wider">Sarah's Lead Tracker</span>
+                          <span className="text-[8px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-full flex items-center gap-1">
+                            <span className="w-1 h-1 rounded-full bg-emerald-400" /> Auto-Synced
+                          </span>
+                        </div>
+                        
+                        {/* Mock spreadsheet headers */}
+                        <div className="grid grid-cols-4 gap-1 text-[8px] font-bold text-slate-500 bg-black/30 p-1 rounded select-none">
+                          <span>Handle</span>
+                          <span>Email</span>
+                          <span>Product</span>
+                          <span>Lead Interest</span>
+                        </div>
+                        
+                        {/* Mock spreadsheet row */}
+                        <motion.div 
+                          initial={{ opacity: 0, x: -10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: 0.2 }}
+                          className="grid grid-cols-4 gap-1 text-[9px] font-medium text-slate-200 p-1"
+                        >
+                          <span className="truncate">@alex_scrolls</span>
+                          <span className="truncate">alex@gmail.com</span>
+                          <span className="truncate">Canva Template</span>
+                          <span className="text-brand-pink font-bold">🔥 High</span>
+                        </motion.div>
+                      </div>
+
+                      {/* Automated Reply Sent Badge */}
+                      <div className="flex items-center gap-2 justify-end text-[9px] text-slate-400 font-medium">
+                        <CheckCircle2 size={12} className="text-emerald-500" />
+                        <span>Auto-reply sent back to Alex's chat!</span>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+
+            </div>
+
+          </div>
+
+          {/* Right Side: Flow Graph Visualizer */}
+          <div className="flex items-center justify-center min-h-[300px] border border-white/5 rounded-2xl bg-[#09090C] relative overflow-hidden p-6">
+            
+            {/* Grid Pattern Background */}
+            <div className="absolute inset-0 dot-grid opacity-30 pointer-events-none" />
+
+            {/* Glowing background circles for active node */}
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+              <AnimatePresence mode="wait">
+                {activeStep === 1 && (
+                  <motion.div
+                    key="glow1"
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 0.15, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.8 }}
+                    className="w-48 h-48 rounded-full bg-brand-pink blur-[40px]"
+                  />
+                )}
+                {activeStep === 2 && (
+                  <motion.div
+                    key="glow2"
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 0.2, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.8 }}
+                    className="w-48 h-48 rounded-full bg-brand-purple blur-[40px]"
+                  />
+                )}
+                {activeStep === 3 && (
+                  <motion.div
+                    key="glow3"
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 0.15, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.8 }}
+                    className="w-48 h-48 rounded-full bg-emerald-500 blur-[40px]"
+                  />
+                )}
+              </AnimatePresence>
+            </div>
+
+            {/* SVG Connecting Conduit Line */}
+            <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ minHeight: "100%" }}>
+              <defs>
+                <linearGradient id="flow-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stopColor="#ff4fd8" />
+                  <stop offset="50%" stopColor="#8b5cf6" />
+                  <stop offset="100%" stopColor="#10b981" />
+                </linearGradient>
+              </defs>
+              
+              {/* Path from Node 1 (Instagram) to Node 2 (AI Core) */}
+              <motion.path
+                d="M 150 70 L 150 170"
+                stroke="rgba(255,255,255,0.15)"
+                strokeWidth="4"
+                fill="none"
+              />
+              <motion.path
+                d="M 150 70 L 150 170"
+                stroke="url(#flow-gradient)"
+                strokeWidth="2"
+                fill="none"
+                strokeDasharray="8 8"
+                animate={activeStep === 1 || activeStep === 2 ? { strokeDashoffset: [-32, 0] } : {}}
+                transition={{ repeat: Infinity, duration: 1.5, ease: "linear" }}
+              />
+
+              {/* Path from Node 2 (AI Core) to Node 3 (CRM) */}
+              <motion.path
+                d="M 150 170 L 150 270"
+                stroke="rgba(255,255,255,0.15)"
+                strokeWidth="4"
+                fill="none"
+              />
+              <motion.path
+                d="M 150 170 L 150 270"
+                stroke="url(#flow-gradient)"
+                strokeWidth="2"
+                fill="none"
+                strokeDasharray="8 8"
+                animate={activeStep === 2 || activeStep === 3 ? { strokeDashoffset: [-32, 0] } : {}}
+                transition={{ repeat: Infinity, duration: 1.5, ease: "linear" }}
+              />
+              
+              {/* Glowing Data Packet Circle */}
+              <AnimatePresence>
+                {activeStep === 1 && (
+                  <motion.circle
+                    cx="150"
+                    cy="70"
+                    r="5"
+                    fill="#ff4fd8"
+                    className="shadow-[0_0_8px_#ff4fd8]"
+                    animate={{ cy: [70, 170] }}
+                    transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
+                  />
+                )}
+                {activeStep === 2 && (
+                  <motion.circle
+                    cx="150"
+                    cy="170"
+                    r="5"
+                    fill="#8b5cf6"
+                    className="shadow-[0_0_8px_#8b5cf6]"
+                    animate={{ cy: [170, 270] }}
+                    transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
+                  />
+                )}
+              </AnimatePresence>
+            </svg>
+
+            {/* Nodes Layout Grid */}
+            <div className="flex flex-col justify-between items-center gap-16 relative z-10 w-full max-w-[200px]">
+              
+              {/* Node 1: Instagram */}
+              <button
+                onClick={() => setActiveStep(1)}
+                className={`w-14 h-14 rounded-2xl flex items-center justify-center border transition-all cursor-pointer relative group ${
+                  activeStep === 1
+                    ? 'bg-gradient-to-tr from-[#f9ce34] via-[#ee2a7b] to-[#6228d7] text-white border-white/20 shadow-[0_0_20px_rgba(238,42,123,0.4)] scale-110'
+                    : 'bg-[#111116] border-white/5 text-slate-400 hover:text-slate-200'
+                }`}
+              >
+                <Instagram size={24} />
+                <span className="absolute left-16 bg-[#111116] border border-white/5 px-2.5 py-1 rounded-md text-[8px] font-bold text-slate-200 uppercase tracking-wider pointer-events-none opacity-0 group-hover:opacity-100 lg:opacity-100 transition-opacity whitespace-nowrap">
+                  1. Instagram DM
+                </span>
+              </button>
+
+              {/* Node 2: ReplyZens AI Core */}
+              <button
+                onClick={() => setActiveStep(2)}
+                className={`w-16 h-16 rounded-full flex items-center justify-center border transition-all cursor-pointer relative group ${
+                  activeStep === 2
+                    ? 'bg-gradient-to-tr from-brand-pink to-brand-purple text-white border-white/25 shadow-[0_0_25px_rgba(139,92,246,0.6)] scale-110'
+                    : 'bg-[#111116] border-white/5 text-slate-400 hover:text-slate-200'
+                }`}
+              >
+                <Zap size={28} className={activeStep === 2 ? "animate-pulse" : ""} />
+                <span className="absolute left-18 bg-[#111116] border border-white/5 px-2.5 py-1 rounded-md text-[8px] font-bold text-slate-200 uppercase tracking-wider pointer-events-none opacity-0 group-hover:opacity-100 lg:opacity-100 transition-opacity whitespace-nowrap">
+                  2. AI Parsing Core
+                </span>
+              </button>
+
+              {/* Node 3: Your CRM */}
+              <button
+                onClick={() => setActiveStep(3)}
+                className={`w-14 h-14 rounded-2xl flex items-center justify-center border transition-all cursor-pointer relative group ${
+                  activeStep === 3
+                    ? 'bg-emerald-500 text-white border-white/20 shadow-[0_0_20px_rgba(16,185,129,0.4)] scale-110'
+                    : 'bg-[#111116] border-white/5 text-slate-400 hover:text-slate-200'
+                }`}
+              >
+                <Database size={24} />
+                <span className="absolute left-16 bg-[#111116] border border-white/5 px-2.5 py-1 rounded-md text-[8px] font-bold text-slate-200 uppercase tracking-wider pointer-events-none opacity-0 group-hover:opacity-100 lg:opacity-100 transition-opacity whitespace-nowrap">
+                  3. CRM / Database
+                </span>
+              </button>
+
+            </div>
+
+          </div>
+
+
+        </div>
+
+      </div>
+    </section>
+  );
+};
+
 const Landing: React.FC = () => {
   const navigate = useNavigate();
-  const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
     <div className="landing-page bg-background text-foreground font-inter selection:bg-brand-purple/30 selection:text-white min-h-screen relative overflow-hidden">
@@ -761,75 +1269,7 @@ const Landing: React.FC = () => {
       <div className="absolute top-[800px] right-0 w-[400px] h-[400px] bg-brand-pink/5 blur-[100px] pointer-events-none" />
 
       {/* NAVBAR */}
-      <nav className="fixed top-0 left-0 right-0 z-50 glass border-b border-border">
-        <div className="max-w-6xl mx-auto px-6 h-[72px] flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2.5 group">
-            <img src="/favicon.svg" alt="ReplyZens Logo" className="w-9 h-9 object-contain transition-transform duration-300 group-hover:scale-105" />
-            <span className="text-xl font-bold tracking-tight text-white uppercase font-outfit">
-              Reply<span className="text-brand-pink">Zens</span>
-            </span>
-          </Link>
-
-          <div className="hidden md:flex items-center gap-8">
-            <a href="#setup" className="text-sm font-medium text-zinc-400 hover:text-white transition-colors">Setup</a>
-            <a href="#features" className="text-sm font-medium text-zinc-400 hover:text-white transition-colors">Features</a>
-            <a href="#noise-filter" className="text-sm font-medium text-zinc-400 hover:text-white transition-colors">Spam Shield</a>
-            <a href="#pricing" className="text-sm font-medium text-zinc-400 hover:text-white transition-colors">Pricing</a>
-            <a href="#faq" className="text-sm font-medium text-zinc-400 hover:text-white transition-colors">FAQ</a>
-            
-            <div className="flex items-center gap-4 ml-4">
-              <button
-                onClick={() => navigate('/login')}
-                className="text-sm font-semibold text-zinc-400 hover:text-white transition-colors"
-              >
-                Log in
-              </button>
-              <button
-                onClick={() => navigate('/signup')}
-                className="w3-button-primary bg-gradient-to-r from-brand-pink to-brand-purple text-white px-5 py-2 rounded-xl text-xs shadow-lg shadow-brand-pink/15 active:scale-95 transition-all"
-              >
-                Start Free Trial
-              </button>
-            </div>
-          </div>
-
-          <button className="md:hidden text-zinc-400 p-2" onClick={() => setMobileOpen(!mobileOpen)}>
-            {mobileOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
-        </div>
-
-        <AnimatePresence>
-          {mobileOpen && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              className="md:hidden bg-card border-t border-border shadow-xl"
-            >
-              <div className="px-6 py-8 flex flex-col gap-6">
-                <a href="#setup" className="text-base font-semibold text-zinc-300" onClick={() => setMobileOpen(false)}>Setup</a>
-                <a href="#features" className="text-base font-semibold text-zinc-300" onClick={() => setMobileOpen(false)}>Features</a>
-                <a href="#noise-filter" className="text-base font-semibold text-zinc-300" onClick={() => setMobileOpen(false)}>Spam Shield</a>
-                <a href="#pricing" className="text-base font-semibold text-zinc-300" onClick={() => setMobileOpen(false)}>Pricing</a>
-                <a href="#faq" className="text-base font-semibold text-zinc-300" onClick={() => setMobileOpen(false)}>FAQ</a>
-                <div className="h-px bg-white/5 my-2" />
-                <button
-                  onClick={() => { navigate('/login'); setMobileOpen(false); }}
-                  className="w-full text-center py-3 border border-white/10 rounded-xl text-zinc-300 font-semibold"
-                >
-                  Log in
-                </button>
-                <button
-                  onClick={() => { navigate('/signup'); setMobileOpen(false); }}
-                  className="bg-gradient-to-r from-brand-pink to-brand-purple text-white font-semibold py-3.5 rounded-xl w-full"
-                >
-                  Start Free Trial
-                </button>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </nav>
+      <Navbar />
 
       <main className="pt-[72px]">
 
@@ -864,7 +1304,7 @@ const Landing: React.FC = () => {
                   <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
                 </button>
                 <a
-                  href="#setup"
+                  href="#how-it-works"
                   className="w-full sm:w-auto px-8 py-4 rounded-xl text-sm font-semibold bg-white/5 border border-white/10 text-zinc-300 hover:bg-white/10 hover:border-white/20 transition-all flex items-center justify-center gap-2"
                 >
                   <Play size={14} fill="currentColor" />
@@ -887,6 +1327,9 @@ const Landing: React.FC = () => {
             </div>
           </div>
         </section>
+
+        {/* INTERACTIVE WORKFLOW PIPELINE */}
+        <PipelineFlowSection />
 
         {/* 2. SETUP TIMELINE SECTION (Easiest way to setup HTML form equivalent) */}
         <section id="setup" className="py-24 border-t border-white/5 relative bg-black/10">
@@ -1197,63 +1640,7 @@ const Landing: React.FC = () => {
       </main>
 
       {/* FOOTER */}
-      <footer className="border-t border-white/5 bg-[#07080C] pt-20 pb-12 px-6 relative z-10">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-10 mb-16">
-            
-            {/* Logo and Brand Summary */}
-            <div className="col-span-2">
-              <Link to="/" className="flex items-center gap-2.5 mb-6 group">
-                <img src="/favicon.svg" alt="ReplyZens Logo" className="w-8 h-8 object-contain transition-transform duration-300 group-hover:scale-105" />
-                <span className="text-lg font-bold tracking-tight text-white uppercase font-outfit">
-                  Reply<span className="text-brand-pink">Zens</span>
-                </span>
-              </Link>
-              <p className="text-zinc-500 text-xs leading-relaxed max-w-sm">
-                The modern Instagram DM API and CRM for digital creators, scaling agencies, and high-growth e-commerce brands. Automatically route inquiries and scale your conversions.
-              </p>
-            </div>
-
-            {/* Product Column */}
-            <div>
-              <h4 className="text-white text-xs font-bold uppercase tracking-wider mb-6">Product</h4>
-              <ul className="space-y-4 text-xs font-medium text-zinc-500">
-                <li><a href="#features" className="hover:text-brand-purple transition-colors">Features</a></li>
-                <li><a href="#setup" className="hover:text-brand-purple transition-colors">Integration Setup</a></li>
-                <li><a href="#pricing" className="hover:text-brand-purple transition-colors">Pricing Plans</a></li>
-                <li><a href="#noise-filter" className="hover:text-brand-purple transition-colors">Noise Filter</a></li>
-              </ul>
-            </div>
-
-            {/* Developers Column */}
-            <div>
-              <h4 className="text-white text-xs font-bold uppercase tracking-wider mb-6">Developer API</h4>
-              <ul className="space-y-4 text-xs font-medium text-zinc-500">
-                <li><a href="#" className="hover:text-brand-purple transition-colors">Webhooks</a></li>
-                <li><a href="#" className="hover:text-brand-purple transition-colors">API Docs</a></li>
-                <li><a href="#" className="hover:text-brand-purple transition-colors">Integrations</a></li>
-                <li><a href="#" className="hover:text-brand-purple transition-colors">System Status</a></li>
-              </ul>
-            </div>
-
-            {/* Legal Column */}
-            <div>
-              <h4 className="text-white text-xs font-bold uppercase tracking-wider mb-6">Legal</h4>
-              <ul className="space-y-4 text-xs font-medium text-zinc-500">
-                <li><Link to="/privacy" className="hover:text-brand-purple transition-colors">Privacy Policy</Link></li>
-                <li><Link to="/terms" className="hover:text-brand-purple transition-colors">Terms of Service</Link></li>
-                <li><Link to="/data-deletion" className="hover:text-brand-purple transition-colors">Data Deletion</Link></li>
-              </ul>
-            </div>
-
-          </div>
-
-          <div className="pt-8 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4 text-zinc-600 text-[10px] font-bold">
-            <span>© 2026 ReplyZens Inc. All rights reserved.</span>
-            <span>Built with ❤ for professional Instagram automation.</span>
-          </div>
-        </div>
-      </footer>
+      <Footer />
 
     </div>
   );
