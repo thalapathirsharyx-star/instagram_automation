@@ -13,6 +13,10 @@ import { UserService } from '@Service/Admin/User.service';
 import { UserRoleService } from '@Service/Admin/UserRole.service';
 import { AuthService } from '@Service/Auth/Auth.service';
 import { JwtStrategy } from '@Service/Auth/JwtStrategy.service';
+import { AdminSubRoleGuard } from '@Service/Auth/AdminSubRoleGuard.service';
+import { TwoFactorEnforcedGuard } from '@Service/Auth/TwoFactorEnforcedGuard.service';
+import { ImpersonationBlockGuard } from '@Service/Auth/ImpersonationBlockGuard.service';
+import { SecurityAlertService } from '@Service/Auth/SecurityAlert.service';
 import { EmailService } from '@Service/Email.service';
 import { EmailConfigController } from '@Controller/Admin/EmailConfig.controller';
 import { EmailConfigService } from '@Service/Admin/EmailConfig.service';
@@ -127,6 +131,10 @@ import { TokenMonitorService } from '@Service/TokenMonitor.service';
     CompanyService,
     CommonService,
     JwtStrategy,
+    AdminSubRoleGuard,
+    TwoFactorEnforcedGuard,
+    ImpersonationBlockGuard,
+    SecurityAlertService,
     ErrorLogService,
     {
       provide: APP_FILTER,

@@ -1,7 +1,9 @@
-import { Controller, Get, Patch, Body, Req, ForbiddenException } from '@nestjs/common';
+import { Controller, Get, Patch, Body, Req, ForbiddenException, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { JWTAuthController } from '@Controller/JWTAuth.controller';
 import { ResponseEnum } from '@Helper/Enum/ResponseEnum';
+import { AdminSubRoleGuard, SuperAdminRoles } from '@Service/Auth/AdminSubRoleGuard.service';
+import { SecurityAlertService } from '@Service/Auth/SecurityAlert.service';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -52,11 +54,24 @@ function maskKey(key?: string): string {
 @ApiTags("LLM Keys")
 export class LLMKeyController extends JWTAuthController {
 
+  constructor(private readonly _SecurityAlertService: SecurityAlertService) {
+    super();
+  }
+
   @Get()
+  @UseGuards(AdminSubRoleGuard)
+  @SuperAdminRoles('Owner', 'Security')
   async GetKeys(@Req() req: any) {
     if (req.user?.user_role_code !== 'SUPER_ADMIN') {
       throw new ForbiddenException('Only platform administrators can access LLM provider keys.');
     }
+    
+    // Send immediate security alert for LLM keys view
+    await this._SecurityAlertService.SendAlert(
+      'LLM Keys Accessed',
+      `Super Admin user ${req.user.email} (sub-role: ${req.user.super_admin_sub_role}) has viewed the platform LLM keys.`
+    );
+
     const keys = getKeysFromEnv();
     return {
       Type: ResponseEnum.Success,
@@ -69,11 +84,19 @@ export class LLMKeyController extends JWTAuthController {
   }
 
   @Patch('Update')
+  @UseGuards(AdminSubRoleGuard)
+  @SuperAdminRoles('Owner', 'Security')
   async UpdateKeys(@Body() body: { openai: string; gemini: string; groq: string }, @Req() req: any) {
     if (req.user?.user_role_code !== 'SUPER_ADMIN') {
       throw new ForbiddenException('Only platform administrators can update LLM provider keys.');
     }
     
+    // Send immediate security alert for LLM keys update/rotation
+    await this._SecurityAlertService.SendAlert(
+      'LLM Keys Rotated',
+      `Super Admin user ${req.user.email} (sub-role: ${req.user.super_admin_sub_role}) has updated/rotated the platform LLM keys.`
+    );
+
     const currentKeys = getKeysFromEnv();
     
     const newOpenai = (body.openai && body.openai.includes('...')) ? currentKeys.openai : body.openai;

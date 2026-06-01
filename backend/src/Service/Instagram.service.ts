@@ -266,6 +266,12 @@ export class InstagramService {
         await this.sendInstagramMessage(lead.instagram_handle, textToSend, company.instagram_access_token);
         await this.logOutboundMessage(lead, { reply: textToSend, action: 'welcome' } as any);
       }
+    } else {
+      // Reset follow-up status when user replies so they can be followed up again if they go cold later
+      if (lead.follow_up_sent) {
+        lead.follow_up_sent = false;
+        await lead.save();
+      }
     }
 
     const inboundMsg = new instagram_message();
@@ -643,6 +649,8 @@ export class InstagramService {
         page_name: company?.instagram_username || 'Connected Account',
         welcome_message: company?.welcome_message,
         auto_follow_up_enabled: company?.auto_follow_up_enabled || false,
+        auto_follow_up_delay_hours: company?.auto_follow_up_delay_hours ?? 24,
+        auto_follow_up_message: company?.auto_follow_up_message || '',
         story_mention_enabled: company?.story_mention_enabled || false,
         story_mention_message: company?.story_mention_message || '',
         auto_reply_enabled: company?.auto_reply_enabled !== false, // default true
@@ -661,6 +669,8 @@ export class InstagramService {
     
     if (data.welcome_message !== undefined) company.welcome_message = data.welcome_message;
     if (data.auto_follow_up_enabled !== undefined) company.auto_follow_up_enabled = data.auto_follow_up_enabled;
+    if (data.auto_follow_up_delay_hours !== undefined) company.auto_follow_up_delay_hours = data.auto_follow_up_delay_hours;
+    if (data.auto_follow_up_message !== undefined) company.auto_follow_up_message = data.auto_follow_up_message;
     if (data.story_mention_enabled !== undefined) company.story_mention_enabled = data.story_mention_enabled;
     if (data.story_mention_message !== undefined) company.story_mention_message = data.story_mention_message;
     if (data.auto_reply_enabled !== undefined) company.auto_reply_enabled = data.auto_reply_enabled;

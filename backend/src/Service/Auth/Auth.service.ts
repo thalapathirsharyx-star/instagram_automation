@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { company } from '@Database/Table/Admin/company';
 import { user } from '@Database/Table/Admin/user';
@@ -8,13 +8,21 @@ import { country } from '@Database/Table/Admin/country';
 import { currency } from '@Database/Table/Admin/currency';
 import { EncryptionService } from '../Encryption.service';
 import { HashingService } from '../Hashing.service';
+import { Redis } from 'ioredis';
+import * as speakeasy from 'speakeasy';
+import * as QRCode from 'qrcode';
+import * as randomstring from 'randomstring';
+
+import { SecurityAlertService } from './SecurityAlert.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private _JwtService: JwtService,
     private _EncryptionService: EncryptionService,
-    private _HashingService: HashingService
+    private _HashingService: HashingService,
+    @Inject("REDIS_CLIENT") private _RedisClient: Redis,
+    private _SecurityAlertService: SecurityAlertService
   ) { }
 
   async ValidateUser(username: string, password: string): Promise<any> {
@@ -34,7 +42,26 @@ export class AuthService {
     }
     const isPasswordValid = await this._HashingService.Compare(password, UserData.password);
     if (!isPasswordValid) {
+      if (UserData.user_role?.code === 'SUPER_ADMIN') {
+        UserData.failed_login_count = (UserData.failed_login_count || 0) + 1;
+        if (UserData.failed_login_count >= 5) {
+          UserData.status = false;
+        }
+        await UserData.save();
+        if (UserData.failed_login_count >= 5) {
+          await this._SecurityAlertService.SendAlert(
+            'Admin Account Locked',
+            `Super Admin user account has been locked due to 5+ failed login attempts:\n- Email: ${UserData.email}`
+          );
+          throw new Error('Account locked due to too many failed login attempts.');
+        }
+      }
       throw new Error('Invalid password');
+    }
+
+    if (UserData.user_role?.code === 'SUPER_ADMIN' && UserData.failed_login_count > 0) {
+      UserData.failed_login_count = 0;
+      await UserData.save();
     }
 
     // For backwards compatibility or super admins, if no company is linked directly,
@@ -45,6 +72,17 @@ export class AuthService {
       companyData = companies[0] || null;
     }
 
+    // If 2FA is enabled, return a temporary pending state!
+    if (UserData.two_factor_enabled) {
+      const tempPayload = {
+        email: UserData.email,
+        user_id: UserData.id,
+        pending_2fa: true
+      };
+      const temp_token = this._JwtService.sign(tempPayload, { expiresIn: '5m' });
+      return { status: 'pending_2fa', temp_token };
+    }
+
     const payload = {
       email: UserData.email,
       user_id: UserData.id,
@@ -52,12 +90,186 @@ export class AuthService {
       user_role_code: UserData.user_role?.code || 'CLIENT',
       user_role_name: UserData.user_role?.name || 'Client',
       company: companyData,
-      company_id: companyData?.id
+      company_id: companyData?.id,
+      super_admin_sub_role: UserData.super_admin_sub_role,
+      two_factor_enabled: UserData.two_factor_enabled
     };
     const api_token = this._JwtService.sign(payload);
     return { api_token, user: payload };
   }
 
+  async Setup2FA(userId: string) {
+    const u = await user.findOne({ where: { id: userId } });
+    if (!u) {
+      throw new Error('User not found');
+    }
+    const secret = speakeasy.generateSecret({ length: 20, name: `ReplyZens:${u.email}` });
+    await this._RedisClient.set(`2fa_temp:${userId}`, secret.base32, 'EX', 600);
+    const qrCodeUrl = await QRCode.toDataURL(secret.otpauth_url);
+    const recoveryCodes = Array.from({ length: 8 }, () => randomstring.generate({ length: 10, charset: 'alphanumeric' }).toUpperCase());
+    await this._RedisClient.set(`2fa_temp_codes:${userId}`, JSON.stringify(recoveryCodes), 'EX', 600);
+
+    return {
+      secret: secret.base32,
+      qrCode: qrCodeUrl,
+      recoveryCodes
+    };
+  }
+
+  async Verify2FA(userId: string, token: string) {
+    const tempSecret = await this._RedisClient.get(`2fa_temp:${userId}`);
+    if (!tempSecret) {
+      throw new Error('2FA setup session expired or not initialized. Please try again.');
+    }
+
+    const verified = speakeasy.totp.verify({
+      secret: tempSecret,
+      encoding: 'base32',
+      token,
+      window: 1
+    });
+
+    if (!verified) {
+      throw new Error('Invalid verification code.');
+    }
+
+    const tempCodesStr = await this._RedisClient.get(`2fa_temp_codes:${userId}`);
+    if (!tempCodesStr) {
+      throw new Error('Recovery codes expired. Please restart the 2FA setup process.');
+    }
+    const recoveryCodes: string[] = JSON.parse(tempCodesStr);
+    const encryptedSecret = this._EncryptionService.Encrypt(tempSecret);
+    const hashedCodes = await Promise.all(recoveryCodes.map(code => this._HashingService.Hash(code)));
+
+    const u = await user.findOne({ where: { id: userId } });
+    if (!u) {
+      throw new Error('User not found');
+    }
+    u.two_factor_secret = encryptedSecret;
+    u.two_factor_recovery_codes = hashedCodes;
+    u.two_factor_enabled = true;
+    u.two_factor_enforced_at = new Date();
+    await u.save();
+
+    await this._RedisClient.del(`2fa_temp:${userId}`);
+    await this._RedisClient.del(`2fa_temp_codes:${userId}`);
+
+    return { success: true };
+  }
+
+  async Confirm2FA(tempToken: string, totpCode: string, ipAddress: string) {
+    let payload: any;
+    try {
+      payload = this._JwtService.verify(tempToken);
+    } catch (e) {
+      throw new Error('Verification session expired or invalid. Please login again.');
+    }
+
+    if (!payload || !payload.pending_2fa) {
+      throw new Error('Invalid verification context.');
+    }
+
+    const UserData = await user.findOne({
+      where: { id: payload.user_id },
+      relations: ['user_role', 'company']
+    });
+
+    if (!UserData) {
+      throw new Error('User not found');
+    }
+    if (UserData.status == false) {
+      throw new Error('User suspended, contact administration');
+    }
+
+    const decryptedSecret = this._EncryptionService.Decrypt(UserData.two_factor_secret);
+    let codeIsValid = speakeasy.totp.verify({
+      secret: decryptedSecret,
+      encoding: 'base32',
+      token: totpCode,
+      window: 1
+    });
+
+    let usedRecoveryCode = false;
+    if (!codeIsValid && UserData.two_factor_recovery_codes) {
+      for (let i = 0; i < UserData.two_factor_recovery_codes.length; i++) {
+        const isMatch = await this._HashingService.Compare(totpCode.toUpperCase(), UserData.two_factor_recovery_codes[i]);
+        if (isMatch) {
+          codeIsValid = true;
+          usedRecoveryCode = true;
+          UserData.two_factor_recovery_codes.splice(i, 1);
+          break;
+        }
+      }
+    }
+
+    if (!codeIsValid) {
+      UserData.failed_login_count = (UserData.failed_login_count || 0) + 1;
+      if (UserData.failed_login_count >= 5) {
+        UserData.status = false;
+      }
+      await UserData.save();
+      if (UserData.failed_login_count >= 5) {
+        await this._SecurityAlertService.SendAlert(
+          'Admin Account Locked (2FA)',
+          `Super Admin user account has been locked due to 5+ failed 2FA verification attempts:\n- Email: ${UserData.email}`
+        );
+        throw new Error('Account locked due to too many failed 2FA verification attempts.');
+      }
+      throw new Error('Invalid verification code.');
+    }
+
+    if (UserData.user_role?.code === 'SUPER_ADMIN' && UserData.last_login_ip && UserData.last_login_ip !== ipAddress) {
+      await this._SecurityAlertService.SendAlert(
+        'Admin Login from New IP Detected',
+        `Super Admin user ${UserData.email} (sub-role: ${UserData.super_admin_sub_role}) logged in from a new/different IP address:\n- Previous IP: ${UserData.last_login_ip}\n- New IP: ${ipAddress}`
+      );
+    }
+
+    UserData.failed_login_count = 0;
+    UserData.last_login_ip = ipAddress;
+    await UserData.save();
+
+    let companyData = UserData.company;
+    if (!companyData) {
+      const companies = await company.find({ relations: ["currency"] });
+      companyData = companies[0] || null;
+    }
+
+    const fullPayload = {
+      email: UserData.email,
+      user_id: UserData.id,
+      user_role_id: UserData.user_role_id,
+      user_role_code: UserData.user_role?.code || 'CLIENT',
+      user_role_name: UserData.user_role?.name || 'Client',
+      company: companyData,
+      company_id: companyData?.id,
+      super_admin_sub_role: UserData.super_admin_sub_role,
+      two_factor_enabled: UserData.two_factor_enabled
+    };
+
+    const api_token = this._JwtService.sign(fullPayload);
+    return { api_token, user: fullPayload };
+  }
+
+  async Disable2FA(userId: string) {
+    const u = await user.findOne({ where: { id: userId }, relations: ['user_role'] });
+    if (!u) {
+      throw new Error('User not found');
+    }
+    u.two_factor_enabled = false;
+    u.two_factor_secret = null;
+    u.two_factor_recovery_codes = null;
+    await u.save();
+
+    if (u.user_role?.code === 'SUPER_ADMIN') {
+      await this._SecurityAlertService.SendAlert(
+        '2FA Disabled for Admin',
+        `Two-Factor Authentication was disabled for Super Admin user:\n- Email: ${u.email}`
+      );
+    }
+
+    return { success: true };
+  }
 
   async Register(data: RegisterModel): Promise<any> {
     // 1. Check if user exists
@@ -105,5 +317,57 @@ export class AuthService {
     await newUser.save();
 
     return this.ValidateUser(data.email, data.password);
+  }
+
+  async Impersonate(adminUserId: string, companyId: string) {
+    const adminUser = await user.findOne({
+      where: { id: adminUserId },
+      relations: ['user_role']
+    });
+
+    if (!adminUser || adminUser.user_role?.code !== 'SUPER_ADMIN') {
+      throw new Error('Only Super Admin users can trigger client impersonation.');
+    }
+
+    const targetCompany = await company.findOne({
+      where: { id: companyId },
+      relations: ['currency']
+    });
+
+    if (!targetCompany) {
+      throw new Error('Target company not found.');
+    }
+
+    let clientRole = await user_role.findOne({ where: { code: 'CLIENT_ADMIN' } });
+    if (!clientRole) {
+      clientRole = new user_role();
+      clientRole.name = 'Client Admin';
+      clientRole.code = 'CLIENT_ADMIN';
+      clientRole.created_by_id = '0';
+      clientRole.created_on = new Date();
+      await clientRole.save();
+    }
+
+    const payload = {
+      email: adminUser.email,
+      user_id: adminUser.id,
+      user_role_id: clientRole.id,
+      user_role_code: 'CLIENT_ADMIN',
+      user_role_name: 'Client Admin',
+      company: targetCompany,
+      company_id: targetCompany.id,
+      impersonator_id: adminUser.id,
+      impersonation: true,
+      super_admin_sub_role: adminUser.super_admin_sub_role
+    };
+
+    const api_token = this._JwtService.sign(payload, { expiresIn: '60m' });
+
+    await this._SecurityAlertService.SendAlert(
+      'Client Impersonation Started',
+      `Super Admin ${adminUser.email} (sub-role: ${adminUser.super_admin_sub_role}) has started an impersonation session for company: ${targetCompany.name} (ID: ${targetCompany.id}).`
+    );
+
+    return { api_token, user: payload };
   }
 }

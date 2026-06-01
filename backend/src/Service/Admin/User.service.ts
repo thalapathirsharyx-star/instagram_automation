@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { user } from '@Database/Table/Admin/user';
+import { user_role } from '@Database/Table/Admin/user_role';
 import { RandomValue } from '@Helper/Common.helper';
 import { ChangePasswordModel, ResetPasswordModel, UserModel } from '@Model/Admin/User.model';
 import { Not } from 'typeorm';
@@ -8,13 +9,16 @@ import { EncryptionService } from '../Encryption.service';
 import { HashingService } from '../Hashing.service';
 import { AuditLogService } from './AuditLog.service';
 import { LogActionEnum } from '@Helper/Enum/AuditLogEnum';
+import { SecurityAlertService } from '../Auth/SecurityAlert.service';
+
 @Injectable()
 export class UserService {
   constructor(
     private _EmailService: EmailService,
     private _EncryptionService: EncryptionService,
     private _HashingService: HashingService,
-    private _AuditLogService: AuditLogService
+    private _AuditLogService: AuditLogService,
+    private _SecurityAlertService: SecurityAlertService
   ) {
   }
 
@@ -130,5 +134,42 @@ export class UserService {
     await user.update(Id, UserData as any);
     this._AuditLogService.AuditEmitEvent({ PerformedType: user.name, ActionType: LogActionEnum.ResetPassword, PrimaryId: [UserData.id] });
     return UserData as user;
+  }
+
+  async InsertAdmin(adminData: any, UserId: string) {
+    const existing = await user.findOne({ where: { email: adminData.email } });
+    if (existing) {
+      throw new Error('User already exists with this email');
+    }
+
+    let superAdminRole = await user_role.findOne({ where: { code: 'SUPER_ADMIN' } });
+    if (!superAdminRole) {
+      superAdminRole = new user_role();
+      superAdminRole.name = 'Super Admin';
+      superAdminRole.code = 'SUPER_ADMIN';
+      superAdminRole.created_by_id = '0';
+      superAdminRole.created_on = new Date();
+      await superAdminRole.save();
+    }
+
+    const _UserData = new user();
+    _UserData.user_role_id = superAdminRole.id;
+    _UserData.first_name = adminData.first_name;
+    _UserData.last_name = adminData.last_name;
+    _UserData.email = adminData.email;
+    _UserData.mobile = adminData.mobile;
+    _UserData.super_admin_sub_role = adminData.super_admin_sub_role || 'Support';
+    _UserData.created_by_id = UserId;
+    _UserData.created_on = new Date();
+    _UserData.password = await this._HashingService.Hash(adminData.password);
+    await user.save(_UserData);
+    this._AuditLogService.AuditEmitEvent({ PerformedType: user.name, ActionType: LogActionEnum.Insert, PrimaryId: [_UserData.id] });
+
+    await this._SecurityAlertService.SendAlert(
+      'New Admin Account Created',
+      `A new platform Super Admin account has been created:\n- Email: ${_UserData.email}\n- Sub-role: ${_UserData.super_admin_sub_role}\n- Created by: user ID ${UserId}`
+    );
+
+    return _UserData;
   }
 }

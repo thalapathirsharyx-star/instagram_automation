@@ -8,6 +8,7 @@ interface User {
   roleId: string;
   companyId?: string;
   company?: any;
+  twoFactorEnabled?: boolean;
 }
 
 interface AuthContextType {
@@ -15,6 +16,7 @@ interface AuthContextType {
   token: string | null;
   login: (token: string, userData: any) => void;
   logout: () => void;
+  updateUser: (updatedFields: Partial<User>) => void;
   isAuthenticated: boolean;
   isLoading: boolean;
 }
@@ -50,7 +52,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       roleCode: userData.user_role_code,
       roleId: userData.user_role_id,
       companyId: userData.company_id,
-      company: userData.company
+      company: userData.company,
+      twoFactorEnabled: userData.two_factor_enabled
     };
     
     setToken(newToken);
@@ -58,6 +61,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     localStorage.setItem('token', newToken);
     localStorage.setItem('user', JSON.stringify(formattedUser));
     localStorage.setItem('isAuthenticated', 'true'); // Keep for backward compatibility if needed
+  };
+
+  const updateUser = (updatedFields: Partial<User>) => {
+    if (user) {
+      const updatedUser = { ...user, ...updatedFields };
+      setUser(updatedUser);
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+    }
   };
 
   const logout = () => {
@@ -74,6 +85,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       token, 
       login, 
       logout, 
+      updateUser,
       isAuthenticated: !!token,
       isLoading 
     }}>

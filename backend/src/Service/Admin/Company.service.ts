@@ -165,6 +165,8 @@ export class CompanyService {
     if (settings.working_hours_end !== undefined) CompanyData.working_hours_end = settings.working_hours_end;
     if (settings.ooo_message !== undefined) CompanyData.ooo_message = settings.ooo_message;
     if (settings.auto_follow_up_enabled !== undefined) CompanyData.auto_follow_up_enabled = settings.auto_follow_up_enabled;
+    if (settings.auto_follow_up_delay_hours !== undefined) CompanyData.auto_follow_up_delay_hours = settings.auto_follow_up_delay_hours;
+    if (settings.auto_follow_up_message !== undefined) CompanyData.auto_follow_up_message = settings.auto_follow_up_message;
 
     CompanyData.updated_by_id = UserId;
     CompanyData.updated_on = new Date();
@@ -175,6 +177,8 @@ export class CompanyService {
       working_hours_end: CompanyData.working_hours_end,
       ooo_message: CompanyData.ooo_message,
       auto_follow_up_enabled: CompanyData.auto_follow_up_enabled,
+      auto_follow_up_delay_hours: CompanyData.auto_follow_up_delay_hours,
+      auto_follow_up_message: CompanyData.auto_follow_up_message,
       updated_by_id: UserId,
       updated_on: CompanyData.updated_on
     });

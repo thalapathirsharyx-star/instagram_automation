@@ -36,9 +36,10 @@ const SettingsCard: React.FC<{ icon: any, title: string, subtitle: string, child
 );
 
 import { connectInstagram, getInstagramSettings, updateInstagramSettings, disconnectInstagram } from '../api/crm.api';
+import api from '../lib/axios';
 
 const Settings: React.FC = () => {
-  const { user } = useAuth();
+  const { user, updateUser } = useAuth();
   const [isConnecting, setIsConnecting] = React.useState(false);
   const [isConnected, setIsConnected] = React.useState(false);
   const [isLoadingStatus, setIsLoadingStatus] = React.useState(true);
@@ -49,6 +50,74 @@ const Settings: React.FC = () => {
   const [notification, setNotification] = React.useState<{ type: 'success' | 'error', message: string } | null>(null);
   const [autoReplyEnabled, setAutoReplyEnabled] = React.useState(true);
   const [humanHandoffAlerts, setHumanHandoffAlerts] = React.useState(true);
+
+  // 2FA states
+  const [isSettingUp2Fa, setIsSettingUp2Fa] = React.useState(false);
+  const [qrCodeUrl, setQrCodeUrl] = React.useState('');
+  const [secret, setSecret] = React.useState('');
+  const [recoveryCodes, setRecoveryCodes] = React.useState<string[]>([]);
+  const [totpVerificationCode, setTotpVerificationCode] = React.useState('');
+  const [isVerifying2Fa, setIsVerifying2Fa] = React.useState(false);
+
+  const handleSetup2FA = async () => {
+    setIsSettingUp2Fa(true);
+    setNotification(null);
+    try {
+      const res = await api.post('/Auth/2fa/setup');
+      if (res.data.Type === 'S') {
+        const { qrCodeUrl, secret, recoveryCodes } = res.data.result;
+        setQrCodeUrl(qrCodeUrl);
+        setSecret(secret);
+        setRecoveryCodes(recoveryCodes);
+      } else {
+        showNotification(res.data.Message || 'Failed to initialize 2FA', 'error');
+        setIsSettingUp2Fa(false);
+      }
+    } catch (err) {
+      console.error(err);
+      showNotification('Failed to initialize 2FA setup.', 'error');
+      setIsSettingUp2Fa(false);
+    }
+  };
+
+  const handleVerifyAndEnable2FA = async () => {
+    if (!totpVerificationCode) return;
+    setIsVerifying2Fa(true);
+    setNotification(null);
+    try {
+      const res = await api.post('/Auth/2fa/verify', { token: totpVerificationCode });
+      if (res.data.Type === 'S') {
+        updateUser({ twoFactorEnabled: true });
+        showNotification('Two-Factor Authentication enabled successfully!', 'success');
+        setIsSettingUp2Fa(false);
+        setTotpVerificationCode('');
+      } else {
+        showNotification(res.data.Message || 'Invalid verification code', 'error');
+      }
+    } catch (err) {
+      console.error(err);
+      showNotification('Failed to verify code.', 'error');
+    } finally {
+      setIsVerifying2Fa(false);
+    }
+  };
+
+  const handleDisable2FA = async () => {
+    if (!window.confirm('Are you sure you want to disable 2FA? This will decrease your account security.')) return;
+    setNotification(null);
+    try {
+      const res = await api.post('/Auth/2fa/disable');
+      if (res.data.Type === 'S') {
+        updateUser({ twoFactorEnabled: false });
+        showNotification('Two-Factor Authentication disabled successfully.', 'success');
+      } else {
+        showNotification(res.data.Message || 'Failed to disable 2FA', 'error');
+      }
+    } catch (err) {
+      console.error(err);
+      showNotification('Failed to disable 2FA.', 'error');
+    }
+  };
 
   const showNotification = (message: string, type: 'success' | 'error' = 'success') => {
     setNotification({ message, type });
@@ -379,6 +448,98 @@ const Settings: React.FC = () => {
                 Edit Profile Details
               </button>
             </>
+          )}
+        </SettingsCard>
+
+        <SettingsCard 
+          icon={Shield} 
+          title="Security & 2FA" 
+          subtitle="Keep your account secure with Multi-Factor Authentication."
+        >
+          {isSettingUp2Fa ? (
+            <div className="space-y-6">
+              <div className="p-4 bg-zinc-900/50 rounded-2xl border border-white/5 flex flex-col items-center gap-4">
+                <p className="text-xs text-zinc-400 text-center font-medium">Scan this QR code with your authenticator app (e.g. Google Authenticator, Duo):</p>
+                {qrCodeUrl && (
+                  <img src={qrCodeUrl} alt="2FA QR Code" className="w-40 h-40 bg-white p-2 rounded-xl" />
+                )}
+                <div className="text-center w-full">
+                  <span className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest block mb-1">Secret Key</span>
+                  <code className="text-xs text-purple-400 font-mono bg-purple-500/10 px-3 py-1.5 rounded-lg border border-purple-500/20 select-all">{secret}</code>
+                </div>
+              </div>
+
+              {recoveryCodes.length > 0 && (
+                <div className="p-4 bg-zinc-900/50 rounded-2xl border border-white/5">
+                  <span className="text-[10px] text-rose-400 font-bold uppercase tracking-widest block mb-2">Save these recovery codes:</span>
+                  <div className="grid grid-cols-2 gap-2">
+                    {recoveryCodes.map((code, idx) => (
+                      <code key={idx} className="text-xs text-zinc-300 font-mono bg-zinc-800/80 px-2.5 py-1 rounded border border-white/5 text-center select-all">{code}</code>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest ml-1">Verification Code</label>
+                <input 
+                  type="text"
+                  placeholder="000000"
+                  value={totpVerificationCode}
+                  onChange={(e) => setTotpVerificationCode(e.target.value)}
+                  className="w-full bg-zinc-800 border border-white/5 rounded-xl px-4 py-3 text-sm text-zinc-100 focus:border-purple-500/50 outline-none transition-all shadow-inner text-center font-mono tracking-widest text-lg"
+                  maxLength={6}
+                />
+              </div>
+
+              <div className="flex gap-2">
+                <button 
+                  onClick={handleVerifyAndEnable2FA}
+                  disabled={isVerifying2Fa || !totpVerificationCode}
+                  className="w-full py-3 bg-purple-500 text-white rounded-xl font-bold hover:bg-purple-600 transition-all text-sm disabled:opacity-50"
+                >
+                  {isVerifying2Fa ? 'Enabling...' : 'Verify & Enable'}
+                </button>
+                <button 
+                  onClick={() => setIsSettingUp2Fa(false)}
+                  className="w-fit px-6 py-3 bg-zinc-800 border border-white/10 rounded-xl text-zinc-300 font-bold hover:bg-zinc-700 hover:text-white transition-all text-sm"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          ) : user?.twoFactorEnabled ? (
+            <div className="space-y-6">
+              <div className="flex items-center gap-2 text-emerald-400 font-bold text-xs uppercase tracking-widest bg-emerald-500/10 px-3 py-1.5 rounded-lg w-fit border border-emerald-500/20">
+                <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                2FA Enabled
+              </div>
+              <p className="text-sm text-zinc-400 font-medium leading-relaxed">
+                Your account is currently protected by a secondary authentication layer.
+              </p>
+              <button 
+                onClick={handleDisable2FA}
+                className="w-full py-3 bg-rose-500/10 text-rose-500 hover:bg-rose-50 hover:text-white border border-rose-500/20 rounded-xl font-bold uppercase tracking-widest transition-all text-xs shadow-sm animate-in fade-in"
+              >
+                Disable Multi-Factor Authentication
+              </button>
+            </div>
+          ) : (
+            <div className="space-y-6">
+              <div className="flex items-center gap-2 text-rose-400 font-bold text-xs uppercase tracking-widest bg-rose-500/10 px-3 py-1.5 rounded-lg w-fit border border-rose-500/20">
+                <div className="w-1.5 h-1.5 rounded-full bg-rose-400" />
+                2FA Disabled
+              </div>
+              <p className="text-sm text-zinc-400 font-medium leading-relaxed">
+                Add an extra layer of security to your account by scanning a QR code with an authenticator app.
+              </p>
+              <button 
+                onClick={handleSetup2FA}
+                className="w-full py-3 bg-purple-500/15 text-purple-400 hover:bg-purple-600 hover:text-white border border-purple-500/30 rounded-xl font-bold uppercase tracking-widest transition-all text-xs shadow-glow-purple"
+              >
+                Set Up 2FA Now
+              </button>
+            </div>
           )}
         </SettingsCard>
 

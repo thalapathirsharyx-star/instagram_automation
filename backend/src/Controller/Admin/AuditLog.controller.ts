@@ -1,11 +1,14 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { AuditLogService } from '@Service/Admin/AuditLog.service';
 import { JWTAuthController } from '@Controller/JWTAuth.controller';
 import { AuditLogLazyLoadModel } from '@Model/Admin/AuditLog.model';
+import { AdminSubRoleGuard, SuperAdminRoles } from '@Service/Auth/AdminSubRoleGuard.service';
 
 @Controller({ path: "AuditLog", version: '1' })
 @ApiTags("Audit Log")
+@UseGuards(AdminSubRoleGuard)
+@SuperAdminRoles('Owner', 'Security', 'Support')
 export class AuditLogController extends JWTAuthController {
 
   constructor(private _AuditLogService: AuditLogService) {

@@ -1,10 +1,12 @@
-import { Body, Controller, Get, Param, Patch, Post, Put } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Put, UseGuards, Inject } from '@nestjs/common';
 import { CurrentUser } from '@Helper/Common.helper';
 import { ApiTags } from '@nestjs/swagger';
 import { UserService } from '@Service/Admin/User.service';
 import { ResponseEnum } from '@Helper/Enum/ResponseEnum';
 import { ChangePasswordModel, UserModel } from '@Model/Admin/User.model';
 import { JWTAuthController } from '@Controller/JWTAuth.controller';
+import { AdminSubRoleGuard, SuperAdminRoles } from '@Service/Auth/AdminSubRoleGuard.service';
+import { Redis } from 'ioredis';
 
 @Controller({ path: "User", version: '1' })
 @ApiTags("User")
@@ -12,6 +14,7 @@ export class UserController extends JWTAuthController {
 
   constructor(
     private _UserService: UserService,
+    @Inject("REDIS_CLIENT") private _RedisClient: Redis
   ) {
     super()
   }
@@ -63,6 +66,26 @@ export class UserController extends JWTAuthController {
     return this.SendResponse(ResponseEnum.Success, ResponseEnum.Reset);
   }
 
+  @Post('Admin/Create')
+  @UseGuards(AdminSubRoleGuard)
+  @SuperAdminRoles('Owner')
+  async CreateAdmin(@Body() body: any, @CurrentUser() UserId: string) {
+    const result = await this._UserService.InsertAdmin(body, UserId);
+    return this.SendResponseData(result);
+  }
 
+  @Get('Admin/2fa-policy')
+  async Get2faPolicy() {
+    const enforced = await this._RedisClient.get('system:2fa_enforced') === 'true';
+    return { enforced };
+  }
+
+  @Patch('Admin/2fa-policy')
+  @UseGuards(AdminSubRoleGuard)
+  @SuperAdminRoles('Owner', 'Security')
+  async Toggle2faPolicy(@Body() body: { enforce: boolean }) {
+    await this._RedisClient.set('system:2fa_enforced', body.enforce ? 'true' : 'false');
+    return { success: true, enforced: body.enforce };
+  }
 }
 

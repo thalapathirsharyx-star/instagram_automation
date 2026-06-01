@@ -1,6 +1,7 @@
 import { Controller, Get, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '@Service/Auth/JwtAuthGuard.service';
+import { AdminSubRoleGuard, SuperAdminRoles } from '@Service/Auth/AdminSubRoleGuard.service';
 import { instagram_lead } from '@Database/Table/CRM/instagram_lead';
 import { instagram_message } from '@Database/Table/CRM/instagram_message';
 import { company } from '@Database/Table/Admin/company';
@@ -10,7 +11,8 @@ import { user } from '@Database/Table/Admin/user';
 @ApiTags("Admin")
 export class AdminStatsController {
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, AdminSubRoleGuard)
+  @SuperAdminRoles('Owner')
   @Get()
   async GetGlobalStats() {
     // Only fetch if super admin - for now we just return the counts

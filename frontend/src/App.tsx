@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
 import Dashboard from './pages/Dashboard';
 import Inbox from './pages/Inbox';
@@ -31,9 +31,26 @@ import ProtectedRoute from './components/ProtectedRoute';
 
 function AppContent() {
   const location = useLocation();
-  const { isAuthenticated, user, logout } = useAuth();
+  const navigate = useNavigate();
+  const { isAuthenticated, user, login, logout } = useAuth();
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
+
+  const handleStopImpersonation = () => {
+    const adminToken = localStorage.getItem('admin_token');
+    const adminUserJson = localStorage.getItem('admin_user');
+    
+    if (adminToken && adminUserJson) {
+      const adminUser = JSON.parse(adminUserJson);
+      // Restore Super Admin session
+      login(adminToken, adminUser);
+      // Clean up backup storage
+      localStorage.removeItem('admin_token');
+      localStorage.removeItem('admin_user');
+      // Redirect back to Admin clients list
+      navigate('/admin/clients');
+    }
+  };
   
   useEffect(() => {
     if (theme === 'dark') {
@@ -67,9 +84,26 @@ function AppContent() {
     );
   }
 
+  const isImpersonating = !!localStorage.getItem('admin_token');
+
   return (
-    <div className="crm-layout">
-      <Sidebar />
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', width: '100%', maxWidth: '100vw', overflow: 'hidden' }}>
+      {isImpersonating && (
+        <div className="bg-gradient-to-r from-amber-600 via-purple-700 to-amber-600 text-white px-6 py-2 flex items-center justify-between text-xs font-bold uppercase tracking-wider shadow-lg border-b border-amber-500/20 animate-in slide-in-from-top duration-300" style={{ flexShrink: 0, zIndex: 9999 }}>
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping shrink-0" />
+            <span>Impersonating: <strong className="text-white underline">{user?.company?.name || 'Client Account'}</strong> (Read-Only Actions Restricted)</span>
+          </div>
+          <button 
+            onClick={handleStopImpersonation}
+            className="bg-white/10 hover:bg-white/20 text-white px-4 py-1.5 rounded-lg border border-white/20 transition-all cursor-pointer font-extrabold text-[10px]"
+          >
+            Stop Impersonation
+          </button>
+        </div>
+      )}
+      <div className="crm-layout" style={{ flex: 1, height: 'auto', width: '100%', maxWidth: '100vw', overflow: 'hidden' }}>
+        <Sidebar />
 
       <main className="content-area">
         <header className="top-header relative z-[100]">
@@ -165,6 +199,7 @@ function AppContent() {
           </Routes>
         </div>
       </main>
+      </div>
     </div>
   );
 }

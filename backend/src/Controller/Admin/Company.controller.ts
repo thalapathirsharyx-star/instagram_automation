@@ -1,10 +1,13 @@
-import { Body, Controller, Get, Patch, Put, Post, Req, Param, ForbiddenException } from '@nestjs/common';
+import { Body, Controller, Get, Patch, Put, Post, Req, Param, ForbiddenException, UseGuards } from '@nestjs/common';
 import { CompanyModel } from '@Model/Admin/Company.model';
 import { CurrentUser } from '@Helper/Common.helper';
 import { ApiTags } from '@nestjs/swagger';
 import { CompanyService } from '@Service/Admin/Company.service';
+import { AuthService } from '@Service/Auth/Auth.service';
 import { ResponseEnum } from '@Helper/Enum/ResponseEnum';
 import { JWTAuthController } from '@Controller/JWTAuth.controller';
+import { AdminSubRoleGuard, SuperAdminRoles } from '@Service/Auth/AdminSubRoleGuard.service';
+import { ImpersonationBlockGuard } from '@Service/Auth/ImpersonationBlockGuard.service';
 import * as crypto from 'crypto';
 const Razorpay = require('razorpay');
 
@@ -12,7 +15,10 @@ const Razorpay = require('razorpay');
 @ApiTags("Company")
 export class CompanyController extends JWTAuthController {
 
-  constructor(private _CompanyService: CompanyService) {
+  constructor(
+    private _CompanyService: CompanyService,
+    private _AuthService: AuthService
+  ) {
     super()
   }
 
@@ -35,6 +41,8 @@ export class CompanyController extends JWTAuthController {
 
 
   @Get('Admin/All')
+  @UseGuards(AdminSubRoleGuard)
+  @SuperAdminRoles('Owner', 'Support')
   async GetAllForAdmin(@Req() req: any) {
     if (req.user.user_role_code !== 'SUPER_ADMIN') {
       throw new ForbiddenException('Only Super Admins can access this list');
@@ -43,6 +51,8 @@ export class CompanyController extends JWTAuthController {
   }
 
   @Patch('Admin/ToggleStatus/:id')
+  @UseGuards(AdminSubRoleGuard)
+  @SuperAdminRoles('Owner')
   async ToggleStatus(@Param('id') id: string, @CurrentUser() UserId: string, @Req() req: any) {
     if (req.user.user_role_code !== 'SUPER_ADMIN') {
       throw new ForbiddenException('Only Super Admins can manage client status');
@@ -52,6 +62,7 @@ export class CompanyController extends JWTAuthController {
   }
 
   @Put('UpdatePlan')
+  @UseGuards(ImpersonationBlockGuard)
   async UpdatePlan(@Body() body: { plan: string }, @Req() req: any) {
     const user = req.user;
     if (!user?.company_id) {
@@ -62,6 +73,7 @@ export class CompanyController extends JWTAuthController {
   }
 
   @Post('CreateRazorpayOrder')
+  @UseGuards(ImpersonationBlockGuard)
   async CreateRazorpayOrder(@Body() body: { plan: string }, @Req() req: any) {
     if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
       return this.SendResponse(ResponseEnum.Error, 'Razorpay keys are not configured on the server.');
@@ -92,6 +104,7 @@ export class CompanyController extends JWTAuthController {
   }
 
   @Post('VerifyRazorpayPayment')
+  @UseGuards(ImpersonationBlockGuard)
   async VerifyRazorpayPayment(@Body() body: {
     razorpay_order_id: string,
     razorpay_payment_id: string,
@@ -122,4 +135,11 @@ export class CompanyController extends JWTAuthController {
     return this.SendResponse(ResponseEnum.Success, "Automation settings updated.");
   }
 
+  @Post('Admin/Impersonate/:companyId')
+  @UseGuards(AdminSubRoleGuard)
+  @SuperAdminRoles('Owner', 'Support')
+  async Impersonate(@Param('companyId') companyId: string, @CurrentUser() UserId: string) {
+    const result = await this._AuthService.Impersonate(UserId, companyId);
+    return { Type: ResponseEnum.Success, Message: 'Impersonation session started', result };
+  }
 }

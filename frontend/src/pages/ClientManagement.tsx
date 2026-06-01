@@ -13,6 +13,8 @@ import {
   ArrowRight
 } from 'lucide-react';
 import api from '../lib/axios';
+import { useAuth } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 interface CompanyAdminData {
   id: string;
@@ -44,6 +46,40 @@ const ClientManagement: React.FC = () => {
   const [clients, setClients] = useState<CompanyAdminData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(10);
+  
+  const { login } = useAuth();
+  const navigate = useNavigate();
+
+  const handleImpersonate = async (companyId: string) => {
+    try {
+      const originalToken = localStorage.getItem('token');
+      const originalUser = localStorage.getItem('user');
+
+      const response = await api.post(`/Company/Admin/Impersonate/${companyId}`);
+      if (response.data.Type === 'S') {
+        const { api_token, user: impersonatedUser } = response.data.result;
+
+        // Backup original Super Admin credentials
+        if (originalToken && originalUser) {
+          localStorage.setItem('admin_token', originalToken);
+          localStorage.setItem('admin_user', originalUser);
+        }
+
+        // Log in with impersonated client token
+        login(api_token, impersonatedUser);
+
+        // Redirect to client dashboard
+        navigate('/dashboard');
+      } else {
+        alert('Impersonation failed: ' + (response.data.Message || 'Unknown error'));
+      }
+    } catch (err: any) {
+      console.error(err);
+      alert('Error initiating impersonation session.');
+    }
+  };
 
   const fetchClients = async () => {
     try {
@@ -71,9 +107,19 @@ const ClientManagement: React.FC = () => {
     }
   };
 
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm]);
+
   const filteredClients = clients.filter(c => 
     c.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
     c.email.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const totalPages = Math.ceil(filteredClients.length / itemsPerPage);
+  const paginatedClients = filteredClients.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
   );
 
   return (
@@ -113,16 +159,16 @@ const ClientManagement: React.FC = () => {
           </button>
         </div>
 
-        <div style={{ overflowX: 'auto' }}>
+        <div style={{ overflowX: 'auto', overflowY: 'auto', flex: 1 }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
             <thead>
               <tr style={{ borderBottom: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.01)' }}>
-                <th style={{ padding: '16px 24px', fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-dim)', textTransform: 'uppercase' }}>Company</th>
-                <th style={{ padding: '16px 24px', fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-dim)', textTransform: 'uppercase' }}>Details</th>
-                <th style={{ padding: '16px 24px', fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-dim)', textTransform: 'uppercase' }}>Plan & Usage</th>
-                <th style={{ padding: '16px 24px', fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-dim)', textTransform: 'uppercase' }}>Stats</th>
-                <th style={{ padding: '16px 24px', fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-dim)', textTransform: 'uppercase' }}>Status</th>
-                <th style={{ padding: '16px 24px', fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-dim)', textTransform: 'uppercase', textAlign: 'right' }}>Actions</th>
+                <th className="sticky-th-company" style={{ padding: '12px 20px', fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-dim)', textTransform: 'uppercase' }}>Company</th>
+                <th className="sticky-th" style={{ padding: '12px 20px', fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-dim)', textTransform: 'uppercase' }}>Details</th>
+                <th className="sticky-th" style={{ padding: '12px 20px', fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-dim)', textTransform: 'uppercase' }}>Plan & Usage</th>
+                <th className="sticky-th" style={{ padding: '12px 20px', fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-dim)', textTransform: 'uppercase' }}>Stats</th>
+                <th className="sticky-th" style={{ padding: '12px 20px', fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-dim)', textTransform: 'uppercase' }}>Status</th>
+                <th className="sticky-th" style={{ padding: '12px 20px', fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-dim)', textTransform: 'uppercase', textAlign: 'right' }}>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -130,9 +176,9 @@ const ClientManagement: React.FC = () => {
                 <tr>
                   <td colSpan={5} style={{ padding: '40px', textAlign: 'center', color: 'var(--text-dim)' }}>Loading platform clients...</td>
                 </tr>
-              ) : filteredClients.map((client) => (
+              ) : paginatedClients.map((client) => (
                 <tr key={client.id} className="table-row-hover" style={{ borderBottom: '1px solid var(--glass-border)' }}>
-                  <td style={{ padding: '20px 24px' }}>
+                  <td className="sticky-td-company" style={{ padding: '12px 20px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                       <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: 'var(--primary-gradient)', display: 'flex', alignItems: 'center', justifySelf: 'center', justifyContent: 'center', color: 'white' }}>
                         <Building2 size={20} />
@@ -143,7 +189,7 @@ const ClientManagement: React.FC = () => {
                       </div>
                     </div>
                   </td>
-                  <td style={{ padding: '20px 24px' }}>
+                  <td style={{ padding: '12px 20px' }}>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                       <div style={{ fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
                         <MapPin size={14} color="var(--text-dim)" /> {client.country?.name || 'Global'}
@@ -153,7 +199,7 @@ const ClientManagement: React.FC = () => {
                       </div>
                     </div>
                   </td>
-                  <td style={{ padding: '20px 24px' }}>
+                  <td style={{ padding: '12px 20px' }}>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                         <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${client.plan !== 'Free' ? 'bg-purple-500/10 text-purple-400 border border-purple-500/20' : 'bg-zinc-800 text-zinc-400 border border-zinc-700'}`}>
@@ -170,7 +216,7 @@ const ClientManagement: React.FC = () => {
                       </div>
                     </div>
                   </td>
-                  <td style={{ padding: '20px 24px' }}>
+                  <td style={{ padding: '12px 20px' }}>
                     <div style={{ display: 'flex', gap: '16px' }}>
                       <div style={{ textAlign: 'center' }}>
                         <div style={{ fontSize: '0.9rem', fontWeight: 700 }}>{client.userCount}</div>
@@ -182,10 +228,10 @@ const ClientManagement: React.FC = () => {
                       </div>
                     </div>
                   </td>
-                  <td style={{ padding: '20px 24px' }}>
+                  <td style={{ padding: '12px 20px' }}>
                     <StatusBadge status={client.status} />
                   </td>
-                  <td style={{ padding: '20px 24px', textAlign: 'right' }}>
+                  <td style={{ padding: '12px 20px', textAlign: 'right' }}>
                     <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px' }}>
                       <button 
                         onClick={() => handleToggleStatus(client.id)}
@@ -193,6 +239,13 @@ const ClientManagement: React.FC = () => {
                         style={{ padding: '8px 12px', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer', border: '1px solid var(--glass-border)' }}
                       >
                         {client.status ? 'Suspend' : 'Activate'}
+                      </button>
+                      <button 
+                        onClick={() => handleImpersonate(client.id)}
+                        className="glass-card" 
+                        style={{ padding: '8px 12px', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer', border: '1px solid var(--glass-border)', color: 'rgba(168,85,247,1)', display: 'flex', alignItems: 'center', gap: '6px' }}
+                      >
+                        Impersonate <ArrowRight size={14} />
                       </button>
                       <button className="glass-card" style={{ padding: '8px', cursor: 'pointer' }}>
                         <MoreVertical size={16} />
@@ -203,6 +256,75 @@ const ClientManagement: React.FC = () => {
               ))}
             </tbody>
           </table>
+        </div>
+
+        {/* Pagination Controls */}
+        <div style={{ 
+          padding: '16px 24px', 
+          borderTop: '1px solid var(--glass-border)', 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'center', 
+          background: 'rgba(255,255,255,0.01)',
+          flexShrink: 0
+        }}>
+          <div style={{ fontSize: '0.85rem', color: 'var(--text-dim)' }}>
+            Showing <strong style={{ color: 'var(--text)' }}>{filteredClients.length > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0}</strong> to{' '}
+            <strong style={{ color: 'var(--text)' }}>{Math.min(currentPage * itemsPerPage, filteredClients.length)}</strong> of{' '}
+            <strong style={{ color: 'var(--text)' }}>{filteredClients.length}</strong> clients
+          </div>
+          
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <button
+              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1 || totalPages <= 1}
+              className="glass-card"
+              style={{
+                padding: '6px 12px',
+                fontSize: '0.8rem',
+                fontWeight: 600,
+                cursor: (currentPage === 1 || totalPages <= 1) ? 'not-allowed' : 'pointer',
+                opacity: (currentPage === 1 || totalPages <= 1) ? 0.4 : 1,
+                border: '1px solid var(--glass-border)'
+              }}
+            >
+              Previous
+            </button>
+            
+            {Array.from({ length: Math.max(totalPages, 1) }, (_, i) => i + 1).map(pageNum => (
+              <button
+                key={pageNum}
+                onClick={() => setCurrentPage(pageNum)}
+                className={currentPage === pageNum ? 'gradient-btn' : 'glass-card'}
+                style={{
+                  padding: '6px 12px',
+                  fontSize: '0.8rem',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  borderRadius: '8px',
+                  border: currentPage === pageNum ? 'none' : '1px solid var(--glass-border)'
+                }}
+              >
+                {pageNum}
+              </button>
+            ))}
+
+            <button
+              onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+              disabled={currentPage === totalPages || totalPages <= 1}
+              className="glass-card"
+              style={{
+                padding: '6px 12px',
+                fontSize: '0.8rem',
+                fontWeight: 600,
+                cursor: (currentPage === totalPages || totalPages <= 1) ? 'not-allowed' : 'pointer',
+                opacity: (currentPage === totalPages || totalPages <= 1) ? 0.4 : 1,
+                border: '1px solid var(--glass-border)'
+              }}
+            >
+              Next
+            </button>
+          </div>
         </div>
       </div>
     </div>

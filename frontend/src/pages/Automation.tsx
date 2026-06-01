@@ -47,6 +47,8 @@ const Automation: React.FC = () => {
 
   // Advanced Settings State
   const [autoFollowUp, setAutoFollowUp] = useState(false);
+  const [autoFollowUpDelayHours, setAutoFollowUpDelayHours] = useState(24);
+  const [autoFollowUpMessage, setAutoFollowUpMessage] = useState('');
   const [storyMentionEnabled, setStoryMentionEnabled] = useState(false);
   const [storyMentionMessage, setStoryMentionMessage] = useState('');
   const [autoReplyEnabled, setAutoReplyEnabled] = useState(true);
@@ -140,6 +142,8 @@ const Automation: React.FC = () => {
         const d = res.data.Data;
         setWelcomeMessage(d?.welcome_message || '');
         setAutoFollowUp(d?.auto_follow_up_enabled || false);
+        setAutoFollowUpDelayHours(d?.auto_follow_up_delay_hours ?? 24);
+        setAutoFollowUpMessage(d?.auto_follow_up_message || '');
         setStoryMentionEnabled(d?.story_mention_enabled || false);
         setStoryMentionMessage(d?.story_mention_message || '');
         if (d?.auto_reply_enabled !== undefined) setAutoReplyEnabled(d.auto_reply_enabled);
@@ -176,6 +180,8 @@ const Automation: React.FC = () => {
       setIsSaving(true);
       const res = await api.post('/Instagram/Settings', { 
         auto_follow_up_enabled: autoFollowUp,
+        auto_follow_up_delay_hours: autoFollowUpDelayHours,
+        auto_follow_up_message: autoFollowUpMessage,
         story_mention_enabled: storyMentionEnabled,
         story_mention_message: storyMentionMessage,
         auto_reply_enabled: autoReplyEnabled,
@@ -867,13 +873,43 @@ const Automation: React.FC = () => {
               <div className="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/10">
                 <div>
                   <h4 className="text-sm font-medium text-zinc-100">Enable Auto Follow-Up</h4>
-                  <p className="text-xs text-zinc-400 mt-1">If a lead hasn't replied in 24 hrs, AI sends a check-in DM.</p>
+                  <p className="text-xs text-zinc-400 mt-1">If a lead hasn't replied, AI sends a check-in DM.</p>
                 </div>
                 <label className="relative inline-flex items-center cursor-pointer">
                   <input type="checkbox" className="sr-only peer" checked={autoFollowUp} onChange={(e) => setAutoFollowUp(e.target.checked)} />
                   <div className="w-11 h-6 bg-zinc-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-zinc-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-500"></div>
                 </label>
               </div>
+
+              {autoFollowUp && (
+                <div className="space-y-4 border-t border-white/5 pt-4 animate-in fade-in slide-in-from-top-2 duration-300">
+                  <div>
+                    <label className="block text-xs font-semibold text-zinc-400 mb-1.5 uppercase tracking-wider">Follow-Up Delay Time</label>
+                    <select 
+                      value={autoFollowUpDelayHours} 
+                      onChange={(e) => setAutoFollowUpDelayHours(Number(e.target.value))} 
+                      className="w-full bg-zinc-900 border border-white/10 px-4 py-2.5 rounded-xl text-sm font-bold text-zinc-300 outline-none focus:border-purple-500/50"
+                    >
+                      <option value={1}>1 hour of silence</option>
+                      <option value={6}>6 hours of silence</option>
+                      <option value={12}>12 hours of silence</option>
+                      <option value={24}>24 hours of silence (Recommended)</option>
+                      <option value={48}>48 hours of silence</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-zinc-400 mb-1.5 uppercase tracking-wider">Custom Follow-Up Nudge Template</label>
+                    <textarea 
+                      value={autoFollowUpMessage} 
+                      onChange={(e) => setAutoFollowUpMessage(e.target.value)}
+                      placeholder="e.g. Hey! Just checking in to see if you had any other questions or needed help with anything?"
+                      rows={3}
+                      className="w-full w3-input min-h-[80px] text-sm resize-none text-zinc-100 p-3"
+                    />
+                  </div>
+                </div>
+              )}
+
               <div className="p-4 bg-blue-500/10 rounded-xl border border-blue-500/20">
                 <div className="flex gap-3">
                   <Info className="text-blue-500 flex-shrink-0" size={18} />

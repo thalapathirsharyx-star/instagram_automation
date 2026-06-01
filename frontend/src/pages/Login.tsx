@@ -12,6 +12,10 @@ const Login: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const [showPassword, setShowPassword] = useState(false);
+  const [isPending2Fa, setIsPending2Fa] = useState(false);
+  const [tempToken, setTempToken] = useState('');
+  const [totpCode, setTotpCode] = useState('');
+
   const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -27,7 +31,15 @@ const Login: React.FC = () => {
       const response = await api.post('/Auth/Login', { email, password });
 
       if (response.data.Type === 'S') {
-        const { api_token, user } = response.data.result;
+        const result = response.data.result;
+        if (result.status === 'pending_2fa') {
+          setIsPending2Fa(true);
+          setTempToken(result.temp_token);
+          setIsLoading(false);
+          return;
+        }
+
+        const { api_token, user } = result;
         setMessage({ text: 'Login Successful! Redirecting...', type: 'success' });
 
         setTimeout(() => {
@@ -41,6 +53,38 @@ const Login: React.FC = () => {
       console.error('Login error:', err);
       const error = err as { response?: { data?: { Message?: string } }; message?: string };
       const messageText = error.response?.data?.Message || error.message || 'An error occurred during login';
+      setMessage({ text: messageText, type: 'error' });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleVerify2Fa = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setMessage(null);
+
+    try {
+      const response = await api.post('/Auth/2fa/confirm', {
+        temp_token: tempToken,
+        totp_code: totpCode
+      });
+
+      if (response.data.Type === 'S') {
+        const { api_token, user } = response.data.result;
+        setMessage({ text: '2FA Verification Successful! Redirecting...', type: 'success' });
+
+        setTimeout(() => {
+          login(api_token, user);
+          navigate(from, { replace: true });
+        }, 1000);
+      } else {
+        setMessage({ text: response.data.Message || 'Verification failed', type: 'error' });
+      }
+    } catch (err: unknown) {
+      console.error('2FA verification error:', err);
+      const error = err as { response?: { data?: { Message?: string } }; message?: string };
+      const messageText = error.response?.data?.Message || error.message || 'An error occurred during verification';
       setMessage({ text: messageText, type: 'error' });
     } finally {
       setIsLoading(false);
@@ -95,68 +139,109 @@ const Login: React.FC = () => {
             </div>
           )}
 
-          <form onSubmit={handleLogin} className="space-y-6">
-            <div className="space-y-2">
-              <label className="text-sm font-bold text-zinc-700 ml-1" htmlFor="email">Email Address</label>
-              <div className="relative group">
-                <Mail size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 group-focus-within:text-purple-600 transition-colors z-10" />
-                <input
-                  type="email"
-                  id="email"
-                  className="w-full pl-12 pr-4 py-3.5 bg-zinc-50 border border-zinc-200 rounded-xl text-zinc-900 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all duration-300 placeholder:text-zinc-400 shadow-sm"
-                  placeholder="name@company.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                />
+          {!isPending2Fa ? (
+            <form onSubmit={handleLogin} className="space-y-6">
+              <div className="space-y-2">
+                <label className="text-sm font-bold text-zinc-700 ml-1" htmlFor="email">Email Address</label>
+                <div className="relative group">
+                  <Mail size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 group-focus-within:text-purple-600 transition-colors z-10" />
+                  <input
+                    type="email"
+                    id="email"
+                    className="w-full pl-12 pr-4 py-3.5 bg-zinc-50 border border-zinc-200 rounded-xl text-zinc-900 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all duration-300 placeholder:text-zinc-400 shadow-sm"
+                    placeholder="name@company.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                  />
+                </div>
               </div>
-            </div>
 
-            <div className="space-y-2">
-              <div className="flex items-center justify-between ml-1">
-                <label className="text-sm font-bold text-zinc-700" htmlFor="password">Password</label>
-                <a href="#" className="text-xs font-bold text-purple-600 hover:text-purple-500 transition-colors">Forgot password?</a>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between ml-1">
+                  <label className="text-sm font-bold text-zinc-700" htmlFor="password">Password</label>
+                  <a href="#" className="text-xs font-bold text-purple-600 hover:text-purple-500 transition-colors">Forgot password?</a>
+                </div>
+                <div className="relative group">
+                  <Lock size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 group-focus-within:text-purple-600 transition-colors z-10" />
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    id="password"
+                    className="w-full pl-12 pr-12 py-3.5 bg-zinc-50 border border-zinc-200 rounded-xl text-zinc-900 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all duration-300 placeholder:text-zinc-400 shadow-sm"
+                    placeholder="••••••••"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                  />
+                  <button
+                    type="button"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 p-1 text-zinc-400 hover:text-purple-600 transition-colors z-10"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
               </div>
-              <div className="relative group">
-                <Lock size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 group-focus-within:text-purple-600 transition-colors z-10" />
-                <input
-                  type={showPassword ? "text" : "password"}
-                  id="password"
-                  className="w-full pl-12 pr-12 py-3.5 bg-zinc-50 border border-zinc-200 rounded-xl text-zinc-900 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all duration-300 placeholder:text-zinc-400 shadow-sm"
-                  placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                />
-                <button
-                  type="button"
-                  className="absolute right-4 top-1/2 -translate-y-1/2 p-1 text-zinc-400 hover:text-purple-600 transition-colors z-10"
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                </button>
+
+              <div className="flex items-center gap-3 ml-1 mt-2">
+                <input type="checkbox" id="remember" className="w-4 h-4 rounded border-zinc-300 bg-white text-purple-600 focus:ring-purple-500/30 cursor-pointer accent-purple-600" />
+                <label htmlFor="remember" className="text-sm font-bold text-zinc-600 cursor-pointer">Remember me</label>
               </div>
-            </div>
 
-            <div className="flex items-center gap-3 ml-1 mt-2">
-              <input type="checkbox" id="remember" className="w-4 h-4 rounded border-zinc-300 bg-white text-purple-600 focus:ring-purple-500/30 cursor-pointer accent-purple-600" />
-              <label htmlFor="remember" className="text-sm font-bold text-zinc-600 cursor-pointer">Remember me</label>
-            </div>
+              <button type="submit" className="w-full mt-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white rounded-xl py-3.5 font-bold text-base shadow-lg shadow-purple-500/20 hover:shadow-xl hover:shadow-purple-500/30 transition-all duration-300 flex items-center justify-center gap-3 disabled:opacity-70 group border border-purple-500/30" disabled={isLoading}>
+                {isLoading ? (
+                  <>
+                    <Loader2 size={20} className="animate-spin" />
+                    <span>Signing in...</span>
+                  </>
+                ) : (
+                  <>
+                    <span>Sign In</span>
+                    <LogIn size={20} className="group-hover:translate-x-1 transition-transform duration-300" />
+                  </>
+                )}
+              </button>
+            </form>
+          ) : (
+            <form onSubmit={handleVerify2Fa} className="space-y-6">
+              <div className="space-y-2">
+                <label className="text-sm font-bold text-zinc-700 ml-1" htmlFor="totpCode">Two-Factor Authentication Code</label>
+                <div className="relative group">
+                  <Lock size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 group-focus-within:text-purple-600 transition-colors z-10" />
+                  <input
+                    type="text"
+                    id="totpCode"
+                    className="w-full pl-12 pr-4 py-3.5 bg-zinc-50 border border-zinc-200 rounded-xl text-zinc-900 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none transition-all duration-300 placeholder:text-zinc-400 shadow-sm font-mono tracking-widest text-center text-lg"
+                    placeholder="000000"
+                    value={totpCode}
+                    onChange={(e) => setTotpCode(e.target.value)}
+                    maxLength={10}
+                    required
+                    autoFocus
+                  />
+                </div>
+                <p className="text-xs text-zinc-500 ml-1">Enter the 6-digit verification code from your authenticator app or a recovery code.</p>
+              </div>
 
-            <button type="submit" className="w-full mt-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white rounded-xl py-3.5 font-bold text-base shadow-lg shadow-purple-500/20 hover:shadow-xl hover:shadow-purple-500/30 transition-all duration-300 flex items-center justify-center gap-3 disabled:opacity-70 group border border-purple-500/30" disabled={isLoading}>
-              {isLoading ? (
-                <>
-                  <Loader2 size={20} className="animate-spin" />
-                  <span>Signing in...</span>
-                </>
-              ) : (
-                <>
-                  <span>Sign In</span>
-                  <LogIn size={20} className="group-hover:translate-x-1 transition-transform duration-300" />
-                </>
-              )}
-            </button>
-          </form>
+              <button type="submit" className="w-full mt-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white rounded-xl py-3.5 font-bold text-base shadow-lg shadow-purple-500/20 hover:shadow-xl hover:shadow-purple-500/30 transition-all duration-300 flex items-center justify-center gap-3 disabled:opacity-70 group border border-purple-500/30" disabled={isLoading}>
+                {isLoading ? (
+                  <>
+                    <Loader2 size={20} className="animate-spin" />
+                    <span>Verifying...</span>
+                  </>
+                ) : (
+                  <>
+                    <span>Verify Code</span>
+                    <LogIn size={20} className="group-hover:translate-x-1 transition-transform duration-300" />
+                  </>
+                )}
+              </button>
+
+              <button type="button" onClick={() => { setIsPending2Fa(false); setMessage(null); }} className="w-full mt-2 bg-zinc-100 hover:bg-zinc-200 text-zinc-700 rounded-xl py-3.5 font-bold text-base transition-all duration-300 flex items-center justify-center gap-3 border border-zinc-200">
+                Cancel
+              </button>
+            </form>
+          )}
 
           <div className="text-center mt-10 pt-8 border-t border-zinc-100">
             <p className="text-zinc-500 font-semibold">

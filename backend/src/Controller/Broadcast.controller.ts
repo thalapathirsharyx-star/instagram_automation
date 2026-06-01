@@ -1,10 +1,11 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, Req } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, Req, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { BroadcastService } from '@Service/Broadcast.service';
 import { JWTAuthController } from '@Controller/JWTAuth.controller';
 import { ResponseEnum } from '@Helper/Enum/ResponseEnum';
 import { PLAN_LIMITS } from '@Config/PlanLimits';
 import { company as CompanyTable } from '@Database/Table/Admin/company';
+import { ImpersonationBlockGuard } from '@Service/Auth/ImpersonationBlockGuard.service';
 
 @Controller({ path: "Broadcast", version: '1' })
 @ApiTags("Broadcast")
@@ -35,6 +36,7 @@ export class BroadcastController extends JWTAuthController {
   }
 
   @Post('Create')
+  @UseGuards(ImpersonationBlockGuard)
   async CreateBroadcast(@Body() body: any, @Req() req: any) {
     const user = req.user;
     if (!user?.company_id) {
@@ -56,6 +58,7 @@ export class BroadcastController extends JWTAuthController {
   }
 
   @Put('Update/:id')
+  @UseGuards(ImpersonationBlockGuard)
   async UpdateBroadcast(@Param('id') id: string, @Body() body: any, @Req() req: any) {
     const user = req.user;
     if (!user?.company_id) {
@@ -70,6 +73,7 @@ export class BroadcastController extends JWTAuthController {
   }
 
   @Delete('Delete/:id')
+  @UseGuards(ImpersonationBlockGuard)
   async DeleteBroadcast(@Param('id') id: string, @Req() req: any) {
     const user = req.user;
     if (!user?.company_id) {
@@ -94,6 +98,7 @@ export class BroadcastController extends JWTAuthController {
   }
 
   @Post('Send/:id')
+  @UseGuards(ImpersonationBlockGuard)
   async SendBroadcast(@Param('id') id: string, @Req() req: any) {
     const user = req.user;
     if (!user?.company_id) {

@@ -133,18 +133,15 @@ export class TokenMonitorService implements OnModuleInit {
   }
 
   /**
-   * Identifies "Hot" leads that haven't responded in 24 hours and automatically sends
-   * a follow-up DM to re-engage them.
+   * Identifies "Hot" leads that haven't responded in the company-configured delay window
+   * and automatically sends a customized follow-up DM to re-engage them.
    */
   private async processAutoFollowUps() {
     try {
-      const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
-      
       const abandonedLeads = await instagram_lead.find({
         where: {
           lead_status: 'Hot',
-          follow_up_sent: false,
-          last_message_time: LessThan(twentyFourHoursAgo)
+          follow_up_sent: false
         },
         relations: ['company']
       });
@@ -152,7 +149,20 @@ export class TokenMonitorService implements OnModuleInit {
       if (abandonedLeads.length === 0) return;
 
       for (const lead of abandonedLeads) {
-        if (!lead.company?.instagram_access_token) continue;
+        const company = lead.company;
+        if (!company || !company.instagram_access_token || !company.auto_follow_up_enabled) {
+          continue;
+        }
+
+        // Evaluate dynamic delay time configured by the company (default to 24 hours)
+        const delayHours = company.auto_follow_up_delay_hours ?? 24;
+        const delayMs = delayHours * 60 * 60 * 1000;
+        const lastMessageMs = lead.last_message_time ? new Date(lead.last_message_time).getTime() : 0;
+        
+        // Skip if the configured delay time has not elapsed yet
+        if (Date.now() - lastMessageMs < delayMs) {
+          continue;
+        }
         
         // Only follow up if the LAST message in the thread was from US (Outbound)
         // meaning they read it but went cold.
@@ -162,9 +172,11 @@ export class TokenMonitorService implements OnModuleInit {
         });
 
         if (lastMsg && lastMsg.direction === 'Outbound') {
-          const followUpText = "Hey! Just checking in to see if you had any other questions or needed help with anything?";
+          // Use company-configured follow-up message template, with a friendly default fallback
+          const followUpText = company.auto_follow_up_message?.trim() || 
+            "Hey! Just checking in to see if you had any other questions or needed help with anything?";
           
-          const url = `https://graph.facebook.com/v21.0/${lead.company.instagram_page_id}/messages`;
+          const url = `https://graph.facebook.com/v21.0/${company.instagram_page_id || 'me'}/messages`;
           try {
             await axios.post(
               url,
@@ -173,7 +185,7 @@ export class TokenMonitorService implements OnModuleInit {
                 message: { text: followUpText }
               },
               {
-                headers: { 'Authorization': `Bearer ${lead.company.instagram_access_token}` }
+                headers: { 'Authorization': `Bearer ${company.instagram_access_token}` }
               }
             );
 
@@ -192,7 +204,7 @@ export class TokenMonitorService implements OnModuleInit {
             lead.follow_up_sent = true;
             await lead.save();
 
-            console.log(`[FOLLOW UP] Sent auto follow-up to lead ${lead.id}`);
+            console.log(`[FOLLOW UP] Sent auto follow-up to lead ${lead.id} using template message.`);
           } catch (err: any) {
             console.error(`[FOLLOW UP ERROR] Failed to send to ${lead.id}:`, err.response?.data || err.message);
           }

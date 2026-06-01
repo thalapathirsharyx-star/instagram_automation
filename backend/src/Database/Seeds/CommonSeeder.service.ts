@@ -82,11 +82,17 @@ export class CommonSeederService {
               user_role_id: UserRoleData.id,
               email: 'admin@user.com',
               password: hashedPassword,
+              super_admin_sub_role: 'Owner',
               created_by_id: "0",
               created_on: new Date()
             }
           ])
           .execute()
+      }
+    } else {
+      if (!existingUser.super_admin_sub_role) {
+        existingUser.super_admin_sub_role = 'Owner';
+        await existingUser.save();
       }
     }
   }

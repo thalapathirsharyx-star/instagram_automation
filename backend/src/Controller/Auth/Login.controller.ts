@@ -1,4 +1,4 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Ip } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ResponseEnum } from '@Helper/Enum/ResponseEnum';
 import { ForgotPasswordModel, ResetPasswordModel, RegisterModel } from '@Model/Admin/User.model';
@@ -6,6 +6,17 @@ import { UserLoginModel } from '@Model/Admin/UserLogin.model';
 import { UserService } from '@Service/Admin/User.service';
 import { AuthService } from '@Service/Auth/Auth.service';
 import { AuthBaseController } from '@Controller/AuthBase.controller';
+import { JwtAuthGuard } from '@Service/Auth/JwtAuthGuard.service';
+import { CurrentUser } from '@Helper/Common.helper';
+
+export class Verify2FaModel {
+  token: string;
+}
+
+export class Confirm2FaModel {
+  temp_token: string;
+  totp_code: string;
+}
 
 @Controller({ path: "Auth", version: '1' })
 @ApiTags("Auth")
@@ -46,4 +57,30 @@ export class LoginController extends AuthBaseController {
     return this.SendResponse(ResponseEnum.Success, "Password reseted successfully");
   }
 
+  @Post('2fa/setup')
+  @UseGuards(JwtAuthGuard)
+  async Setup2FA(@CurrentUser() UserId: string) {
+    const result = await this._AuthService.Setup2FA(UserId);
+    return { Type: ResponseEnum.Success, Message: '2FA setup initialized', result };
+  }
+
+  @Post('2fa/verify')
+  @UseGuards(JwtAuthGuard)
+  async Verify2FA(@CurrentUser() UserId: string, @Body() data: Verify2FaModel) {
+    const result = await this._AuthService.Verify2FA(UserId, data.token);
+    return { Type: ResponseEnum.Success, Message: '2FA verified and enabled successfully', result };
+  }
+
+  @Post('2fa/confirm')
+  async Confirm2FA(@Body() data: Confirm2FaModel, @Ip() ip: string) {
+    const result = await this._AuthService.Confirm2FA(data.temp_token, data.totp_code, ip);
+    return { Type: ResponseEnum.Success, Message: '2FA confirmed successfully', result };
+  }
+
+  @Post('2fa/disable')
+  @UseGuards(JwtAuthGuard)
+  async Disable2FA(@CurrentUser() UserId: string) {
+    const result = await this._AuthService.Disable2FA(UserId);
+    return { Type: ResponseEnum.Success, Message: '2FA disabled successfully', result };
+  }
 }
