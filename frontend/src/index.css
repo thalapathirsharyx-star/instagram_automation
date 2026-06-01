@@ -1444,6 +1444,296 @@
   background-color: #f4f4f5 !important;
 }
 
+/* ==========================================
+   Premium Instagram-Inspired CRM Theme
+   (Scoped to crm-layout to preserve Landing Page)
+   ========================================== */
+
+.crm-layout {
+  /* Dark Mode theme colors */
+  --background: 222 47% 11% !important; /* #0F172A */
+  --foreground: 210 40% 98% !important; /* #F8FAFC */
+  --card: 217 33% 17% !important;       /* #1E293B */
+  --card-foreground: 210 40% 98% !important;
+  --border: 215 25% 27% !important;     /* #334155 */
+  --glass-border: rgba(255, 255, 255, 0.08) !important;
+  
+  /* Primary and Brand Colors */
+  --primary: 327 73% 57% !important;    /* Instagram Pink: #E440A3 */
+  --brand-purple: #8B5CF6 !important;
+  --brand-pink: #E440A3 !important;
+  --accent-blue: #4F7CFF !important;
+  --highlight-cyan: #00C2FF !important;
+  
+  /* Gradients */
+  --primary-gradient: linear-gradient(135deg, #E440A3 0%, #8B5CF6 100%) !important;
+  --instagram-gradient: linear-gradient(135deg, #F58529 0%, #E440A3 50%, #8B5CF6 100%) !important;
+  --glow-gradient: linear-gradient(135deg, rgba(228, 64, 163, 0.15), rgba(139, 92, 246, 0.15)) !important;
+  
+  /* Status Colors */
+  --success: #22C55E !important;
+  --warning: #F59E0B !important;
+  --error: #EF4444 !important;
+  --info: #3B82F6 !important;
+
+  background-color: #0f172a !important;
+  background-image: none !important;
+}
+
+/* Light Mode theme overrides */
+:root.light .crm-layout {
+  --background: 230 100% 99% !important; /* #FAFBFF */
+  --foreground: 224 71% 4% !important;   /* #111827 */
+  --card: 0 0% 100% !important;          /* #FFFFFF */
+  --card-foreground: 220 14% 20% !important; /* #4B5563 */
+  --border: 220 14% 92% !important;      /* #E5E7EB */
+  --glass-border: rgba(0, 0, 0, 0.06) !important;
+  --primary: 262 83% 58% !important;    /* Instagram Purple: #8B5CF6 */
+  
+  background-color: #fafbff !important;
+  background-image: none !important;
+}
+
+/* Scoped Content Area Backgrounds */
+.crm-layout .content-area {
+  background-color: #0f172a !important;
+}
+
+:root.light .crm-layout .content-area {
+  background-color: #f4f6fc !important; /* Secondary Background Light */
+}
+
+/* Scoped Top Header styling */
+.crm-layout .top-header {
+  background-color: #111827 !important; /* Dark Secondary Background */
+  border-bottom: 1px solid #334155 !important;
+}
+
+:root.light .crm-layout .top-header {
+  background-color: #ffffff !important;
+  border-bottom: 1px solid #e5e7eb !important;
+}
+
+/* Scoped Sidebar Styling */
+.crm-layout .sidebar {
+  background-color: #111827 !important; /* Dark Secondary Background */
+  border-right: 1px solid #334155 !important;
+}
+
+:root.light .crm-layout .sidebar {
+  background-color: #ffffff !important; /* Sidebar Background Light */
+  border-right: 1px solid #e5e7eb !important;
+}
+
+/* Scoped Sidebar Menu Nav Items */
+.crm-layout .nav-item {
+  border-radius: 12px !important; /* Button Radius */
+  color: #9ca3af !important; /* Muted Text Dark */
+  transition: all 0.2s ease !important;
+}
+
+:root.light .crm-layout .nav-item {
+  color: #4b5563 !important; /* Body Text Light */
+}
+
+/* Scoped Sidebar Active Menu Item */
+.crm-layout .nav-item.active {
+  background: rgba(139, 92, 246, 0.15) !important;
+  color: #8b5cf6 !important;
+  border: 1px solid rgba(139, 92, 246, 0.25) !important;
+}
+
+:root.light .crm-layout .nav-item.active {
+  background-color: #f5f3ff !important;
+  color: #8b5cf6 !important;
+  border: 1px solid rgba(139, 92, 246, 0.15) !important;
+}
+
+.crm-layout .nav-item.active svg {
+  color: #8b5cf6 !important;
+}
+
+/* Scoped Sidebar Hover Menu Item */
+.crm-layout .nav-item:hover {
+  background: rgba(139, 92, 246, 0.08) !important;
+  color: #8b5cf6 !important;
+}
+
+:root.light .crm-layout .nav-item:hover {
+  background-color: #faf5ff !important;
+  color: #8b5cf6 !important;
+}
+
+.crm-layout .nav-item:hover svg {
+  color: #8b5cf6 !important;
+}
+
+/* Premium Glass Card Design overrides */
+.crm-layout .glass-card,
+.crm-layout .w3-card {
+  background-color: #1e293b !important; /* Cards Dark */
+  border: 1px solid #334155 !important;   /* Border Dark */
+  border-radius: 16px !important;         /* Card Radius */
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2) !important;
+  backdrop-filter: blur(12px) !important;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+:root.light .crm-layout .glass-card,
+:root.light .crm-layout .w3-card {
+  background-color: #ffffff !important;   /* Cards Light */
+  border: 1px solid #eef2ff !important;   /* Border Light */
+  border-radius: 16px !important;         /* Card Radius */
+  box-shadow: 0 4px 20px rgba(17, 24, 39, 0.06) !important; /* Shadow Light */
+  backdrop-filter: none !important;
+}
+
+.crm-layout .glass-card:hover,
+.crm-layout .w3-card:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3) !important;
+  border-color: rgba(139, 92, 246, 0.4) !important;
+}
+
+:root.light .crm-layout .glass-card:hover,
+:root.light .crm-layout .w3-card:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 30px rgba(15, 23, 42, 0.08) !important;
+  border-color: #8b5cf6 !important;
+}
+
+/* Premium Input Radius */
+.crm-layout input,
+.crm-layout select,
+.crm-layout textarea,
+.crm-layout .w3-input {
+  border-radius: 10px !important;
+}
+
+/* Premium Primary CTA buttons */
+.crm-layout .gradient-btn,
+.crm-layout .w3-button-primary,
+.crm-layout button.gradient-btn {
+  background: linear-gradient(135deg, #E440A3 0%, #8B5CF6 100%) !important;
+  color: #ffffff !important;
+  border-radius: 12px !important; /* Button Radius */
+  font-weight: 600 !important;
+  border: none !important;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  box-shadow: 0 4px 15px rgba(228, 64, 163, 0.2) !important;
+}
+
+.crm-layout .gradient-btn:hover,
+.crm-layout .w3-button-primary:hover,
+.crm-layout button.gradient-btn:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 8px 25px rgba(228, 64, 163, 0.4) !important;
+  filter: brightness(1.05) !important;
+}
+
+/* Active chat conversation cards (Inbox Sidebar list items) */
+.crm-layout .bg-purple-500\/15 {
+  background-color: rgba(139, 92, 246, 0.1) !important;
+  border-left: 4px solid #8B5CF6 !important;
+  border-radius: 12px !important;
+  border-color: rgba(139, 92, 246, 0.2) !important;
+}
+
+:root.light .crm-layout .bg-purple-500\/15 {
+  background-color: #F5F3FF !important;
+  border-left: 4px solid #8B5CF6 !important;
+  border-radius: 12px !important;
+  border-color: rgba(139, 92, 246, 0.1) !important;
+  box-shadow: 0 4px 20px rgba(17, 24, 39, 0.04) !important;
+}
+
+/* Scoped conversation lists in Inbox Sidebar */
+.crm-layout .w-\[340px\] .flex.gap-4.p-4.mx-3.my-2 {
+  background-color: #1e293b !important;
+  border: 1px solid #334155 !important;
+  border-radius: 16px !important;
+}
+
+:root.light .crm-layout .w-\[340px\] .flex.gap-4.p-4.mx-3.my-2 {
+  background-color: #FFFFFF !important;
+  border: 1px solid #EEF2FF !important;
+  border-radius: 16px !important;
+  box-shadow: 0 4px 20px rgba(17, 24, 39, 0.06) !important;
+}
+
+/* Inactive conversation hover states */
+.crm-layout .w-\[340px\] .flex.gap-4.p-4.mx-3.my-2:hover {
+  background-color: #202b3c !important;
+}
+
+:root.light .crm-layout .w-\[340px\] .flex.gap-4.p-4.mx-3.my-2:hover {
+  background-color: #F8F9FD !important;
+}
+
+/* Sticky row hover coloring alignment for table views */
+.crm-layout .table-row-hover:hover td {
+  background-color: #202024 !important;
+}
+
+:root.light .crm-layout .table-row-hover:hover td {
+  background-color: #f8f9fd !important; /* Hover Background */
+}
+
+/* Custom Scoped Chat History Background overrides */
+.crm-layout .flex-grow.p-8.overflow-y-auto.premium-scroll {
+  background-image: linear-gradient(180deg, #111827 0%, #0f172a 100%) !important;
+  background-color: transparent !important;
+}
+
+:root.light .crm-layout .flex-grow.p-8.overflow-y-auto.premium-scroll {
+  background-image: linear-gradient(180deg, #f4f6fc 0%, #f5f3ff 100%) !important;
+  background-color: transparent !important;
+}
+
+/* Scoped Inbox Header & Footer styling */
+.crm-layout .p-6.border-b,
+.crm-layout .p-6.bg-zinc-900\/80.border-t {
+  background-color: #1e293b !important;
+  border-color: #334155 !important;
+}
+
+:root.light .crm-layout .p-6.border-b,
+:root.light .crm-layout .p-6.bg-zinc-900\/80.border-t {
+  background-color: #ffffff !important;
+  border-color: #eef2ff !important;
+}
+
+/* Scoped Outbound & Inbound Chat Bubble Styling */
+.crm-layout .bg-purple-600 {
+  background: linear-gradient(135deg, #E440A3 0%, #8B5CF6 100%) !important;
+  border-color: transparent !important;
+}
+
+.crm-layout .bg-purple-600,
+.crm-layout .bg-purple-600 * {
+  color: #ffffff !important;
+}
+
+.crm-layout .bg-zinc-900 {
+  background-color: #1e293b !important;
+  border-color: #334155 !important;
+}
+
+.crm-layout .bg-zinc-900,
+.crm-layout .bg-zinc-900 * {
+  color: #f8fafc !important;
+}
+
+:root.light .crm-layout .bg-zinc-900 {
+  background-color: #ffffff !important;
+  border-color: #eef2ff !important;
+}
+
+:root.light .crm-layout .bg-zinc-900,
+:root.light .crm-layout .bg-zinc-900 * {
+  color: #111827 !important;
+}
+
 
 
 

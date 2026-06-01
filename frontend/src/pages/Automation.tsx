@@ -21,7 +21,9 @@ import {
   Workflow,
   Moon,
   Repeat,
-  Heart
+  Heart,
+  CheckCircle2,
+  AlertCircle
 } from 'lucide-react';
 import api from '../lib/axios';
 import PlaybookCanvas from '../components/PlaybookCanvas';
@@ -303,15 +305,11 @@ const Automation: React.FC = () => {
       
       {/* Custom Toast Notification */}
       {toastMessage && (
-        <div className="fixed top-6 right-6 z-[9999] px-5 py-3 rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border flex items-center gap-3 animate-in slide-in-from-top-4 fade-in duration-300 bg-white dark:bg-zinc-900 border-slate-200 dark:border-white/5 backdrop-blur-md">
+        <div className="fixed top-6 right-6 z-[9999] px-4 py-3 rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.08)] dark:shadow-[0_12px_40px_rgba(0,0,0,0.35)] border flex items-center gap-3 animate-in slide-in-from-top-4 fade-in duration-300 bg-white/80 dark:bg-zinc-950/80 border-slate-200/50 dark:border-white/5 backdrop-blur-md">
           {toastMessage.type === 'success' ? (
-            <div className="w-6 h-6 rounded-full bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20 shrink-0">
-              <span className="text-xs font-bold text-emerald-500">✓</span>
-            </div>
+            <CheckCircle2 className="h-5 w-5 text-emerald-500 shrink-0" />
           ) : (
-            <div className="w-6 h-6 rounded-full bg-red-500/10 flex items-center justify-center border border-red-500/20 shrink-0">
-              <span className="text-xs font-bold text-red-500">!</span>
-            </div>
+            <AlertCircle className="h-5 w-5 text-red-500 shrink-0" />
           )}
           <span className="font-semibold text-sm text-slate-800 dark:text-zinc-100">{toastMessage.title}</span>
         </div>

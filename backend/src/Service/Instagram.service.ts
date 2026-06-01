@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { instagram_lead } from '@Database/Table/CRM/instagram_lead';
 import { instagram_message } from '@Database/Table/CRM/instagram_message';
 import { knowledge_base } from '@Database/Table/CRM/knowledge_base';
@@ -11,6 +11,8 @@ import { KnowledgeBaseService } from './KnowledgeBase.service';
 import axios from 'axios';
 import { PLAN_LIMITS } from '@Config/PlanLimits';
 import { MoreThan } from 'typeorm';
+import { MailerService } from './Mailer.service';
+import { Redis } from 'ioredis';
 
 @Injectable()
 export class InstagramService {
@@ -20,7 +22,9 @@ export class InstagramService {
   constructor(
     private readonly instagramGateway: InstagramGateway,
     private readonly aiService: AIService,
-    private readonly knowledgeBaseService: KnowledgeBaseService
+    private readonly knowledgeBaseService: KnowledgeBaseService,
+    private readonly mailerService: MailerService,
+    @Inject('REDIS_CLIENT') private readonly redisClient: Redis
   ) { }
 
   /**
@@ -513,10 +517,57 @@ export class InstagramService {
       if (company) {
         company.monthly_ai_usage = (company.monthly_ai_usage || 0) + 1;
         await CompanyTable.update(companyId, { monthly_ai_usage: company.monthly_ai_usage });
+        
+        // Track consumption limits and trigger proactive alerting
+        await this.checkAndSendUsageAlert(company, limits);
       }
     }
 
     return aiResponse;
+  }
+
+  private async checkAndSendUsageAlert(company: any, limits: any) {
+    if (!company || !company.email) return;
+
+    const usage = company.monthly_ai_usage || 0;
+    const limit = limits.aiMessagesLimit;
+    if (limit <= 0) return;
+
+    const percent = (usage / limit) * 100;
+    const currentMonth = company.ai_usage_reset_month || new Date().toISOString().slice(0, 7);
+
+    // 100% Exceeded alert
+    if (percent >= 100) {
+      const key = `ai_usage_alert_100:${company.id}:${currentMonth}`;
+      const sent = await this.redisClient.get(key);
+      if (!sent) {
+        await this.redisClient.set(key, 'true', 'EX', 30 * 24 * 60 * 60); // 30 days expiry
+        await this.mailerService.SendMail({
+          to: company.email,
+          subject: `[ALERT] AI Response Limits Reached - ${company.name}`,
+          template: `Hello,\n\nYour company "${company.name}" has reached 100% of its monthly AI messaging limits (${usage}/${limit} messages) for the '${company.plan}' plan.\n\nAutomated AI responses are temporarily offline until the counter resets or you upgrade your plan.\n\nBest regards,\nReplyZens Team`,
+          context: {},
+          html: false
+        });
+        console.log(`[ALERT 100%] Sent usage limit exhausted alert to ${company.email}`);
+      }
+    }
+    // 80% Warning alert
+    else if (percent >= 80) {
+      const key = `ai_usage_alert_80:${company.id}:${currentMonth}`;
+      const sent = await this.redisClient.get(key);
+      if (!sent) {
+        await this.redisClient.set(key, 'true', 'EX', 30 * 24 * 60 * 60); // 30 days expiry
+        await this.mailerService.SendMail({
+          to: company.email,
+          subject: `[WARNING] AI Response Limit approaching 80% - ${company.name}`,
+          template: `Hello,\n\nYour company "${company.name}" has used ${usage} out of ${limit} of its monthly AI messaging limits (80% reached) for the '${company.plan}' plan.\n\nTo ensure uninterrupted service, you can upgrade your plan in the billing settings.\n\nBest regards,\nReplyZens Team`,
+          context: {},
+          html: false
+        });
+        console.log(`[ALERT 80%] Sent usage approaching 80% warning to ${company.email}`);
+      }
+    }
   }
 
 

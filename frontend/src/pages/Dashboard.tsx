@@ -16,22 +16,49 @@ import {
 } from 'lucide-react';
 
 
-const DashboardCard: React.FC<{ title: string; value: string | number; icon: any; trend: string; color?: string }> = ({ title, value, icon: Icon, trend, color }) => (
-  <div className="w3-card group">
-    <div className="flex justify-between items-start mb-6">
-      <div className="p-3.5 bg-zinc-800/50 rounded-2xl text-purple-400 group-hover:bg-purple-500/10 transition-all duration-500 border border-white/5">
-        <Icon size={24} />
+const DashboardCard: React.FC<{ title: string; value: string | number; icon: any; trend: string }> = ({ title, value, icon: Icon, trend }) => {
+  let iconColor = '#8B5CF6'; // Default Purple
+  let bgHover = 'group-hover:bg-[#8B5CF6]/10';
+  let bgDefault = 'bg-[#8B5CF6]/5';
+
+  if (title.toLowerCase().includes('lead')) {
+    iconColor = '#E440A3'; // Pink
+    bgHover = 'group-hover:bg-[#E440A3]/10';
+    bgDefault = 'bg-[#E440A3]/5';
+  } else if (title.toLowerCase().includes('balance') || title.toLowerCase().includes('sales')) {
+    iconColor = '#22C55E'; // Green
+    bgHover = 'group-hover:bg-[#22C55E]/10';
+    bgDefault = 'bg-[#22C55E]/5';
+  } else if (title.toLowerCase().includes('funnel') || title.toLowerCase().includes('engagement')) {
+    iconColor = '#3B82F6'; // Blue
+    bgHover = 'group-hover:bg-[#3B82F6]/10';
+    bgDefault = 'bg-[#3B82F6]/5';
+  } else if (title.toLowerCase().includes('interaction') || title.toLowerCase().includes('conversation')) {
+    iconColor = '#8B5CF6'; // Purple
+    bgHover = 'group-hover:bg-[#8B5CF6]/10';
+    bgDefault = 'bg-[#8B5CF6]/5';
+  }
+
+  return (
+    <div className="w3-card group">
+      <div className="flex justify-between items-start mb-6">
+        <div 
+          className={`p-3.5 rounded-2xl transition-all duration-500 border border-white/5 ${bgDefault} ${bgHover}`}
+          style={{ borderColor: 'var(--glass-border)' }}
+        >
+          <Icon size={24} style={{ color: iconColor }} />
+        </div>
+        <div className="flex items-center gap-1 text-emerald-400 text-xs font-bold bg-emerald-500/10 px-2 py-1 rounded-lg border border-emerald-500/20">
+          {trend} <ArrowUpRight size={14} />
+        </div>
       </div>
-      <div className="flex items-center gap-1 text-emerald-400 text-xs font-bold bg-emerald-500/10 px-2 py-1 rounded-lg border border-emerald-500/20">
-        {trend} <ArrowUpRight size={14} />
+      <div>
+        <p className="text-[11px] font-bold text-zinc-500 uppercase tracking-widest mb-1">{title}</p>
+        <h3 className="text-3xl font-bold text-zinc-100 tabular-nums">{value}</h3>
       </div>
     </div>
-    <div>
-      <p className="text-[11px] font-bold text-zinc-500 uppercase tracking-widest mb-1">{title}</p>
-      <h3 className="text-3xl font-bold text-zinc-100 tabular-nums">{value}</h3>
-    </div>
-  </div>
-);
+  );
+};
 
 const Dashboard: React.FC = () => {
   const [balance, setBalance] = useState<number>(0);
@@ -78,22 +105,17 @@ const Dashboard: React.FC = () => {
       const funnel = Object.entries(statusCounts).map(([name, value]) => ({ name, value }));
       setFunnelData(funnel.length > 0 ? funnel : [{ name: 'No Data', value: 1 }]);
 
-      // Calculate playbook funnel metrics dynamically with realistic multipliers/minimums for professional presentation
+      // Calculate playbook funnel metrics dynamically based on actual database leads
       const started = leads.length;
       const replied = leads.filter((l: any) => l.lead_status !== 'New' || (l.lead_score && l.lead_score > 1)).length;
       const captured = leads.filter((l: any) => (l.tags && l.tags.length > 0) || (l.lead_score && l.lead_score >= 5)).length;
       const converted = leads.filter((l: any) => l.lead_status === 'Buyer').length;
 
-      const startedVal = Math.max(started, 120);
-      const repliedVal = Math.max(replied, Math.floor(startedVal * 0.78));
-      const capturedVal = Math.max(captured, Math.floor(repliedVal * 0.52));
-      const convertedVal = Math.max(converted, Math.floor(capturedVal * 0.35));
-
       setPlaybookFunnel({
-        started: startedVal,
-        replied: repliedVal,
-        captured: capturedVal,
-        converted: convertedVal
+        started,
+        replied,
+        captured,
+        converted
       });
 
       // Interaction chart data (last 7 days grouped)
@@ -277,7 +299,7 @@ const Dashboard: React.FC = () => {
               </div>
               <div className="flex items-center gap-1.5 text-xs font-bold text-purple-400 bg-purple-500/10 px-3 py-1.5 rounded-xl border border-purple-500/20">
                 <Target size={14} className="text-purple-400 animate-pulse" />
-                <span>Overall ROI: {((playbookFunnel.converted / playbookFunnel.started) * 100).toFixed(1)}%</span>
+                <span>Overall ROI: {playbookFunnel.started > 0 ? ((playbookFunnel.converted / playbookFunnel.started) * 100).toFixed(1) : '0.0'}%</span>
               </div>
             </div>
 
@@ -304,8 +326,8 @@ const Dashboard: React.FC = () => {
               <div className="flex justify-between items-center pl-7 text-[10px] text-zinc-500 font-bold">
                 <div className="h-3 border-l border-zinc-700/50 border-dashed"></div>
                 <div className="px-1.5 py-0.5 rounded bg-zinc-800/30 text-emerald-400 border border-emerald-500/10 flex items-center gap-1">
-                  <span>↓ {((playbookFunnel.replied / playbookFunnel.started) * 100).toFixed(0)}% Reply Rate</span>
-                  <span className="text-zinc-500">({(100 - (playbookFunnel.replied / playbookFunnel.started) * 100).toFixed(0)}% drop-off)</span>
+                  <span>↓ {playbookFunnel.started > 0 ? ((playbookFunnel.replied / playbookFunnel.started) * 100).toFixed(0) : '0'}% Reply Rate</span>
+                  <span className="text-zinc-500">({(100 - (playbookFunnel.started > 0 ? (playbookFunnel.replied / playbookFunnel.started) * 100 : 0)).toFixed(0)}% drop-off)</span>
                 </div>
                 <div></div>
               </div>
@@ -320,12 +342,12 @@ const Dashboard: React.FC = () => {
                   <div className="flex items-center gap-3">
                     <span className="text-xs font-bold text-zinc-100">{playbookFunnel.replied} leads</span>
                     <span className="text-[10px] font-bold text-zinc-500 px-1.5 py-0.5 rounded bg-zinc-800">
-                      {((playbookFunnel.replied / playbookFunnel.started) * 100).toFixed(0)}%
+                      {playbookFunnel.started > 0 ? ((playbookFunnel.replied / playbookFunnel.started) * 100).toFixed(0) : '0'}%
                     </span>
                   </div>
                 </div>
                 <div className="h-2 bg-zinc-800/50 rounded-full overflow-hidden border border-white/5">
-                  <div className="h-full bg-gradient-to-r from-indigo-500 to-blue-500 rounded-full" style={{ width: `${(playbookFunnel.replied / playbookFunnel.started) * 100}%` }}></div>
+                  <div className="h-full bg-gradient-to-r from-indigo-500 to-blue-500 rounded-full" style={{ width: `${playbookFunnel.started > 0 ? (playbookFunnel.replied / playbookFunnel.started) * 100 : 0}%` }}></div>
                 </div>
               </div>
 
@@ -333,8 +355,8 @@ const Dashboard: React.FC = () => {
               <div className="flex justify-between items-center pl-7 text-[10px] text-zinc-500 font-bold">
                 <div className="h-3 border-l border-zinc-700/50 border-dashed"></div>
                 <div className="px-1.5 py-0.5 rounded bg-zinc-800/30 text-emerald-400 border border-emerald-500/10 flex items-center gap-1">
-                  <span>↓ {((playbookFunnel.captured / playbookFunnel.replied) * 100).toFixed(0)}% Capture Rate</span>
-                  <span className="text-zinc-500">({(100 - (playbookFunnel.captured / playbookFunnel.replied) * 100).toFixed(0)}% drop-off)</span>
+                  <span>↓ {playbookFunnel.replied > 0 ? ((playbookFunnel.captured / playbookFunnel.replied) * 100).toFixed(0) : '0'}% Capture Rate</span>
+                  <span className="text-zinc-500">({(100 - (playbookFunnel.replied > 0 ? (playbookFunnel.captured / playbookFunnel.replied) * 100 : 0)).toFixed(0)}% drop-off)</span>
                 </div>
                 <div></div>
               </div>
@@ -349,12 +371,12 @@ const Dashboard: React.FC = () => {
                   <div className="flex items-center gap-3">
                     <span className="text-xs font-bold text-zinc-100">{playbookFunnel.captured} leads</span>
                     <span className="text-[10px] font-bold text-zinc-500 px-1.5 py-0.5 rounded bg-zinc-800">
-                      {((playbookFunnel.captured / playbookFunnel.started) * 100).toFixed(0)}%
+                      {playbookFunnel.started > 0 ? ((playbookFunnel.captured / playbookFunnel.started) * 100).toFixed(0) : '0'}%
                     </span>
                   </div>
                 </div>
                 <div className="h-2 bg-zinc-800/50 rounded-full overflow-hidden border border-white/5">
-                  <div className="h-full bg-gradient-to-r from-blue-500 to-teal-500 rounded-full" style={{ width: `${(playbookFunnel.captured / playbookFunnel.started) * 100}%` }}></div>
+                  <div className="h-full bg-gradient-to-r from-blue-500 to-teal-500 rounded-full" style={{ width: `${playbookFunnel.started > 0 ? (playbookFunnel.captured / playbookFunnel.started) * 100 : 0}%` }}></div>
                 </div>
               </div>
 
@@ -362,8 +384,8 @@ const Dashboard: React.FC = () => {
               <div className="flex justify-between items-center pl-7 text-[10px] text-zinc-500 font-bold">
                 <div className="h-3 border-l border-zinc-700/50 border-dashed"></div>
                 <div className="px-1.5 py-0.5 rounded bg-zinc-800/30 text-emerald-400 border border-emerald-500/10 flex items-center gap-1">
-                  <span>↓ {((playbookFunnel.converted / playbookFunnel.captured) * 100).toFixed(0)}% Close Rate</span>
-                  <span className="text-zinc-500">({(100 - (playbookFunnel.converted / playbookFunnel.captured) * 100).toFixed(0)}% drop-off)</span>
+                  <span>↓ {playbookFunnel.captured > 0 ? ((playbookFunnel.converted / playbookFunnel.captured) * 100).toFixed(0) : '0'}% Close Rate</span>
+                  <span className="text-zinc-500">({(100 - (playbookFunnel.captured > 0 ? (playbookFunnel.converted / playbookFunnel.captured) * 100 : 0)).toFixed(0)}% drop-off)</span>
                 </div>
                 <div></div>
               </div>
@@ -378,12 +400,12 @@ const Dashboard: React.FC = () => {
                   <div className="flex items-center gap-3">
                     <span className="text-xs font-bold text-zinc-100">{playbookFunnel.converted} leads</span>
                     <span className="text-[10px] font-bold text-zinc-500 px-1.5 py-0.5 rounded bg-zinc-800">
-                      {((playbookFunnel.converted / playbookFunnel.started) * 100).toFixed(0)}%
+                      {playbookFunnel.started > 0 ? ((playbookFunnel.converted / playbookFunnel.started) * 100).toFixed(0) : '0'}%
                     </span>
                   </div>
                 </div>
                 <div className="h-2 bg-zinc-800/50 rounded-full overflow-hidden border border-white/5">
-                  <div className="h-full bg-gradient-to-r from-teal-500 to-emerald-400 rounded-full" style={{ width: `${(playbookFunnel.converted / playbookFunnel.started) * 100}%` }}></div>
+                  <div className="h-full bg-gradient-to-r from-teal-500 to-emerald-400 rounded-full" style={{ width: `${playbookFunnel.started > 0 ? (playbookFunnel.converted / playbookFunnel.started) * 100 : 0}%` }}></div>
                 </div>
               </div>
             </div>

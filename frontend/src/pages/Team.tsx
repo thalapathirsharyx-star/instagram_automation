@@ -36,7 +36,7 @@ const Team: React.FC = () => {
     setIsInviting(true);
     try {
       const res = await addTeamMember(formData);
-      if (res.Type === 'Success') {
+      if (res.Type === 'Success' || res.Type === 'S') {
         setFormData({ first_name: '', last_name: '', email: '', password: '' });
         fetchMembers();
       } else {
@@ -53,7 +53,7 @@ const Team: React.FC = () => {
     if (!confirm('Are you sure you want to remove this team member?')) return;
     try {
       const res = await removeTeamMember(id);
-      if (res.Success || res.Type === 'Success') {
+      if (res.Success || res.Type === 'Success' || res.Type === 'S') {
         fetchMembers();
       }
     } catch (err) {
