@@ -2,11 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { Book, Plus, Trash2, Sparkles, FileText, UploadCloud, Loader2, MessageSquareQuote, HelpCircle, File } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import api from '../lib/axios';
+import { useToast } from '../context/ToastContext';
+import { ConfirmModal } from '../components/ConfirmModal';
 
 const KnowledgeBase: React.FC = () => {
+  const { toast } = useToast();
   const [items, setItems] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'all' | 'documents' | 'faqs' | 'facts'>('all');
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -25,16 +30,24 @@ const KnowledgeBase: React.FC = () => {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!window.confirm('Are you sure you want to delete this knowledge item?')) return;
+  const handleDelete = async () => {
+    if (!confirmDeleteId) return;
     
     try {
-      const res = await api.delete(`/Instagram/KnowledgeBase/${id}`);
+      setIsDeleting(true);
+      const res = await api.delete(`/Instagram/KnowledgeBase/${confirmDeleteId}`);
       if (res.data.Success) {
-        setItems(items.filter(item => item.id !== id));
+        setItems(items.filter(item => item.id !== confirmDeleteId));
+        toast.success('Knowledge item deleted', 'The item has been removed from your Brain Base.');
+      } else {
+        toast.error('Failed to delete', res.data.Message || 'An error occurred while deleting.');
       }
     } catch (error) {
       console.error('Error deleting knowledge:', error);
+      toast.error('Error deleting knowledge', 'An unexpected network error occurred.');
+    } finally {
+      setIsDeleting(false);
+      setConfirmDeleteId(null);
     }
   };
 
@@ -194,7 +207,7 @@ const KnowledgeBase: React.FC = () => {
                         <Sparkles size={10} /> AI READY
                       </div>
                       <button 
-                        onClick={() => handleDelete(item.id)}
+                        onClick={() => setConfirmDeleteId(item.id)}
                         className="p-1.5 text-zinc-500 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-all cursor-pointer"
                       >
                         <Trash2 size={16} />
@@ -207,6 +220,17 @@ const KnowledgeBase: React.FC = () => {
           )}
         </div>
       )}
+      <ConfirmModal
+        isOpen={confirmDeleteId !== null}
+        title="Delete Knowledge Item"
+        message="Are you sure you want to delete this knowledge item? This action will permanently remove it from your AI's trained context."
+        confirmText="Delete"
+        cancelText="Cancel"
+        type="danger"
+        isLoading={isDeleting}
+        onConfirm={handleDelete}
+        onCancel={() => setConfirmDeleteId(null)}
+      />
     </div>
   );
 };

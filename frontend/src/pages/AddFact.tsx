@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { FileText, Loader2, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import api from '../lib/axios';
+import { useToast } from '../context/ToastContext';
 
 const AddFact: React.FC = () => {
+  const { toast } = useToast();
   const [newTitle, setNewTitle] = useState('');
   const [newContent, setNewContent] = useState('');
   const [category, setCategory] = useState('General');
@@ -22,10 +24,14 @@ const AddFact: React.FC = () => {
       });
 
       if (res.data.Success) {
+        toast.success('Knowledge fact saved', 'The business fact has been successfully saved to your Brain Base.');
         navigate('/knowledge');
+      } else {
+        toast.error('Failed to save fact', res.data.Message || 'Could not save fact to Brain Base.');
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error saving knowledge:', error);
+      toast.error('Error saving fact', 'An unexpected network error occurred.');
     } finally {
       setIsSaving(false);
     }

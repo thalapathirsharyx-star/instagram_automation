@@ -28,6 +28,7 @@ import Broadcasts from './pages/Broadcasts';
 import { Bell, Sun, Moon, LogOut } from 'lucide-react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
+import { ToastProvider } from './context/ToastContext';
 
 function AppContent() {
   const location = useLocation();
@@ -208,7 +209,9 @@ function App() {
   return (
     <Router>
       <AuthProvider>
-        <AppContent />
+        <ToastProvider>
+          <AppContent />
+        </ToastProvider>
       </AuthProvider>
     </Router>
   );

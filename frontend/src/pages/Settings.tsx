@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { 
   Shield, 
@@ -17,6 +17,8 @@ import {
   Sparkles,
   AlertCircle
 } from 'lucide-react';
+import { useToast } from '../context/ToastContext';
+import { ConfirmModal } from '../components/ConfirmModal';
 
 const SettingsCard: React.FC<{ icon: any, title: string, subtitle: string, children: React.ReactNode }> = ({ icon: Icon, title, subtitle, children }) => (
   <div className="w3-card flex flex-col gap-6 group hover:border-purple-500/30 transition-all duration-500 border-white/5">
@@ -40,24 +42,26 @@ import api from '../lib/axios';
 
 const Settings: React.FC = () => {
   const { user, updateUser } = useAuth();
-  const [isConnecting, setIsConnecting] = React.useState(false);
-  const [isConnected, setIsConnected] = React.useState(false);
-  const [isLoadingStatus, setIsLoadingStatus] = React.useState(true);
-  const [showGuide, setShowGuide] = React.useState(false);
-  const [connectionDetails, setConnectionDetails] = React.useState<{ name: string, id: string } | null>(null);
-  const [isEditingProfile, setIsEditingProfile] = React.useState(false);
-  const [profileEmail, setProfileEmail] = React.useState(user?.email || '');
-  const [notification, setNotification] = React.useState<{ type: 'success' | 'error', message: string } | null>(null);
-  const [autoReplyEnabled, setAutoReplyEnabled] = React.useState(true);
-  const [humanHandoffAlerts, setHumanHandoffAlerts] = React.useState(true);
+  const { toast } = useToast();
+  const [isConnecting, setIsConnecting] = useState(false);
+  const [isConnected, setIsConnected] = useState(false);
+  const [isLoadingStatus, setIsLoadingStatus] = useState(true);
+  const [showGuide, setShowGuide] = useState(false);
+  const [connectionDetails, setConnectionDetails] = useState<{ name: string, id: string } | null>(null);
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const [profileEmail, setProfileEmail] = useState(user?.email || '');
+  const [autoReplyEnabled, setAutoReplyEnabled] = useState(true);
+  const [humanHandoffAlerts, setHumanHandoffAlerts] = useState(true);
 
   // 2FA states
-  const [isSettingUp2Fa, setIsSettingUp2Fa] = React.useState(false);
-  const [qrCodeUrl, setQrCodeUrl] = React.useState('');
-  const [secret, setSecret] = React.useState('');
-  const [recoveryCodes, setRecoveryCodes] = React.useState<string[]>([]);
-  const [totpVerificationCode, setTotpVerificationCode] = React.useState('');
-  const [isVerifying2Fa, setIsVerifying2Fa] = React.useState(false);
+  const [isSettingUp2Fa, setIsSettingUp2Fa] = useState(false);
+  const [qrCodeUrl, setQrCodeUrl] = useState('');
+  const [secret, setSecret] = useState('');
+  const [recoveryCodes, setRecoveryCodes] = useState<string[]>([]);
+  const [totpVerificationCode, setTotpVerificationCode] = useState('');
+  const [isVerifying2Fa, setIsVerifying2Fa] = useState(false);
+  const [confirmDisable2FA, setConfirmDisable2FA] = useState(false);
+  const [isDisabling2FA, setIsDisabling2FA] = useState(false);
 
   const handleSetup2FA = async () => {
     setIsSettingUp2Fa(true);
@@ -103,9 +107,8 @@ const Settings: React.FC = () => {
   };
 
   const handleDisable2FA = async () => {
-    if (!window.confirm('Are you sure you want to disable 2FA? This will decrease your account security.')) return;
-    setNotification(null);
     try {
+      setIsDisabling2FA(true);
       const res = await api.post('/Auth/2fa/disable');
       if (res.data.Type === 'S') {
         updateUser({ twoFactorEnabled: false });
@@ -113,22 +116,22 @@ const Settings: React.FC = () => {
       } else {
         showNotification(res.data.Message || 'Failed to disable 2FA', 'error');
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
       showNotification('Failed to disable 2FA.', 'error');
+    } finally {
+      setIsDisabling2FA(false);
+      setConfirmDisable2FA(false);
     }
   };
 
   const showNotification = (message: string, type: 'success' | 'error' = 'success') => {
-    setNotification({ message, type });
-  };
-
-  React.useEffect(() => {
-    if (notification) {
-      const timer = setTimeout(() => setNotification(null), 3000);
-      return () => clearTimeout(timer);
+    if (type === 'success') {
+      toast.success(message);
+    } else {
+      toast.error(message);
     }
-  }, [notification]);
+  };
 
   React.useEffect(() => {
     setIsLoadingStatus(true);
@@ -222,13 +225,6 @@ const Settings: React.FC = () => {
           <h1 className="text-3xl font-bold text-zinc-100 mb-2">Control Center</h1>
           <p className="text-zinc-400 font-medium">Configure your CRM integration and automation preferences.</p>
         </div>
-        {notification && (
-          <div className={`px-4 py-2 rounded-xl flex items-center gap-2 text-sm font-bold animate-in zoom-in duration-300 border
-            ${notification.type === 'success' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border-rose-500/20'}`}>
-            {notification.type === 'success' ? <Sparkles size={16} /> : <AlertCircle size={16} />}
-            {notification.message}
-          </div>
-        )}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
@@ -518,7 +514,7 @@ const Settings: React.FC = () => {
                 Your account is currently protected by a secondary authentication layer.
               </p>
               <button 
-                onClick={handleDisable2FA}
+                onClick={() => setConfirmDisable2FA(true)}
                 className="w-full py-3 bg-rose-500/10 text-rose-500 hover:bg-rose-50 hover:text-white border border-rose-500/20 rounded-xl font-bold uppercase tracking-widest transition-all text-xs shadow-sm animate-in fade-in"
               >
                 Disable Multi-Factor Authentication
@@ -544,6 +540,17 @@ const Settings: React.FC = () => {
         </SettingsCard>
 
       </div>
+      <ConfirmModal
+        isOpen={confirmDisable2FA}
+        title="Disable Two-Factor Authentication"
+        message="Are you sure you want to disable Two-Factor Authentication? This will significantly decrease your account security."
+        confirmText="Disable 2FA"
+        cancelText="Keep Enabled"
+        type="danger"
+        isLoading={isDisabling2FA}
+        onConfirm={handleDisable2FA}
+        onCancel={() => setConfirmDisable2FA(false)}
+      />
     </div>
   );
 };

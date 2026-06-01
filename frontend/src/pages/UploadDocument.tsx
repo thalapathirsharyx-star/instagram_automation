@@ -2,8 +2,10 @@ import React, { useState, useRef } from 'react';
 import { UploadCloud, Loader2, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import api from '../lib/axios';
+import { useToast } from '../context/ToastContext';
 
 const UploadDocument: React.FC = () => {
+  const { toast } = useToast();
   const [isSaving, setIsSaving] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
@@ -24,11 +26,14 @@ const UploadDocument: React.FC = () => {
       });
 
       if (res.data.Success) {
+        toast.success('Document uploaded', `${file.name} has been processed successfully.`);
         navigate('/knowledge');
+      } else {
+        toast.error('Upload failed', res.data.Message || 'Failed to process document.');
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error uploading file:', error);
-      alert('Error uploading file. Please ensure it is a PDF or TXT.');
+      toast.error('Upload error', 'Please ensure the file is a valid PDF or TXT.');
     } finally {
       setIsSaving(false);
     }

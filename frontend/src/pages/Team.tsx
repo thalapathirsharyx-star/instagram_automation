@@ -1,14 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { getTeamMembers, addTeamMember, removeTeamMember } from '../api/team.api';
 import { Users, UserPlus, Mail, Shield, Trash2, ShieldAlert, Eye, EyeOff } from 'lucide-react';
+import { useToast } from '../context/ToastContext';
+import { ConfirmModal } from '../components/ConfirmModal';
 
 const Team: React.FC = () => {
+  const { toast } = useToast();
   const [members, setMembers] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isInviting, setIsInviting] = useState(false);
   const [formData, setFormData] = useState({ first_name: '', last_name: '', email: '', password: '' });
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [confirmRemoveId, setConfirmRemoveId] = useState<string | null>(null);
+  const [isRemoving, setIsRemoving] = useState(false);
 
   useEffect(() => {
     fetchMembers();
@@ -38,26 +43,38 @@ const Team: React.FC = () => {
       const res = await addTeamMember(formData);
       if (res.Type === 'Success' || res.Type === 'S') {
         setFormData({ first_name: '', last_name: '', email: '', password: '' });
+        toast.success('Team member added', `${formData.first_name} has been added successfully.`);
         fetchMembers();
       } else {
         setError(res.Message || 'Failed to add member');
+        toast.error('Add failed', res.Message || 'Could not add team member.');
       }
     } catch (err: any) {
-      setError(err?.response?.data?.Message || 'An error occurred while adding the member');
+      const errMsg = err?.response?.data?.Message || 'An error occurred while adding the member';
+      setError(errMsg);
+      toast.error('Add failed', errMsg);
     } finally {
       setIsInviting(false);
     }
   };
 
-  const handleRemove = async (id: string) => {
-    if (!confirm('Are you sure you want to remove this team member?')) return;
+  const handleRemove = async () => {
+    if (!confirmRemoveId) return;
     try {
-      const res = await removeTeamMember(id);
+      setIsRemoving(true);
+      const res = await removeTeamMember(confirmRemoveId);
       if (res.Success || res.Type === 'Success' || res.Type === 'S') {
+        toast.success('Member removed', 'The team member has been successfully removed.');
         fetchMembers();
+      } else {
+        toast.error('Removal failed', res.Message || 'Could not remove team member.');
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error('Failed to remove member', err);
+      toast.error('Removal failed', err?.response?.data?.Message || 'An unexpected error occurred.');
+    } finally {
+      setIsRemoving(false);
+      setConfirmRemoveId(null);
     }
   };
 
@@ -200,7 +217,7 @@ const Team: React.FC = () => {
                     </div>
                     {member.role !== 'Client Admin' && (
                       <button 
-                        onClick={() => handleRemove(member.id)}
+                        onClick={() => setConfirmRemoveId(member.id)}
                         className="p-2.5 text-zinc-500 hover:text-rose-400 hover:bg-rose-500/10 rounded-xl transition-all"
                         title="Remove member"
                       >
@@ -215,6 +232,17 @@ const Team: React.FC = () => {
         </div>
 
       </div>
+      <ConfirmModal
+        isOpen={confirmRemoveId !== null}
+        title="Remove Team Member"
+        message="Are you sure you want to remove this team member? They will lose all access to this workspace immediately."
+        confirmText="Remove"
+        cancelText="Cancel"
+        type="danger"
+        isLoading={isRemoving}
+        onConfirm={handleRemove}
+        onCancel={() => setConfirmRemoveId(null)}
+      />
     </div>
   );
 };

@@ -27,6 +27,8 @@ import {
 } from 'lucide-react';
 import api from '../lib/axios';
 import PlaybookCanvas from '../components/PlaybookCanvas';
+import { useToast } from '../context/ToastContext';
+import { ConfirmModal } from '../components/ConfirmModal';
 
 interface PlaybookStep {
   id: string;
@@ -62,11 +64,16 @@ const Automation: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [showCanvas, setShowCanvas] = useState(false);
-  const [toastMessage, setToastMessage] = useState<{title: string, type: 'success' | 'error'} | null>(null);
+  const { toast } = useToast();
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const showToast = (title: string, type: 'success' | 'error' = 'success') => {
-    setToastMessage({ title, type });
-    setTimeout(() => setToastMessage(null), 3000);
+    if (type === 'success') {
+      toast.success(title);
+    } else {
+      toast.error(title);
+    }
   };
 
   // Visual Playbook Builder State
@@ -286,34 +293,26 @@ const Automation: React.FC = () => {
     }
   };
 
-  const deleteCommentTrigger = async (id: string) => {
-    if (!window.confirm('Are you sure you want to delete this trigger?')) return;
+  const deleteCommentTrigger = async () => {
+    if (!confirmDeleteId) return;
     try {
-      const res = await api.delete(`/Instagram/CommentTriggers/${id}`);
+      setIsDeleting(true);
+      const res = await api.delete(`/Instagram/CommentTriggers/${confirmDeleteId}`);
       if (res.data.Success) {
-        setCommentTriggers(commentTriggers.filter(t => t.id !== id));
+        setCommentTriggers(commentTriggers.filter(t => t.id !== confirmDeleteId));
         showToast('Trigger deleted successfully!');
       }
     } catch (error) {
       console.error('Error deleting comment trigger:', error);
       showToast('Failed to delete trigger.', 'error');
+    } finally {
+      setIsDeleting(false);
+      setConfirmDeleteId(null);
     }
   };
 
   return (
     <div className="flex flex-col gap-8 min-h-full animate-in fade-in duration-700 pb-10 relative">
-      
-      {/* Custom Toast Notification */}
-      {toastMessage && (
-        <div className="fixed top-6 right-6 z-[9999] px-4 py-3 rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.08)] dark:shadow-[0_12px_40px_rgba(0,0,0,0.35)] border flex items-center gap-3 animate-in slide-in-from-top-4 fade-in duration-300 bg-white/80 dark:bg-zinc-950/80 border-slate-200/50 dark:border-white/5 backdrop-blur-md">
-          {toastMessage.type === 'success' ? (
-            <CheckCircle2 className="h-5 w-5 text-emerald-500 shrink-0" />
-          ) : (
-            <AlertCircle className="h-5 w-5 text-red-500 shrink-0" />
-          )}
-          <span className="font-semibold text-sm text-slate-800 dark:text-zinc-100">{toastMessage.title}</span>
-        </div>
-      )}
 
       {/* HEADER & TABS */}
       <div className="flex flex-col gap-6 md:flex-row md:justify-between md:items-end">
@@ -635,7 +634,7 @@ const Automation: React.FC = () => {
                         </div>
 
                         <button 
-                          onClick={() => deleteCommentTrigger(trigger.id)}
+                          onClick={() => setConfirmDeleteId(trigger.id)}
                           className="text-zinc-500 hover:text-red-400 p-2 rounded-xl hover:bg-red-500/5 transition-colors"
                         >
                           <Trash2 size={16} />
@@ -1038,6 +1037,17 @@ const Automation: React.FC = () => {
         </div>
       )}
 
+      <ConfirmModal
+        isOpen={confirmDeleteId !== null}
+        title="Delete Comment Trigger"
+        message="Are you sure you want to delete this comment-to-DM trigger? This keyword mapping will be permanently removed."
+        confirmText="Delete"
+        cancelText="Cancel"
+        type="danger"
+        isLoading={isDeleting}
+        onConfirm={deleteCommentTrigger}
+        onCancel={() => setConfirmDeleteId(null)}
+      />
     </div>
   );
 };

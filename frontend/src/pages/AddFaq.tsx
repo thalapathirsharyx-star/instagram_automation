@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { HelpCircle, Loader2, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import api from '../lib/axios';
+import { useToast } from '../context/ToastContext';
 
 const AddFaq: React.FC = () => {
+  const { toast } = useToast();
   const [newQuestion, setNewQuestion] = useState('');
   const [newAnswer, setNewAnswer] = useState('');
   const [isSaving, setIsSaving] = useState(false);
@@ -21,10 +23,14 @@ const AddFaq: React.FC = () => {
       });
 
       if (res.data.Success) {
+        toast.success('FAQ added successfully', 'The question & answer have been added to your Brain Base.');
         navigate('/knowledge');
+      } else {
+        toast.error('Failed to save FAQ', res.data.Message || 'Could not save FAQ to Brain Base.');
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error saving FAQ:', error);
+      toast.error('Error saving FAQ', 'An unexpected network error occurred.');
     } finally {
       setIsSaving(false);
     }
