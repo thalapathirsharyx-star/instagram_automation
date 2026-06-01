@@ -53,6 +53,6 @@ export class ExceptionHelper implements ExceptionFilter {
       created_by_name: response.req?.user?.["email"] ?? "No User",
       created_on: new Date()
     })
-    response.json({ Type: ResponseEnum.Error, Message: MessageText }).status(500);
+    response.status(500).json({ Type: ResponseEnum.Error, Message: MessageText });
   }
 }

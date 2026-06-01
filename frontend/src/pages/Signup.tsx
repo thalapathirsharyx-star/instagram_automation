@@ -41,6 +41,8 @@ const Signup: React.FC = () => {
           login(api_token, user);
           navigate('/dashboard', { replace: true });
         }, 1200);
+      } else {
+        throw new Error('User exists');
       }
     } catch (err: any) {
       // If user already exists, login instead!
