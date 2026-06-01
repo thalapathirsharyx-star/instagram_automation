@@ -33,5 +33,21 @@ export class EmailService {
     return Res;
   }
 
+  async SendVerificationEmail(emailId: string, firstName: string, verifyUrl: string, tempPassword?: string) {
+    const Res = await this._MailerService.SendMail({
+      to: emailId,
+      subject: "Activate Your Account - ReplyZens",
+      template: "VerifyEmail",
+      html: true,
+      context: {
+        first_name: firstName,
+        verify_url: verifyUrl,
+        email: emailId,
+        temp_password: tempPassword
+      },
+    });
+    return Res;
+  }
+
 
 }

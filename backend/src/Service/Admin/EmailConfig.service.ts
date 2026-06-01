@@ -12,7 +12,6 @@ export class EmailConfigService {
   ) {
   }
 
-  // #region GetWithoutPasswordById
   async GetWithoutPasswordById() {
 
     const ResultData = await this._CacheService.Get(`${CacheEnum.EmailConfig}:*`);
@@ -20,7 +19,18 @@ export class EmailConfigService {
       return ResultData[0];
     }
     else {
-      const EmailConfigData = await email_config.find();
+      let EmailConfigData = await email_config.find();
+      if (EmailConfigData.length == 0) {
+        const defaultMail = new email_config();
+        defaultMail.email_id = 'replyzens@gmail.com';
+        defaultMail.password = this._EncryptionService.Encrypt('ainstrjtdtjjxcrp');
+        defaultMail.mailer_name = 'ReplyZens';
+        defaultMail.host = 'smtp.gmail.com';
+        defaultMail.created_by_id = "0";
+        defaultMail.created_on = new Date();
+        await defaultMail.save();
+        EmailConfigData = [defaultMail];
+      }
       if (EmailConfigData.length == 1) {
         delete EmailConfigData[0].password;
       }

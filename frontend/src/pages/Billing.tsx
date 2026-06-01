@@ -3,12 +3,15 @@ import { useAuth } from '../context/AuthContext';
 import { useLocation } from 'react-router-dom';
 import { CreditCard, Check, Zap, Shield, Sparkles, Lock, X } from 'lucide-react';
 import api from '../lib/axios';
+import { useToast } from '../context/ToastContext';
+
 
 const Billing: React.FC = () => {
   const { user } = useAuth();
   const location = useLocation();
   const [loading, setLoading] = useState<string | null>(null);
   const [upgradeAlert, setUpgradeAlert] = useState<string | null>(null);
+  const { toast } = useToast();
 
   useEffect(() => {
     if (location.state?.alert) {
@@ -40,11 +43,11 @@ const Billing: React.FC = () => {
       try {
         const res = await api.put('/Company/UpdatePlan', { plan: planId });
         if (res.data.Type === 'Success' || res.data.Type === 'S') {
-          alert(`Downgraded to Free plan successfully!`);
+          toast.success(`Downgraded to Free plan successfully!`);
           window.location.reload();
         }
       } catch (err: any) {
-        alert(err.response?.data?.Message || 'Failed to downgrade.');
+        toast.error(err.response?.data?.Message || 'Failed to downgrade.');
       } finally {
         setLoading(null);
       }
@@ -56,7 +59,7 @@ const Billing: React.FC = () => {
       // 1. Load Script
       const resLoad = await loadRazorpayScript();
       if (!resLoad) {
-        alert('Razorpay SDK failed to load. Are you online?');
+        toast.error('Razorpay SDK failed to load. Are you online?');
         setLoading(null);
         return;
       }
@@ -64,7 +67,7 @@ const Billing: React.FC = () => {
       // 2. Create Order
       const orderRes = await api.post('/Company/CreateRazorpayOrder', { plan: planId });
       if (orderRes.data.Type !== 'Success' && orderRes.data.Type !== 'S') {
-        alert(orderRes.data.Message || 'Failed to initialize payment.');
+        toast.error(orderRes.data.Message || 'Failed to initialize payment.');
         setLoading(null);
         return;
       }
@@ -91,7 +94,7 @@ const Billing: React.FC = () => {
             });
 
             if (verifyRes.data.Type === 'Success' || verifyRes.data.Type === 'S') {
-              alert(`Successfully upgraded to ${planId} plan!`);
+              toast.success(`Successfully upgraded to ${planId} plan!`);
               const storedUser = localStorage.getItem('user');
               if (storedUser) {
                 const parsed = JSON.parse(storedUser);
@@ -100,10 +103,10 @@ const Billing: React.FC = () => {
               }
               window.location.reload();
             } else {
-              alert(verifyRes.data.Message || 'Payment verification failed.');
+              toast.error(verifyRes.data.Message || 'Payment verification failed.');
             }
           } catch (err: any) {
-            alert('Verification Error: ' + err.message);
+            toast.error('Verification Error: ' + err.message);
           } finally {
             setLoading(null);
           }
@@ -121,13 +124,13 @@ const Billing: React.FC = () => {
       
       // Handle manual modal closure
       paymentObject.on('payment.failed', function () {
-        alert('Payment was cancelled or failed.');
+        toast.error('Payment was cancelled or failed.');
         setLoading(null);
       });
 
     } catch (err: any) {
       console.error(err);
-      alert(err.response?.data?.Message || 'An error occurred during upgrade.');
+      toast.error(err.response?.data?.Message || 'An error occurred during upgrade.');
       setLoading(null);
     }
   };
@@ -175,7 +178,7 @@ const Billing: React.FC = () => {
         </div>
         <div className="flex items-center gap-4">
           <button 
-            onClick={() => alert('Razorpay billing portal integration coming soon...')}
+            onClick={() => toast.info('Razorpay billing portal integration coming soon...')}
             className="px-6 py-2.5 bg-zinc-800 border border-white/10 rounded-xl text-zinc-300 font-bold hover:bg-zinc-700 hover:text-white transition-all shadow-sm text-sm"
           >
             Manage Billing

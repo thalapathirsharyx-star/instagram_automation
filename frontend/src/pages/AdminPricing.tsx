@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { DollarSign, Save, Edit3, ShieldAlert } from 'lucide-react';
+import { useToast } from '../context/ToastContext';
 
 const AdminPricing: React.FC = () => {
+  const { toast } = useToast();
   const [plans, setPlans] = useState([
     {
       id: 'Free',
@@ -40,7 +42,7 @@ const AdminPricing: React.FC = () => {
     // Simulate API call to save settings
     setTimeout(() => {
       setSaving(false);
-      alert('Pricing plans updated successfully! (Note: Backend DB integration required to make live)');
+      toast.success('Pricing plans updated successfully!', 'Backend DB integration required to make live');
     }, 1000);
   };
 

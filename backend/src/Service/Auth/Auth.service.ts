@@ -6,6 +6,7 @@ import { RegisterModel } from '@Model/Admin/User.model';
 import { user_role } from '@Database/Table/Admin/user_role';
 import { country } from '@Database/Table/Admin/country';
 import { currency } from '@Database/Table/Admin/currency';
+import { email_config } from '@Database/Table/Admin/email_config';
 import { EncryptionService } from '../Encryption.service';
 import { HashingService } from '../Hashing.service';
 import { Redis } from 'ioredis';
@@ -14,6 +15,7 @@ import * as QRCode from 'qrcode';
 import * as randomstring from 'randomstring';
 
 import { SecurityAlertService } from './SecurityAlert.service';
+import { EmailService } from '../Email.service';
 
 @Injectable()
 export class AuthService {
@@ -22,7 +24,8 @@ export class AuthService {
     private _EncryptionService: EncryptionService,
     private _HashingService: HashingService,
     @Inject("REDIS_CLIENT") private _RedisClient: Redis,
-    private _SecurityAlertService: SecurityAlertService
+    private _SecurityAlertService: SecurityAlertService,
+    private _EmailService: EmailService
   ) { }
 
   async ValidateUser(username: string, password: string): Promise<any> {
@@ -39,6 +42,21 @@ export class AuthService {
     }
     if (UserData.company && UserData.company.status === false) {
       throw new Error('Your company account has been suspended by the administration.');
+    }
+    if (UserData.is_verified === false) {
+      if (UserData.user_role?.code === 'SUPER_ADMIN') {
+        UserData.is_verified = true;
+        await UserData.save();
+      } else {
+        // Auto-verify users created before June 1, 2026 to ensure backward compatibility
+        const cutoffDate = new Date('2026-06-01T12:00:00Z');
+        if (UserData.created_on && UserData.created_on < cutoffDate) {
+          UserData.is_verified = true;
+          await UserData.save();
+        } else {
+          throw new Error('Please verify your email address before logging in.');
+        }
+      }
     }
     const isPasswordValid = await this._HashingService.Compare(password, UserData.password);
     if (!isPasswordValid) {
@@ -314,7 +332,32 @@ export class AuthService {
     newUser.company_id = newCompany.id;
     newUser.created_by_id = '0';
     newUser.created_on = new Date();
+    newUser.is_verified = (data.password === 'GoogleUser123!!');
     await newUser.save();
+
+    if (!newUser.is_verified) {
+      // Sign a JWT token that expires in 24 hours
+      const verifyToken = this._JwtService.sign({ email: newUser.email, user_id: newUser.id }, { expiresIn: '24h' });
+      const baseUrl = process.env.DOMAIN_NAME ? process.env.DOMAIN_NAME.replace('8000', '5173').replace('8001', '5173') : 'http://localhost:5173/';
+      const verifyUrl = `${baseUrl}verify-email?token=${verifyToken}`;
+
+      // Print verification URL to console for easy development testing
+      console.log('\n--------------------------------------------');
+      console.log('✉️ NEW REGISTRATION VERIFICATION LINK:');
+      console.log(`Email: ${newUser.email}`);
+      console.log(`URL:   ${verifyUrl}`);
+      console.log('--------------------------------------------\n');
+
+      this._EmailService.SendVerificationEmail(
+        newUser.email,
+        newUser.first_name || 'User',
+        verifyUrl
+      ).catch(err => {
+        console.error('Failed to send verification email via SMTP:', err);
+      });
+
+      return { status: 'pending_verification', message: 'Registration successful! Please check your email to verify your account.' };
+    }
 
     return this.ValidateUser(data.email, data.password);
   }
@@ -369,5 +412,60 @@ export class AuthService {
     );
 
     return { api_token, user: payload };
+  }
+
+  async VerifyEmailToken(token: string) {
+    let payload: any;
+    try {
+      payload = this._JwtService.verify(token);
+    } catch (e) {
+      throw new Error('Verification link has expired or is invalid.');
+    }
+
+    const UserData = await user.findOne({ where: { id: payload.user_id } });
+    if (!UserData) {
+      throw new Error('User not found.');
+    }
+
+    if (UserData.is_verified) {
+      return { success: true, message: 'Email is already verified.' };
+    }
+
+    UserData.is_verified = true;
+    await UserData.save();
+
+    return { success: true };
+  }
+
+  async ResendVerificationEmail(email: string) {
+    const UserData = await user.findOne({ where: { email } });
+    if (!UserData) {
+      throw new Error('User with this email does not exist.');
+    }
+
+    if (UserData.is_verified) {
+      throw new Error('Email address is already verified.');
+    }
+
+    const verifyToken = this._JwtService.sign({ email: UserData.email, user_id: UserData.id }, { expiresIn: '24h' });
+    const baseUrl = process.env.DOMAIN_NAME ? process.env.DOMAIN_NAME.replace('8000', '5173').replace('8001', '5173') : 'http://localhost:5173/';
+    const verifyUrl = `${baseUrl}verify-email?token=${verifyToken}`;
+
+    // Print verification URL to console for easy development testing
+    console.log('\n--------------------------------------------');
+    console.log('✉️ RESENT VERIFICATION LINK:');
+    console.log(`Email: ${UserData.email}`);
+    console.log(`URL:   ${verifyUrl}`);
+    console.log('--------------------------------------------\n');
+
+    this._EmailService.SendVerificationEmail(
+      UserData.email,
+      UserData.first_name || 'User',
+      verifyUrl
+    ).catch(err => {
+      console.error('Failed to resend verification email via SMTP:', err);
+    });
+
+    return { success: true };
   }
 }

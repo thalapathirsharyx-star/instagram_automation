@@ -4,6 +4,7 @@ import { user } from '../Table/Admin/user';
 import { currency } from '../Table/Admin/currency';
 import { country } from '../Table/Admin/country';
 import { company } from '../Table/Admin/company';
+import { email_config } from '../Table/Admin/email_config';
 import { Injectable } from '@nestjs/common';
 import { EncryptionService } from '@Service/Encryption.service';
 import { HashingService } from '@Service/Hashing.service';
@@ -47,6 +48,13 @@ export class CommonSeederService {
 
     try {
       await this.CompanySeed();
+    }
+    catch (e) {
+      console.log(e);
+    }
+
+    try {
+      await this.EmailConfigSeed();
     }
     catch (e) {
       console.log(e);
@@ -166,6 +174,24 @@ export class CommonSeederService {
     }
   }
 
-
+  async EmailConfigSeed() {
+    const existingConfig = await email_config.findOne({ where: {} });
+    if (!existingConfig) {
+      await this._DataSource.manager.createQueryBuilder()
+        .insert()
+        .into(email_config)
+        .values([
+          {
+            email_id: 'replyzens@gmail.com',
+            password: this._EncryptionService.Encrypt('ainstrjtdtjjxcrp'),
+            mailer_name: 'ReplyZens',
+            host: 'smtp.gmail.com',
+            created_by_id: "0",
+            created_on: new Date()
+          }
+        ])
+        .execute();
+    }
+  }
 }
 

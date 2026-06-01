@@ -15,6 +15,8 @@ import {
 import api from '../lib/axios';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { useToast } from '../context/ToastContext';
+
 
 interface CompanyAdminData {
   id: string;
@@ -51,6 +53,7 @@ const ClientManagement: React.FC = () => {
   
   const { login } = useAuth();
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   const handleImpersonate = async (companyId: string) => {
     try {
@@ -69,15 +72,16 @@ const ClientManagement: React.FC = () => {
 
         // Log in with impersonated client token
         login(api_token, impersonatedUser);
+        toast.success('Impersonation session started successfully');
 
         // Redirect to client dashboard
         navigate('/dashboard');
       } else {
-        alert('Impersonation failed: ' + (response.data.Message || 'Unknown error'));
+        toast.error('Impersonation failed', response.data.Message || 'Unknown error');
       }
     } catch (err: any) {
       console.error(err);
-      alert('Error initiating impersonation session.');
+      toast.error('Error initiating impersonation session.');
     }
   };
 

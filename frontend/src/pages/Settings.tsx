@@ -65,7 +65,6 @@ const Settings: React.FC = () => {
 
   const handleSetup2FA = async () => {
     setIsSettingUp2Fa(true);
-    setNotification(null);
     try {
       const res = await api.post('/Auth/2fa/setup');
       if (res.data.Type === 'S') {
@@ -74,12 +73,12 @@ const Settings: React.FC = () => {
         setSecret(secret);
         setRecoveryCodes(recoveryCodes);
       } else {
-        showNotification(res.data.Message || 'Failed to initialize 2FA', 'error');
+        toast.error(res.data.Message || 'Failed to initialize 2FA');
         setIsSettingUp2Fa(false);
       }
     } catch (err) {
       console.error(err);
-      showNotification('Failed to initialize 2FA setup.', 'error');
+      toast.error('Failed to initialize 2FA setup.');
       setIsSettingUp2Fa(false);
     }
   };
@@ -87,20 +86,19 @@ const Settings: React.FC = () => {
   const handleVerifyAndEnable2FA = async () => {
     if (!totpVerificationCode) return;
     setIsVerifying2Fa(true);
-    setNotification(null);
     try {
       const res = await api.post('/Auth/2fa/verify', { token: totpVerificationCode });
       if (res.data.Type === 'S') {
         updateUser({ twoFactorEnabled: true });
-        showNotification('Two-Factor Authentication enabled successfully!', 'success');
+        toast.success('Two-Factor Authentication enabled successfully!');
         setIsSettingUp2Fa(false);
         setTotpVerificationCode('');
       } else {
-        showNotification(res.data.Message || 'Invalid verification code', 'error');
+        toast.error(res.data.Message || 'Invalid verification code');
       }
     } catch (err) {
       console.error(err);
-      showNotification('Failed to verify code.', 'error');
+      toast.error('Failed to verify code.');
     } finally {
       setIsVerifying2Fa(false);
     }
@@ -194,15 +192,15 @@ const Settings: React.FC = () => {
                   name: res.Data?.page_name || 'Instagram Account',
                   id: res.Data?.business_id || ''
                 });
-                alert('Instagram Account Linked Successfully!');
+                toast.success('Instagram Account Linked Successfully!');
               } else {
                 const message = (res.Message || '').toUpperCase();
                 if (message.includes('META_NO_INSTAGRAM_LINKED')) {
                   setShowGuide(true);
                 } else if (message.includes('META_APP_RESTRICTED')) {
-                  alert(res.Message);
+                  toast.error(res.Message || 'Meta App Restricted.');
                 } else {
-                  alert('Connection Failed: ' + (res.Message || 'Unknown Error'));
+                  toast.error('Connection Failed: ' + (res.Message || 'Unknown Error'));
                 }
               }
             })
@@ -409,7 +407,7 @@ const Settings: React.FC = () => {
                 <button 
                   onClick={() => {
                     setIsEditingProfile(false);
-                    setNotification({ type: 'success', message: 'Profile updated successfully! (Mock)' });
+                    toast.success('Profile updated successfully! (Mock)');
                   }}
                   className="w-fit px-6 py-2.5 bg-purple-500 text-white rounded-xl font-bold hover:bg-purple-600 transition-all shadow-sm text-sm"
                 >

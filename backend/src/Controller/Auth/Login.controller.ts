@@ -9,6 +9,14 @@ import { AuthBaseController } from '@Controller/AuthBase.controller';
 import { JwtAuthGuard } from '@Service/Auth/JwtAuthGuard.service';
 import { CurrentUser } from '@Helper/Common.helper';
 
+export class VerifyEmailModel {
+  token: string;
+}
+
+export class ResendVerificationModel {
+  email: string;
+}
+
 export class Verify2FaModel {
   token: string;
 }
@@ -38,6 +46,18 @@ export class LoginController extends AuthBaseController {
   async Register(@Body() RegisterData: RegisterModel) {
     const result = await this._AuthService.Register(RegisterData);
     return { Type: ResponseEnum.Success, Message: 'Registered Successfully', result };
+  }
+
+  @Post('VerifyEmail')
+  async VerifyEmail(@Body() data: VerifyEmailModel) {
+    const result = await this._AuthService.VerifyEmailToken(data.token);
+    return { Type: ResponseEnum.Success, Message: 'Email verified successfully', result };
+  }
+
+  @Post('ResendVerification')
+  async ResendVerification(@Body() data: ResendVerificationModel) {
+    const result = await this._AuthService.ResendVerificationEmail(data.email);
+    return { Type: ResponseEnum.Success, Message: 'Verification email sent successfully', result };
   }
 
   @Post('ForgotPassword')

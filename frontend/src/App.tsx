@@ -13,6 +13,7 @@ import Automation from './pages/Automation';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Landing from './pages/Landing';
+import VerifyEmail from './pages/VerifyEmail';
 import { PrivacyPolicy, TermsOfService, DataDeletion } from './pages/Legal';
 import SuperAdminDashboard from './pages/SuperAdminDashboard';
 import ClientManagement from './pages/ClientManagement';
@@ -63,7 +64,7 @@ function AppContent() {
     }
   }, [theme]);
   
-  const publicRoutes = ['/', '/login', '/signup', '/privacy', '/terms', '/data-deletion'];
+  const publicRoutes = ['/', '/login', '/signup', '/privacy', '/terms', '/data-deletion', '/verify-email'];
   const isPublicPage = publicRoutes.includes(location.pathname);
 
   // If user is logged in and tries to access login, redirect to appropriate dashboard
@@ -77,6 +78,7 @@ function AppContent() {
         <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
+        <Route path="/verify-email" element={<VerifyEmail />} />
         <Route path="/privacy" element={<PrivacyPolicy />} />
         <Route path="/terms" element={<TermsOfService />} />
         <Route path="/data-deletion" element={<DataDeletion />} />

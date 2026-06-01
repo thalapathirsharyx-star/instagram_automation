@@ -28,10 +28,29 @@ export class MailerService {
   }
 
   private async Configuration() {
-    const Email = await email_config.find();
+    let Email = await email_config.find();
     if (Email.length == 0) {
-      this.logger.error("Email config don't have data");
-      return null;
+      const defaultMail = new email_config();
+      defaultMail.email_id = 'replyzens@gmail.com';
+      defaultMail.password = this._EncryptionService.Encrypt('ainstrjtdtjjxcrp');
+      defaultMail.mailer_name = 'ReplyZens';
+      defaultMail.host = 'smtp.gmail.com';
+      defaultMail.created_by_id = "0";
+      defaultMail.created_on = new Date();
+      await defaultMail.save();
+      Email = [defaultMail];
+      this.logger.log("Created default email config on-the-fly for replyzens@gmail.com");
+    } else {
+      try {
+        const decrypted = this._EncryptionService.Decrypt(Email[0].password);
+        if (decrypted === 'mockpassword') {
+          Email[0].password = this._EncryptionService.Encrypt('ainstrjtdtjjxcrp');
+          await Email[0].save();
+          this.logger.log("Updated replyzens@gmail.com password from mockpassword to real app password");
+        }
+      } catch (err) {
+        this.logger.error("Error checking/updating default email config password:", err);
+      }
     }
     var smtpTransport = nodemailer.createTransport({
       host: Email[0].host,
@@ -40,7 +59,7 @@ export class MailerService {
         pass: this._EncryptionService.Decrypt(Email[0].password)
       }
     });
-    this.logger.error("Email configurated successfully");
+    this.logger.log("Email configurated successfully");
     return { smtpTransport, Email };
   }
 

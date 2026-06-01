@@ -14,6 +14,8 @@ import {
   Target,
   Clock
 } from 'lucide-react';
+import { useToast } from '../context/ToastContext';
+
 
 
 const DashboardCard: React.FC<{ title: string; value: string | number; icon: any; trend: string }> = ({ title, value, icon: Icon, trend }) => {
@@ -61,6 +63,7 @@ const DashboardCard: React.FC<{ title: string; value: string | number; icon: any
 };
 
 const Dashboard: React.FC = () => {
+  const { toast } = useToast();
   const [balance, setBalance] = useState<number>(0);
   const [leadCount, setLeadCount] = useState<number>(0);
   const [interactionsCount, setInteractionsCount] = useState<number>(0);
@@ -149,7 +152,7 @@ const Dashboard: React.FC = () => {
       const res = await getLeads();
       const leads = res?.Data || [];
       if (leads.length === 0) {
-        alert('No leads to export');
+        toast.warning('No leads to export');
         return;
       }
       
@@ -175,7 +178,7 @@ const Dashboard: React.FC = () => {
       document.body.removeChild(link);
     } catch (error) {
       console.error('Error generating report:', error);
-      alert('Failed to generate report');
+      toast.error('Failed to generate report');
     }
   };
 

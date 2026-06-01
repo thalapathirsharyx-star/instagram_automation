@@ -51,6 +51,9 @@ export class user extends BaseTable {
   @Column({ type: 'boolean', default: false })
   two_factor_enabled: boolean;
 
+  @Column({ type: 'boolean', default: false })
+  is_verified: boolean;
+
   @Column({ type: 'text', nullable: true })
   two_factor_secret: string;
 
