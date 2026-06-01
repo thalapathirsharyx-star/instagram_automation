@@ -15,7 +15,8 @@ import {
   Zap,
   RefreshCw,
   Sparkles,
-  AlertCircle
+  AlertCircle,
+  Lock
 } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
 import { ConfirmModal } from '../components/ConfirmModal';
@@ -52,6 +53,49 @@ const Settings: React.FC = () => {
   const [profileEmail, setProfileEmail] = useState(user?.email || '');
   const [autoReplyEnabled, setAutoReplyEnabled] = useState(true);
   const [humanHandoffAlerts, setHumanHandoffAlerts] = useState(true);
+
+  // Password reset states
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [isGoogleRegistered, setIsGoogleRegistered] = useState(false);
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
+
+  const handleChangePassword = async () => {
+    if (newPassword !== confirmPassword) {
+      toast.error("New passwords do not match.");
+      return;
+    }
+    if (newPassword.length < 6) {
+      toast.error("Password must be at least 6 characters.");
+      return;
+    }
+    if (!isGoogleRegistered && !currentPassword) {
+      toast.error("Current password is required.");
+      return;
+    }
+
+    setIsChangingPassword(true);
+    try {
+      const res = await api.post('/User/ChangePassword', {
+        old_password: isGoogleRegistered ? 'GoogleUser123!!' : currentPassword,
+        password: newPassword
+      });
+      if (res.data.Type === 'S') {
+        toast.success("Password changed successfully!");
+        setCurrentPassword('');
+        setNewPassword('');
+        setConfirmPassword('');
+        setIsGoogleRegistered(false);
+      } else {
+        toast.error(res.data.Message || "Failed to change password.");
+      }
+    } catch (err) {
+      toast.error("An error occurred while changing password.");
+    } finally {
+      setIsChangingPassword(false);
+    }
+  };
 
   // 2FA states
   const [isSettingUp2Fa, setIsSettingUp2Fa] = useState(false);
@@ -216,6 +260,17 @@ const Settings: React.FC = () => {
     }
   };
 
+  type TabType = 'profile' | 'meta' | 'webhooks';
+  const [activeTab, setActiveTab] = useState<TabType>('profile');
+
+  const tabs = [
+    { id: 'profile', label: 'My Profile', icon: User },
+    ...(user?.roleCode !== 'SUPER_ADMIN' ? [
+      { id: 'meta', label: 'Meta Integration', icon: Shield },
+      { id: 'webhooks', label: 'Webhooks & API', icon: Database }
+    ] : [])
+  ];
+
   return (
     <div className="flex flex-col gap-8 min-h-full animate-in fade-in duration-700 pb-10">
       <div className="flex justify-between items-end">
@@ -225,319 +280,422 @@ const Settings: React.FC = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+      <div className="flex flex-col md:flex-row gap-8 min-h-[600px]">
         
-        {user?.roleCode !== 'SUPER_ADMIN' && (
-          <>
-            <SettingsCard 
-              icon={Shield} 
-              title="Meta Integration" 
-              subtitle="Manage your Instagram and Facebook connections."
-            >
-          {isLoadingStatus ? (
-            <div className="flex items-center gap-3 p-4 bg-zinc-900/50 rounded-2xl border border-white/5 text-zinc-400 font-bold text-xs uppercase tracking-widest">
-              <div className="animate-spin w-4 h-4 border-2 border-purple-500 border-t-transparent rounded-full" />
-              Verifying Connection...
-            </div>
-          ) : isConnected ? (
-            <div className="space-y-6">
-              <div className="flex items-center gap-2 text-emerald-400 font-bold text-xs uppercase tracking-widest bg-emerald-500/10 px-3 py-1.5 rounded-lg w-fit border border-emerald-500/20">
-                <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                Active Connection
-              </div>
-              
-              <div className="p-5 bg-zinc-800 rounded-2xl border border-white/5 shadow-inner">
-                <div className="text-sm font-bold text-zinc-100">{connectionDetails?.name}</div>
-                <div className="text-[10px] text-zinc-500 font-mono mt-1 uppercase tracking-widest">Business ID: {connectionDetails?.id}</div>
-              </div>
-
-              <button 
-                onClick={async () => {
-                  try {
-                    await disconnectInstagram();
-                    setIsConnected(false);
-                    setConnectionDetails(null);
-                    showNotification('Account disconnected successfully.', 'success');
-                  } catch (e) {
-                    showNotification('Failed to disconnect account.', 'error');
-                  }
-                }}
-                className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-white border border-rose-500/20 rounded-xl font-bold uppercase tracking-widest transition-all text-xs shadow-sm"
+        {/* LEFT SIDEBAR NAVIGATION */}
+        <div className="w-full md:w-64 shrink-0 space-y-2">
+          {tabs.map((tab) => {
+            const Icon = tab.icon;
+            const isActive = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id as TabType)}
+                className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-xl font-bold text-sm transition-all duration-300 border ${
+                  isActive 
+                    ? 'bg-purple-500/10 text-purple-400 border-purple-500/20 shadow-inner'
+                    : 'bg-transparent text-zinc-400 border-transparent hover:bg-white/5 hover:text-zinc-200'
+                }`}
               >
-                <X size={16} /> Disconnect Account
+                <Icon size={18} className={isActive ? "text-purple-400" : "text-zinc-500"} />
+                {tab.label}
               </button>
-            </div>
-          ) : (
-            <div className="space-y-6">
-              <p className="text-sm text-zinc-400 font-medium leading-relaxed">
-                Connect your business account to start receiving and responding to Instagram DMs automatically.
-              </p>
-              <button 
-                onClick={handleConnect}
-                disabled={isConnecting}
-                className="w3-button-primary w-full justify-center shadow-glow-purple"
+            );
+          })}
+        </div>
+
+        {/* RIGHT CONTENT AREA */}
+        <div className="flex-1 max-w-3xl space-y-8">
+          
+          {activeTab === 'profile' && (
+            <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-500">
+              <SettingsCard 
+                icon={User} 
+                title="Account Profile" 
+                subtitle="Your personal account information."
               >
-                {isConnecting ? <RefreshCw className="animate-spin" size={18} /> : <Link2 size={18} />}
-                <span>{isConnecting ? 'Linking Account...' : 'Connect Instagram'}</span>
-              </button>
-              <button 
-                onClick={() => setShowGuide(true)}
-                className="w-full flex items-center justify-center gap-2 text-xs font-bold text-purple-400 hover:text-purple-300 transition-colors uppercase tracking-widest"
-              >
-                <Info size={14} /> Link Instructions Guide
-              </button>
-            </div>
-          )}
-        </SettingsCard>
-
-        {showGuide && (
-          <div className="fixed inset-0 bg-zinc-950/80 backdrop-blur-md flex items-center justify-center z-[1000] p-6 animate-in fade-in duration-300">
-            <div className="w3-card max-w-xl w-full p-10 relative animate-in zoom-in-95 duration-500 shadow-2xl bg-zinc-900 border-white/10">
-              <button 
-                onClick={() => setShowGuide(false)}
-                className="absolute top-6 right-6 p-2 text-zinc-500 hover:text-white hover:bg-white/5 rounded-xl transition-all"
-              >
-                <X size={20} />
-              </button>
-
-              <div className="mb-10">
-                <h2 className="text-2xl font-bold text-zinc-100 mb-2">Let's Link Your Account</h2>
-                <p className="text-zinc-400 font-medium leading-relaxed">Meta requires specific settings to be enabled before we can automate your DMs.</p>
-              </div>
-
-              <div className="space-y-8">
-                
-                <div className="flex gap-6">
-                  <div className="w-12 h-12 bg-purple-500/10 text-purple-400 rounded-2xl flex items-center justify-center shrink-0 border border-purple-500/20">
-                    <Smartphone size={24} />
+                {isEditingProfile ? (
+                  <div className="space-y-4">
+                    <div className="flex gap-4 items-center mb-2">
+                      <div className="w-14 h-14 bg-purple-500/10 text-purple-400 rounded-2xl flex items-center justify-center border border-purple-500/20 font-bold text-xl shadow-inner uppercase">
+                        {profileEmail[0]?.toUpperCase() || 'A'}
+                      </div>
+                      <div className="flex-grow">
+                        <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest ml-1">Email Address</label>
+                        <input 
+                          type="email"
+                          value={profileEmail}
+                          onChange={(e) => setProfileEmail(e.target.value)}
+                          className="w-full bg-zinc-800 border border-white/5 rounded-xl px-4 py-3 text-sm text-zinc-100 focus:border-purple-500/50 outline-none transition-all mt-1 shadow-inner"
+                        />
+                      </div>
+                    </div>
+                    <div className="flex gap-2">
+                      <button 
+                        onClick={() => {
+                          setIsEditingProfile(false);
+                          toast.success('Profile updated successfully! (Mock)');
+                        }}
+                        className="w-fit px-6 py-2.5 bg-purple-500 text-white rounded-xl font-bold hover:bg-purple-600 transition-all shadow-sm text-sm"
+                      >
+                        Save Changes
+                      </button>
+                      <button 
+                        onClick={() => {
+                          setIsEditingProfile(false);
+                          setProfileEmail(user?.email || '');
+                        }}
+                        className="w-fit px-6 py-2.5 bg-zinc-800 border border-white/10 rounded-xl text-zinc-300 font-bold hover:bg-zinc-700 hover:text-white transition-all shadow-sm text-sm"
+                      >
+                        Cancel
+                      </button>
+                    </div>
                   </div>
-                  <div>
-                    <h4 className="font-bold text-zinc-100 mb-1">Step 1: Switch to Professional</h4>
-                    <p className="text-sm text-zinc-400 font-medium leading-relaxed">
-                      In the Instagram App &gt; Settings &gt; Account Type. Switch to <strong className="text-zinc-200">Business</strong> or <strong className="text-zinc-200">Creator</strong>.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex gap-6">
-                  <div className="w-12 h-12 bg-purple-500/10 text-purple-400 rounded-2xl flex items-center justify-center shrink-0 border border-purple-500/20">
-                    <Link2 size={24} />
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-zinc-100 mb-1">Step 2: Link to Facebook Page</h4>
-                    <p className="text-sm text-zinc-400 font-medium leading-relaxed">
-                      Edit Profile &gt; Public Business Information &gt; Page. Select or create a Facebook Page.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex gap-6">
-                  <div className="w-12 h-12 bg-purple-500/10 text-purple-400 rounded-2xl flex items-center justify-center shrink-0 border border-purple-500/20">
-                    <ToggleRight size={24} />
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-zinc-100 mb-1">Step 3: Allow Message Access</h4>
-                    <p className="text-sm text-zinc-400 font-medium leading-relaxed">
-                      Settings &gt; Privacy &gt; Messages. Turn <strong className="text-emerald-400 uppercase tracking-widest text-[10px]">ON</strong> "Allow Access to Messages" at the bottom.
-                    </p>
-                  </div>
-                </div>
-
-              </div>
-
-              <div className="mt-12 space-y-4">
-                <button 
-                  onClick={handleConnect}
-                  className="w3-button-primary w-full justify-center py-4"
-                >
-                  <CheckCircle2 size={20} />
-                  <span>I've Done These Steps</span>
-                </button>
-                <button 
-                   onClick={() => setShowGuide(false)}
-                   className="w-full py-3 text-sm font-bold text-zinc-500 hover:text-zinc-300 transition-colors"
-                >
-                  Maybe Later
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        <SettingsCard 
-          icon={Database} 
-          title="Webhooks & API" 
-          subtitle="Real-time data synchronization settings."
-        >
-          <div className="space-y-4">
-            <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest ml-1">Webhook Endpoint</label>
-            <div className="bg-zinc-800 p-4 rounded-2xl border border-white/5 text-sm font-mono text-zinc-500 truncate shadow-inner">
-              https://replyzens.in/api/v1/Instagram/Webhook
-            </div>
-            <button className="flex items-center gap-2 text-xs font-bold text-purple-400 hover:text-purple-300 transition-colors uppercase tracking-widest">
-              <Zap size={14} /> Test Connectivity
-            </button>
-          </div>
-        </SettingsCard>
-          </>
-        )}
-
-        <SettingsCard 
-          icon={User} 
-          title="Account Profile" 
-          subtitle="Your personal account information."
-        >
-          {isEditingProfile ? (
-            <div className="space-y-4">
-              <div className="flex gap-4 items-center mb-2">
-                <div className="w-14 h-14 bg-purple-500/10 text-purple-400 rounded-2xl flex items-center justify-center border border-purple-500/20 font-bold text-xl shadow-inner uppercase">
-                  {profileEmail[0]?.toUpperCase() || 'A'}
-                </div>
-                <div className="flex-grow">
-                  <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest ml-1">Email Address</label>
-                  <input 
-                    type="email"
-                    value={profileEmail}
-                    onChange={(e) => setProfileEmail(e.target.value)}
-                    className="w-full bg-zinc-800 border border-white/5 rounded-xl px-4 py-3 text-sm text-zinc-100 focus:border-purple-500/50 outline-none transition-all mt-1 shadow-inner"
-                  />
-                </div>
-              </div>
-              <div className="flex gap-2">
-                <button 
-                  onClick={() => {
-                    setIsEditingProfile(false);
-                    toast.success('Profile updated successfully! (Mock)');
-                  }}
-                  className="w-fit px-6 py-2.5 bg-purple-500 text-white rounded-xl font-bold hover:bg-purple-600 transition-all shadow-sm text-sm"
-                >
-                  Save Changes
-                </button>
-                <button 
-                  onClick={() => {
-                    setIsEditingProfile(false);
-                    setProfileEmail(user?.email || '');
-                  }}
-                  className="w-fit px-6 py-2.5 bg-zinc-800 border border-white/10 rounded-xl text-zinc-300 font-bold hover:bg-zinc-700 hover:text-white transition-all shadow-sm text-sm"
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          ) : (
-            <>
-              <div className="flex gap-4 items-center mb-4">
-                <div className="w-14 h-14 bg-purple-500/10 text-purple-400 rounded-2xl flex items-center justify-center border border-purple-500/20 font-bold text-xl shadow-inner uppercase">
-                  {user?.email?.[0] || 'A'}
-                </div>
-                <div>
-                  <div className="font-bold text-zinc-100">{user?.email || 'admin@replyzens.in'}</div>
-                  <div className="text-xs text-zinc-500 font-medium mt-0.5">{user?.role || 'Administrator Access'}</div>
-                </div>
-              </div>
-              <button 
-                onClick={() => setIsEditingProfile(true)}
-                className="w-fit px-6 py-3 bg-zinc-800 border border-white/10 rounded-xl text-zinc-300 font-bold hover:bg-zinc-700 hover:text-white transition-all shadow-sm"
-              >
-                Edit Profile Details
-              </button>
-            </>
-          )}
-        </SettingsCard>
-
-        <SettingsCard 
-          icon={Shield} 
-          title="Security & 2FA" 
-          subtitle="Keep your account secure with Multi-Factor Authentication."
-        >
-          {isSettingUp2Fa ? (
-            <div className="space-y-6">
-              <div className="p-4 bg-zinc-900/50 rounded-2xl border border-white/5 flex flex-col items-center gap-4">
-                <p className="text-xs text-zinc-400 text-center font-medium">Scan this QR code with your authenticator app (e.g. Google Authenticator, Duo):</p>
-                {qrCodeUrl && (
-                  <img src={qrCodeUrl} alt="2FA QR Code" className="w-40 h-40 bg-white p-2 rounded-xl" />
+                ) : (
+                  <>
+                    <div className="flex gap-4 items-center mb-4">
+                      <div className="w-14 h-14 bg-purple-500/10 text-purple-400 rounded-2xl flex items-center justify-center border border-purple-500/20 font-bold text-xl shadow-inner uppercase">
+                        {user?.email?.[0] || 'A'}
+                      </div>
+                      <div>
+                        <div className="font-bold text-zinc-100">{user?.email || 'admin@replyzens.in'}</div>
+                        <div className="text-xs text-zinc-500 font-medium mt-0.5">{user?.role || 'Administrator Access'}</div>
+                      </div>
+                    </div>
+                    <button 
+                      onClick={() => setIsEditingProfile(true)}
+                      className="w-fit px-6 py-3 bg-zinc-800 border border-white/10 rounded-xl text-zinc-300 font-bold hover:bg-zinc-700 hover:text-white transition-all shadow-sm"
+                    >
+                      Edit Profile Details
+                    </button>
+                  </>
                 )}
-                <div className="text-center w-full">
-                  <span className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest block mb-1">Secret Key</span>
-                  <code className="text-xs text-purple-400 font-mono bg-purple-500/10 px-3 py-1.5 rounded-lg border border-purple-500/20 select-all">{secret}</code>
-                </div>
-              </div>
+              </SettingsCard>
 
-              {recoveryCodes.length > 0 && (
-                <div className="p-4 bg-zinc-900/50 rounded-2xl border border-white/5">
-                  <span className="text-[10px] text-rose-400 font-bold uppercase tracking-widest block mb-2">Save these recovery codes:</span>
-                  <div className="grid grid-cols-2 gap-2">
-                    {recoveryCodes.map((code, idx) => (
-                      <code key={idx} className="text-xs text-zinc-300 font-mono bg-zinc-800/80 px-2.5 py-1 rounded border border-white/5 text-center select-all">{code}</code>
-                    ))}
+              <SettingsCard 
+                icon={Lock} 
+                title="Account Security" 
+                subtitle="Set a new password for your account."
+              >
+                <div className="space-y-6">
+                  <div className="flex items-center gap-3 p-4 bg-emerald-500/5 border border-emerald-500/20 rounded-xl">
+                    <input 
+                      type="checkbox" 
+                      id="googleAuth"
+                      checked={isGoogleRegistered}
+                      onChange={(e) => setIsGoogleRegistered(e.target.checked)}
+                      className="w-4 h-4 rounded border-white/10 bg-zinc-800 text-emerald-500 focus:ring-emerald-500/50 focus:ring-offset-0 cursor-pointer"
+                    />
+                    <label htmlFor="googleAuth" className="text-[11px] font-bold text-emerald-400 uppercase tracking-widest cursor-pointer select-none">
+                      I registered using Google (skip current password)
+                    </label>
+                  </div>
+
+                  {!isGoogleRegistered && (
+                    <div>
+                      <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest ml-1">Current Password</label>
+                      <input 
+                        type="password"
+                        placeholder="Enter your current password"
+                        value={currentPassword}
+                        onChange={(e) => setCurrentPassword(e.target.value)}
+                        className="w-full bg-zinc-800 border border-white/5 rounded-xl px-4 py-3 text-sm text-zinc-100 focus:border-purple-500/50 outline-none transition-all mt-1 shadow-inner placeholder:text-zinc-600"
+                      />
+                    </div>
+                  )}
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest ml-1">New Password</label>
+                      <input 
+                        type="password"
+                        placeholder="Minimum 6 characters"
+                        value={newPassword}
+                        onChange={(e) => setNewPassword(e.target.value)}
+                        className="w-full bg-zinc-800 border border-white/5 rounded-xl px-4 py-3 text-sm text-zinc-100 focus:border-purple-500/50 outline-none transition-all mt-1 shadow-inner placeholder:text-zinc-600"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest ml-1">Confirm New Password</label>
+                      <input 
+                        type="password"
+                        placeholder="Retype your new password"
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        className="w-full bg-zinc-800 border border-white/5 rounded-xl px-4 py-3 text-sm text-zinc-100 focus:border-purple-500/50 outline-none transition-all mt-1 shadow-inner placeholder:text-zinc-600"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex justify-end mt-2">
+                    <button 
+                      onClick={handleChangePassword}
+                      disabled={isChangingPassword || (!isGoogleRegistered && !currentPassword) || !newPassword || !confirmPassword}
+                      className="w-full md:w-auto px-8 py-3 bg-emerald-500 text-white rounded-xl font-bold hover:bg-emerald-600 transition-all shadow-sm text-sm disabled:opacity-50 disabled:hover:bg-emerald-500"
+                    >
+                      {isChangingPassword ? 'Updating...' : 'Set Password'}
+                    </button>
                   </div>
                 </div>
-              )}
+              </SettingsCard>
 
-              <div className="space-y-2">
-                <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest ml-1">Verification Code</label>
-                <input 
-                  type="text"
-                  placeholder="000000"
-                  value={totpVerificationCode}
-                  onChange={(e) => setTotpVerificationCode(e.target.value)}
-                  className="w-full bg-zinc-800 border border-white/5 rounded-xl px-4 py-3 text-sm text-zinc-100 focus:border-purple-500/50 outline-none transition-all shadow-inner text-center font-mono tracking-widest text-lg"
-                  maxLength={6}
-                />
-              </div>
+              <SettingsCard 
+                icon={Shield} 
+                title="Security & 2FA" 
+                subtitle="Keep your account secure with Multi-Factor Authentication."
+              >
+                {isSettingUp2Fa ? (
+                  <div className="space-y-6">
+                    <div className="p-4 bg-zinc-900/50 rounded-2xl border border-white/5 flex flex-col items-center gap-4">
+                      <p className="text-xs text-zinc-400 text-center font-medium">Scan this QR code with your authenticator app (e.g. Google Authenticator, Duo):</p>
+                      {qrCodeUrl && (
+                        <img src={qrCodeUrl} alt="2FA QR Code" className="w-40 h-40 bg-white p-2 rounded-xl" />
+                      )}
+                      <div className="text-center w-full">
+                        <span className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest block mb-1">Secret Key</span>
+                        <code className="text-xs text-purple-400 font-mono bg-purple-500/10 px-3 py-1.5 rounded-lg border border-purple-500/20 select-all">{secret}</code>
+                      </div>
+                    </div>
 
-              <div className="flex gap-2">
-                <button 
-                  onClick={handleVerifyAndEnable2FA}
-                  disabled={isVerifying2Fa || !totpVerificationCode}
-                  className="w-full py-3 bg-purple-500 text-white rounded-xl font-bold hover:bg-purple-600 transition-all text-sm disabled:opacity-50"
-                >
-                  {isVerifying2Fa ? 'Enabling...' : 'Verify & Enable'}
-                </button>
-                <button 
-                  onClick={() => setIsSettingUp2Fa(false)}
-                  className="w-fit px-6 py-3 bg-zinc-800 border border-white/10 rounded-xl text-zinc-300 font-bold hover:bg-zinc-700 hover:text-white transition-all text-sm"
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          ) : user?.twoFactorEnabled ? (
-            <div className="space-y-6">
-              <div className="flex items-center gap-2 text-emerald-400 font-bold text-xs uppercase tracking-widest bg-emerald-500/10 px-3 py-1.5 rounded-lg w-fit border border-emerald-500/20">
-                <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                2FA Enabled
-              </div>
-              <p className="text-sm text-zinc-400 font-medium leading-relaxed">
-                Your account is currently protected by a secondary authentication layer.
-              </p>
-              <button 
-                onClick={() => setConfirmDisable2FA(true)}
-                className="w-full py-3 bg-rose-500/10 text-rose-500 hover:bg-rose-50 hover:text-white border border-rose-500/20 rounded-xl font-bold uppercase tracking-widest transition-all text-xs shadow-sm animate-in fade-in"
-              >
-                Disable Multi-Factor Authentication
-              </button>
-            </div>
-          ) : (
-            <div className="space-y-6">
-              <div className="flex items-center gap-2 text-rose-400 font-bold text-xs uppercase tracking-widest bg-rose-500/10 px-3 py-1.5 rounded-lg w-fit border border-rose-500/20">
-                <div className="w-1.5 h-1.5 rounded-full bg-rose-400" />
-                2FA Disabled
-              </div>
-              <p className="text-sm text-zinc-400 font-medium leading-relaxed">
-                Add an extra layer of security to your account by scanning a QR code with an authenticator app.
-              </p>
-              <button 
-                onClick={handleSetup2FA}
-                className="w-full py-3 bg-purple-500/15 text-purple-400 hover:bg-purple-600 hover:text-white border border-purple-500/30 rounded-xl font-bold uppercase tracking-widest transition-all text-xs shadow-glow-purple"
-              >
-                Set Up 2FA Now
-              </button>
+                    {recoveryCodes.length > 0 && (
+                      <div className="p-4 bg-zinc-900/50 rounded-2xl border border-white/5">
+                        <span className="text-[10px] text-rose-400 font-bold uppercase tracking-widest block mb-2">Save these recovery codes:</span>
+                        <div className="grid grid-cols-2 gap-2">
+                          {recoveryCodes.map((code, idx) => (
+                            <code key={idx} className="text-xs text-zinc-300 font-mono bg-zinc-800/80 px-2.5 py-1 rounded border border-white/5 text-center select-all">{code}</code>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest ml-1">Verification Code</label>
+                      <input 
+                        type="text"
+                        placeholder="000000"
+                        value={totpVerificationCode}
+                        onChange={(e) => setTotpVerificationCode(e.target.value)}
+                        className="w-full bg-zinc-800 border border-white/5 rounded-xl px-4 py-3 text-sm text-zinc-100 focus:border-purple-500/50 outline-none transition-all shadow-inner text-center font-mono tracking-widest text-lg"
+                        maxLength={6}
+                      />
+                    </div>
+
+                    <div className="flex gap-2">
+                      <button 
+                        onClick={handleVerifyAndEnable2FA}
+                        disabled={isVerifying2Fa || !totpVerificationCode}
+                        className="w-full py-3 bg-purple-500 text-white rounded-xl font-bold hover:bg-purple-600 transition-all text-sm disabled:opacity-50"
+                      >
+                        {isVerifying2Fa ? 'Enabling...' : 'Verify & Enable'}
+                      </button>
+                      <button 
+                        onClick={() => setIsSettingUp2Fa(false)}
+                        className="w-fit px-6 py-3 bg-zinc-800 border border-white/10 rounded-xl text-zinc-300 font-bold hover:bg-zinc-700 hover:text-white transition-all text-sm"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                ) : user?.twoFactorEnabled ? (
+                  <div className="space-y-6">
+                    <div className="flex items-center gap-2 text-emerald-400 font-bold text-xs uppercase tracking-widest bg-emerald-500/10 px-3 py-1.5 rounded-lg w-fit border border-emerald-500/20">
+                      <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                      2FA Enabled
+                    </div>
+                    <p className="text-sm text-zinc-400 font-medium leading-relaxed">
+                      Your account is currently protected by a secondary authentication layer.
+                    </p>
+                    <button 
+                      onClick={() => setConfirmDisable2FA(true)}
+                      className="w-full py-3 bg-rose-500/10 text-rose-500 hover:bg-rose-50 hover:text-white border border-rose-500/20 rounded-xl font-bold uppercase tracking-widest transition-all text-xs shadow-sm animate-in fade-in"
+                    >
+                      Disable Multi-Factor Authentication
+                    </button>
+                  </div>
+                ) : (
+                  <div className="space-y-6">
+                    <div className="flex items-center gap-2 text-rose-400 font-bold text-xs uppercase tracking-widest bg-rose-500/10 px-3 py-1.5 rounded-lg w-fit border border-rose-500/20">
+                      <div className="w-1.5 h-1.5 rounded-full bg-rose-400" />
+                      2FA Disabled
+                    </div>
+                    <p className="text-sm text-zinc-400 font-medium leading-relaxed">
+                      Add an extra layer of security to your account by scanning a QR code with an authenticator app.
+                    </p>
+                    <button 
+                      onClick={handleSetup2FA}
+                      className="w-full py-3 bg-purple-500/15 text-purple-400 hover:bg-purple-600 hover:text-white border border-purple-500/30 rounded-xl font-bold uppercase tracking-widest transition-all text-xs shadow-glow-purple"
+                    >
+                      Set Up 2FA Now
+                    </button>
+                  </div>
+                )}
+              </SettingsCard>
             </div>
           )}
-        </SettingsCard>
+
+          {activeTab === 'meta' && user?.roleCode !== 'SUPER_ADMIN' && (
+            <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-500">
+              <SettingsCard 
+                icon={Shield} 
+                title="Meta Integration" 
+                subtitle="Manage your Instagram and Facebook connections."
+              >
+                {isLoadingStatus ? (
+                  <div className="flex items-center gap-3 p-4 bg-zinc-900/50 rounded-2xl border border-white/5 text-zinc-400 font-bold text-xs uppercase tracking-widest">
+                    <div className="animate-spin w-4 h-4 border-2 border-purple-500 border-t-transparent rounded-full" />
+                    Verifying Connection...
+                  </div>
+                ) : isConnected ? (
+                  <div className="space-y-6">
+                    <div className="flex items-center gap-2 text-emerald-400 font-bold text-xs uppercase tracking-widest bg-emerald-500/10 px-3 py-1.5 rounded-lg w-fit border border-emerald-500/20">
+                      <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                      Active Connection
+                    </div>
+                    
+                    <div className="p-5 bg-zinc-800 rounded-2xl border border-white/5 shadow-inner">
+                      <div className="text-sm font-bold text-zinc-100">{connectionDetails?.name}</div>
+                      <div className="text-[10px] text-zinc-500 font-mono mt-1 uppercase tracking-widest">Business ID: {connectionDetails?.id}</div>
+                    </div>
+
+                    <button 
+                      onClick={async () => {
+                        try {
+                          await disconnectInstagram();
+                          setIsConnected(false);
+                          setConnectionDetails(null);
+                          toast.success('Account disconnected successfully.');
+                        } catch (e) {
+                          toast.error('Failed to disconnect account.');
+                        }
+                      }}
+                      className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-white border border-rose-500/20 rounded-xl font-bold uppercase tracking-widest transition-all text-xs shadow-sm"
+                    >
+                      <X size={16} /> Disconnect Account
+                    </button>
+                  </div>
+                ) : (
+                  <div className="space-y-6">
+                    <p className="text-sm text-zinc-400 font-medium leading-relaxed">
+                      Connect your business account to start receiving and responding to Instagram DMs automatically.
+                    </p>
+                    <button 
+                      onClick={handleConnect}
+                      disabled={isConnecting}
+                      className="w3-button-primary w-full justify-center shadow-glow-purple"
+                    >
+                      {isConnecting ? <RefreshCw className="animate-spin" size={18} /> : <Link2 size={18} />}
+                      <span>{isConnecting ? 'Linking Account...' : 'Connect Instagram'}</span>
+                    </button>
+                    <button 
+                      onClick={() => setShowGuide(true)}
+                      className="w-full flex items-center justify-center gap-2 text-xs font-bold text-purple-400 hover:text-purple-300 transition-colors uppercase tracking-widest"
+                    >
+                      <Info size={14} /> Link Instructions Guide
+                    </button>
+                  </div>
+                )}
+              </SettingsCard>
+            </div>
+          )}
+
+          {activeTab === 'webhooks' && user?.roleCode !== 'SUPER_ADMIN' && (
+            <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-500">
+              <SettingsCard 
+                icon={Database} 
+                title="Webhooks & API" 
+                subtitle="Real-time data synchronization settings."
+              >
+                <div className="space-y-4">
+                  <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest ml-1">Webhook Endpoint</label>
+                  <div className="bg-zinc-800 p-4 rounded-2xl border border-white/5 text-sm font-mono text-zinc-500 truncate shadow-inner">
+                    https://replyzens.in/api/v1/Instagram/Webhook
+                  </div>
+                  <button className="flex items-center gap-2 text-xs font-bold text-purple-400 hover:text-purple-300 transition-colors uppercase tracking-widest">
+                    <Zap size={14} /> Test Connectivity
+                  </button>
+                </div>
+              </SettingsCard>
+            </div>
+          )}
+          
+        </div>
 
       </div>
+
+      {showGuide && (
+        <div className="fixed inset-0 bg-zinc-950/80 backdrop-blur-md flex items-center justify-center z-[1000] p-6 animate-in fade-in duration-300">
+          <div className="w3-card max-w-xl w-full p-10 relative animate-in zoom-in-95 duration-500 shadow-2xl bg-zinc-900 border-white/10">
+            <button 
+              onClick={() => setShowGuide(false)}
+              className="absolute top-6 right-6 p-2 text-zinc-500 hover:text-white hover:bg-white/5 rounded-xl transition-all"
+            >
+              <X size={20} />
+            </button>
+
+            <div className="mb-10">
+              <h2 className="text-2xl font-bold text-zinc-100 mb-2">Let's Link Your Account</h2>
+              <p className="text-zinc-400 font-medium leading-relaxed">Meta requires specific settings to be enabled before we can automate your DMs.</p>
+            </div>
+
+            <div className="space-y-8">
+              
+              <div className="flex gap-6">
+                <div className="w-12 h-12 bg-purple-500/10 text-purple-400 rounded-2xl flex items-center justify-center shrink-0 border border-purple-500/20">
+                  <Smartphone size={24} />
+                </div>
+                <div>
+                  <h4 className="font-bold text-zinc-100 mb-1">Step 1: Switch to Professional</h4>
+                  <p className="text-sm text-zinc-400 font-medium leading-relaxed">
+                    In the Instagram App &gt; Settings &gt; Account Type. Switch to <strong className="text-zinc-200">Business</strong> or <strong className="text-zinc-200">Creator</strong>.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex gap-6">
+                <div className="w-12 h-12 bg-purple-500/10 text-purple-400 rounded-2xl flex items-center justify-center shrink-0 border border-purple-500/20">
+                  <Link2 size={24} />
+                </div>
+                <div>
+                  <h4 className="font-bold text-zinc-100 mb-1">Step 2: Link to Facebook Page</h4>
+                  <p className="text-sm text-zinc-400 font-medium leading-relaxed">
+                    Edit Profile &gt; Public Business Information &gt; Page. Select or create a Facebook Page.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex gap-6">
+                <div className="w-12 h-12 bg-purple-500/10 text-purple-400 rounded-2xl flex items-center justify-center shrink-0 border border-purple-500/20">
+                  <ToggleRight size={24} />
+                </div>
+                <div>
+                  <h4 className="font-bold text-zinc-100 mb-1">Step 3: Allow Message Access</h4>
+                  <p className="text-sm text-zinc-400 font-medium leading-relaxed">
+                    Settings &gt; Privacy &gt; Messages. Turn <strong className="text-emerald-400 uppercase tracking-widest text-[10px]">ON</strong> "Allow Access to Messages" at the bottom.
+                  </p>
+                </div>
+              </div>
+
+            </div>
+
+            <div className="mt-12 space-y-4">
+              <button 
+                onClick={handleConnect}
+                className="w3-button-primary w-full justify-center py-4"
+              >
+                <CheckCircle2 size={20} />
+                <span>I've Done These Steps</span>
+              </button>
+              <button 
+                 onClick={() => setShowGuide(false)}
+                 className="w-full py-3 text-sm font-bold text-zinc-500 hover:text-zinc-300 transition-colors"
+              >
+                Maybe Later
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <ConfirmModal
         isOpen={confirmDisable2FA}
         title="Disable Two-Factor Authentication"

@@ -326,13 +326,12 @@ const Dashboard: React.FC = () => {
               </div>
 
               {/* Transition 1 -> 2 */}
-              <div className="flex justify-between items-center pl-7 text-[10px] text-zinc-500 font-bold">
-                <div className="h-3 border-l border-zinc-700/50 border-dashed"></div>
-                <div className="px-1.5 py-0.5 rounded bg-zinc-800/30 text-emerald-400 border border-emerald-500/10 flex items-center gap-1">
+              <div className="flex items-center gap-4 py-1.5">
+                <div className="h-6 border-l-2 border-zinc-500/30 border-dashed ml-[9px]"></div>
+                <div className="px-2 py-1 rounded-md bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 flex items-center gap-1 text-[10px] font-bold">
                   <span>↓ {playbookFunnel.started > 0 ? ((playbookFunnel.replied / playbookFunnel.started) * 100).toFixed(0) : '0'}% Reply Rate</span>
-                  <span className="text-zinc-500">({(100 - (playbookFunnel.started > 0 ? (playbookFunnel.replied / playbookFunnel.started) * 100 : 0)).toFixed(0)}% drop-off)</span>
+                  <span className="opacity-70 ml-1">({(100 - (playbookFunnel.started > 0 ? (playbookFunnel.replied / playbookFunnel.started) * 100 : 0)).toFixed(0)}% drop-off)</span>
                 </div>
-                <div></div>
               </div>
 
               {/* Step 2: Replied */}
@@ -355,13 +354,12 @@ const Dashboard: React.FC = () => {
               </div>
 
               {/* Transition 2 -> 3 */}
-              <div className="flex justify-between items-center pl-7 text-[10px] text-zinc-500 font-bold">
-                <div className="h-3 border-l border-zinc-700/50 border-dashed"></div>
-                <div className="px-1.5 py-0.5 rounded bg-zinc-800/30 text-emerald-400 border border-emerald-500/10 flex items-center gap-1">
+              <div className="flex items-center gap-4 py-1.5">
+                <div className="h-6 border-l-2 border-zinc-500/30 border-dashed ml-[9px]"></div>
+                <div className="px-2 py-1 rounded-md bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 flex items-center gap-1 text-[10px] font-bold">
                   <span>↓ {playbookFunnel.replied > 0 ? ((playbookFunnel.captured / playbookFunnel.replied) * 100).toFixed(0) : '0'}% Capture Rate</span>
-                  <span className="text-zinc-500">({(100 - (playbookFunnel.replied > 0 ? (playbookFunnel.captured / playbookFunnel.replied) * 100 : 0)).toFixed(0)}% drop-off)</span>
+                  <span className="opacity-70 ml-1">({(100 - (playbookFunnel.replied > 0 ? (playbookFunnel.captured / playbookFunnel.replied) * 100 : 0)).toFixed(0)}% drop-off)</span>
                 </div>
-                <div></div>
               </div>
 
               {/* Step 3: Captured */}
@@ -384,13 +382,12 @@ const Dashboard: React.FC = () => {
               </div>
 
               {/* Transition 3 -> 4 */}
-              <div className="flex justify-between items-center pl-7 text-[10px] text-zinc-500 font-bold">
-                <div className="h-3 border-l border-zinc-700/50 border-dashed"></div>
-                <div className="px-1.5 py-0.5 rounded bg-zinc-800/30 text-emerald-400 border border-emerald-500/10 flex items-center gap-1">
+              <div className="flex items-center gap-4 py-1.5">
+                <div className="h-6 border-l-2 border-zinc-500/30 border-dashed ml-[9px]"></div>
+                <div className="px-2 py-1 rounded-md bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 flex items-center gap-1 text-[10px] font-bold">
                   <span>↓ {playbookFunnel.captured > 0 ? ((playbookFunnel.converted / playbookFunnel.captured) * 100).toFixed(0) : '0'}% Close Rate</span>
-                  <span className="text-zinc-500">({(100 - (playbookFunnel.captured > 0 ? (playbookFunnel.converted / playbookFunnel.captured) * 100 : 0)).toFixed(0)}% drop-off)</span>
+                  <span className="opacity-70 ml-1">({(100 - (playbookFunnel.captured > 0 ? (playbookFunnel.converted / playbookFunnel.captured) * 100 : 0)).toFixed(0)}% drop-off)</span>
                 </div>
-                <div></div>
               </div>
 
               {/* Step 4: Converted */}
