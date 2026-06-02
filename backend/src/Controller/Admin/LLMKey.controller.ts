@@ -3,6 +3,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { JWTAuthController } from '@Controller/JWTAuth.controller';
 import { ResponseEnum } from '@Helper/Enum/ResponseEnum';
 import { AdminSubRoleGuard, SuperAdminRoles } from '@Service/Auth/AdminSubRoleGuard.service';
+import { JwtAuthGuard } from '@Service/Auth/JwtAuthGuard.service';
 import { SecurityAlertService } from '@Service/Auth/SecurityAlert.service';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -59,7 +60,7 @@ export class LLMKeyController extends JWTAuthController {
   }
 
   @Get()
-  @UseGuards(AdminSubRoleGuard)
+  @UseGuards(JwtAuthGuard, AdminSubRoleGuard)
   @SuperAdminRoles('Owner', 'Security')
   async GetKeys(@Req() req: any) {
     if (req.user?.user_role_code !== 'SUPER_ADMIN') {
@@ -84,7 +85,7 @@ export class LLMKeyController extends JWTAuthController {
   }
 
   @Patch('Update')
-  @UseGuards(AdminSubRoleGuard)
+  @UseGuards(JwtAuthGuard, AdminSubRoleGuard)
   @SuperAdminRoles('Owner', 'Security')
   async UpdateKeys(@Body() body: { openai: string; gemini: string; groq: string }, @Req() req: any) {
     if (req.user?.user_role_code !== 'SUPER_ADMIN') {

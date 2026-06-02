@@ -4,9 +4,14 @@ import { ErrorLogService } from '@Service/Admin/ErrorLog.service';
 import { JWTAuthController } from '@Controller/JWTAuth.controller';
 import { ErrorLogDeleteModel, ErrorLogLazyLoadModel } from '@Model/Admin/ErrorLog.model';
 import { ResponseEnum } from '@Helper/Enum/ResponseEnum';
+import { UseGuards } from '@nestjs/common';
+import { AdminSubRoleGuard, SuperAdminRoles } from '@Service/Auth/AdminSubRoleGuard.service';
+import { JwtAuthGuard } from '@Service/Auth/JwtAuthGuard.service';
 
 @Controller({ path: "ErrorLog", version: '1' })
 @ApiTags("Error Log")
+@UseGuards(JwtAuthGuard, AdminSubRoleGuard)
+@SuperAdminRoles('Owner', 'Support', 'Security')
 export class ErrorLogController extends JWTAuthController {
 
   constructor(private _ErrorLogService: ErrorLogService) {

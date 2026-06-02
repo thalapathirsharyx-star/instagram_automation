@@ -6,6 +6,7 @@ import { ResponseEnum } from '@Helper/Enum/ResponseEnum';
 import { ChangePasswordModel, UserModel } from '@Model/Admin/User.model';
 import { JWTAuthController } from '@Controller/JWTAuth.controller';
 import { AdminSubRoleGuard, SuperAdminRoles } from '@Service/Auth/AdminSubRoleGuard.service';
+import { JwtAuthGuard } from '@Service/Auth/JwtAuthGuard.service';
 import { Redis } from 'ioredis';
 
 @Controller({ path: "User", version: '1' })
@@ -67,7 +68,7 @@ export class UserController extends JWTAuthController {
   }
 
   @Post('Admin/Create')
-  @UseGuards(AdminSubRoleGuard)
+  @UseGuards(JwtAuthGuard, AdminSubRoleGuard)
   @SuperAdminRoles('Owner')
   async CreateAdmin(@Body() body: any, @CurrentUser() UserId: string) {
     const result = await this._UserService.InsertAdmin(body, UserId);
@@ -81,7 +82,7 @@ export class UserController extends JWTAuthController {
   }
 
   @Patch('Admin/2fa-policy')
-  @UseGuards(AdminSubRoleGuard)
+  @UseGuards(JwtAuthGuard, AdminSubRoleGuard)
   @SuperAdminRoles('Owner', 'Security')
   async Toggle2faPolicy(@Body() body: { enforce: boolean }) {
     await this._RedisClient.set('system:2fa_enforced', body.enforce ? 'true' : 'false');

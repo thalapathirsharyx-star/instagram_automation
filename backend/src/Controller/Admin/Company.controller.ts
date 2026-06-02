@@ -7,6 +7,7 @@ import { AuthService } from '@Service/Auth/Auth.service';
 import { ResponseEnum } from '@Helper/Enum/ResponseEnum';
 import { JWTAuthController } from '@Controller/JWTAuth.controller';
 import { AdminSubRoleGuard, SuperAdminRoles } from '@Service/Auth/AdminSubRoleGuard.service';
+import { JwtAuthGuard } from '@Service/Auth/JwtAuthGuard.service';
 import { ImpersonationBlockGuard } from '@Service/Auth/ImpersonationBlockGuard.service';
 import * as crypto from 'crypto';
 const Razorpay = require('razorpay');
@@ -41,7 +42,7 @@ export class CompanyController extends JWTAuthController {
 
 
   @Get('Admin/All')
-  @UseGuards(AdminSubRoleGuard)
+  @UseGuards(JwtAuthGuard, AdminSubRoleGuard)
   @SuperAdminRoles('Owner', 'Support')
   async GetAllForAdmin(@Req() req: any) {
     if (req.user.user_role_code !== 'SUPER_ADMIN') {
@@ -51,7 +52,7 @@ export class CompanyController extends JWTAuthController {
   }
 
   @Patch('Admin/ToggleStatus/:id')
-  @UseGuards(AdminSubRoleGuard)
+  @UseGuards(JwtAuthGuard, AdminSubRoleGuard)
   @SuperAdminRoles('Owner')
   async ToggleStatus(@Param('id') id: string, @CurrentUser() UserId: string, @Req() req: any) {
     if (req.user.user_role_code !== 'SUPER_ADMIN') {
@@ -140,7 +141,7 @@ export class CompanyController extends JWTAuthController {
   }
 
   @Post('Admin/Impersonate/:companyId')
-  @UseGuards(AdminSubRoleGuard)
+  @UseGuards(JwtAuthGuard, AdminSubRoleGuard)
   @SuperAdminRoles('Owner', 'Support')
   async Impersonate(@Param('companyId') companyId: string, @CurrentUser() UserId: string) {
     const result = await this._AuthService.Impersonate(UserId, companyId);

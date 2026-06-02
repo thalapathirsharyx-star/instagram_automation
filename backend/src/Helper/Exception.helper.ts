@@ -1,4 +1,4 @@
-import { ArgumentsHost, Catch, ExceptionFilter } from '@nestjs/common';
+import { ArgumentsHost, Catch, ExceptionFilter, HttpException } from '@nestjs/common';
 import { Response } from 'express';
 import { error_log } from '@Database/Table/Admin/error_log';
 import { ResponseEnum } from './Enum/ResponseEnum';
@@ -53,6 +53,9 @@ export class ExceptionHelper implements ExceptionFilter {
       created_by_name: response.req?.user?.["email"] ?? "No User",
       created_on: new Date()
     })
-    response.status(500).json({ Type: ResponseEnum.Error, Message: MessageText });
+    const status = exception instanceof HttpException
+      ? exception.getStatus()
+      : 500;
+    response.status(status).json({ Type: ResponseEnum.Error, Message: MessageText });
   }
 }
