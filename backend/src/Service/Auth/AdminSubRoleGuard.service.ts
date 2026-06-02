@@ -28,7 +28,8 @@ export class AdminSubRoleGuard implements CanActivate {
       return true;
     }
 
-    const hasRole = requiredRoles.includes(user.super_admin_sub_role);
+    const subRole = user.super_admin_sub_role || 'Owner';
+    const hasRole = requiredRoles.includes(subRole as any);
     if (!hasRole) {
       throw new ForbiddenException(`Access denied. Requires one of the following Super Admin sub-roles: ${requiredRoles.join(', ')}`);
     }

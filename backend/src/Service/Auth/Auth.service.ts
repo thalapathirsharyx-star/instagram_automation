@@ -101,6 +101,11 @@ export class AuthService {
       return { status: 'pending_2fa', temp_token };
     }
 
+    if (UserData.user_role?.code === 'SUPER_ADMIN' && !UserData.super_admin_sub_role) {
+      UserData.super_admin_sub_role = 'Owner';
+      await UserData.save();
+    }
+
     const payload = {
       email: UserData.email,
       user_id: UserData.id,
@@ -251,6 +256,11 @@ export class AuthService {
     if (!companyData) {
       const companies = await company.find({ relations: ["currency"] });
       companyData = companies[0] || null;
+    }
+
+    if (UserData.user_role?.code === 'SUPER_ADMIN' && !UserData.super_admin_sub_role) {
+      UserData.super_admin_sub_role = 'Owner';
+      await UserData.save();
     }
 
     const fullPayload = {
