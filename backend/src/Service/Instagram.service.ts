@@ -14,6 +14,9 @@ import { MoreThan } from 'typeorm';
 import { MailerService } from './Mailer.service';
 import { Redis } from 'ioredis';
 
+import { story_context } from '@Database/Table/CRM/story_context';
+import { OCRService } from './OCR.service';
+
 @Injectable()
 export class InstagramService {
   private processedMids = new Set<string>();
@@ -24,6 +27,7 @@ export class InstagramService {
     private readonly aiService: AIService,
     private readonly knowledgeBaseService: KnowledgeBaseService,
     private readonly mailerService: MailerService,
+    private readonly ocrService: OCRService,
     @Inject('REDIS_CLIENT') private readonly redisClient: Redis
   ) { }
 
@@ -128,7 +132,7 @@ export class InstagramService {
     return { Success: true };
   }
 
-  async processIncomingMessage(input: InstagramMessageContext | string, text?: string, messageId?: string, igBusinessId?: string, skipDedupe = false): Promise<InstagramActionResponse | void> {
+  async processIncomingMessage(input: InstagramMessageContext | string, text?: string, messageId?: string, igBusinessId?: string, skipDedupe = false, storyInfo?: { id: string, url?: string }): Promise<InstagramActionResponse | void> {
     if (messageId && this.processedMids.has(messageId) && !skipDedupe) {
       return;
     }
@@ -275,6 +279,66 @@ export class InstagramService {
       if (lead.follow_up_sent) {
         lead.follow_up_sent = false;
         await lead.save();
+      }
+    }
+
+    // Process story reply OCR if storyInfo is present
+    if (storyInfo && storyInfo.id && company) {
+      try {
+        console.log(`[STORY REPLY DETECTED] Story ID: ${storyInfo.id}`);
+        // 1. Check if we already have story_context saved
+        let sc = await story_context.findOne({ where: { instagram_story_id: storyInfo.id, company_id: companyId } });
+        if (!sc) {
+          console.log(`[STORY REPLY] Context not found. Fetching media from Meta...`);
+          let storyMediaUrl = storyInfo.url;
+          
+          // Fetch the real media_url from Meta Graph API
+          if (company.instagram_access_token) {
+            try {
+              const res = await axios.get(`https://graph.facebook.com/v21.0/${storyInfo.id}`, {
+                params: {
+                  fields: 'media_url,media_type',
+                  access_token: company.instagram_access_token
+                }
+              });
+              if (res.data?.media_url) {
+                storyMediaUrl = res.data.media_url;
+                console.log(`[STORY REPLY] Successfully retrieved Meta media URL: ${storyMediaUrl}`);
+              }
+            } catch (err: any) {
+              console.error('[STORY REPLY ERROR] Failed to fetch story details from Graph API:', err.response?.data || err.message);
+            }
+          }
+
+          if (storyMediaUrl) {
+            // Download & OCR
+            const ocrText = await this.ocrService.extractTextFromUrl(storyMediaUrl);
+            if (ocrText && ocrText.trim().length > 0) {
+              // Analyze with LLM to get structured JSON
+              const structuredData = await this.aiService.analyzeStoryOcrText(ocrText);
+              
+              sc = new story_context();
+              sc.company_id = companyId;
+              sc.instagram_story_id = storyInfo.id;
+              sc.story_media_url = storyMediaUrl;
+              sc.ocr_text = ocrText;
+              sc.structured_data = structuredData;
+              sc.created_by_id = '00000000-0000-0000-0000-000000000000';
+              sc.created_on = new Date();
+              await sc.save();
+              console.log(`[STORY REPLY] Saved new story context:`, JSON.stringify(structuredData));
+            }
+          }
+        } else {
+          console.log(`[STORY REPLY] Existing story context found:`, JSON.stringify(sc.structured_data));
+        }
+
+        if (sc) {
+          lead.last_story_context_id = sc.id;
+          await lead.save();
+        }
+      } catch (err: any) {
+        console.error('[STORY OCR PROCESS ERROR] Failed in OCR story flow:', err.message);
       }
     }
 

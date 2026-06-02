@@ -46,4 +46,7 @@ export class instagram_lead extends BaseTable {
 
   @Column({ type: 'boolean', default: false })
   follow_up_sent: boolean;
+
+  @Column({ type: 'uuid', nullable: true })
+  last_story_context_id: string;
 }

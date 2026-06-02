@@ -237,7 +237,8 @@ export class InstagramController extends AuthBaseController {
       }
     } else if (messaging.message && !messaging.message.is_echo && senderId && text) {
       console.log(`[NEW MESSAGE] "${text}" from sender: ${senderId}`);
-      await this._InstagramService.processIncomingMessage(senderId, text, mid, igBusinessId);
+      const storyInfo = messaging.message.reply_to?.story;
+      await this._InstagramService.processIncomingMessage(senderId, text, mid, igBusinessId, false, storyInfo);
     } else if (messaging.message && messaging.message.attachments && !messaging.message.is_echo && senderId) {
       const attachment = messaging.message.attachments[0];
       if (attachment.type === 'image') {

@@ -54,6 +54,7 @@ import { BroadcastService } from '@Service/Broadcast.service';
 import { AIService } from '@Service/AI.service';
 import { KnowledgeBaseService } from '@Service/KnowledgeBase.service';
 import { TokenMonitorService } from '@Service/TokenMonitor.service';
+import { OCRService } from '@Service/OCR.service';
 
 @Module({
   imports: [
@@ -154,6 +155,7 @@ import { TokenMonitorService } from '@Service/TokenMonitor.service';
     AIService,
     KnowledgeBaseService,
     TokenMonitorService,
+    OCRService,
     {
       provide: "REDIS_CLIENT",
       useFactory: () => {

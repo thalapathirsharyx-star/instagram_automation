@@ -3,6 +3,7 @@ import { instagram_lead } from '@Database/Table/CRM/instagram_lead';
 import { instagram_message } from '@Database/Table/CRM/instagram_message';
 import { knowledge_base } from '@Database/Table/CRM/knowledge_base';
 import { company as CompanyTable } from '@Database/Table/Admin/company';
+import { story_context } from '@Database/Table/CRM/story_context';
 import axios from 'axios';
 
 @Injectable()
@@ -28,6 +29,30 @@ Previous Tags: ${(lead.tags || []).join(', ')}
 `;
 
     const company = await CompanyTable.findOne({ where: { id: companyId } });
+
+    let storyContextStr = '';
+    if (lead.last_story_context_id) {
+      try {
+        const sc = await story_context.findOne({ where: { id: lead.last_story_context_id } });
+        if (sc && sc.structured_data) {
+          const sd = sc.structured_data;
+          storyContextStr = `
+═══════════════════════════════
+ACTIVE INSTAGRAM STORY CONTEXT
+═══════════════════════════════
+The customer is replying to/asking about an Instagram Story promoting:
+- Product Name: ${sd.product_name || 'N/A'}
+- Price: ${sd.price ? `${sd.price}` : 'Not specified'}
+- Available Sizes: ${sd.sizes && sd.sizes.length > 0 ? sd.sizes.join(', ') : 'Not specified'}
+- Context: ${sd.customer_context || 'N/A'}
+
+You MUST use the above product details to answer the customer's queries about availability, price, size, or orders.
+`;
+        }
+      } catch (err: any) {
+        console.error('[AI SERVICE] Failed to load story context:', err.message);
+      }
+    }
 
     const profile = company?.business_profile || {
       type: 'clothing brand',
@@ -103,6 +128,8 @@ KNOWLEDGE BASE (Product Info)
 ═══════════════════════════════
 \${context}
 
+${storyContextStr}
+
 ═══════════════════════════════
 PREVIOUS INTELLIGENCE (Context Memory)
 ═══════════════════════════════
@@ -156,6 +183,10 @@ Return ONLY valid JSON. No extra text outside it.
 `;
 
     let customPrompt = company?.system_prompt || defaultPrompt;
+
+    if (company?.system_prompt && storyContextStr) {
+      customPrompt += `\n\n${storyContextStr}`;
+    }
 
     // Always append strict perspective rule to prevent echoing bugs even if they use a custom prompt
     if (company?.system_prompt) {
@@ -277,6 +308,66 @@ Include these fields:
     } catch (err) {
       console.error('[CONTEXT ERROR]', err);
       return "General business information.";
+    }
+  }
+
+  /**
+   * Analyze the OCR text extracted from a story to structure it into JSON.
+   */
+  async analyzeStoryOcrText(ocrText: string): Promise<any> {
+    const GROQ_API_KEY = process.env.GROQ_API_KEY;
+    const prompt = `
+You are an expert product data extractor.
+Analyze the following raw OCR text extracted from an Instagram Story image and convert it into a clean structured JSON object.
+
+Extract:
+1. Product name (e.g. "Nike Air Max", or a brief title of what is promoted)
+2. Price (numeric value only, e.g. 5999, or null if not found)
+3. Available sizes (array of sizes like ["7", "8", "9"] or ["S", "M", "L"], or empty array if not found)
+4. A brief customer context summarizing what the story is promoting.
+
+OCR TEXT:
+"""
+${ocrText}
+"""
+
+Return ONLY valid JSON in this exact format. No extra text or markdown formatting.
+
+{
+  "product_name": "Product Name Here",
+  "price": 1234 or null,
+  "sizes": ["size1", "size2"] or [],
+  "customer_context": "Instagram story promotes..."
+}
+`;
+
+    try {
+      const response = await axios.post(
+        'https://api.groq.com/openai/v1/chat/completions',
+        {
+          model: 'llama-3.3-70b-versatile',
+          messages: [
+            { role: 'system', content: prompt }
+          ],
+          response_format: { type: "json_object" }
+        },
+        {
+          headers: {
+            'Authorization': `Bearer ${GROQ_API_KEY}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+
+      return JSON.parse(response.data.choices[0].message.content);
+    } catch (err: any) {
+      console.error('[AI OCR ANALYZE ERROR] Failed to analyze OCR text:', err.message);
+      return {
+        product_name: null,
+        price: null,
+        sizes: [],
+        customer_context: `Failed to analyze OCR text: ${ocrText}`
+      };
     }
   }
 }
