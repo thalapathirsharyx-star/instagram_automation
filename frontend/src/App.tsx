@@ -24,6 +24,7 @@ import AdminActivity from './pages/AdminActivity';
 import LLMKeys from './pages/LLMKeys';
 import AISettings from './pages/AISettings';
 import Team from './pages/Team';
+import AddTeamMember from './pages/AddTeamMember';
 import Billing from './pages/Billing';
 import Broadcasts from './pages/Broadcasts';
 import { Bell, Sun, Moon, LogOut } from 'lucide-react';
@@ -132,10 +133,10 @@ function AppContent() {
               >
                 <div className="text-right hidden sm:block">
                   <div className="flex items-center justify-end gap-2 mb-0.5">
-                    <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-widest ${user?.roleCode === 'SUPER_ADMIN' ? 'bg-amber-500/10 text-amber-500 border border-amber-500/20' : 'bg-purple-500/10 text-purple-500 border border-purple-500/20'}`}>
-                      {user?.roleCode === 'SUPER_ADMIN' ? 'SUPER ADMIN' : `${user?.company?.plan || 'FREE'} PLAN`}
+                    <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-widest ${user?.roleCode === 'SUPER_ADMIN' ? 'bg-amber-500/10 text-amber-500 border border-amber-500/20' : (!user?.company?.plan || user?.company?.plan?.toUpperCase() === 'FREE' ? 'bg-rose-500/10 text-rose-500 border border-rose-500/20' : 'bg-purple-500/10 text-purple-500 border border-purple-500/20')}`}>
+                      {user?.roleCode === 'SUPER_ADMIN' ? 'SUPER ADMIN' : (!user?.company?.plan || user?.company?.plan?.toUpperCase() === 'FREE' ? '14 DAYS TRIAL' : `${user?.company?.plan} PLAN`)}
                     </span>
-                    <div className="text-sm font-bold text-white">{user?.email ? user.email.split('@')[0] : 'Guest'}</div>
+                    <div className="text-sm font-bold text-zinc-100">{user?.email ? user.email.split('@')[0] : 'Guest'}</div>
                   </div>
                   <div className="text-[10px] font-bold text-emerald-500 uppercase tracking-wider flex items-center justify-end gap-1.5 mt-0.5">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Active Now
@@ -194,6 +195,7 @@ function AppContent() {
             
             <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
             <Route path="/team" element={<ProtectedRoute><Team /></ProtectedRoute>} />
+            <Route path="/team/add" element={<ProtectedRoute><AddTeamMember /></ProtectedRoute>} />
             <Route path="/billing" element={<ProtectedRoute><Billing /></ProtectedRoute>} />
             
             {/* Redirect logic */}

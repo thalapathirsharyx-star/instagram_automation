@@ -200,11 +200,11 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen w-full flex overflow-hidden bg-zinc-50 font-inter relative">
+    <div className="min-h-screen w-full flex overflow-hidden bg-white font-inter relative">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(168,85,247,0.06)_0%,transparent_50%)] pointer-events-none" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(59,130,246,0.06)_0%,transparent_50%)] pointer-events-none" />
       
-      <div className="hidden lg:flex lg:w-1/2 items-center justify-center relative p-20 z-10 bg-zinc-100/50 border-r border-zinc-200/50">
+      <div className="hidden lg:flex lg:w-1/2 items-center justify-center relative p-20 z-10">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(139,92,246,0.06)_0%,transparent_70%)] pointer-events-none" />
         <div className="relative w-full max-w-2xl flex flex-col items-center">
           <div className="w-full transform hover:scale-[1.01] transition-transform duration-1000 ease-in-out">
@@ -228,7 +228,7 @@ const Login: React.FC = () => {
       </div>
 
       <div className="w-full lg:w-1/2 flex flex-col items-center justify-center p-6 md:p-12 z-20">
-        <div className="w-full max-w-lg bg-white rounded-[2rem] p-10 md:p-12 shadow-2xl border border-zinc-100 relative">
+        <div className="w-full max-w-lg bg-white rounded-[2rem] p-10 md:p-12 shadow-[0_8px_40px_rgb(0,0,0,0.04)] border border-zinc-100 relative">
           <div className="mb-10 text-center">
             <div className="w-16 h-16 bg-transparent flex items-center justify-center mx-auto mb-8">
               <img src="/favicon.svg" alt="ReplyZens Logo" className="w-16 h-16 object-contain" />
