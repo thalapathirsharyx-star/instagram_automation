@@ -101,8 +101,11 @@ export class InstagramService {
         }
       };
 
-    } catch (error) {
+    } catch (error: any) {
       console.error('[CONNECT FAILED]', error);
+      if (error.response?.data?.error?.message) {
+        throw new Error(`Meta API Error: ${error.response.data.error.message}`);
+      }
       throw error;
     }
   }

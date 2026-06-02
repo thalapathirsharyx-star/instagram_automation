@@ -45,6 +45,9 @@ export class InstagramController extends AuthBaseController {
       const expectedSignature = `sha256=${crypto.createHmac('sha256', appSecret).update(req.rawBody).digest('hex')}`;
       if (signature !== expectedSignature) {
         console.error('[SECURITY] Invalid webhook signature detected!');
+        console.error(`- Loaded FB_APP_SECRET prefix: ${appSecret.slice(0, 4)}... (length: ${appSecret.length})`);
+        console.error(`- Received Header Signature: ${signature}`);
+        console.error(`- Computed Expected Signature: ${expectedSignature}`);
         throw new HttpException('Invalid signature', HttpStatus.FORBIDDEN);
       }
     } else {
