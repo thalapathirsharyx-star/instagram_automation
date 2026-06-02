@@ -106,7 +106,7 @@ function AppContent() {
           </button>
         </div>
       )}
-      <div className="crm-layout" style={{ flex: 1, height: 'auto', width: '100%', maxWidth: '100vw', overflow: 'hidden' }}>
+      <div className="crm-layout" style={{ flex: 1, height: '100%', minHeight: 0, width: '100%', maxWidth: '100vw', overflow: 'hidden' }}>
         <Sidebar />
 
       <main className="content-area">

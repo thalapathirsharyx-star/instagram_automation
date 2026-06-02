@@ -17,6 +17,12 @@ const AdminActivity: React.FC = () => {
   const [activities, setActivities] = useState<ActivityItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [filter, setFilter] = useState<string>('all');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(10);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filter]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -85,6 +91,11 @@ const AdminActivity: React.FC = () => {
   }, []);
 
   const filteredActivities = filter === 'all' ? activities : activities.filter(a => a.type === filter);
+  const totalPages = Math.ceil(filteredActivities.length / itemsPerPage);
+  const paginatedActivities = filteredActivities.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
   const formatTime = (ts: string) => {
     try {
@@ -120,7 +131,7 @@ const AdminActivity: React.FC = () => {
   }
 
   return (
-    <div className="dashboard-page" style={{ height: '100%', display: 'flex', flexDirection: 'column', gap: '32px' }}>
+    <div className="dashboard-page" style={{ minHeight: '100%', display: 'flex', flexDirection: 'column', gap: '32px' }}>
       <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
           <h1 style={{ margin: 0, fontSize: '1.8rem', color: '#18181b' }}>Platform Activity</h1>
@@ -184,49 +195,98 @@ const AdminActivity: React.FC = () => {
           <span style={{ fontSize: '0.8rem', color: '#71717a', fontWeight: 500 }}>{filteredActivities.length} events</span>
         </div>
         
-        <div style={{ maxHeight: '600px', overflowY: 'auto' }}>
+        <div>
           {filteredActivities.length === 0 ? (
             <div style={{ padding: '60px', textAlign: 'center', color: '#71717a' }}>
               <Activity size={32} style={{ marginBottom: '12px', opacity: 0.3 }} />
               <p>No events found for this filter.</p>
             </div>
-          ) : filteredActivities.map((item, i) => (
-            <div
-              key={item.id}
-              style={{
-                padding: '20px 24px',
-                borderBottom: i < filteredActivities.length - 1 ? '1px solid #f4f4f5' : 'none',
-                display: 'flex',
-                alignItems: 'flex-start',
-                gap: '16px',
-                transition: 'background 0.2s',
-              }}
-              className="table-row-hover"
-            >
-              <div style={{
-                width: '36px',
-                height: '36px',
-                borderRadius: '10px',
-                background: `${item.color}15`,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: item.color,
-                flexShrink: 0,
-              }}>
-                {item.icon}
-              </div>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px' }}>
-                  <span style={{ fontWeight: 600, color: '#18181b', fontSize: '0.95rem' }}>{item.title}</span>
-                  <span style={{ fontSize: '0.8rem', color: '#a1a1aa', fontWeight: 500, display: 'flex', alignItems: 'center', gap: '4px', flexShrink: 0 }}>
-                    <Clock size={12} /> {formatTime(item.timestamp)}
-                  </span>
+          ) : (
+            <>
+              {paginatedActivities.map((item, i) => (
+                <div
+                  key={item.id}
+                  style={{
+                    padding: '20px 24px',
+                    borderBottom: i < paginatedActivities.length - 1 ? '1px solid #f4f4f5' : 'none',
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    gap: '16px',
+                    transition: 'background 0.2s',
+                  }}
+                  className="table-row-hover"
+                >
+                  <div style={{
+                    width: '36px',
+                    height: '36px',
+                    borderRadius: '10px',
+                    background: `${item.color}15`,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: item.color,
+                    flexShrink: 0,
+                  }}>
+                    {item.icon}
+                  </div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px' }}>
+                      <span style={{ fontWeight: 600, color: '#18181b', fontSize: '0.95rem' }}>{item.title}</span>
+                      <span style={{ fontSize: '0.8rem', color: '#a1a1aa', fontWeight: 500, display: 'flex', alignItems: 'center', gap: '4px', flexShrink: 0 }}>
+                        <Clock size={12} /> {formatTime(item.timestamp)}
+                      </span>
+                    </div>
+                    <p style={{ margin: '4px 0 0', fontSize: '0.85rem', color: '#71717a', lineHeight: 1.5 }}>{item.description}</p>
+                  </div>
                 </div>
-                <p style={{ margin: '4px 0 0', fontSize: '0.85rem', color: '#71717a', lineHeight: 1.5 }}>{item.description}</p>
-              </div>
-            </div>
-          ))}
+              ))}
+              {totalPages > 1 && (
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 24px', background: '#fafafa', borderTop: '1px solid #f4f4f5' }}>
+                  <span style={{ fontSize: '0.85rem', color: '#71717a', fontWeight: 500 }}>
+                    Showing {((currentPage - 1) * itemsPerPage) + 1} to {Math.min(currentPage * itemsPerPage, filteredActivities.length)} of {filteredActivities.length} events
+                  </span>
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    <button
+                      onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                      disabled={currentPage === 1}
+                      style={{
+                        padding: '8px 16px',
+                        background: currentPage === 1 ? '#fafafa' : '#ffffff',
+                        border: '1px solid #e4e4e7',
+                        borderRadius: '8px',
+                        fontSize: '0.85rem',
+                        color: currentPage === 1 ? '#a1a1aa' : '#18181b',
+                        cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
+                        fontWeight: 600,
+                        transition: 'all 0.2s'
+                      }}
+                      className={currentPage !== 1 ? 'table-row-hover' : ''}
+                    >
+                      Previous
+                    </button>
+                    <button
+                      onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                      disabled={currentPage === totalPages}
+                      style={{
+                        padding: '8px 16px',
+                        background: currentPage === totalPages ? '#fafafa' : '#ffffff',
+                        border: '1px solid #e4e4e7',
+                        borderRadius: '8px',
+                        fontSize: '0.85rem',
+                        color: currentPage === totalPages ? '#a1a1aa' : '#18181b',
+                        cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
+                        fontWeight: 600,
+                        transition: 'all 0.2s'
+                      }}
+                      className={currentPage !== totalPages ? 'table-row-hover' : ''}
+                    >
+                      Next
+                    </button>
+                  </div>
+                </div>
+              )}
+            </>
+          )}
         </div>
       </div>
     </div>

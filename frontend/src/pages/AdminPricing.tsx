@@ -47,7 +47,7 @@ const AdminPricing: React.FC = () => {
   };
 
   return (
-    <div className="dashboard-page" style={{ height: '100%', display: 'flex', flexDirection: 'column', gap: '32px' }}>
+    <div className="dashboard-page" style={{ minHeight: '100%', display: 'flex', flexDirection: 'column', gap: '32px' }}>
       <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
           <h1 style={{ margin: 0, fontSize: '1.8rem' }}>Plan & Pricing Configuration</h1>

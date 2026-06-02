@@ -69,7 +69,7 @@ const LLMKeys: React.FC = () => {
   }
 
   return (
-    <div className="dashboard-page" style={{ height: '100%', display: 'flex', flexDirection: 'column', gap: '32px' }}>
+    <div className="dashboard-page" style={{ minHeight: '100%', display: 'flex', flexDirection: 'column', gap: '32px' }}>
       <div className="page-header">
         <h1 style={{ margin: 0, fontSize: '1.8rem', color: '#18181b' }}>LLM Provider Keys</h1>
         <p style={{ margin: '8px 0 0', color: '#71717a' }}>Configure global API access credentials for LLM models powering customer chat agents.</p>
