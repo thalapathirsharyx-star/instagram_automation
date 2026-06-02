@@ -48,6 +48,9 @@ export class InstagramController extends AuthBaseController {
         console.error(`- Loaded FB_APP_SECRET prefix: ${appSecret.slice(0, 4)}... (length: ${appSecret.length})`);
         console.error(`- Received Header Signature: ${signature}`);
         console.error(`- Computed Expected Signature: ${expectedSignature}`);
+        console.error(`- rawBody Type: ${typeof req.rawBody} (isBuffer: ${Buffer.isBuffer(req.rawBody)})`);
+        console.error(`- rawBody Length: ${req.rawBody.length}`);
+        console.error(`- rawBody Content: "${req.rawBody.toString('utf-8')}"`);
         throw new HttpException('Invalid signature', HttpStatus.FORBIDDEN);
       }
     } else {
