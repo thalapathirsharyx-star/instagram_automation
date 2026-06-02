@@ -20,6 +20,7 @@ const AISettings: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [notification, setNotification] = useState<{ type: 'success' | 'error', message: string } | null>(null);
+  const [showUpgradePrompt, setShowUpgradePrompt] = useState(false);
 
   useEffect(() => {
     if (notification) {
@@ -59,6 +60,10 @@ const AISettings: React.FC = () => {
   };
 
   const handleSave = async () => {
+    if (!hasProPlan) {
+      setShowUpgradePrompt(true);
+      return;
+    }
     try {
       setIsSaving(true);
       await updateAIPrompt(prompt);
@@ -81,7 +86,7 @@ const AISettings: React.FC = () => {
 
   return (
     <div className="relative flex flex-col gap-8 min-h-full animate-in fade-in duration-700 pb-10">
-      {!hasProPlan && <UpgradeOverlay feature="AI Persona" />}
+      {showUpgradePrompt && <UpgradeOverlay feature="AI Persona" onClose={() => setShowUpgradePrompt(false)} />}
       <header className="flex justify-between items-end">
         <div className="flex items-center gap-6">
           <div className="w-14 h-14 bg-purple-500/10 text-purple-400 rounded-2xl flex items-center justify-center border border-purple-500/20 shadow-inner">

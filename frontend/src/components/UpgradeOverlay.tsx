@@ -1,17 +1,26 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Lock, Sparkles } from 'lucide-react';
+import { Lock, Sparkles, X } from 'lucide-react';
 
 interface Props {
   feature: string;
+  onClose?: () => void;
 }
 
-const UpgradeOverlay: React.FC<Props> = ({ feature }) => {
+const UpgradeOverlay: React.FC<Props> = ({ feature, onClose }) => {
   const navigate = useNavigate();
 
   return (
     <div className="absolute inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-black/40 rounded-2xl">
-      <div className="text-center p-8 max-w-md">
+      <div className="text-center p-8 max-w-md relative">
+        {onClose && (
+          <button 
+            onClick={onClose}
+            className="absolute top-0 right-0 p-2 text-zinc-400 hover:text-white transition-colors"
+          >
+            <X size={20} />
+          </button>
+        )}
         <div className="mx-auto w-16 h-16 rounded-2xl bg-purple-500/20 border border-purple-500/30 flex items-center justify-center mb-6">
           <Lock size={28} className="text-purple-400" />
         </div>

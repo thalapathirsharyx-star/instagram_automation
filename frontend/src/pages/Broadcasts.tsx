@@ -60,6 +60,7 @@ const Broadcasts: React.FC = () => {
   const [error, setError] = useState('');
   const [audienceCount, setAudienceCount] = useState<number | null>(null);
   const [isCountLoading, setIsCountLoading] = useState(false);
+  const [showUpgradePrompt, setShowUpgradePrompt] = useState(false);
 
   // Custom modal states
   const [confirmConfig, setConfirmConfig] = useState<{
@@ -114,6 +115,10 @@ const Broadcasts: React.FC = () => {
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!hasProPlan) {
+      setShowUpgradePrompt(true);
+      return;
+    }
     if (!form.name.trim() || !form.message.trim()) {
       setError('Name and message are required.');
       return;
@@ -162,6 +167,10 @@ const Broadcasts: React.FC = () => {
   };
 
   const handleSend = (id: string) => {
+    if (!hasProPlan) {
+      setShowUpgradePrompt(true);
+      return;
+    }
     setConfirmConfig({
       isOpen: true,
       title: 'Launch Broadcast',
@@ -223,7 +232,7 @@ const Broadcasts: React.FC = () => {
 
   return (
     <div className="relative flex flex-col gap-8 min-h-full animate-in fade-in duration-700 pb-10">
-      {!hasProPlan && <UpgradeOverlay feature="Broadcasts" />}
+      {showUpgradePrompt && <UpgradeOverlay feature="Broadcasts" onClose={() => setShowUpgradePrompt(false)} />}
       
       {/* Header */}
       <div className="flex flex-col gap-4 md:flex-row md:justify-between md:items-end">

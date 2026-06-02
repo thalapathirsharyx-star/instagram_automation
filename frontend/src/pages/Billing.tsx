@@ -148,7 +148,6 @@ const Billing: React.FC = () => {
       'Basic automations (up to 4)',
       '1 user',
       'Unified inbox',
-      'AI-powered auto replies',
       'ReplyZens branding on replies'
     ],
     'Pro': [
@@ -309,7 +308,6 @@ const Billing: React.FC = () => {
                 <li className="flex items-start gap-2"><Check size={14} className="text-purple-500 mt-0.5 shrink-0" /> Basic automations (up to 4)</li>
                 <li className="flex items-start gap-2"><Check size={14} className="text-purple-500 mt-0.5 shrink-0" /> 1 user</li>
                 <li className="flex items-start gap-2"><Check size={14} className="text-purple-500 mt-0.5 shrink-0" /> Unified inbox</li>
-                <li className="flex items-start gap-2"><Check size={14} className="text-purple-500 mt-0.5 shrink-0" /> AI-powered auto replies</li>
                 <li className="flex items-start gap-2"><Check size={14} className="text-purple-500 mt-0.5 shrink-0" /> ReplyZens branding on replies</li>
               </ul>
             </div>
