@@ -51,7 +51,12 @@ export class InstagramController extends AuthBaseController {
         console.error(`- rawBody Type: ${typeof req.rawBody} (isBuffer: ${Buffer.isBuffer(req.rawBody)})`);
         console.error(`- rawBody Length: ${req.rawBody.length}`);
         console.error(`- rawBody Content: "${req.rawBody.toString('utf-8')}"`);
-        throw new HttpException('Invalid signature', HttpStatus.FORBIDDEN);
+        
+        if (process.env.BYPASS_SIGNATURE === 'true') {
+          console.warn('[SECURITY WARNING] Bypassing invalid signature check because BYPASS_SIGNATURE=true is set in environment!');
+        } else {
+          throw new HttpException('Invalid signature', HttpStatus.FORBIDDEN);
+        }
       }
     } else {
       console.warn('[SECURITY WARNING] Webhook received without signature validation. Ensure rawBody is enabled and FB_APP_SECRET is set.');
