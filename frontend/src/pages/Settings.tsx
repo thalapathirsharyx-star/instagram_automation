@@ -51,6 +51,30 @@ const Settings: React.FC = () => {
   const [connectionDetails, setConnectionDetails] = useState<{ name: string, id: string } | null>(null);
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [profileEmail, setProfileEmail] = useState(user?.email || '');
+  const [isUpdatingProfile, setIsUpdatingProfile] = useState(false);
+
+  const handleUpdateProfile = async () => {
+    if (!profileEmail) {
+      toast.error('Email is required.');
+      return;
+    }
+    setIsUpdatingProfile(true);
+    try {
+      const res = await api.put('/User/UpdateProfile', { email: profileEmail });
+      if (res.data.Type === 'S') {
+        updateUser({ email: profileEmail });
+        setIsEditingProfile(false);
+        toast.success('Profile updated successfully!');
+      } else {
+        toast.error(res.data.Message || 'Failed to update profile.');
+      }
+    } catch (err: any) {
+      toast.error(err.response?.data?.message || 'An error occurred while updating profile.');
+    } finally {
+      setIsUpdatingProfile(false);
+    }
+  };
+
   const [autoReplyEnabled, setAutoReplyEnabled] = useState(true);
   const [humanHandoffAlerts, setHumanHandoffAlerts] = useState(true);
 
@@ -332,13 +356,11 @@ const Settings: React.FC = () => {
                     </div>
                     <div className="flex gap-2">
                       <button 
-                        onClick={() => {
-                          setIsEditingProfile(false);
-                          toast.success('Profile updated successfully! (Mock)');
-                        }}
-                        className="w-fit px-6 py-2.5 bg-purple-500 text-white rounded-xl font-bold hover:bg-purple-600 transition-all shadow-sm text-sm"
+                        onClick={handleUpdateProfile}
+                        disabled={isUpdatingProfile}
+                        className="w-fit px-6 py-2.5 bg-purple-500 text-white rounded-xl font-bold hover:bg-purple-600 transition-all shadow-sm text-sm disabled:opacity-50"
                       >
-                        Save Changes
+                        {isUpdatingProfile ? 'Saving...' : 'Save Changes'}
                       </button>
                       <button 
                         onClick={() => {
@@ -608,7 +630,7 @@ const Settings: React.FC = () => {
                 <div className="space-y-4">
                   <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest ml-1">Webhook Endpoint</label>
                   <div className="bg-zinc-800 p-4 rounded-2xl border border-white/5 text-sm font-mono text-zinc-500 truncate shadow-inner">
-                    https://replyzens.in/api/v1/Instagram/Webhook
+                    {`${window.location.origin}/api/v1/Instagram/Webhook`}
                   </div>
                   <button className="flex items-center gap-2 text-xs font-bold text-purple-400 hover:text-purple-300 transition-colors uppercase tracking-widest">
                     <Zap size={14} /> Test Connectivity

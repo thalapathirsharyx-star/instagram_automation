@@ -63,6 +63,30 @@ export class UserService {
     delete UserUpdateData.email;
     await user.update(Id, UserUpdateData);
     this._AuditLogService.AuditEmitEvent({ PerformedType: user.name, ActionType: LogActionEnum.Update, PrimaryId: [UserUpdateData.id] });
+  }
+
+  async UpdateProfile(Id: string, email: string) {
+    const UserUpdateData = await user.findOne({ where: { id: Id } });
+    if (!UserUpdateData) {
+      throw new Error('User not found');
+    }
+    
+    const existing = await user.findOne({ where: { email, id: Not(Id) } });
+    if (existing) {
+      throw new Error('Email is already taken by another user');
+    }
+
+    UserUpdateData.email = email;
+    UserUpdateData.updated_by_id = Id;
+    UserUpdateData.updated_on = new Date();
+    await UserUpdateData.save();
+    
+    this._AuditLogService.AuditEmitEvent({ 
+      PerformedType: user.name, 
+      ActionType: LogActionEnum.Update, 
+      PrimaryId: [UserUpdateData.id] 
+    });
+    
     return UserUpdateData;
   }
 

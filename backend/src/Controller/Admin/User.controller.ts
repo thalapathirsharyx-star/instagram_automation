@@ -67,6 +67,17 @@ export class UserController extends JWTAuthController {
     return this.SendResponse(ResponseEnum.Success, ResponseEnum.Reset);
   }
 
+  @Put('UpdateProfile')
+  @UseGuards(JwtAuthGuard)
+  async UpdateProfile(@Body() body: { email: string }, @CurrentUser() UserId: string) {
+    try {
+      await this._UserService.UpdateProfile(UserId, body.email);
+      return this.SendResponse(ResponseEnum.Success, "Profile updated successfully");
+    } catch (e: any) {
+      return this.SendResponse(ResponseEnum.Error, e.message);
+    }
+  }
+
   @Post('Admin/Create')
   @UseGuards(JwtAuthGuard, AdminSubRoleGuard)
   @SuperAdminRoles('Owner')

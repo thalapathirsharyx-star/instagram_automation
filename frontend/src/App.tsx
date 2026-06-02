@@ -65,25 +65,70 @@ function AppContent() {
     }
   }, [theme]);
   
-  const publicRoutes = ['/', '/login', '/signup', '/privacy', '/terms', '/data-deletion', '/verify-email'];
-  const isPublicPage = publicRoutes.includes(location.pathname);
+  const hostname = window.location.hostname;
+  const isLandingDomain = hostname === 'replyzens.in' || hostname === 'www.replyzens.in' || hostname.startsWith('landing.');
 
-  // If user is logged in and tries to access login, redirect to appropriate dashboard
-  if (isAuthenticated && location.pathname === '/login') {
+  // Routing for landing page domain (replyzens.in)
+  if (isLandingDomain) {
+    if (location.pathname === '/login') {
+      window.location.href = 'https://app.replyzens.in/login';
+      return null;
+    }
+    if (location.pathname === '/signup') {
+      window.location.href = 'https://app.replyzens.in/signup';
+      return null;
+    }
+
+    const landingPublicRoutes = ['/', '/privacy', '/terms', '/data-deletion'];
+    const isLandingRoute = landingPublicRoutes.includes(location.pathname);
+
+    if (isLandingRoute) {
+      return (
+        <Routes>
+          <Route path="/" element={<Landing />} />
+          <Route path="/privacy" element={<PrivacyPolicy />} />
+          <Route path="/terms" element={<TermsOfService />} />
+          <Route path="/data-deletion" element={<DataDeletion />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      );
+    } else {
+      return <Navigate to="/" replace />;
+    }
+  }
+
+  // Routing for main app domain (app.replyzens.in)
+  if (location.pathname === '/privacy') {
+    window.location.href = 'https://replyzens.in/privacy';
+    return null;
+  }
+  if (location.pathname === '/terms') {
+    window.location.href = 'https://replyzens.in/terms';
+    return null;
+  }
+  if (location.pathname === '/data-deletion') {
+    window.location.href = 'https://replyzens.in/data-deletion';
+    return null;
+  }
+  if (location.pathname === '/landing') {
+    return <Landing />;
+  }
+
+  const appPublicRoutes = ['/login', '/signup', '/verify-email'];
+  const isAppPublicPage = appPublicRoutes.includes(location.pathname);
+
+  // If user is logged in and tries to access login/signup, redirect to dashboard
+  if (isAuthenticated && (location.pathname === '/login' || location.pathname === '/signup')) {
     return <Navigate to={user?.roleCode === 'SUPER_ADMIN' ? "/admin/dashboard" : "/dashboard"} replace />;
   }
 
-  if (isPublicPage) {
+  if (isAppPublicPage) {
     return (
       <Routes>
-        <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/verify-email" element={<VerifyEmail />} />
-        <Route path="/privacy" element={<PrivacyPolicy />} />
-        <Route path="/terms" element={<TermsOfService />} />
-        <Route path="/data-deletion" element={<DataDeletion />} />
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     );
   }
