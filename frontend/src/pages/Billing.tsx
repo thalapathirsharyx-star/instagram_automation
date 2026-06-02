@@ -264,52 +264,12 @@ const Billing: React.FC = () => {
             <h3 className="font-bold text-zinc-900 text-lg mb-1">Invoices</h3>
             <p className="text-sm text-zinc-500 mb-6">Access all your previous invoices.</p>
             
-            <div className="border border-zinc-200 rounded-2xl overflow-hidden bg-white shadow-sm">
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="bg-zinc-50/80 border-b border-zinc-200">
-                    <th className="px-6 py-4 text-xs font-bold text-zinc-500 uppercase tracking-wider">Invoice</th>
-                    <th className="px-6 py-4 text-xs font-bold text-zinc-500 uppercase tracking-wider">Date</th>
-                    <th className="px-6 py-4 text-xs font-bold text-zinc-500 uppercase tracking-wider">Status</th>
-                    <th className="px-6 py-4 text-xs font-bold text-zinc-500 uppercase tracking-wider">Amount</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-zinc-200">
-                  <tr className="hover:bg-zinc-50 transition-colors group cursor-pointer">
-                    <td className="px-6 py-4 flex items-center gap-3">
-                      <FileText className="text-red-500/80 group-hover:text-red-500 transition-colors" size={18} />
-                      <span className="text-sm font-bold text-zinc-700 group-hover:text-zinc-900">Invoice #012 - Dec 2023</span>
-                    </td>
-                    <td className="px-6 py-4 text-sm font-medium text-zinc-500">Dec 1, 2023</td>
-                    <td className="px-6 py-4">
-                      <span className="px-2.5 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs font-bold">Paid</span>
-                    </td>
-                    <td className="px-6 py-4 text-sm font-bold text-zinc-700">{planPrice === '₹0' ? '₹0.00' : planPrice}</td>
-                  </tr>
-                  <tr className="hover:bg-zinc-50 transition-colors group cursor-pointer">
-                    <td className="px-6 py-4 flex items-center gap-3">
-                      <FileText className="text-red-500/80 group-hover:text-red-500 transition-colors" size={18} />
-                      <span className="text-sm font-bold text-zinc-700 group-hover:text-zinc-900">Invoice #011 - Nov 2023</span>
-                    </td>
-                    <td className="px-6 py-4 text-sm font-medium text-zinc-500">Nov 1, 2023</td>
-                    <td className="px-6 py-4">
-                      <span className="px-2.5 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs font-bold">Paid</span>
-                    </td>
-                    <td className="px-6 py-4 text-sm font-bold text-zinc-700">{planPrice === '₹0' ? '₹0.00' : planPrice}</td>
-                  </tr>
-                  <tr className="hover:bg-zinc-50 transition-colors group cursor-pointer">
-                    <td className="px-6 py-4 flex items-center gap-3">
-                      <FileText className="text-red-500/80 group-hover:text-red-500 transition-colors" size={18} />
-                      <span className="text-sm font-bold text-zinc-700 group-hover:text-zinc-900">Invoice #010 - Oct 2023</span>
-                    </td>
-                    <td className="px-6 py-4 text-sm font-medium text-zinc-500">Oct 1, 2023</td>
-                    <td className="px-6 py-4">
-                      <span className="px-2.5 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs font-bold">Paid</span>
-                    </td>
-                    <td className="px-6 py-4 text-sm font-bold text-zinc-700">{planPrice === '₹0' ? '₹0.00' : planPrice}</td>
-                  </tr>
-                </tbody>
-              </table>
+            <div className="border border-zinc-200 rounded-2xl overflow-hidden bg-white shadow-sm flex flex-col items-center justify-center py-16 px-4 text-center">
+              <div className="w-16 h-16 bg-zinc-50 rounded-full flex items-center justify-center mb-4 border border-zinc-200">
+                <FileText className="text-zinc-400" size={24} />
+              </div>
+              <h4 className="font-bold text-zinc-900 text-lg mb-1">No invoices yet</h4>
+              <p className="text-sm text-zinc-500 max-w-sm">When you subscribe to a premium plan or make a payment, your invoices will appear here.</p>
             </div>
           </div>
         </div>

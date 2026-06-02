@@ -75,6 +75,10 @@ export class CompanyController extends JWTAuthController {
   @Post('CreateRazorpayOrder')
   @UseGuards(ImpersonationBlockGuard)
   async CreateRazorpayOrder(@Body() body: { plan: string }, @Req() req: any) {
+    if (!req.user?.company_id) {
+      return this.SendResponse(ResponseEnum.Error, "No company associated with this account.");
+    }
+
     if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
       return this.SendResponse(ResponseEnum.Error, 'Razorpay keys are not configured on the server.');
     }
@@ -93,13 +97,13 @@ export class CompanyController extends JWTAuthController {
       const order = await rzp.orders.create({
         amount: amount,
         currency: 'INR',
-        receipt: `rcpt_${req.user.company_id.substring(0,8)}_${Date.now()}`
+        receipt: `rcpt_${String(req.user?.company_id || 'unkn').substring(0,8)}_${Date.now()}`
       });
 
       return { Type: ResponseEnum.Success, Data: order };
     } catch (err: any) {
       console.error('Razorpay Error:', err);
-      return this.SendResponse(ResponseEnum.Error, 'Failed to create Razorpay order.');
+      return this.SendResponse(ResponseEnum.Error, `Failed to create Razorpay order: ${err?.error?.description || err.message || 'Unknown error'}`);
     }
   }
 
