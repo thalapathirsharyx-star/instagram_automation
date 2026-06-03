@@ -36,7 +36,11 @@ import {
   KanbanSquare,
   Hexagon,
   Settings,
-  Bell
+  Bell,
+  Bot,
+  Clock,
+  MessageCircle,
+  Calendar
 } from 'lucide-react';
 
 const Instagram = ({ size = 24, className = "" }: { size?: number; className?: string }) => (
@@ -196,7 +200,7 @@ const CodeSetupTabs: React.FC = () => {
       </div>
 
       {/* Visual Animation Panel */}
-      <div className="dark relative rounded-2xl bg-[#0B0D13] border border-white/5 overflow-hidden shadow-2xl p-6 min-h-[300px] flex flex-col justify-center items-center">
+      <div className="dark relative rounded-2xl bg-zinc-950 border border-white/5 overflow-hidden shadow-2xl p-6 min-h-[300px] flex flex-col justify-center items-center">
         {/* Top bar mockup */}
         <div className="absolute top-0 left-0 right-0 h-9 bg-[#11141D] border-b border-white/5 flex items-center px-4 justify-between">
           <div className="flex gap-1.5">
@@ -405,7 +409,7 @@ const CodeSetupTabs: React.FC = () => {
                   <p className="text-[11px] font-medium leading-relaxed">
                     Yes! We have 3 pairs left in size 10. The price is ₹2,499 with free shipping. Would you like a direct payment checkout link?
                   </p>
-                  <div className="absolute -bottom-4 right-1 flex items-center gap-1 text-[8px] font-extrabold text-brand-pink bg-[#0B0D13] px-2 py-0.5 rounded-full border border-white/5">
+                  <div className="absolute -bottom-4 right-1 flex items-center gap-1 text-[8px] font-extrabold text-brand-pink bg-zinc-950 px-2 py-0.5 rounded-full border border-white/5">
                     <Sparkles size={8} /> Auto-Answered by AI
                   </div>
                 </motion.div>
@@ -498,7 +502,7 @@ const CodeSetupTabs: React.FC = () => {
 
 const NoiseFilterMockup: React.FC = () => {
   return (
-    <div className="dark w-full bg-[#0B0D13] border border-white/5 rounded-3xl overflow-hidden shadow-2xl shadow-black/40 flex flex-col h-[400px]">
+    <div className="dark w-full bg-zinc-950 border border-white/5 rounded-3xl overflow-hidden shadow-2xl shadow-black/40 flex flex-col h-[400px]">
       {/* Browser Bar */}
       <div className="h-10 bg-[#11141D] border-b border-white/5 flex items-center justify-between px-4">
         <div className="flex gap-1.5">
@@ -506,7 +510,7 @@ const NoiseFilterMockup: React.FC = () => {
           <div className="w-2.5 h-2.5 rounded-full bg-white/10" />
           <div className="w-2.5 h-2.5 rounded-full bg-white/10" />
         </div>
-        <div className="flex items-center gap-1.5 px-3 py-1 bg-black/20 rounded-lg border border-white/5">
+        <div className="flex items-center gap-1.5 px-3 py-1 bg-zinc-900/50 rounded-lg border border-white/5">
           <Shield size={10} className="text-success" />
           <span className="text-[9px] text-zinc-400 font-mono">noise-filter-engine.bin</span>
         </div>
@@ -1208,7 +1212,7 @@ const PipelineFlowSection: React.FC = () => {
                 onClick={() => setActiveStep(1)}
                 className={`w-16 h-16 rounded-[1rem] flex items-center justify-center border transition-all cursor-pointer relative group ${activeStep === 1
                   ? 'bg-gradient-to-tr from-[#f9ce34] via-[#ee2a7b] to-[#6228d7] text-white border-white/20 shadow-[0_0_25px_rgba(238,42,123,0.5)] scale-110'
-                  : 'bg-[#111116] border-white/5 text-slate-500 hover:text-slate-300'
+                  : 'bg-zinc-900 border-white/5 text-slate-500 hover:text-slate-300'
                   }`}
               >
                 <Instagram size={28} />
@@ -1222,7 +1226,7 @@ const PipelineFlowSection: React.FC = () => {
                 onClick={() => setActiveStep(2)}
                 className={`w-16 h-16 rounded-full flex items-center justify-center border transition-all cursor-pointer relative group ${activeStep === 2
                   ? 'bg-[#111] text-white border-brand-purple/50 shadow-[0_0_30px_rgba(139,92,246,0.3)] scale-110'
-                  : 'bg-[#111116] border-white/5 text-slate-500 hover:text-slate-300'
+                  : 'bg-zinc-900 border-white/5 text-slate-500 hover:text-slate-300'
                   }`}
               >
                 <Zap size={24} className={activeStep === 2 ? "text-brand-purple" : ""} />
@@ -1236,7 +1240,7 @@ const PipelineFlowSection: React.FC = () => {
                 onClick={() => setActiveStep(3)}
                 className={`w-14 h-14 rounded-[1rem] flex items-center justify-center border transition-all cursor-pointer relative group ${activeStep === 3
                   ? 'bg-[#111] text-emerald-400 border-emerald-500/50 shadow-[0_0_30px_rgba(16,185,129,0.3)] scale-110'
-                  : 'bg-[#111116] border-white/5 text-slate-500 hover:text-slate-300'
+                  : 'bg-zinc-900 border-white/5 text-slate-500 hover:text-slate-300'
                   }`}
               >
                 <Database size={24} />
@@ -1256,6 +1260,426 @@ const PipelineFlowSection: React.FC = () => {
   );
 };
 
+
+const Metrics = () => (
+  <section className="py-16 border-y border-white/5 bg-zinc-900/50 backdrop-blur-xl relative z-10">
+    <div className="max-w-6xl mx-auto px-6">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:divide-x divide-white/5">
+        {[
+          { label: "Conversations Automated", value: "10,000+" },
+          { label: "Faster Response Time", value: "85%" },
+          { label: "More Qualified Leads", value: "3x" },
+          { label: "AI Availability", value: "24/7" },
+        ].map((m, i) => (
+          <motion.div initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} key={i} className="text-center px-4">
+            <div className="text-3xl md:text-4xl font-extrabold text-white mb-2 tracking-tight">{m.value}</div>
+            <div className="text-[10px] md:text-xs font-bold text-zinc-500 uppercase tracking-wider">{m.label}</div>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  </section>
+);
+
+const Problem = () => (
+  <section className="py-24 relative bg-background">
+    <div className="max-w-6xl mx-auto px-6">
+      <div className="text-center max-w-3xl mx-auto mb-16">
+        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+          <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-4 text-white">Every Missed DM Is <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-pink to-brand-purple">Lost Revenue</span></h2>
+          <p className="text-sm md:text-base text-zinc-400 font-medium leading-relaxed">Manual replies can't scale. While you sleep or focus on growing the business, your competitors are answering your customers instantly.</p>
+        </motion.div>
+      </div>
+      
+      <div className="grid md:grid-cols-3 gap-6">
+        {[
+          { icon: <Clock size={24} />, title: "Slow Responses", desc: "Customers leave before you reply. 78% of buyers purchase from the company that responds first." },
+          { icon: <MessageCircle size={24} />, title: "Repetitive Questions", desc: "Your team wastes hours answering the same pricing, sizing, and shipping questions daily." },
+          { icon: <X size={24} />, title: "Missed Opportunities", desc: "Potential buyers ghost you because they never get followed up or guided to checkout." }
+        ].map((p, i) => (
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} key={i}>
+            <div className="p-8 rounded-3xl bg-card/20 border border-white/5 hover:border-white/10 transition-colors h-full shadow-lg">
+              <div className="w-12 h-12 rounded-xl bg-red-500/10 text-red-400 flex items-center justify-center mb-6">
+                {p.icon}
+              </div>
+              <h3 className="text-xl font-bold mb-3 text-white">{p.title}</h3>
+              <p className="text-zinc-400 leading-relaxed text-sm">{p.desc}</p>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  </section>
+);
+
+const DiagramNode = ({ icon, title, desc, active = false }: { icon: React.ReactNode, title: string, desc: string, active?: boolean }) => (
+  <div className={`flex flex-col items-center text-center p-6 rounded-2xl w-40 shrink-0 transition-all duration-500 ${active ? 'bg-brand-purple/10 border border-brand-purple/50 shadow-[0_0_30px_rgba(139,92,246,0.3)] scale-105 z-10' : 'bg-white/5 border border-white/10 scale-100 opacity-50'}`}>
+    <div className={`w-12 h-12 rounded-full flex items-center justify-center mb-3 transition-colors duration-500 ${active ? 'bg-brand-purple text-white shadow-[0_0_15px_rgba(139,92,246,0.8)]' : 'bg-zinc-900 text-zinc-500'}`}>
+      {icon}
+    </div>
+    <div className={`font-bold text-sm mb-1 transition-colors duration-500 ${active ? 'text-white' : 'text-zinc-400'}`}>{title}</div>
+    <div className="text-[10px] text-zinc-500">{desc}</div>
+  </div>
+);
+
+const DiagramArrow = ({ active = false }: { active?: boolean }) => (
+  <div className="hidden lg:flex flex-col items-center justify-center w-12 shrink-0 overflow-hidden">
+    <div className={`h-0.5 w-full relative transition-colors duration-500 ${active ? 'bg-brand-purple' : 'bg-black/10 dark:bg-white/10'}`}>
+      {active && (
+        <motion.div
+          className="absolute inset-0 bg-gradient-to-r from-transparent via-brand-pink to-transparent"
+          initial={{ x: '-100%' }}
+          animate={{ x: '100%' }}
+          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+        />
+      )}
+      <div className={`absolute right-0 top-1/2 -translate-y-1/2 border-t-[4px] border-b-[4px] border-l-[4px] border-transparent transition-colors duration-500 ${active ? 'border-l-brand-purple' : 'border-l-black/20 dark:border-l-white/20'}`} />
+    </div>
+  </div>
+);
+
+const Solution = () => {
+  const [step, setStep] = useState(1);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setStep((prev) => (prev >= 4 ? 1 : prev + 1));
+    }, 2500);
+    return () => clearInterval(timer);
+  }, []);
+
+  return (
+    <section className="py-24 border-y border-white/5 relative overflow-hidden bg-zinc-950/50">
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-brand-purple/10 blur-[120px] rounded-full pointer-events-none" />
+      <div className="max-w-6xl mx-auto px-6 relative z-10">
+        <div className="text-center max-w-3xl mx-auto mb-16">
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-brand-purple/10 border border-brand-purple/30 text-brand-purple text-[10px] font-bold uppercase tracking-widest mb-6">
+               <Bot size={14} /> Meet Your AI Assistant
+            </div>
+            <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-4 text-white">Your AI Instagram Sales Assistant</h2>
+            <p className="text-sm md:text-base text-zinc-400 font-medium">A seamless architecture designed to convert engagement into revenue without human intervention.</p>
+          </motion.div>
+        </div>
+
+        <motion.div initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ delay: 0.2 }}>
+          <div className="max-w-5xl mx-auto p-1 rounded-[32px] bg-gradient-to-b from-white/10 to-transparent border border-white/10">
+             <div className="bg-zinc-950 rounded-[28px] p-8 lg:p-12 shadow-2xl relative overflow-hidden">
+               <div className="absolute inset-0 opacity-[0.03] bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]" />
+               
+               <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-6 lg:gap-4">
+                  <DiagramNode icon={<MessageCircle size={20} />} title="Instagram DM" desc="Customer messages you" active={step >= 1} />
+                  <DiagramArrow active={step >= 2} />
+                  <DiagramNode icon={<Bot size={20} className={step >= 2 ? "text-white" : ""} />} title="AI Understands Intent" desc="NLP processes context" active={step >= 2} />
+                  <DiagramArrow active={step >= 3} />
+                  <div className="flex flex-col gap-4">
+                    <DiagramNode icon={<Zap size={20} />} title="Replies Instantly" desc="Answers questions" active={step >= 3} />
+                    <DiagramNode icon={<Users size={20} />} title="Captures Lead" desc="Extracts email/phone" active={step >= 3} />
+                    <DiagramNode icon={<Calendar size={20} />} title="Books Meeting" desc="Shares calendar link" active={step >= 3} />
+                  </div>
+                  <DiagramArrow active={step >= 4} />
+                  <DiagramNode icon={<Database size={20} />} title="Sends To CRM" desc="Syncs data automatically" active={step >= 4} />
+               </div>
+             </div>
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  );
+};
+
+const NewFeatures = () => (
+  <section className="py-24 relative bg-background">
+    <div className="max-w-6xl mx-auto px-6">
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {[
+          { icon: <Bot size={24} />, title: "AI Replies", desc: "Natural, human-like conversations powered by advanced AI that learns from your business." },
+          { icon: <MessageCircle size={24} />, title: "Comment-to-DM", desc: "Instantly convert post and reel engagement into direct messages and leads." },
+          { icon: <Users size={24} />, title: "Lead Qualification", desc: "Automatically collect and qualify customer details before passing them to your team." },
+          { icon: <Inbox size={24} />, title: "Smart Inbox", desc: "Manage all your automated and manual conversations in one clean, unified workspace." },
+          { icon: <Calendar size={24} />, title: "Appointment Booking", desc: "Let AI book meetings and schedule calls directly inside Instagram DMs." },
+          { icon: <BarChart3 size={24} />, title: "Analytics Dashboard", desc: "Track leads, conversion rates, and response metrics to measure your ROI." }
+        ].map((f, i) => (
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} key={i}>
+            <div className="p-8 rounded-3xl bg-card/20 border border-white/5 hover:border-brand-purple/30 hover:shadow-[0_0_30px_rgba(139,92,246,0.1)] transition-all group h-full">
+              <div className="w-14 h-14 rounded-2xl bg-zinc-900 border border-white/10 flex items-center justify-center mb-6 group-hover:bg-brand-purple/20 group-hover:text-brand-purple group-hover:border-brand-purple/30 transition-colors text-zinc-400">
+                {f.icon}
+              </div>
+              <h3 className="text-lg font-bold mb-3 text-white">{f.title}</h3>
+              <p className="text-zinc-400 leading-relaxed text-sm">{f.desc}</p>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  </section>
+);
+
+const Automations = () => (
+  <section className="py-24 relative border-t border-white/5 bg-zinc-950/50">
+    <div className="max-w-6xl mx-auto px-6">
+      <div className="text-center max-w-3xl mx-auto mb-16">
+        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+          <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-4 text-white">Automations That Drive Growth</h2>
+          <p className="text-sm md:text-base text-zinc-400 font-medium">Pre-built flows that generate revenue while you sleep.</p>
+        </motion.div>
+      </div>
+
+      <div className="grid md:grid-cols-3 gap-6">
+        {[
+          { title: 'Comment "PRICE"', flows: ["Post Comment", "DM Sent", "Lead Captured"] },
+          { title: 'Story Reply', flows: ["Story Reply", "AI Qualification", "Appointment Booked"] },
+          { title: 'Keyword Message', flows: ["Keyword DM", "Product Recommendation", "Sale Closed"] },
+        ].map((a, i) => (
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} key={i}>
+            <div className="p-8 rounded-3xl bg-card/30 border border-white/5 hover:border-brand-pink/30 transition-colors shadow-lg group">
+               <h3 className="text-xl font-bold mb-8 text-white group-hover:text-brand-pink transition-colors">{a.title}</h3>
+               <div className="space-y-4 relative">
+                 <div className="absolute left-6 top-6 bottom-6 w-px bg-gradient-to-b from-brand-purple to-brand-pink opacity-50 group-hover:opacity-100 transition-opacity" />
+                 {a.flows.map((step, j) => (
+                   <div key={j} className="flex items-center gap-4 relative z-10">
+                     <div className="w-12 h-12 rounded-full bg-zinc-950 border-2 border-white/10 flex items-center justify-center text-brand-purple font-bold shadow-lg text-sm group-hover:border-brand-pink/30 group-hover:text-brand-pink transition-colors">
+                       {j + 1}
+                     </div>
+                     <div className="font-semibold text-zinc-300 text-sm bg-white/5 px-4 py-3 rounded-xl flex-1 border border-white/5">
+                       {step}
+                     </div>
+                   </div>
+                 ))}
+               </div>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  </section>
+);
+
+const Comparison = () => (
+  <section className="py-24 bg-background relative border-t border-black/5 dark:border-white/5">
+    <div className="max-w-5xl mx-auto px-6 relative z-10">
+      <div className="text-center mb-16">
+        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+          <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-4 text-foreground">Why upgrade from Manual DMs?</h2>
+        </motion.div>
+      </div>
+      
+      <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.2 }}>
+        <div className="relative max-w-4xl mx-auto">
+          {/* Floating Highlight for ReplyZens */}
+          <div className="absolute top-0 bottom-0 left-1/3 w-1/3 bg-white dark:bg-zinc-900 rounded-3xl shadow-[0_0_40px_rgba(139,92,246,0.15)] border border-brand-purple/20 -z-10 transform scale-y-110" />
+          
+          <div className="grid grid-cols-3 items-center">
+            {/* Headers */}
+            <div className="p-4 md:p-8 font-bold text-xs md:text-sm uppercase tracking-widest text-zinc-400">Core Capabilities</div>
+            <div className="p-4 md:p-8 text-center flex flex-col items-center justify-center">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-purple/10 text-brand-purple font-bold text-[10px] uppercase tracking-wider mb-2 md:mb-3">
+                 <Sparkles size={12} /> The Smart Way
+              </div>
+              <div className="font-extrabold text-lg md:text-2xl text-foreground">ReplyZens</div>
+            </div>
+            <div className="p-4 md:p-8 font-bold text-center text-xs md:text-sm uppercase tracking-widest text-zinc-400">Manual DMs</div>
+
+            {/* Rows */}
+            {[
+              { label: "Response Time", pro: "Instant (< 1s)", con: "Hours or Days" },
+              { label: "Availability", pro: "24/7/365", con: "Business Hours" },
+              { label: "Lead Qualification", pro: "Automated & Scored", con: "Manual Guesswork" },
+              { label: "Meeting Booking", pro: "Directly in Chat", con: "Back-and-forth Links" },
+              { label: "CRM Syncing", pro: "Real-time Sync", con: "Manual Data Entry" },
+              { label: "Cost to Scale", pro: "$0 Extra", con: "Hire More Staff" }
+            ].map((row, i) => (
+              <React.Fragment key={i}>
+                <div className="p-4 md:p-6 border-t border-black/5 dark:border-white/5 font-semibold text-xs md:text-base text-foreground flex items-center">
+                  {row.label}
+                </div>
+                <div className="p-4 md:p-6 border-t border-brand-purple/10 text-center font-bold text-xs md:text-base text-brand-purple">
+                  {row.pro}
+                </div>
+                <div className="p-4 md:p-6 border-t border-black/5 dark:border-white/5 text-center font-medium text-xs md:text-base text-zinc-500">
+                  {row.con}
+                </div>
+              </React.Fragment>
+            ))}
+          </div>
+        </div>
+      </motion.div>
+    </div>
+  </section>
+);
+
+const ROICalculator = () => {
+  const [dms, setDms] = useState(1000);
+  const [conversion, setConversion] = useState(5);
+  const [value, setValue] = useState(100);
+
+  const missedRevenue = Math.round((dms * 0.4) * (conversion / 100) * value);
+
+  return (
+    <section className="py-24 relative border-t border-white/5 bg-zinc-950/50">
+      <div className="max-w-6xl mx-auto px-6">
+        <div className="grid lg:grid-cols-2 gap-16 items-center">
+          <div>
+            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+              <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-6 text-white">Calculate Your Lost Revenue</h2>
+              <p className="text-sm md:text-base text-zinc-400 mb-10">See how much money you are leaving on the table by not automating your Instagram DMs.</p>
+              
+              <div className="space-y-8">
+                <div>
+                  <div className="flex justify-between mb-3">
+                    <label className="font-bold text-white text-sm">Monthly DMs</label>
+                    <span className="text-brand-purple font-bold text-sm">{dms.toLocaleString()}</span>
+                  </div>
+                  <input type="range" min="100" max="10000" step="100" value={dms} onChange={e => setDms(Number(e.target.value))} className="w-full h-1.5 bg-black/10 dark:bg-white/10 rounded-lg appearance-none cursor-pointer accent-brand-purple" />
+                </div>
+                <div>
+                  <div className="flex justify-between mb-3">
+                    <label className="font-bold text-white text-sm">Conversion Rate (%)</label>
+                    <span className="text-brand-purple font-bold text-sm">{conversion}%</span>
+                  </div>
+                  <input type="range" min="1" max="20" step="1" value={conversion} onChange={e => setConversion(Number(e.target.value))} className="w-full h-1.5 bg-black/10 dark:bg-white/10 rounded-lg appearance-none cursor-pointer accent-brand-purple" />
+                </div>
+                <div>
+                  <div className="flex justify-between mb-3">
+                    <label className="font-bold text-white text-sm">Average Deal Value ($)</label>
+                    <span className="text-brand-purple font-bold text-sm">${value.toLocaleString()}</span>
+                  </div>
+                  <input type="range" min="10" max="1000" step="10" value={value} onChange={e => setValue(Number(e.target.value))} className="w-full h-1.5 bg-black/10 dark:bg-white/10 rounded-lg appearance-none cursor-pointer accent-brand-purple" />
+                </div>
+              </div>
+            </motion.div>
+          </div>
+          
+          <motion.div initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ delay: 0.2 }}>
+            <div className="bg-gradient-to-br from-brand-purple to-brand-pink p-[1px] rounded-3xl shadow-[0_0_40px_rgba(139,92,246,0.2)]">
+              <div className="bg-zinc-950 rounded-[23px] p-10 md:p-12 text-center relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-brand-purple/20 blur-[80px] -z-10" />
+                <h3 className="text-lg font-bold text-zinc-400 uppercase tracking-widest mb-4">Revenue You're Missing</h3>
+                <div className="text-5xl md:text-7xl font-extrabold text-white mb-6 tracking-tighter">
+                  ${missedRevenue.toLocaleString()}
+                </div>
+                <p className="text-sm text-zinc-500 mb-8 font-medium">Per month due to slow replies and uncaptured leads.</p>
+                <Link to="/signup" className="block w-full py-4 rounded-xl bg-brand-purple text-white font-bold text-sm hover:bg-brand-purple/90 transition-colors shadow-xl">
+                  Stop Losing Money
+                </Link>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+const NewPricing = () => {
+  const navigate = useNavigate();
+  return (
+    <section id="pricing" className="py-24 border-t border-black/5 dark:border-white/5 relative bg-background">
+      <div className="max-w-6xl mx-auto px-6">
+        <div className="text-center max-w-2xl mx-auto mb-16">
+          <span className="text-xs font-bold uppercase tracking-widest text-brand-pink">Simple & Transparent</span>
+          <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-foreground mt-3 mb-4 leading-tight">
+            Pricing that scales with you.
+          </h2>
+          <p className="text-sm md:text-base text-zinc-500 font-medium leading-relaxed">
+            Start completely free with zero credit card required. Upgrade as your automated volume increases.
+          </p>
+        </div>
+
+        <div className="grid md:grid-cols-3 gap-8 max-w-[1000px] mx-auto">
+          {[
+            { 
+              name: "Free", 
+              for: "Explore basic automation features", 
+              price: "₹0", 
+              volume: "25",
+              btnText: "Start For Free",
+              features: ["Connect 1 IG Account", "4 Basic Automations", "1 Team User"] 
+            },
+            { 
+              name: "Pro", 
+              for: "For scaling creators & agencies", 
+              price: "₹2,499", 
+              popular: true, 
+              volume: "2,500",
+              btnText: "Try 14 Days Free",
+              features: ["Connect 3 IG Accounts", "Advanced AI Automations", "3 Team Users", "Full AI Features & Sync"] 
+            },
+            { 
+              name: "Business", 
+              for: "For high-growth enterprise brands", 
+              price: "₹5,999", 
+              volume: "7,500",
+              btnText: "Start Trial",
+              features: ["Unlimited IG Accounts", "Dedicated Sync Server", "Unlimited Team Users", "Priority 24/7 VIP Support"] 
+            }
+          ].map((p, i) => (
+            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} key={i}>
+              <div className={`p-8 rounded-[32px] border h-full flex flex-col relative ${p.popular ? 'bg-[#0B0A10] border-brand-purple shadow-[0_0_40px_rgba(139,92,246,0.15)] transform md:-translate-y-4' : 'bg-card/20 border-black/10 dark:border-white/10 mt-4'}`}>
+                 {p.popular && (
+                   <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-brand-purple text-[#ffffff] text-[10px] font-extrabold px-4 py-1.5 rounded-full uppercase tracking-wider shadow-lg">
+                     Most Popular
+                   </div>
+                 )}
+                 <div className="mb-6">
+                   <h3 className={`text-2xl font-bold mb-2 ${p.popular ? 'text-[#ffffff]' : 'text-foreground'}`}>{p.name}</h3>
+                   <p className={`text-xs font-medium ${p.popular ? 'text-brand-pink' : 'text-zinc-500'}`}>{p.for}</p>
+                 </div>
+                 
+                 <div className="mb-6 flex items-baseline gap-1">
+                   <span className={`text-4xl font-extrabold ${p.popular ? 'text-[#ffffff]' : 'text-foreground'}`}>{p.price}</span>
+                   <span className={`text-sm font-bold ${p.popular ? 'text-zinc-400' : 'text-zinc-500'}`}>/mo</span>
+                 </div>
+                 
+                 <div className="mb-8">
+                   <div className={`text-2xl font-bold mb-1 ${p.popular ? 'text-[#ffffff]' : 'text-foreground'}`}>{p.volume}</div>
+                   <div className={`text-[10px] font-bold uppercase tracking-wider ${p.popular ? 'text-zinc-400' : 'text-zinc-500'}`}>Active Contacts / Mo</div>
+                 </div>
+                 
+                 <button onClick={() => navigate('/signup')} className={`w-full py-3.5 rounded-xl font-bold text-sm text-center transition-all mb-8 ${p.popular ? 'bg-brand-purple text-[#ffffff] hover:bg-brand-purple/90 shadow-lg shadow-brand-purple/20' : 'bg-black/5 dark:bg-white/5 text-foreground hover:bg-black/10 dark:hover:bg-white/10 border border-black/10 dark:border-white/10'}`}>
+                   {p.btnText}
+                 </button>
+                 
+                 <div className="space-y-4 flex-1">
+                   {p.features.map((f, j) => (
+                     <div key={j} className="flex items-center gap-3">
+                       <Check size={14} className={p.popular ? "text-brand-pink" : "text-zinc-400"} />
+                       <span className={`text-xs font-medium ${p.popular ? 'text-[#e2e8f0]' : 'text-zinc-600 dark:text-zinc-400'}`}>{f}</span>
+                     </div>
+                   ))}
+                 </div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+const NewCTA = () => {
+  const navigate = useNavigate();
+  return (
+    <section className="py-32 border-t border-white/5 relative overflow-hidden text-center bg-zinc-950/50">
+      <div className="absolute inset-0 bg-gradient-to-b from-brand-purple/5 to-transparent pointer-events-none" />
+      <div className="max-w-4xl mx-auto px-6 relative z-10">
+        <h2 className="text-4xl md:text-6xl font-extrabold text-white mb-6 leading-tight tracking-tight">
+          Stop Losing Leads In Your Instagram Inbox
+        </h2>
+        <p className="text-base md:text-lg text-zinc-400 max-w-xl mx-auto mb-10">
+          Start automating conversations, qualifying prospects, and growing your business today.
+        </p>
+        <button
+          onClick={() => navigate('/signup')}
+          className="w3-button-primary bg-gradient-to-r from-brand-pink to-brand-purple font-bold px-10 py-5 rounded-xl text-sm shadow-xl shadow-brand-pink/20 hover:scale-[1.02] active:scale-95 transition-all inline-flex items-center gap-2 group"
+        >
+          Start Free Trial
+          <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+        </button>
+      </div>
+    </section>
+  );
+};
 const Landing: React.FC = () => {
   const navigate = useNavigate();
 
@@ -1284,12 +1708,12 @@ const Landing: React.FC = () => {
 
               {/* Headline */}
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight mb-6 text-white leading-[1.1] text-balance">
-                Never worry about the backend of your <span className="gradient-text-ai">Instagram DMs</span> again.
+                Turn Every <span className="gradient-text-ai">Instagram DM</span> Into Revenue
               </h1>
 
               {/* Subtext */}
               <p className="text-sm sm:text-base text-zinc-400 font-medium leading-relaxed max-w-xl mb-8 text-balance">
-                Connect your account securely, set intelligent auto-replies, block spam with AI, qualify buyers instantly, and synchronize customer data directly to your favorite CRM.
+                ReplyZens automatically replies to Instagram messages, qualifies leads, answers questions, and books appointments—24/7.
               </p>
 
               {/* CTA Buttons */}
@@ -1329,444 +1753,21 @@ const Landing: React.FC = () => {
         {/* INTERACTIVE WORKFLOW PIPELINE */}
         <PipelineFlowSection />
 
-        {/* CRM PREVIEW SECTION */}
-        <section className="py-24 relative bg-white">
-          <div className="max-w-6xl mx-auto px-6">
-            <div className="text-center max-w-2xl mx-auto mb-16">
-              <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-zinc-900 mt-3 mb-4 leading-tight">
-                See ReplyZens in Action
-              </h2>
-              <p className="text-sm md:text-base text-zinc-500 font-medium leading-relaxed">
-                A unified workspace with chat inbox, lead details, and pipeline — all on one screen.
-              </p>
-            </div>
 
-            {/* Browser Window Mockup */}
-            <div className="w-full max-w-[1000px] mx-auto bg-white rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.1)] border border-zinc-200 overflow-hidden flex flex-col font-sans relative">
-              {/* Fake Browser Title Bar */}
-              <div className="h-10 bg-zinc-50 border-b border-zinc-200 flex items-center px-4 relative shrink-0">
-                <div className="flex gap-1.5 absolute left-4">
-                  <div className="w-2.5 h-2.5 rounded-full bg-red-400" />
-                  <div className="w-2.5 h-2.5 rounded-full bg-amber-400" />
-                  <div className="w-2.5 h-2.5 rounded-full bg-emerald-400" />
-                </div>
-                <div className="w-full text-center text-[10px] font-bold text-zinc-400 flex items-center justify-center gap-1.5 select-none">
-                  <Lock size={10} className="text-zinc-400" />
-                  app.replyzens.com — Business Intelligence Dashboard
-                </div>
-              </div>
-
-              {/* Fake Browser Content */}
-              <div className="flex h-[600px] bg-white">
-                {/* Sidebar */}
-                <div className="w-[240px] bg-white border-r border-zinc-200 flex flex-col py-6 px-4 shrink-0 overflow-y-auto">
-                  <div className="flex items-center gap-2.5 px-2 mb-8">
-                    <div className="w-6 h-6 bg-brand-purple/10 rounded flex items-center justify-center font-extrabold text-brand-purple text-xs border border-brand-purple/20">
-                      Z
-                    </div>
-                    <span className="font-extrabold text-zinc-900 text-lg tracking-tight">ReplyZens</span>
-                  </div>
-
-                  <div className="space-y-6">
-                    {/* General Section */}
-                    <div>
-                      <div className="text-[9px] font-bold text-zinc-400 uppercase tracking-widest px-2 mb-2">General</div>
-                      <div className="space-y-0.5">
-                        <div className="flex items-center gap-3 px-3 py-2 bg-emerald-50 text-emerald-700 rounded-lg font-bold text-xs cursor-default">
-                          <BarChart3 size={14} className="text-emerald-600" /> Dashboard
-                        </div>
-                        <div className="flex items-center gap-3 px-3 py-2 text-zinc-500 font-semibold text-xs cursor-default hover:bg-zinc-50 rounded-lg">
-                          <Inbox size={14} /> Inbox
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Lead Main Section */}
-                    <div>
-                      <div className="text-[9px] font-bold text-zinc-400 uppercase tracking-widest px-2 mb-2">Lead Main</div>
-                      <div className="space-y-0.5">
-                        <div className="flex items-center gap-3 px-3 py-2 text-zinc-500 font-semibold text-xs cursor-default hover:bg-zinc-50 rounded-lg">
-                          <Users size={14} /> Leads
-                        </div>
-                        <div className="flex items-center gap-3 px-3 py-2 text-zinc-500 font-semibold text-xs cursor-default hover:bg-zinc-50 rounded-lg">
-                          <Activity size={14} /> Follow-Ups
-                        </div>
-                        <div className="flex items-center gap-3 px-3 py-2 text-zinc-500 font-semibold text-xs cursor-default hover:bg-zinc-50 rounded-lg">
-                          <KanbanSquare size={14} /> Pipeline
-                        </div>
-                        <div className="flex items-center gap-3 px-3 py-2 text-zinc-500 font-semibold text-xs cursor-default hover:bg-zinc-50 rounded-lg">
-                          <FileText size={14} /> Templates
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Admin Section */}
-                    <div>
-                      <div className="text-[9px] font-bold text-zinc-400 uppercase tracking-widest px-2 mb-2">Admin</div>
-                      <div className="space-y-0.5">
-                        <div className="flex items-center gap-3 px-3 py-2 text-emerald-600 font-bold text-xs cursor-default hover:bg-emerald-50 rounded-lg">
-                          <Hexagon size={14} /> Master Control
-                        </div>
-                        <div className="flex items-center gap-3 px-3 py-2 text-zinc-500 font-semibold text-xs cursor-default hover:bg-zinc-50 rounded-lg">
-                          <Settings size={14} /> Settings
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Main Content Area */}
-                <div className="flex-1 bg-[#FAFAFA] flex flex-col min-w-0">
-                  {/* Top Header */}
-                  <div className="h-16 border-b border-zinc-200 bg-white flex items-center justify-between px-6 shrink-0">
-                    <div className="w-8 h-8 rounded-md bg-zinc-100 flex items-center justify-center text-zinc-500 border border-zinc-200">
-                      <div className="space-y-1">
-                        <div className="w-3 h-[2px] bg-zinc-500 rounded-full" />
-                        <div className="w-3 h-[2px] bg-zinc-500 rounded-full" />
-                        <div className="w-3 h-[2px] bg-zinc-500 rounded-full" />
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-4">
-                      <Bell size={16} className="text-zinc-400" />
-                      <Settings size={16} className="text-zinc-400" />
-                      <div className="flex items-center gap-2 pl-4 border-l border-zinc-200">
-                        <div className="w-8 h-8 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold text-[10px] border border-emerald-200">
-                          ZE
-                        </div>
-                        <div className="flex flex-col">
-                          <span className="text-[11px] font-bold text-zinc-900 leading-tight">Admin User</span>
-                          <span className="text-[8px] font-bold text-emerald-600 uppercase tracking-wider leading-tight">Super Admin</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Dashboard Content */}
-                  <div className="flex-1 p-8 overflow-y-auto">
-                    <div className="mb-8">
-                      <h3 className="text-xl font-extrabold text-zinc-900 mb-1 tracking-tight">Business Intelligence Overview</h3>
-                      <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Real-time Lead & Campaign Performance Dashboard</p>
-                    </div>
-
-                    {/* KPI Cards */}
-                    <div className="grid grid-cols-4 gap-4 mb-6">
-                      {/* Card 1 */}
-                      <div className="bg-white border border-zinc-200 rounded-2xl p-5 shadow-sm">
-                        <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-500 mb-4">
-                          <Users size={18} />
-                        </div>
-                        <div className="text-[9px] font-bold text-zinc-400 uppercase tracking-wider mb-1">Total Leads</div>
-                        <div className="text-2xl font-extrabold text-zinc-900">0</div>
-                      </div>
-                      {/* Card 2 */}
-                      <div className="bg-white border border-zinc-200 rounded-2xl p-5 shadow-sm">
-                        <div className="w-10 h-10 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-500 mb-4">
-                          <Shield size={18} />
-                        </div>
-                        <div className="text-[9px] font-bold text-zinc-400 uppercase tracking-wider mb-1">Conversions</div>
-                        <div className="text-2xl font-extrabold text-zinc-900">0</div>
-                      </div>
-                      {/* Card 3 */}
-                      <div className="bg-white border border-zinc-200 rounded-2xl p-5 shadow-sm">
-                        <div className="w-10 h-10 rounded-full bg-purple-50 flex items-center justify-center text-purple-500 mb-4">
-                          <Activity size={18} />
-                        </div>
-                        <div className="text-[9px] font-bold text-zinc-400 uppercase tracking-wider mb-1">Conv. Rate</div>
-                        <div className="text-2xl font-extrabold text-zinc-900">0%</div>
-                      </div>
-                      {/* Card 4 */}
-                      <div className="bg-white border border-zinc-200 rounded-2xl p-5 shadow-sm">
-                        <div className="w-10 h-10 rounded-full bg-orange-50 flex items-center justify-center text-orange-500 mb-4">
-                          <Zap size={18} />
-                        </div>
-                        <div className="text-[9px] font-bold text-zinc-400 uppercase tracking-wider mb-1">Campaigns</div>
-                        <div className="text-2xl font-extrabold text-zinc-900">0</div>
-                      </div>
-                    </div>
-
-                    {/* Bottom Charts Placeholder */}
-                    <div className="grid grid-cols-[1fr_2fr] gap-6">
-                      <div className="bg-white border border-zinc-200 rounded-2xl p-6 shadow-sm min-h-[200px] flex flex-col">
-                        <div className="flex items-center gap-2 mb-6">
-                          <div className="w-1 h-3 rounded-full bg-emerald-500" />
-                          <span className="text-xs font-bold text-zinc-900">Lead Sources</span>
-                        </div>
-                        <div className="flex-1 flex flex-col items-center justify-center text-center opacity-50">
-                          <BarChart3 size={32} className="text-zinc-300 mb-2" />
-                          <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">No Stats Yet</span>
-                        </div>
-                      </div>
-
-                      <div className="bg-white border border-zinc-200 rounded-2xl p-6 shadow-sm min-h-[200px] flex flex-col">
-                        <div className="flex items-center gap-2 mb-6">
-                          <div className="w-1 h-3 rounded-full bg-emerald-500" />
-                          <span className="text-xs font-bold text-zinc-900">Monthly Acquisition Trend</span>
-                        </div>
-                        <div className="flex-1 flex items-center justify-center border border-dashed border-zinc-200 rounded-xl bg-zinc-50/50">
-                          <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">Insufficient Data for Trend Line</span>
-                        </div>
-                      </div>
-                    </div>
-
-                  </div>
-                </div>
-              </div>
-            </div>
-
-          </div>
-        </section>
-
-        {/* 2. SETUP TIMELINE SECTION (Easiest way to setup HTML form equivalent) */}
-        <section id="setup" className="py-24 border-t border-white/5 relative bg-black/10">
-          <div className="max-w-6xl mx-auto px-6">
-            <div className="text-center max-w-2xl mx-auto mb-16">
-              <span className="text-xs font-bold uppercase tracking-widest text-brand-purple">Creator & Business Friendly</span>
-              <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-white mt-3 mb-4 leading-tight">
-                Easiest way to automate your Instagram.
-              </h2>
-              <p className="text-sm md:text-base text-zinc-400 font-medium leading-relaxed">
-                Set up auto-replies, teach your AI assistant about your products, and organize customer requests in minutes. No technical experience needed.
-              </p>
-            </div>
-
-            <CodeSetupTabs />
-          </div>
-        </section>
-
-        {/* 3. CORE BENEFITS SECTION (Savior, yeah time-savior equivalent) */}
-        <section id="features" className="py-24 border-t border-white/5 relative">
-          <div className="max-w-6xl mx-auto px-6">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-              className="text-center max-w-2xl mx-auto mb-16"
-            >
-              <span className="text-xs font-bold uppercase tracking-widest text-brand-pink">Time-Savior Infrastructure</span>
-              <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-white mt-3 mb-4 leading-tight">
-                Features that save days of work.
-              </h2>
-              <p className="text-sm md:text-base text-zinc-400 font-medium leading-relaxed">
-                Automate your Instagram customer pipeline instantly. Integration with Google Sheets, email auto-responders, and filters configured in minutes.
-              </p>
-            </motion.div>
-
-            {/* Features Cards Grid */}
-            <motion.div
-              variants={{
-                hidden: {},
-                show: {
-                  transition: {
-                    staggerChildren: 0.1
-                  }
-                }
-              }}
-              initial="hidden"
-              whileInView="show"
-              viewport={{ once: true, margin: "-100px" }}
-              className="grid md:grid-cols-2 lg:grid-cols-4 gap-6"
-            >
-              {[
-                {
-                  title: "Maya AI Auto-Replies",
-                  desc: "Configure auto-responses to handle FAQ, pricing, sizes, and shipping options instantly.",
-                  icon: Sparkles,
-                  color: "text-brand-pink bg-brand-pink/10 border-brand-pink/20"
-                },
-                {
-                  title: "Smart Field Validations",
-                  desc: "Extract clean buyer emails, sizes, handles, and postal codes right out of conversational messages.",
-                  icon: FolderSync,
-                  color: "text-brand-purple bg-brand-purple/10 border-brand-purple/20"
-                },
-                {
-                  title: "Webhook Integrations",
-                  desc: "Instantly route qualified lead events to Google Sheets, Slack, Webhooks, or Zapier.",
-                  icon: Database,
-                  color: "text-success bg-success/10 border-success/20"
-                },
-                {
-                  title: "File & Image Sync",
-                  desc: "Collect screenshot proofs of payment, receipts, and order media directly in the unified inbox.",
-                  icon: Layers,
-                  color: "text-warning bg-warning/10 border-warning/20"
-                }
-              ].map((item, index) => (
-                <motion.div
-                  key={index}
-                  variants={{
-                    hidden: { opacity: 0, y: 30 },
-                    show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 100, damping: 15 } }
-                  }}
-                  whileHover={{
-                    y: -8,
-                    transition: { duration: 0.3, ease: "easeOut" }
-                  }}
-                  className="group bg-card/30 border border-white/5 p-6 rounded-2xl transition-all duration-300 relative overflow-hidden flex flex-col justify-between h-full hover:shadow-[0_20px_50px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_20px_50px_rgba(0,0,0,0.3)] hover:border-brand-purple/20 shadow-sm dark:shadow-none"
-                >
-                  {/* Glowing background blob specific to the card theme */}
-                  <div className={`absolute -right-12 -bottom-12 w-24 h-24 rounded-full blur-[40px] opacity-0 group-hover:opacity-30 transition-opacity duration-500 pointer-events-none ${index === 0 ? 'bg-brand-pink' :
-                    index === 1 ? 'bg-brand-purple' :
-                      index === 2 ? 'bg-emerald-500' : 'bg-amber-500'
-                    }`} />
-
-                  {/* Border top accent line */}
-                  <div className={`absolute top-0 left-0 right-0 h-[2px] w-0 group-hover:w-full transition-all duration-500 bg-gradient-to-r ${index === 0 ? 'from-brand-pink/50 to-brand-purple/50' :
-                    index === 1 ? 'from-brand-purple/50 to-indigo-500/50' :
-                      index === 2 ? 'from-emerald-500/50 to-teal-500/50' : 'from-amber-500/50 to-orange-500/50'
-                    }`} />
-
-                  <div>
-                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center border mb-6 transition-all duration-300 ${item.color} group-hover:scale-110 shadow-md group-hover:shadow-[0_0_15px_rgba(139,92,246,0.15)]`}>
-                      <item.icon size={20} />
-                    </div>
-                    <h3 className="text-base font-bold text-zinc-800 dark:text-white mb-3 group-hover:text-brand-purple dark:group-hover:text-brand-pink transition-colors">{item.title}</h3>
-                    <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed font-medium">{item.desc}</p>
-                  </div>
-                </motion.div>
-              ))}
-            </motion.div>
-          </div>
-        </section>
-
-        {/* 4. SPAM / NOISE SHIELD SECTION (Best in class spam protection equivalent) */}
-        <section id="noise-filter" className="py-24 border-t border-white/5 bg-black/10 relative">
-          <div className="max-w-6xl mx-auto px-6 grid lg:grid-cols-[1.1fr_1fr] gap-12 lg:gap-20 items-center">
-            <div>
-              <span className="text-xs font-bold uppercase tracking-widest text-brand-purple">Spam, No Thanks.</span>
-              <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-white mt-3 mb-4 leading-tight">
-                Best in class noise protection.
-              </h2>
-              <p className="text-sm md:text-base text-zinc-400 font-medium leading-relaxed mb-6">
-                Don't waste hours filtering spam, bot emojis, or generic comments. ReplyZens processes and filters low-intent chat noise, keeping your unified CRM inbox pristine and focused on raw buyers.
-              </p>
-              <div className="flex gap-4 items-center mb-8">
-                <div className="w-10 h-10 rounded-xl bg-success/10 border border-success/20 flex items-center justify-center text-success shrink-0">
-                  <Check size={18} />
-                </div>
-                <div>
-                  <h3 className="text-sm font-bold text-white">98.6% Spam Detection Rate</h3>
-                  <p className="text-xs text-zinc-500 font-medium">Powered by customized Meta NLP filters</p>
-                </div>
-              </div>
-              <button
-                onClick={() => navigate('/signup')}
-                className="w3-button-primary bg-zinc-800 text-white border border-white/10 hover:bg-zinc-700/80 px-6 py-3 rounded-xl text-xs font-bold transition-all"
-              >
-                Protect Your Inbox
-              </button>
-            </div>
-
-            <NoiseFilterMockup />
-          </div>
-        </section>
-
-        {/* 5. TRANSPARENT PRICING SECTION (Pricing equivalent) */}
-        <section id="pricing" className="py-24 border-t border-white/5 relative">
-          <div className="max-w-6xl mx-auto px-6">
-            <div className="text-center max-w-2xl mx-auto mb-16">
-              <span className="text-xs font-bold uppercase tracking-widest text-brand-pink">Simple & Transparent</span>
-              <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-white mt-3 mb-4 leading-tight">
-                Pricing that scales with you.
-              </h2>
-              <p className="text-sm md:text-base text-zinc-400 font-medium leading-relaxed">
-                Start completely free with zero credit card required. Upgrade as your automated volume increases.
-              </p>
-            </div>
-
-            <div className="grid md:grid-cols-3 gap-8 max-w-[960px] mx-auto">
-
-              {/* Free Plan */}
-              <div className="bg-card/20 border border-white/5 rounded-3xl p-8 flex flex-col justify-between hover:border-white/10 transition-colors">
-                <div>
-                  <h3 className="text-lg font-bold text-white mb-2">Free</h3>
-                  <p className="text-xs text-zinc-500 h-8 font-medium">Explore basic automation features</p>
-                  <div className="mb-8 mt-4 flex items-baseline">
-                    <span className="text-3xl font-extrabold text-white">₹0</span>
-                    <span className="text-zinc-500 text-xs font-bold ml-1">/mo</span>
-                  </div>
-                  <div className="mb-6">
-                    <div className="text-xl font-bold text-white">25</div>
-                    <div className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider mt-0.5">Active Contacts / mo</div>
-                  </div>
-                </div>
-                <div>
-                  <button onClick={() => navigate('/signup')} className="w-full py-3 bg-white/5 border border-white/10 hover:bg-white/10 text-zinc-300 text-xs font-bold rounded-xl transition-all mb-8">
-                    Start For Free
-                  </button>
-                  <ul className="space-y-4 text-xs text-zinc-400">
-                    <li className="flex items-start gap-2.5"><Check size={14} className="text-success mt-0.5" /> Connect 1 IG Account</li>
-                    <li className="flex items-start gap-2.5"><Check size={14} className="text-success mt-0.5" /> 4 Basic Automations</li>
-                    <li className="flex items-start gap-2.5"><Check size={14} className="text-success mt-0.5" /> 1 Team User</li>
-                  </ul>
-                </div>
-              </div>
-
-              {/* Pro Plan */}
-              <div className="dark bg-gradient-to-b from-[#1E1735] to-[#120F22] border-2 border-brand-purple rounded-3xl p-8 flex flex-col justify-between relative overflow-visible shadow-xl shadow-brand-purple/5">
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-brand-purple text-white px-3 py-1 text-[9px] font-extrabold uppercase tracking-wider rounded-full whitespace-nowrap">
-                  Most Popular
-                </div>
-                <div>
-                  <h3 className="text-lg font-bold text-white mb-2">Pro</h3>
-                  <p className="text-xs text-brand-pink h-8 font-medium">For scaling creators & agencies</p>
-                  <div className="mb-8 mt-4 flex items-baseline">
-                    <span className="text-3xl font-extrabold text-white">₹2,499</span>
-                    <span className="text-zinc-400 text-xs font-bold ml-1">/mo</span>
-                  </div>
-                  <div className="mb-6">
-                    <div className="text-xl font-bold text-white">2,500</div>
-                    <div className="text-[10px] text-zinc-400 font-bold uppercase tracking-wider mt-0.5">Active Contacts / mo</div>
-                  </div>
-                </div>
-                <div>
-                  <button onClick={() => navigate('/signup')} className="w-full py-3 bg-brand-purple hover:bg-brand-purple/90 text-white text-xs font-bold rounded-xl transition-all mb-8 shadow-lg shadow-brand-purple/20">
-                    Try 14 Days Free
-                  </button>
-                  <ul className="space-y-4 text-xs text-zinc-300">
-                    <li className="flex items-start gap-2.5"><Check size={14} className="text-brand-pink mt-0.5" /> Connect 3 IG Accounts</li>
-                    <li className="flex items-start gap-2.5"><Check size={14} className="text-brand-pink mt-0.5" /> Advanced AI Automations</li>
-                    <li className="flex items-start gap-2.5"><Check size={14} className="text-brand-pink mt-0.5" /> 3 Team Users</li>
-                    <li className="flex items-start gap-2.5"><Check size={14} className="text-brand-pink mt-0.5" /> Full AI Features & Sync</li>
-                  </ul>
-                </div>
-              </div>
-
-              {/* Business Plan */}
-              <div className="bg-card/20 border border-white/5 rounded-3xl p-8 flex flex-col justify-between hover:border-white/10 transition-colors">
-                <div>
-                  <h3 className="text-lg font-bold text-white mb-2">Business</h3>
-                  <p className="text-xs text-zinc-500 h-8 font-medium">For high-growth enterprise brands</p>
-                  <div className="mb-8 mt-4 flex items-baseline">
-                    <span className="text-3xl font-extrabold text-white">₹5,999</span>
-                    <span className="text-zinc-500 text-xs font-bold ml-1">/mo</span>
-                  </div>
-                  <div className="mb-6">
-                    <div className="text-xl font-bold text-white">7,500</div>
-                    <div className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider mt-0.5">Active Contacts / mo</div>
-                  </div>
-                </div>
-                <div>
-                  <button onClick={() => navigate('/signup')} className="w-full py-3 bg-white/5 border border-white/10 hover:bg-white/10 text-zinc-300 text-xs font-bold rounded-xl transition-all mb-8">
-                    Start Trial
-                  </button>
-                  <ul className="space-y-4 text-xs text-zinc-400">
-                    <li className="flex items-start gap-2.5"><Check size={14} className="text-success mt-0.5" /> Unlimited IG Accounts</li>
-                    <li className="flex items-start gap-2.5"><Check size={14} className="text-success mt-0.5" /> Dedicated Sync Server</li>
-                    <li className="flex items-start gap-2.5"><Check size={14} className="text-success mt-0.5" /> Unlimited Team Users</li>
-                    <li className="flex items-start gap-2.5"><Check size={14} className="text-success mt-0.5" /> Priority 24/7 VIP Support</li>
-                  </ul>
-                </div>
-              </div>
-
-            </div>
-          </div>
-        </section>
-
-        {/* 6. FAQ ACCORDION SECTION (Frequently Asked Questions equivalent) */}
-        <section id="faq" className="py-24 border-t border-white/5 bg-black/10 relative">
+        {/* INTERACTIVE WORKFLOW PIPELINE */}
+        <PipelineFlowSection />
+        
+        <Metrics />
+        <Problem />
+        <Solution />
+        <NewFeatures />
+        <Automations />
+        <Comparison />
+        <ROICalculator />
+        <NewPricing />
+        
+        {/* FAQ ACCORDION SECTION (Original) */}
+        <section id="faq" className="py-24 border-t border-white/5 bg-zinc-950/50 relative">
           <div className="max-w-3xl mx-auto px-6">
             <div className="text-center mb-16">
               <span className="text-xs font-bold uppercase tracking-widest text-brand-purple">Have Questions?</span>
@@ -1801,25 +1802,7 @@ const Landing: React.FC = () => {
           </div>
         </section>
 
-        {/* 7. FINAL CTA (Collect Form Submissions equivalent) */}
-        <section className="py-32 border-t border-white/5 relative overflow-hidden text-center">
-          <div className="absolute inset-0 bg-gradient-to-b from-brand-purple/5 to-transparent pointer-events-none" />
-          <div className="max-w-4xl mx-auto px-6 relative z-10">
-            <h2 className="text-4xl md:text-6xl font-extrabold text-white mb-6 leading-tight tracking-tight">
-              Create your DM API and start automating today.
-            </h2>
-            <p className="text-base md:text-lg text-zinc-400 max-w-xl mx-auto mb-10">
-              Set up your custom rules and let our backend protect your inbox, handle questions, and qualify leads 24/7.
-            </p>
-            <button
-              onClick={() => navigate('/signup')}
-              className="w3-button-primary bg-gradient-to-r from-brand-pink to-brand-purple font-bold px-10 py-5 rounded-xl text-sm shadow-xl shadow-brand-pink/20 hover:scale-[1.02] active:scale-95 transition-all inline-flex items-center gap-2 group"
-            >
-              Get Started In 2 Minutes
-              <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
-            </button>
-          </div>
-        </section>
+        <NewCTA />
 
       </main>
 
