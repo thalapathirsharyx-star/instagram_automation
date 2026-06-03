@@ -6,6 +6,7 @@ import Inbox from './pages/Inbox';
 import Leads from './pages/Leads';
 import Settings from './pages/Settings';
 import KnowledgeBase from './pages/KnowledgeBase';
+import ProductCatalog from './pages/ProductCatalog';
 import UploadDocument from './pages/UploadDocument';
 import AddFaq from './pages/AddFaq';
 import AddFact from './pages/AddFact';
@@ -222,6 +223,7 @@ function AppContent() {
             <Route path="/leads" element={<ProtectedRoute><Leads /></ProtectedRoute>} />
             <Route path="/inbox" element={<ProtectedRoute><Inbox /></ProtectedRoute>} />
             <Route path="/knowledge" element={<ProtectedRoute><KnowledgeBase /></ProtectedRoute>} />
+            <Route path="/catalog" element={<ProtectedRoute><ProductCatalog /></ProtectedRoute>} />
             <Route path="/knowledge/upload" element={<ProtectedRoute><UploadDocument /></ProtectedRoute>} />
             <Route path="/knowledge/add-faq" element={<ProtectedRoute><AddFaq /></ProtectedRoute>} />
             <Route path="/knowledge/add-fact" element={<ProtectedRoute><AddFact /></ProtectedRoute>} />

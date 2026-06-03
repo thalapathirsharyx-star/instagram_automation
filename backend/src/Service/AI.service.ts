@@ -4,10 +4,14 @@ import { instagram_message } from '@Database/Table/CRM/instagram_message';
 import { knowledge_base } from '@Database/Table/CRM/knowledge_base';
 import { company as CompanyTable } from '@Database/Table/Admin/company';
 import { story_context } from '@Database/Table/CRM/story_context';
+import { ProductCatalogService } from './ProductCatalog.service';
 import axios from 'axios';
 
 @Injectable()
 export class AIService {
+  constructor(
+    private _ProductCatalogService: ProductCatalogService
+  ) {}
 
   /**
    * Generate an AI reply using Groq (Llama 3.3) based on message context,
@@ -16,6 +20,7 @@ export class AIService {
   async generateAiReply(messageText: string, lead: instagram_lead, companyId: string): Promise<any> {
     const GROQ_API_KEY = process.env.GROQ_API_KEY;
     const context = await this.getRelevantContext(messageText, companyId);
+    const catalogContext = await this.getRelevantCatalogContext(messageText, companyId);
 
     const history = await instagram_message.find({
       where: { lead_id: lead.id, company_id: lead.company_id },
@@ -129,6 +134,11 @@ KNOWLEDGE BASE (Product Info)
 ═══════════════════════════════
 \${context}
 
+═══════════════════════════════
+PRODUCT CATALOG (Inventory & Live Stock)
+═══════════════════════════════
+\${catalogContext}
+
 ${storyContextStr}
 
 ═══════════════════════════════
@@ -149,7 +159,7 @@ CUSTOMER'S MESSAGE
 ═══════════════════════════════
 LEAD QUALIFICATION RULES
 ═══════════════════════════════
-- Mark "lead": "yes" if the customer shows clear interest in any product mentioned in the KNOWLEDGE BASE.
+- Mark "lead": "yes" if the customer shows clear interest in any product mentioned in the KNOWLEDGE BASE or PRODUCT CATALOG.
 - If they ask about price, sizing, fabric, material, or availability of an item, they ARE a lead.
 - If they express intent to visit the store, book an appointment, or ask "how to order", they ARE a lead.
 - If they are just saying "hi", "thanks", "ok", or "cool", they are NOT a lead yet.
@@ -162,7 +172,7 @@ ${oooRule}
 STRICT RESPONSE RULES (ANTI-HALLUCINATION & TONE)
 ═══════════════════════════════
 1. NO SLANG: Never use casual slang like "bro", "dude", "machan", or "yaare" in your replies. Always maintain a respectful, professional retail voice.
-2. NO HALLUCINATIONS: Do NOT make up information. Do not invent shipping times (e.g. "2-3 days"), shipping rates (e.g. "free shipping"), prices, or stock status unless they are explicitly stated in the KNOWLEDGE BASE or the ACTIVE INSTAGRAM STORY CONTEXT above.
+2. NO HALLUCINATIONS: Do NOT make up information. Do not invent shipping times (e.g. "2-3 days"), shipping rates (e.g. "free shipping"), prices, or stock status unless they are explicitly stated in the KNOWLEDGE BASE, the PRODUCT CATALOG, or the ACTIVE INSTAGRAM STORY CONTEXT above.
 3. HANDLING UNKNOWN INFO: If the customer asks about product availability, price, or delivery times and you do NOT have that info in the context, say:
    "I will check the details and availability for you right away. A team member will get back to you shortly!"
 4. BRIEF AND NATURAL: Keep responses under 2-3 sentences. Sound like a polite human chat agent, not a long-winded AI.
@@ -182,14 +192,15 @@ OUTPUT FORMAT (JSON ONLY)
 Return ONLY valid JSON. No extra text outside it.
 
 {
-  "reply": "smart auto-reply based on intent (enquiry -> info from KB, purchase -> how to buy, casual -> greeting)",
+  "reply": "smart auto-reply based on intent (enquiry -> info from KB/Catalog, purchase -> how to buy, casual -> greeting)",
   "action": "reply",
   "lead": "yes/no",
   "intent": "\${rules.intent_types.join('/')}",
   "summary": "2-3 sentence overview of what the customer wants and current status. Mandatory even for greetings.",
   "confidence": 0.0 to 1.0,
   "detected_language": "english" | "tamil" | "tanglish",
-  "tags": ["interested", "pricing", "size_query", "support"]
+  "tags": ["interested", "pricing", "size_query", "support"],
+  "confirmed_order": null | { "sku": "SKU_CODE_HERE", "quantity": number, "size": string | null, "color": string | null }
 }
 `;
 
@@ -208,12 +219,14 @@ Include these fields:
 - "intent": "purchase/enquiry/support/casual"
 - "confidence": 0.0 to 1.0
 - "summary": a 2-3 sentence summary of the discussion so far
-- "tags": array of interest tags`;
+- "tags": array of interest tags
+- "confirmed_order": null or { "sku": "SKU_CODE", "quantity": number, "size": string | null, "color": string | null }`;
     }
 
     // Replace placeholders in custom prompt
     const prompt = customPrompt
       .replace(/\${context}/g, context)
+      .replace(/\${catalogContext}/g, catalogContext)
       .replace(/\${previousIntelligence}/g, previousIntelligence)
       .replace(/\${historyText}/g, historyText)
       .replace(/\${messageText}/g, messageText)
@@ -255,11 +268,40 @@ Include these fields:
         intent: aiData.intent || 'enquiry',
         confidence: aiData.confidence || 0,
         lead: isLead ? 'yes' : 'no',
-        summary: aiData.summary || aiData.notes || ''
+        summary: aiData.summary || aiData.notes || '',
+        confirmed_order: aiData.confirmed_order || null
       };
     } catch (error: any) {
       console.error('[AI ERROR] Groq failed:', error.response?.data || error.message);
       return { reply: "I'll check on that for you!", action: 'human_required' };
+    }
+  }
+
+  /**
+   * Find relevant products from the product catalog.
+   */
+  async getRelevantCatalogContext(messageText: string, companyId: string): Promise<string> {
+    try {
+      const items = await this._ProductCatalogService.queryCatalog(companyId, messageText);
+      if (!items || items.length === 0) return "No products matching query in catalog.";
+
+      let combined = '';
+      for (const item of items) {
+        const entry = `[Product: ${item.name}]
+Price: ${item.price}
+SKU: ${item.sku || 'N/A'}
+Stock Quantity: ${item.stock_quantity}
+Variants: ${item.variants || 'None'}
+Description: ${item.description || 'N/A'}
+\n`;
+        if ((combined + entry).length < 4000) {
+          combined += entry;
+        } else break;
+      }
+      return combined;
+    } catch (err) {
+      console.error('[CATALOG CONTEXT ERROR]', err);
+      return "No product catalog context available.";
     }
   }
 

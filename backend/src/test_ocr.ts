@@ -21,7 +21,7 @@ if (fs.existsSync(envPath)) {
 
 async function runTest() {
   const ocrService = new OCRService();
-  const aiService = new AIService();
+  const aiService = new AIService(null as any);
 
   // Standard Tesseract test image URL containing text
   const testImageUrl = 'https://tesseract.projectnaptha.com/img/eng_bw.png';

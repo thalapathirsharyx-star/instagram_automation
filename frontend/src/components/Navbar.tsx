@@ -20,7 +20,7 @@ const Navbar: React.FC = () => {
     <nav className="fixed top-0 left-0 right-0 z-50 glass border-b border-border">
       <div className="max-w-6xl mx-auto px-6 h-[72px] flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2.5 group">
-          <img src="/favicon.svg" alt="ReplyZens Logo" className="w-9 h-9 object-contain transition-transform duration-300 group-hover:scale-105" />
+          <img src="/logo.png" alt="ReplyZens Logo" className="w-9 h-9 object-contain transition-transform duration-300 group-hover:scale-105" />
           <span className="text-xl font-bold tracking-tight text-white uppercase font-outfit">
             Reply<span className="text-brand-pink">Zens</span>
           </span>

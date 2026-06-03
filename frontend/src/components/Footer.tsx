@@ -10,7 +10,7 @@ const Footer: React.FC = () => {
           {/* Logo and Brand Summary */}
           <div className="col-span-2">
             <Link to="/" className="flex items-center gap-2.5 mb-6 group">
-              <img src="/favicon.svg" alt="ReplyZens Logo" className="w-8 h-8 object-contain transition-transform duration-300 group-hover:scale-105" />
+              <img src="/logo.png" alt="ReplyZens Logo" className="w-8 h-8 object-contain transition-transform duration-300 group-hover:scale-105" />
               <span className="text-lg font-bold tracking-tight text-white uppercase font-outfit logo-text">
                 Reply<span className="text-brand-pink">Zens</span>
               </span>

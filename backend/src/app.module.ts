@@ -55,6 +55,8 @@ import { AIService } from '@Service/AI.service';
 import { KnowledgeBaseService } from '@Service/KnowledgeBase.service';
 import { TokenMonitorService } from '@Service/TokenMonitor.service';
 import { OCRService } from '@Service/OCR.service';
+import { ProductCatalogController } from '@Controller/ProductCatalog.controller';
+import { ProductCatalogService } from '@Service/ProductCatalog.service';
 
 @Module({
   imports: [
@@ -120,6 +122,7 @@ import { OCRService } from '@Service/OCR.service';
     LegalController,
     TeamController,
     BroadcastController,
+    ProductCatalogController,
   ],
   providers: [
     AuthService,
@@ -156,6 +159,7 @@ import { OCRService } from '@Service/OCR.service';
     KnowledgeBaseService,
     TokenMonitorService,
     OCRService,
+    ProductCatalogService,
     {
       provide: "REDIS_CLIENT",
       useFactory: () => {

@@ -16,6 +16,7 @@ import { Redis } from 'ioredis';
 
 import { story_context } from '@Database/Table/CRM/story_context';
 import { OCRService } from './OCR.service';
+import { ProductCatalogService } from './ProductCatalog.service';
 
 @Injectable()
 export class InstagramService {
@@ -28,6 +29,7 @@ export class InstagramService {
     private readonly knowledgeBaseService: KnowledgeBaseService,
     private readonly mailerService: MailerService,
     private readonly ocrService: OCRService,
+    private readonly productCatalogService: ProductCatalogService,
     @Inject('REDIS_CLIENT') private readonly redisClient: Redis
   ) { }
 
@@ -541,6 +543,19 @@ export class InstagramService {
     const aiResponse = await this.aiService.generateAiReply(context.message_text, lead, companyId);
 
     if (aiResponse.reply) {
+      // Decrement stock if order confirmed
+      if (aiResponse.confirmed_order && aiResponse.confirmed_order.sku) {
+        try {
+          const orderSku = aiResponse.confirmed_order.sku;
+          const orderQty = parseInt(aiResponse.confirmed_order.quantity, 10) || 1;
+          const orderSize = aiResponse.confirmed_order.size;
+          const orderColor = aiResponse.confirmed_order.color;
+          console.log(`[ORDER CONFIRMED] Decrementing stock for SKU: ${orderSku}, Qty: ${orderQty}, Size: ${orderSize || 'N/A'}, Color: ${orderColor || 'N/A'}`);
+          await this.productCatalogService.decrementStock(companyId, orderSku, orderQty, { size: orderSize, color: orderColor });
+        } catch (err: any) {
+          console.error('[ORDER STOCK DECREMENT ERROR]', err.message);
+        }
+      }
       // 6. Combine Logic (Decision Engine)
       const ai_confidence = parseFloat(aiResponse.confidence) || 0;
       const final_score = Math.min(10, rule_score + (ai_confidence * 7)); // Boost AI influence on score

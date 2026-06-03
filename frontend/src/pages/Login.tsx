@@ -231,7 +231,7 @@ const Login: React.FC = () => {
         <div className="w-full max-w-lg bg-white rounded-[2rem] p-10 md:p-12 shadow-[0_8px_40px_rgb(0,0,0,0.04)] border border-zinc-100 relative">
           <div className="mb-10 text-center">
             <div className="w-16 h-16 bg-transparent flex items-center justify-center mx-auto mb-8">
-              <img src="/favicon.svg" alt="ReplyZens Logo" className="w-16 h-16 object-contain" />
+              <img src="/logo.png" alt="ReplyZens Logo" className="w-16 h-16 object-contain" />
             </div>
             <h1 className="text-3xl font-extrabold tracking-tight text-zinc-900 mb-2">Welcome Back</h1>
             <p className="text-zinc-500 font-semibold">Sign in to your AI workspace</p>

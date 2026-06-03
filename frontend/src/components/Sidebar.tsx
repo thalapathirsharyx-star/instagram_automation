@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, Users, MessageSquare, Settings, Book, Zap, Sparkles, ChevronLeft, ChevronRight, CreditCard, Radio, Activity, DollarSign, Key, Lock, IndianRupee, ClipboardList } from 'lucide-react';
+import { LayoutDashboard, Users, MessageSquare, Settings, Book, Zap, Sparkles, ChevronLeft, ChevronRight, CreditCard, Radio, Activity, DollarSign, Key, Lock, IndianRupee, ClipboardList, ShoppingBag } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 const Sidebar: React.FC = () => {
@@ -14,7 +14,7 @@ const Sidebar: React.FC = () => {
       <div className="logo-container">
         <div className="logo">
           <div className="logo-icon bg-transparent border-0 shadow-none p-0">
-            <img src="/favicon.svg" alt="ReplyZens Logo" className="w-10 h-10 object-contain" />
+            <img src="/logo.png" alt="ReplyZens Logo" className="w-10 h-10 object-contain" />
           </div>
           <span className="logo-text">ReplyZens</span>
         </div>
@@ -90,6 +90,10 @@ const Sidebar: React.FC = () => {
             <NavLink to="/knowledge" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
               <Book size={20} />
               <span>Brain Base</span>
+            </NavLink>
+            <NavLink to="/catalog" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+              <ShoppingBag size={20} />
+              <span>Product Catalog</span>
             </NavLink>
             <NavLink to="/automation" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
               <Zap size={20} />
