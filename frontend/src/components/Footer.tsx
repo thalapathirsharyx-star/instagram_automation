@@ -12,7 +12,7 @@ const Footer: React.FC = () => {
             <Link to="/" className="flex items-center gap-2.5 mb-6 group">
               <img src="/logo.png" alt="ReplyZens Logo" className="w-8 h-8 object-contain transition-transform duration-300 group-hover:scale-105" />
               <span className="text-lg font-bold tracking-tight text-white uppercase font-outfit logo-text">
-                Reply<span className="text-brand-pink">Zens</span>
+                Reply<span className="text-[#818CF8]">Zens</span>
               </span>
             </Link>
             <p className="text-zinc-500 text-xs leading-relaxed max-w-sm mb-6">

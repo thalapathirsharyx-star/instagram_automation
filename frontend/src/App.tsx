@@ -40,6 +40,9 @@ function AppContent() {
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
 
+  const hostname = window.location.hostname;
+  const isLandingDomain = hostname === 'replyzens.in' || hostname === 'www.replyzens.in' || hostname.startsWith('landing.');
+
   const handleStopImpersonation = () => {
     const adminToken = localStorage.getItem('admin_token');
     const adminUserJson = localStorage.getItem('admin_user');
@@ -65,9 +68,6 @@ function AppContent() {
       document.documentElement.classList.remove('dark');
     }
   }, [theme]);
-  
-  const hostname = window.location.hostname;
-  const isLandingDomain = hostname === 'replyzens.in' || hostname === 'www.replyzens.in' || hostname.startsWith('landing.');
 
   // Routing for landing page domain (replyzens.in)
   if (isLandingDomain) {

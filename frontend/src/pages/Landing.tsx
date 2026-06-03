@@ -5,17 +5,10 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import {
   Zap,
-  Menu,
-  X,
-  ChevronDown,
-  CheckCircle2,
   ArrowRight,
   Check,
-  Shield,
-  Sparkles,
+  X,
   Play,
-  FolderSync,
-  Layers,
   Database,
   Lock,
   Upload,
@@ -32,71 +25,974 @@ import {
   BarChart3,
   Inbox,
   Users,
-  Activity,
-  KanbanSquare,
-  Hexagon,
-  Settings,
-  Bell,
   Bot,
   Clock,
   MessageCircle,
-  Calendar
+  Calendar,
+  Sparkles,
+  ChevronDown,
+  ArrowUpRight,
+  DollarSign,
+  Shield,
+  HelpCircle,
+  Sliders,
+  CheckCircle,
+  Menu,
+  CheckCircle2,
+  Workflow,
+  Layers,
+  Send,
+  Plus,
+  Star
 } from 'lucide-react';
 
-const Instagram = ({ size = 24, className = "" }: { size?: number; className?: string }) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width={size}
-    height={size}
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    className={`lucide lucide-instagram ${className}`}
-  >
-    <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
-    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
-    <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
-  </svg>
-);
+// ==========================================
+// 1. HERO WORKFLOW ANIMATION COMPONENT
+// ==========================================
+const HeroWorkflow = () => {
+  const [activeStep, setActiveStep] = useState(0);
 
-const FAQItem = ({ question, answer }: { question: string, answer: string }) => {
-  const [isOpen, setIsOpen] = useState(false);
+  const steps = [
+    {
+      title: "Instagram DM",
+      icon: <MessageCircle size={18} />,
+      badge: "Inbound",
+      detail: "Alex DMs: 'Hey, do you ship to UK?'",
+      glow: "from-[#38BDF8] to-[#3B82F6]",
+      color: "text-[#38BDF8] bg-[#38BDF8]/10 border-[#38BDF8]/20 dark:text-[#38BDF8]"
+    },
+    {
+      title: "AI Agent",
+      icon: <Bot size={18} />,
+      badge: "Maya AI",
+      detail: "Maya processes intent in <0.2s",
+      glow: "from-[#3B82F6] to-[#6366F1]",
+      color: "text-[#3B82F6] bg-[#3B82F6]/10 border-[#3B82F6]/20 dark:text-[#3B82F6]"
+    },
+    {
+      title: "Lead Qualification",
+      icon: <Users size={18} />,
+      badge: "Scoring",
+      detail: "Email & location captured automatically",
+      glow: "from-[#6366F1] to-[#38BDF8]",
+      color: "text-[#6366F1] bg-[#6366F1]/10 border-[#6366F1]/20 dark:text-[#6366F1]"
+    },
+    {
+      title: "CRM Sync",
+      icon: <Database size={18} />,
+      badge: "Integration",
+      detail: "Synced to Google Sheets & HubSpot",
+      glow: "from-[#38BDF8] to-[#3B82F6]",
+      color: "text-[#38BDF8] bg-[#38BDF8]/10 border-[#38BDF8]/20 dark:text-white dark:bg-white/10 dark:border-white/20"
+    },
+    {
+      title: "Appointment Booking",
+      icon: <Calendar size={18} />,
+      badge: "Cal.com",
+      detail: "Cal link sent to book consultation",
+      glow: "from-[#3B82F6] to-[#6366F1]",
+      color: "text-[#3B82F6] bg-[#3B82F6]/10 border-[#3B82F6]/20 dark:text-[#3B82F6]"
+    },
+    {
+      title: "Revenue",
+      icon: <DollarSign size={18} />,
+      badge: "Sale Closed",
+      detail: "Booking completed: +$499 Revenue",
+      glow: "from-[#6366F1] to-[#38BDF8]",
+      color: "text-emerald-400 bg-emerald-500/10 border-emerald-500/20 dark:text-white dark:bg-[#3B82F6]/20 dark:border-[#3B82F6]/35"
+    }
+  ];
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveStep((prev) => (prev + 1) % steps.length);
+    }, 3500);
+    return () => clearInterval(interval);
+  }, [steps.length]);
+
+  return (
+    <div className="w-full bg-[#121826]/40 border border-white/5 p-6 md:p-8 rounded-3xl backdrop-blur-xl relative overflow-hidden shadow-2xl">
+      {/* Background soft glows */}
+      <div className="absolute top-0 right-0 w-64 h-64 bg-[#3B82F6]/5 blur-[80px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-64 h-64 bg-[#6366F1]/5 blur-[80px] rounded-full pointer-events-none" />
+
+      {/* Title / Header bar */}
+      <div className="flex items-center justify-between pb-6 border-b border-white/5 mb-8">
+        <div className="flex items-center gap-2">
+          <div className="w-2.5 h-2.5 rounded-full bg-zinc-700" />
+          <div className="w-2.5 h-2.5 rounded-full bg-zinc-700" />
+          <div className="w-2.5 h-2.5 rounded-full bg-zinc-700" />
+          <span className="text-[10px] text-zinc-550 uppercase tracking-wider font-semibold ml-2 font-mono">live_workflow_simulation.sh</span>
+        </div>
+        <div className="text-[10px] text-[#38BDF8] bg-[#38BDF8]/10 px-2.5 py-1 rounded border border-[#38BDF8]/20 flex items-center gap-1 select-none font-bold">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#38BDF8] animate-pulse" /> Autopilot Active
+        </div>
+      </div>
+
+      {/* Grid of Steps */}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 relative z-10">
+        {steps.map((step, idx) => {
+          const isSelected = activeStep === idx;
+          const isPassed = activeStep > idx;
+
+          return (
+            <div
+              key={idx}
+              onClick={() => setActiveStep(idx)}
+              className={`flex flex-col p-4 rounded-2xl border transition-all duration-500 cursor-pointer relative group text-left h-full ${
+                isSelected
+                  ? `bg-[#121826] border-[#38BDF8] shadow-lg shadow-[#38BDF8]/10 scale-[1.03]`
+                  : isPassed
+                  ? "bg-[#121826]/30 border-white/10 opacity-70"
+                  : "bg-transparent border-white/5 opacity-50 hover:opacity-75"
+              }`}
+            >
+              {/* Connector line (hidden on last node) */}
+              {idx < steps.length - 1 && (
+                <div className="hidden lg:block absolute top-7 left-full w-4 h-0.5 bg-white/5 -translate-y-1/2 z-0" />
+              )}
+
+              {/* Step number / Badge */}
+              <div className="flex items-center justify-between mb-3">
+                <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider ${
+                  isSelected ? "bg-[#38BDF8] text-white" : "bg-white/5 text-zinc-400"
+                }`}>
+                  Step {idx + 1}
+                </span>
+                <span className={`text-[8px] font-bold ${isSelected ? "text-[#38BDF8]" : "text-zinc-500"}`}>
+                  {step.badge}
+                </span>
+              </div>
+
+              {/* Icon Container */}
+              <div className={`w-8 h-8 rounded-xl border flex items-center justify-center mb-3 transition-colors ${step.color}`}>
+                {step.icon}
+              </div>
+
+              {/* Step Title */}
+              <h4 className="text-xs font-bold text-white mb-1 group-hover:text-[#38BDF8] transition-colors">
+                {step.title}
+              </h4>
+
+              {/* Detail snippet */}
+              <p className="text-[10px] text-zinc-400 leading-normal font-medium mt-auto">
+                {step.detail}
+              </p>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Console details of currently active step */}
+      <div className="mt-8 bg-black/40 border border-white/5 p-4 rounded-xl text-left font-mono relative">
+        <div className="text-[9px] text-zinc-555 uppercase tracking-widest mb-2 flex items-center justify-between">
+          <span>Simulation Logs</span>
+          <span className="text-[#38BDF8] font-bold">Step {activeStep + 1} / 6</span>
+        </div>
+        <div className="text-xs space-y-1 text-zinc-350">
+          <p className="text-white font-semibold">
+            &gt; Initializing pipeline flow node: {steps[activeStep].title.toUpperCase()}
+          </p>
+          <p className="text-zinc-450">
+            [STATUS] Node connected. Status: SUCCESS. Latency: {(Math.random() * 0.15 + 0.05).toFixed(3)}s
+          </p>
+          <p className="text-[#38BDF8] font-medium">
+            [DATA] {steps[activeStep].detail}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ==========================================
+// 2. PRODUCT SHOWCASE COMPONENT (SECTION 6)
+// ==========================================
+const ProductShowcase = () => {
+  const [activeTab, setActiveTab] = useState<TabType>('inbox');
+
+  const tabs = [
+    { id: 'inbox' as TabType, label: 'Smart Inbox', icon: <Inbox size={14} /> },
+    { id: 'agent' as TabType, label: 'AI Agent (Maya)', icon: <Bot size={14} /> },
+    { id: 'builder' as TabType, label: 'Automation Builder', icon: <Workflow size={14} /> },
+    { id: 'analytics' as TabType, label: 'Analytics & ROI', icon: <BarChart3 size={14} /> },
+    { id: 'settings' as TabType, label: 'Integrations & Settings', icon: <Sliders size={14} /> }
+  ];
+
+  return (
+    <div className="w-full max-w-6xl mx-auto flex flex-col gap-6 mockup-dark">
+      {/* Tabs navigation */}
+      <div className="flex flex-wrap items-center justify-center gap-2 p-1.5 bg-[#121826]/80 border border-white/5 rounded-2xl backdrop-blur-lg self-center">
+        {tabs.map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id)}
+            className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
+              activeTab === tab.id
+                ? 'bg-[#3B82F6] text-white shadow-md shadow-[#3B82F6]/20 border border-white/10'
+                : 'text-zinc-400 hover:text-zinc-200 border border-transparent'
+            }`}
+          >
+            {tab.icon}
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Main Showcase Panel wrapped in premium gradient border */}
+      <div className="premium-gradient-border w-full max-w-6xl mx-auto">
+        <div className="premium-card-content overflow-hidden min-h-[520px] flex flex-col relative">
+          {/* Top Window bar */}
+          <div className="h-11 bg-[#0B1020]/60 border-b border-white/5 flex items-center justify-between px-5 shrink-0 select-none">
+            <div className="flex gap-1.5">
+              <div className="w-3 h-3 rounded-full bg-zinc-700" />
+              <div className="w-3 h-3 rounded-full bg-zinc-700" />
+              <div className="w-3 h-3 rounded-full bg-zinc-700" />
+            </div>
+            <span className="text-[10px] text-zinc-555 font-bold uppercase tracking-wider font-mono">
+              replyzens_cloud_v1.0.8 // {activeTab.toUpperCase()}
+            </span>
+            <div className="w-12" />
+          </div>
+
+          {/* Dynamic Inner Panel Viewports */}
+          <div className="flex-1 p-4 md:p-6 flex flex-col bg-gradient-to-b from-[#0B1020]/20 to-black/20">
+            <AnimatePresence mode="wait">
+              {activeTab === 'inbox' && <InboxMockup key="inbox" />}
+              {activeTab === 'agent' && <MockupWrapper key="agent"><AgentMockup /></MockupWrapper>}
+              {activeTab === 'builder' && <MockupWrapper key="builder"><BuilderMockup /></MockupWrapper>}
+              {activeTab === 'analytics' && <MockupWrapper key="analytics"><AnalyticsMockup /></MockupWrapper>}
+              {activeTab === 'settings' && <MockupWrapper key="settings"><SettingsMockup /></MockupWrapper>}
+            </AnimatePresence>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Wrapper for consistent mockup heights
+const MockupWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  return (
+    <div className="w-full flex-grow flex flex-col h-[440px]">
+      {children}
+    </div>
+  );
+};
+
+// ==========================================
+// 2A. TAB SUBMOCKUPS
+// ==========================================
+
+// Mockup 1: Inbox Dashboard
+const InboxMockup = () => {
   return (
     <motion.div
-      layout
-      variants={{
-        hidden: { opacity: 0, y: 15 },
-        show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 120, damping: 18 } }
-      }}
-      className={`border border-black/5 dark:border-white/5 rounded-2xl p-6 bg-zinc-500/5 dark:bg-white/[0.02] hover:bg-zinc-500/10 dark:hover:bg-white/[0.04] transition-all duration-300 relative overflow-hidden shadow-sm dark:shadow-none ${isOpen ? 'ring-1 ring-brand-purple/20 border-brand-purple/30' : ''
-        }`}
+      initial={{ opacity: 0, y: 15 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -15 }}
+      transition={{ duration: 0.35 }}
+      className="grid lg:grid-cols-[220px_1fr_240px] gap-4 h-[440px] items-stretch text-left"
     >
-      {/* Glowing vertical indicator stripe */}
-      <div
-        className={`absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-brand-pink to-brand-purple transition-all duration-500 origin-top ${isOpen ? 'scale-y-100 opacity-100' : 'scale-y-0 opacity-0'
-          }`}
-      />
+      {/* Left Chat List Panel */}
+      <div className="bg-black/30 border border-white/5 rounded-2xl p-3 flex flex-col gap-2 overflow-y-auto">
+        <span className="text-[9px] font-bold text-zinc-555 uppercase tracking-wider px-2 mb-1">Conversations</span>
+        
+        {/* Chat Item 1 */}
+        <div className="p-2 rounded-xl bg-white/5 border border-zinc-700 flex flex-col gap-1 cursor-pointer">
+          <div className="flex justify-between items-center">
+            <span className="text-xs font-bold text-white">@daniel_k</span>
+            <span className="text-[7px] font-bold text-[#38BDF8] bg-[#38BDF8]/10 px-1.5 py-0.5 rounded">Autopilot</span>
+          </div>
+          <span className="text-[9px] text-zinc-455 truncate font-medium">Wants custom sizes info</span>
+          <span className="text-[7.5px] text-[#38BDF8] font-extrabold mt-1">🔥 High Intent</span>
+        </div>
+
+        {/* Chat Item 2 */}
+        <div className="p-2 rounded-xl bg-white/[0.02] border border-white/5 flex flex-col gap-1 hover:bg-white/[0.04] transition-colors cursor-pointer opacity-70">
+          <div className="flex justify-between items-center">
+            <span className="text-xs font-bold text-zinc-300">@sarah.fit</span>
+            <span className="text-[7px] text-emerald-400 font-bold bg-emerald-500/10 px-1.5 py-0.5 rounded">Booked</span>
+          </div>
+          <span className="text-[9px] text-zinc-500 truncate">Booked demo for 10am</span>
+          <span className="text-[7.5px] text-zinc-455 font-semibold mt-1">Synced to CRM</span>
+        </div>
+
+        {/* Chat Item 3 */}
+        <div className="p-2 rounded-xl bg-white/[0.02] border border-white/5 flex flex-col gap-1 hover:bg-white/[0.04] transition-colors cursor-pointer opacity-70">
+          <div className="flex justify-between items-center">
+            <span className="text-xs font-bold text-zinc-300">@hype_brands</span>
+            <span className="text-[7px] text-yellow-500 font-bold bg-yellow-500/10 px-1.5 py-0.5 rounded">Action Needed</span>
+          </div>
+          <span className="text-[9px] text-zinc-500 truncate">Requests volume pricing</span>
+          <span className="text-[7.5px] text-yellow-500/80 font-bold mt-1">Escalated</span>
+        </div>
+      </div>
+
+      {/* Middle Chat Feed Panel */}
+      <div className="bg-black/20 border border-white/5 rounded-2xl flex flex-col overflow-hidden relative">
+        {/* Chat Header */}
+        <div className="p-3 bg-black/40 border-b border-white/5 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="w-6 h-6 rounded-full bg-zinc-700 flex items-center justify-center text-[8px] font-bold text-white">
+              DK
+            </div>
+            <div className="flex flex-col">
+              <span className="text-xs font-bold text-white">Daniel Kreuger (@daniel_k)</span>
+              <span className="text-[8px] text-emerald-400 font-semibold flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" /> Active Now
+              </span>
+            </div>
+          </div>
+          <div className="flex items-center gap-1.5 bg-[#38BDF8]/10 border border-[#38BDF8]/20 px-2 py-1 rounded-full text-[8.5px] font-bold text-[#38BDF8]">
+            <Sparkles size={8} className="animate-spin" /> Autopilot Running
+          </div>
+        </div>
+
+        {/* Messages list */}
+        <div className="flex-1 p-3 space-y-3.5 overflow-y-auto">
+          {/* User Message */}
+          <div className="flex gap-2 max-w-[85%]">
+            <div className="w-5 h-5 rounded-full bg-zinc-800 flex items-center justify-center text-[7px] font-bold shrink-0 text-zinc-305">US</div>
+            <div className="bg-zinc-800/80 border border-white/5 p-2.5 rounded-2xl rounded-tl-none">
+              <p className="text-[10px] text-zinc-200">
+                Hi! Do you have the white sneaker in size 10? How much is it?
+              </p>
+            </div>
+          </div>
+
+          {/* AI Response */}
+          <div className="flex gap-2 max-w-[85%] ml-auto justify-end">
+            <div className="bg-zinc-850 p-2.5 rounded-2xl rounded-tr-none text-right border border-[#38BDF8]/25">
+              <p className="text-[10px] text-white">
+                Yes! We have 3 pairs left in size 10. The price is $129 with free shipping. Would you like a checkout link?
+              </p>
+              <span className="text-[6.5px] font-bold text-zinc-450 uppercase tracking-wide mt-1 block">
+                ✦ Automated by Maya
+              </span>
+            </div>
+            <div className="w-5 h-5 rounded-full bg-[#38BDF8] flex items-center justify-center text-[7px] font-bold shrink-0 text-white font-mono">AI</div>
+          </div>
+
+          {/* User Message 2 */}
+          <div className="flex gap-2 max-w-[85%]">
+            <div className="w-5 h-5 rounded-full bg-zinc-800 flex items-center justify-center text-[7px] font-bold shrink-0 text-zinc-300">US</div>
+            <div className="bg-zinc-800/80 border border-white/5 p-2.5 rounded-2xl rounded-tl-none">
+              <p className="text-[10px] text-zinc-200">
+                Yes please! Send details to daniel@gmail.com
+              </p>
+            </div>
+          </div>
+
+          {/* AI Response 2 */}
+          <div className="flex gap-2 max-w-[85%] ml-auto justify-end">
+            <div className="bg-zinc-850 p-2.5 rounded-2xl rounded-tr-none text-right border border-[#38BDF8]/25">
+              <p className="text-[10px] text-white">
+                Awesome! I've saved daniel@gmail.com. Here is your checkout link: replyzens.com/chk/shoes-10
+              </p>
+              <span className="text-[6.5px] font-bold text-[#38BDF8] uppercase tracking-wide mt-1 block font-extrabold">
+                ✦ Automated by Maya
+              </span>
+            </div>
+            <div className="w-5 h-5 rounded-full bg-[#38BDF8] flex items-center justify-center text-[7px] font-bold shrink-0 text-white font-mono">AI</div>
+          </div>
+        </div>
+
+        {/* Input area */}
+        <div className="p-2 border-t border-white/5 bg-black/20 flex items-center gap-2">
+          <div className="flex-1 bg-white/5 border border-white/5 rounded-xl h-7 px-3 flex items-center text-[9px] text-zinc-500">
+            AI is responding. Click to pause autopilot and reply manually...
+          </div>
+          <button className="h-7 px-3 bg-white/10 border border-white/20 rounded-xl text-[9px] font-bold text-zinc-200 hover:bg-white/20 transition-all cursor-pointer">
+            Pause AI
+          </button>
+        </div>
+      </div>
+
+      {/* Right Lead Intelligence Sidebar */}
+      <div className="bg-black/30 border border-[#1C2538] rounded-2xl p-4 flex flex-col gap-4 text-left">
+        <h5 className="text-[10px] font-bold text-zinc-555 uppercase tracking-widest">Lead Intelligence</h5>
+
+        <div className="flex flex-col items-center gap-2 border-b border-white/5 pb-3">
+          <div className="w-12 h-12 rounded-full bg-zinc-700 flex items-center justify-center text-xs font-bold text-white shadow-lg">
+            DK
+          </div>
+          <span className="text-xs font-bold text-white">@daniel_k</span>
+          <span className="text-[8px] bg-[#38BDF8]/10 text-[#38BDF8] border border-[#38BDF8]/20 px-2 py-0.5 rounded-full font-bold select-none">
+            High-Intent Lead 🔥
+          </span>
+        </div>
+
+        <div className="space-y-3 text-[10px]">
+          <div>
+            <span className="text-zinc-500 block mb-0.5">Email Address</span>
+            <span className="text-zinc-200 font-mono font-bold">daniel@gmail.com</span>
+          </div>
+
+          <div>
+            <span className="text-zinc-500 block mb-0.5">Lead Location</span>
+            <span className="text-zinc-200 font-bold">United Kingdom</span>
+          </div>
+
+          <div>
+            <span className="text-zinc-500 block mb-0.5">Extracted Interest</span>
+            <span className="text-zinc-200 font-bold">White Sneaker (Size 10)</span>
+          </div>
+
+          <div>
+            <span className="text-zinc-500 block mb-0.5">Integrations Synced</span>
+            <div className="flex flex-wrap gap-1.5 mt-1">
+              <span className="text-[8px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.5 rounded">
+                Sheets
+              </span>
+              <span className="text-[8px] font-bold text-blue-400 bg-blue-500/10 border border-blue-500/20 px-1.5 py-0.5 rounded">
+                HubSpot
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  );
+};
+
+// Mockup 2: AI Agent Instructions
+const AgentMockup = () => {
+  return (
+    <div className="grid lg:grid-cols-[1.2fr_0.8fr] gap-4 h-[440px] items-stretch text-left">
+      {/* Left Instructions Column */}
+      <div className="bg-black/30 border border-white/5 rounded-2xl p-4 flex flex-col gap-4 overflow-y-auto">
+        <h5 className="text-[10px] font-bold text-zinc-555 uppercase tracking-widest border-b border-white/5 pb-2">AI Agent Setup</h5>
+
+        <div className="flex flex-col gap-1.5">
+          <label className="text-xs font-bold text-zinc-350">Agent Persona / System Prompt</label>
+          <textarea
+            readOnly
+            value="You are Maya, an AI assistant representing replyzens.com. Your tone should be extremely friendly, helpful, and outcome-oriented. Help visitors qualify their DMs, answer FAQs regarding products, pricing, features, and setup. Push high-intent buyers to schedule a call via Cal.com link, or provide a purchase link if they inquire about pricing. If you do not know the answer, ask for their email so our human staff can follow up."
+            className="w-full h-32 bg-black/40 border border-white/10 rounded-xl p-3 text-[10px] text-zinc-400 font-mono leading-relaxed resize-none outline-none focus:border-[#38BDF8]/50"
+          />
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div className="flex flex-col gap-1.5">
+            <label className="text-xs font-bold text-zinc-350">Confidence Threshold</label>
+            <div className="bg-black/40 border border-white/10 rounded-xl p-3 flex items-center justify-between">
+              <span className="text-[10px] font-mono text-zinc-200 font-semibold">92% Match</span>
+              <div className="w-24 h-1.5 bg-white/10 rounded-full overflow-hidden">
+                <div className="h-full bg-[#38BDF8]" style={{ width: "92%" }} />
+              </div>
+            </div>
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <label className="text-xs font-bold text-zinc-350">Tone Type</label>
+            <div className="bg-black/40 border border-white/10 rounded-xl p-2.5 flex gap-1">
+              <span className="text-[9px] font-bold bg-[#38BDF8]/10 border border-[#38BDF8]/20 text-[#38BDF8] px-2 py-0.5 rounded">
+                Warm & Sales
+              </span>
+              <span className="text-[9px] font-bold text-zinc-555 px-2 py-0.5 rounded">
+                Strict FAQ
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-1.5">
+          <label className="text-xs font-bold text-zinc-350">Default Call to Action Node</label>
+          <div className="bg-white/[0.02] border border-[#38BDF8]/20 p-3 rounded-xl flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Calendar size={14} className="text-[#38BDF8]" />
+              <span className="text-[10px] font-bold text-white">Book Introductory Call</span>
+            </div>
+            <span className="text-[8px] text-zinc-555 font-mono">Cal.com/replyzens/15min</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Right Knowledge Base Panel */}
+      <div className="bg-black/30 border border-white/5 rounded-2xl p-4 flex flex-col gap-4 text-left">
+        <h5 className="text-[10px] font-bold text-zinc-555 uppercase tracking-widest border-b border-white/5 pb-2">Knowledge Docs</h5>
+        <p className="text-[10px] text-zinc-400 leading-normal font-medium">
+          Upload catalogs, spreadsheets, FAQs, or policies. ReplyZens learns instantly.
+        </p>
+
+        {/* Upload box */}
+        <div className="border border-dashed border-white/10 rounded-xl p-4 text-center bg-black/40 hover:border-[#38BDF8] transition-colors cursor-pointer group flex flex-col items-center justify-center gap-2">
+          <Upload size={18} className="text-zinc-400 group-hover:text-[#38BDF8] transition-colors" />
+          <span className="text-[10px] font-bold text-zinc-300">Drop PDF or txt files here</span>
+          <span className="text-[8px] text-zinc-500">Maximum size limit 20MB per file</span>
+        </div>
+
+        {/* Trained files list */}
+        <div className="space-y-2 mt-auto">
+          {/* File 1 */}
+          <div className="bg-white/[0.02] border border-white/5 p-2 rounded-xl flex items-center justify-between">
+            <div className="flex items-center gap-2 min-w-0">
+              <FileText size={14} className="text-[#38BDF8] shrink-0" />
+              <span className="text-[9.5px] font-bold text-zinc-300 truncate">summer_pricing_catalog.pdf</span>
+            </div>
+            <span className="text-[8px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.5 rounded">
+              Trained
+            </span>
+          </div>
+
+          {/* File 2 */}
+          <div className="bg-white/[0.02] border border-white/5 p-2 rounded-xl flex items-center justify-between">
+            <div className="flex items-center gap-2 min-w-0">
+              <FileText size={14} className="text-[#38BDF8] shrink-0" />
+              <span className="text-[9.5px] font-bold text-zinc-300 truncate">return_and_shipping_rules.txt</span>
+            </div>
+            <span className="text-[8px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.5 rounded">
+              Trained
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Mockup 3: Automation Workflow Builder
+const BuilderMockup = () => {
+  return (
+    <div className="flex flex-col h-[440px] text-left">
+      <div className="flex justify-between items-center border-b border-white/5 pb-2 mb-4 shrink-0">
+        <div>
+          <h5 className="text-[10px] font-bold text-zinc-555 uppercase tracking-widest">Automation Editor</h5>
+          <h6 className="text-xs font-bold text-white mt-0.5">Recipe: Comment &quot;SCALE&quot; to Lead</h6>
+        </div>
+        <button className="btn-premium-cta px-3 py-1.5 text-[9px] font-bold flex items-center gap-1">
+          <Plus size={10} /> Add Node
+        </button>
+      </div>
+
+      {/* Visual Workspace Canvas */}
+      <div className="flex-1 bg-black/30 border border-white/5 rounded-2xl p-6 relative overflow-hidden flex flex-col justify-center items-center gap-6">
+        <div className="absolute inset-0 dot-grid opacity-[0.1] pointer-events-none" />
+
+        {/* Node 1: Trigger */}
+        <div className="bg-[#121826] border border-zinc-700 p-3 rounded-xl w-64 shadow-md relative z-10 flex items-center gap-3">
+          <div className="w-8 h-8 rounded-lg bg-zinc-800 border border-zinc-700 flex items-center justify-center text-zinc-200 shrink-0">
+            <MessageCircle size={16} />
+          </div>
+          <div>
+            <span className="text-[8px] font-bold text-zinc-500 uppercase tracking-wider block">1. Trigger</span>
+            <span className="text-[10.5px] font-bold text-white">User comments &quot;SCALE&quot; on post</span>
+          </div>
+        </div>
+
+        {/* Connector Line 1 */}
+        <div className="w-0.5 h-6 bg-gradient-to-b from-[#38BDF8] to-[#3B82F6] relative">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1.5 h-1.5 bg-[#38BDF8] rounded-full animate-ping" />
+        </div>
+
+        {/* Node 2: Action */}
+        <div className="bg-[#121826] border border-[#38BDF8]/55 p-3 rounded-xl w-64 shadow-md relative z-10 flex items-center gap-3">
+          <div className="w-8 h-8 rounded-lg bg-[#38BDF8]/10 border border-[#38BDF8]/20 flex items-center justify-center text-[#38BDF8] shrink-0">
+            <Send size={16} />
+          </div>
+          <div>
+            <span className="text-[8px] font-bold text-[#38BDF8] uppercase tracking-wider block">2. Action</span>
+            <span className="text-[10.5px] font-bold text-white">Send DM with checkout link</span>
+          </div>
+        </div>
+
+        {/* Connector Line 2 */}
+        <div className="w-0.5 h-6 bg-gradient-to-b from-[#3B82F6] to-[#6366F1] relative">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1.5 h-1.5 bg-[#38BDF8] rounded-full animate-ping" />
+        </div>
+
+        {/* Node 3: Condition Branch */}
+        <div className="bg-[#121826] border border-emerald-500/40 p-3 rounded-xl w-64 shadow-md relative z-10 flex items-center gap-3">
+          <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0">
+            <Database size={16} />
+          </div>
+          <div>
+            <span className="text-[8px] font-bold text-emerald-400 uppercase tracking-wider block">3. Integration Sync</span>
+            <span className="text-[10.5px] font-bold text-white">Sync lead data to Sheets</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Mockup 4: Analytics
+const AnalyticsMockup = () => {
+  return (
+    <div className="grid lg:grid-cols-[1.1fr_0.9fr] gap-4 h-[440px] items-stretch text-left">
+      {/* Left Graphs Column */}
+      <div className="bg-black/30 border border-white/5 rounded-2xl p-4 flex flex-col justify-between">
+        <div>
+          <h5 className="text-[10px] font-bold text-zinc-555 uppercase tracking-widest mb-1 border-b border-white/5 pb-2">Sales Analytics</h5>
+          <span className="text-[9px] text-zinc-500 font-medium">Live ROI and automation conversions over the last 30 days.</span>
+        </div>
+
+        {/* Custom SVG Line Chart */}
+        <div className="h-48 w-full bg-black/20 rounded-xl relative overflow-hidden flex items-end p-2 border border-white/5">
+          <div className="absolute inset-0 dot-grid opacity-[0.05] pointer-events-none" />
+          <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+            <defs>
+              <linearGradient id="chart-glow" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#3B82F6" stopOpacity="0.2" />
+                <stop offset="100%" stopColor="#3B82F6" stopOpacity="0.0" />
+              </linearGradient>
+            </defs>
+            {/* Gradient Fill */}
+            <path
+              d="M 0 90 Q 20 60, 40 75 T 80 30 T 100 10 L 100 100 L 0 100 Z"
+              fill="url(#chart-glow)"
+            />
+            {/* Chart Line */}
+            <motion.path
+              d="M 0 90 Q 20 60, 40 75 T 80 30 T 100 10"
+              fill="none"
+              stroke="#3B82F6"
+              strokeWidth="2"
+              initial={{ pathLength: 0 }}
+              animate={{ pathLength: 1 }}
+              transition={{ duration: 2, ease: "easeInOut" }}
+            />
+          </svg>
+          <div className="absolute top-4 left-4 bg-[#3B82F6]/10 border border-[#3B82F6]/20 px-2 py-0.5 rounded text-[8px] font-bold text-[#38BDF8]">
+            Revenue Trend: +34%
+          </div>
+          {/* Axis markers */}
+          <div className="absolute bottom-1 right-2 text-[7px] text-zinc-500 font-mono">May 1 - May 30</div>
+        </div>
+
+        {/* Bottom Metrics Bar */}
+        <div className="grid grid-cols-2 gap-4 border-t border-white/5 pt-3">
+          <div>
+            <span className="text-[9px] text-zinc-500 block">Total Automated Revenue</span>
+            <span className="text-base font-extrabold text-white">$18,429.50</span>
+          </div>
+          <div>
+            <span className="text-[9px] text-zinc-500 block">Lead Conversion Rate</span>
+            <span className="text-base font-extrabold text-[#38BDF8]">8.42%</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Right KPIs Panel */}
+      <div className="bg-black/30 border border-white/5 rounded-2xl p-4 flex flex-col justify-between">
+        <h5 className="text-[10px] font-bold text-zinc-555 uppercase tracking-widest border-b border-white/5 pb-2">Recent Conversions</h5>
+
+        <div className="space-y-2 flex-grow overflow-y-auto py-2">
+          {/* Conv 1 */}
+          <div className="bg-white/[0.02] border border-white/5 p-2 rounded-xl flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="w-6 h-6 rounded-full bg-zinc-800 flex items-center justify-center text-[8px] text-zinc-200 font-bold">SM</div>
+              <div className="flex flex-col">
+                <span className="text-[10px] font-bold text-white">@sarah_fit</span>
+                <span className="text-[8px] text-zinc-500">Booked Demo: Consultation</span>
+              </div>
+            </div>
+            <span className="text-[8px] font-extrabold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded">
+              Booked
+            </span>
+          </div>
+
+          {/* Conv 2 */}
+          <div className="bg-white/[0.02] border border-white/5 p-2 rounded-xl flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="w-6 h-6 rounded-full bg-zinc-800 flex items-center justify-center text-[8px] text-zinc-200 font-bold">JD</div>
+              <div className="flex flex-col">
+                <span className="text-[10px] font-bold text-white">@john_dealz</span>
+                <span className="text-[8px] text-zinc-500">Purchased Sneaker White</span>
+              </div>
+            </div>
+            <span className="text-[8px] font-extrabold text-zinc-200 bg-white/10 border border-white/20 px-2 py-0.5 rounded">
+              +$129.00
+            </span>
+          </div>
+
+          {/* Conv 3 */}
+          <div className="bg-white/[0.02] border border-white/5 p-2 rounded-xl flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="w-6 h-6 rounded-full bg-zinc-805 flex items-center justify-center text-[8px] text-zinc-305 font-bold">CL</div>
+              <div className="flex flex-col">
+                <span className="text-[10px] font-bold text-white">@coaching_pro</span>
+                <span className="text-[8px] text-zinc-505 font-bold">Captured Email</span>
+              </div>
+            </div>
+            <span className="text-[8px] font-bold text-zinc-500 bg-white/5 px-2 py-0.5 rounded">
+              Lead Saved
+            </span>
+          </div>
+        </div>
+
+        {/* Conversion Rate Card */}
+        <div className="bg-[#121826] border border-[#38BDF8]/20 p-3 rounded-xl text-center">
+          <span className="text-[9px] text-zinc-555 uppercase tracking-widest block mb-1">Time Saved This Month</span>
+          <span className="text-xl font-black text-[#38BDF8] font-mono">48.5 Hours</span>
+          <p className="text-[8px] text-zinc-500 mt-1">Based on 3,820 auto-responses generated 24/7</p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Mockup 5: Settings / Integrations
+const SettingsMockup = () => {
+  return (
+    <div className="grid lg:grid-cols-[1.2fr_0.8fr] gap-4 h-[440px] items-stretch text-left">
+      {/* Left Integration Columns */}
+      <div className="bg-black/30 border border-white/5 rounded-2xl p-4 flex flex-col justify-between">
+        <div>
+          <h5 className="text-[10px] font-bold text-zinc-555 uppercase tracking-widest mb-1 border-b border-white/5 pb-2">Platform Connections</h5>
+          <span className="text-[9px] text-zinc-555 font-medium">Sync customer details and triggers to your dashboard tools instantly.</span>
+        </div>
+
+        {/* Integration Grid */}
+        <div className="grid grid-cols-2 gap-3 my-4">
+          {/* Instagram */}
+          <div className="p-3 bg-white/[0.02] border border-[#38BDF8]/20 rounded-xl flex items-center justify-between">
+            <div>
+              <span className="text-[10.5px] font-bold block text-white font-inter">Instagram Business</span>
+              <span className="text-[7.5px] text-emerald-404 flex items-center gap-1 font-semibold mt-0.5">
+                ● Connected as @replyzens
+              </span>
+            </div>
+            <Check size={14} className="text-emerald-400 shrink-0" />
+          </div>
+
+          {/* Google Sheets */}
+          <div className="p-3 bg-white/[0.02] border border-[#38BDF8]/20 rounded-xl flex items-center justify-between">
+            <div>
+              <span className="text-[10.5px] font-bold block text-white font-inter">Google Sheets</span>
+              <span className="text-[7.5px] text-emerald-404 flex items-center gap-1 font-semibold mt-0.5">
+                ● Active Leads Sheet
+              </span>
+            </div>
+            <Check size={14} className="text-emerald-400 shrink-0" />
+          </div>
+
+          {/* HubSpot */}
+          <div className="p-3 bg-white/[0.02] border border-[#38BDF8]/20 rounded-xl flex items-center justify-between">
+            <div>
+              <span className="text-[10.5px] font-bold block text-white font-inter">HubSpot CRM</span>
+              <span className="text-[7.5px] text-emerald-404 flex items-center gap-1 font-semibold mt-0.5">
+                ● Contact sync active
+              </span>
+            </div>
+            <Check size={14} className="text-emerald-400 shrink-0" />
+          </div>
+
+          {/* Slack Notifications */}
+          <div className="p-3 bg-white/[0.02] border border-white/5 rounded-xl flex items-center justify-between opacity-50 hover:opacity-100 transition-opacity">
+            <div>
+              <span className="text-[10.5px] font-bold block text-white font-inter">Slack Notifications</span>
+              <span className="text-[7.5px] text-zinc-500 mt-0.5">Not configured</span>
+            </div>
+            <Plus size={14} className="text-[#38BDF8] shrink-0 cursor-pointer" />
+          </div>
+        </div>
+
+        {/* API Token Box */}
+        <div className="bg-black/40 border border-white/5 rounded-xl p-3 flex flex-col gap-1 font-mono text-[9px] text-[#A5D8FF]">
+          <span className="font-sans font-bold text-zinc-300">API Access Token</span>
+          <div className="flex items-center justify-between bg-black/60 p-2 rounded border border-white/5 text-zinc-400 mt-1">
+            <span>sk_live_2026_zen_ab8201...</span>
+            <span className="text-[#38BDF8] font-sans font-bold uppercase cursor-pointer hover:underline">Copy</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Right Webhook Panel */}
+      <div className="bg-black/30 border border-white/5 rounded-2xl p-4 flex flex-col gap-4">
+        <h5 className="text-[10px] font-bold text-zinc-555 uppercase tracking-widest border-b border-white/5 pb-2">Custom Webhooks</h5>
+        <p className="text-[10px] text-zinc-455 leading-normal font-medium">
+          Send webhook events to your backend on lead qualifications, appointment bookings, or payment updates.
+        </p>
+
+        <div className="bg-white/[0.02] border border-[#38BDF8]/20 p-3 rounded-xl text-left">
+          <span className="text-[8px] font-bold text-zinc-300 uppercase font-mono block">Webhook Endpoint</span>
+          <span className="text-[10px] font-mono text-zinc-200 mt-1 block truncate">https://api.yourdomain.com/webhook</span>
+          
+          <div className="flex gap-1.5 mt-3">
+            <span className="text-[7px] font-bold text-[#38BDF8] bg-[#38BDF8]/10 border border-[#38BDF8]/20 px-2 py-0.5 rounded">
+              on_lead_qualify
+            </span>
+            <span className="text-[7px] font-bold text-[#38BDF8] bg-[#38BDF8]/10 border border-[#38BDF8]/20 px-2 py-0.5 rounded">
+              on_appointment
+            </span>
+          </div>
+        </div>
+
+        <button className="w-full mt-auto py-2 bg-white/10 hover:bg-white/20 border border-white/20 rounded-xl text-xs font-bold text-[#38BDF8] transition-all cursor-pointer">
+          Test Endpoint
+        </button>
+      </div>
+    </div>
+  );
+};
+
+
+// ==========================================
+// 3. ROI CALCULATOR COMPONENT (SECTION 9)
+// ==========================================
+const ROICalculator = () => {
+  const [dms, setDms] = useState(2500);
+  const [conversionRate, setConversionRate] = useState(5);
+  const [dealValue, setDealValue] = useState(150);
+
+  const capturedDMs = dms * 0.45;
+  const qualifiedLeads = capturedDMs * (conversionRate / 100);
+  const monthlyRevenue = qualifiedLeads * dealValue;
+  const annualRevenue = monthlyRevenue * 12;
+
+  return (
+    <div className="w-full grid lg:grid-cols-2 gap-12 items-stretch max-w-6xl mx-auto text-left">
+      {/* Sliders Block */}
+      <div className="premium-gradient-border shadow-2xl">
+        <div className="premium-card-content p-8 flex flex-col justify-between h-full">
+          <div className="mb-6">
+            <span className="text-xs font-bold uppercase tracking-widest text-zinc-500">Interactive Model</span>
+            <h3 className="text-2xl md:text-3xl font-bold text-white mt-2 mb-3">Adjust Your Metrics</h3>
+            <p className="text-xs text-zinc-450 leading-relaxed font-medium mt-1">
+              Fine-tune the parameters below to calculate how much revenue you stand to recover by deploying ReplyZens AI automations.
+            </p>
+          </div>
+
+          <div className="space-y-8">
+            {/* Slider 1 */}
+            <div className="flex flex-col gap-3">
+              <div className="flex justify-between items-center text-sm font-semibold">
+                <span className="text-zinc-300">Monthly Instagram DMs</span>
+                <span className="text-[#4F39F6] font-mono font-bold text-base">{dms.toLocaleString()}</span>
+              </div>
+              <input
+                type="range"
+                min="500"
+                max="20000"
+                step="500"
+                value={dms}
+                onChange={(e) => setDms(Number(e.target.value))}
+                className="w-full h-1.5 bg-[#121826] border border-white/5 rounded-lg appearance-none cursor-pointer accent-[#4F39F6]"
+              />
+              <div className="flex justify-between text-[10px] text-zinc-555 font-mono">
+                <span>500</span>
+                <span>20,000+</span>
+              </div>
+            </div>
+
+            {/* Slider 2 */}
+            <div className="flex flex-col gap-3">
+              <div className="flex justify-between items-center text-sm font-semibold">
+                <span className="text-zinc-300">Current Conversion Rate</span>
+                <span className="text-[#4F39F6] font-mono font-bold text-base">{conversionRate}%</span>
+              </div>
+              <input
+                type="range"
+                min="1"
+                max="25"
+                step="1"
+                value={conversionRate}
+                onChange={(e) => setConversionRate(Number(e.target.value))}
+                className="w-full h-1.5 bg-[#121826] border border-white/5 rounded-lg appearance-none cursor-pointer accent-[#4F39F6]"
+              />
+              <div className="flex justify-between text-[10px] text-zinc-555 font-mono">
+                <span>1%</span>
+                <span>25%</span>
+              </div>
+            </div>
+
+            {/* Slider 3 */}
+            <div className="flex flex-col gap-3">
+              <div className="flex justify-between items-center text-sm font-semibold">
+                <span className="text-zinc-300">Average Customer Value (LTV)</span>
+                <span className="text-[#4F39F6] font-mono font-bold text-base">${dealValue}</span>
+              </div>
+              <input
+                type="range"
+                min="20"
+                max="1500"
+                step="10"
+                value={dealValue}
+                onChange={(e) => setDealValue(Number(e.target.value))}
+                className="w-full h-1.5 bg-[#121826] border border-white/5 rounded-lg appearance-none cursor-pointer accent-[#4F39F6]"
+              />
+              <div className="flex justify-between text-[10px] text-zinc-555 font-mono">
+                <span>$20</span>
+                <span>$1,500</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Calculations / Output Panel */}
+      <div className="premium-gradient-border shadow-2xl">
+        <div className="premium-card-content p-8 md:p-10 flex flex-col justify-between h-full relative overflow-hidden text-center">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-[#38BDF8]/5 blur-[80px] rounded-full -z-10" />
+
+          <div>
+            <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Recovered Lost Conversions</span>
+            <div className="text-5xl md:text-6xl font-black roi-recovered-revenue mt-4 mb-3 tracking-tight font-sans">
+              ${Math.round(monthlyRevenue).toLocaleString()}
+            </div>
+            <span className="text-xs font-semibold text-zinc-550">Recovered Revenue / Month</span>
+          </div>
+
+          <div className="h-px bg-white/5 my-6" />
+
+          <div className="grid grid-cols-2 gap-4 text-left">
+            <div className="bg-black/20 p-4 rounded-2xl border border-white/5">
+              <span className="text-[9px] text-zinc-550 uppercase tracking-wider block mb-1">Additional Leads</span>
+              <span className="text-lg font-bold text-white font-mono">{Math.round(qualifiedLeads).toLocaleString()} /mo</span>
+            </div>
+            <div className="bg-black/20 p-4 rounded-2xl border border-white/5">
+              <span className="text-[9px] text-zinc-555 uppercase tracking-wider block mb-1">Estimated Annual Growth</span>
+              <span className="text-lg font-bold text-[#4F39F6] font-mono">${Math.round(annualRevenue).toLocaleString()} /yr</span>
+            </div>
+          </div>
+
+          <p className="text-[10.5px] text-zinc-500 font-medium leading-relaxed mt-6">
+            *Calculation assumes a conservative recovery of 45% of customer inquiries lost due to delayed response times and lack of manual follow-ups.
+          </p>
+
+          <Link
+            to="/signup"
+            className="btn-premium-cta mt-8 w-full py-4 text-sm font-extrabold flex items-center justify-center gap-2 group"
+          >
+            Stop Leaving Money On The Table
+            <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+
+// ==========================================
+// 4. FAQ ACCORDION COMPONENT (SECTION 12)
+// ==========================================
+const FAQItemComponent = ({ question, answer }: { question: string; answer: string }) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div className={`border border-white/5 rounded-2xl p-6 bg-[#121826]/40 hover:bg-[#121826]/60 transition-all duration-300 relative overflow-hidden text-left ${
+      isOpen ? 'ring-1 ring-[#38BDF8]/20 border-[#38BDF8]' : ''
+    }`}>
+      <div className={`absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-[#38BDF8] to-[#6366F1] transition-all duration-500 origin-top ${
+        isOpen ? 'scale-y-100 opacity-100' : 'scale-y-0 opacity-0'
+      }`} />
 
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between text-left group transition-all outline-none"
+        className="w-full flex items-center justify-between text-left group outline-none"
       >
-        <span className="text-base font-bold text-zinc-800 dark:text-zinc-200 group-hover:text-brand-purple dark:group-hover:text-brand-pink transition-colors">
+        <span className="text-base font-bold text-white group-hover:text-[#38BDF8] transition-colors font-inter">
           {question}
         </span>
-        <motion.div
-          animate={{ rotate: isOpen ? 180 : 0, scale: isOpen ? 1.1 : 1 }}
-          transition={{ type: "spring", stiffness: 200, damping: 15 }}
-          className={`w-8 h-8 rounded-full flex items-center justify-center border transition-all ${isOpen
-            ? 'border-brand-purple/30 bg-brand-purple/10 text-brand-purple'
-            : 'border-zinc-200 dark:border-white/10 text-zinc-500 dark:text-zinc-400 group-hover:border-zinc-300 dark:group-hover:border-white/20'
-            }`}
-        >
-          <ChevronDown size={16} />
-        </motion.div>
+        <div className={`w-8 h-8 rounded-full flex items-center justify-center border transition-all shrink-0 ${
+          isOpen
+            ? 'border-[#38BDF8] bg-[#38BDF8]/10 text-[#38BDF8]'
+            : 'border-white/10 text-zinc-555 group-hover:border-white/20'
+        }`}>
+          <ChevronDown size={14} className={`transform transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
+        </div>
       </button>
 
       <AnimatePresence initial={false}>
@@ -108,732 +1004,9 @@ const FAQItem = ({ question, answer }: { question: string, answer: string }) => 
             transition={{ type: "spring", stiffness: 180, damping: 20 }}
             className="overflow-hidden"
           >
-            <motion.p
-              initial={{ y: 8, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: 8, opacity: 0 }}
-              transition={{ duration: 0.25, delay: 0.05 }}
-              className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed font-medium"
-            >
-              {answer}
-            </motion.p>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.div>
-  );
-};
-
-const CodeSetupTabs: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'connect' | 'train' | 'automate' | 'crm'>('connect');
-
-  // Automatically cycle through tabs every 8 seconds to show the live animations
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setActiveTab((prev) => {
-        if (prev === 'connect') return 'train';
-        if (prev === 'train') return 'automate';
-        if (prev === 'automate') return 'crm';
-        return 'connect';
-      });
-    }, 8000);
-    return () => clearInterval(timer);
-  }, []);
-
-  const tabs = {
-    connect: {
-      title: "1. Link Instagram",
-      heading: "Connect in one click",
-      desc: "Connect your Instagram Business account instantly. Simply click connect, authenticate via Meta's secure verification popup, and you're ready to start. No complex settings required.",
-    },
-    train: {
-      title: "2. Teach Your Assistant",
-      heading: "Teach Maya about your products",
-      desc: "Paste your catalog descriptions, type your frequently asked questions, or upload a product PDF. Maya learns instantly to answer pricing, sizing, and shipping questions.",
-    },
-    automate: {
-      title: "3. Set Up Auto-Answers",
-      heading: "Create rules for automatic replies",
-      desc: "Specify how Maya replies. Create simple rules for specific questions, automatically collect buyer details (like sizes or emails), or chat manually yourself.",
-    },
-    crm: {
-      title: "4. Track Your Sales",
-      heading: "Organize customer leads automatically",
-      desc: "Never lose track of a potential buyer. ReplyZens automatically organizes your customer chats, tags warm leads, and saves them in a clean visual tracker.",
-    }
-  };
-
-  return (
-    <div className="grid lg:grid-cols-[1fr_1.2fr] gap-8 items-stretch bg-card/40 border border-white/5 p-6 md:p-8 rounded-3xl backdrop-blur-md min-h-[480px]">
-      {/* Tab Selectors & Info */}
-      <div className="flex flex-col justify-between gap-6">
-        <div className="flex flex-col gap-4">
-          <div className="flex flex-wrap gap-2">
-            {Object.keys(tabs).map((tabKey) => (
-              <button
-                key={tabKey}
-                onClick={() => setActiveTab(tabKey as 'connect' | 'train' | 'automate' | 'crm')}
-                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${activeTab === tabKey
-                  ? 'bg-brand-purple/10 text-brand-purple border border-brand-purple/20 shadow-lg shadow-brand-purple/5'
-                  : 'text-zinc-400 hover:text-zinc-200 border border-transparent'
-                  }`}
-              >
-                {tabs[tabKey as keyof typeof tabs].title}
-              </button>
-            ))}
-          </div>
-
-          <div className="mt-4">
-            <h3 className="text-xl md:text-2xl font-bold text-white mb-3">
-              {tabs[activeTab].heading}
-            </h3>
             <p className="text-sm text-zinc-400 leading-relaxed font-medium">
-              {tabs[activeTab].desc}
+              {faqMarkdownLinkFix(answer)}
             </p>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-3 text-xs font-bold text-brand-pink mt-4">
-          <Zap size={14} className="animate-pulse" />
-          Setup takes less than 3 minutes — no technical skills required.
-        </div>
-      </div>
-
-      {/* Visual Animation Panel */}
-      <div className="dark relative rounded-2xl bg-zinc-950 border border-white/5 overflow-hidden shadow-2xl p-6 min-h-[300px] flex flex-col justify-center items-center">
-        {/* Top bar mockup */}
-        <div className="absolute top-0 left-0 right-0 h-9 bg-[#11141D] border-b border-white/5 flex items-center px-4 justify-between">
-          <div className="flex gap-1.5">
-            <div className="w-2.5 h-2.5 rounded-full bg-red-500/30" />
-            <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/30" />
-            <div className="w-2.5 h-2.5 rounded-full bg-green-500/30" />
-          </div>
-          <span className="text-[9px] text-zinc-500 font-bold uppercase tracking-wider select-none">
-            {activeTab === 'connect' && "Step 1: Connect Account"}
-            {activeTab === 'train' && "Step 2: AI Training"}
-            {activeTab === 'automate' && "Step 3: Auto-Replies"}
-            {activeTab === 'crm' && "Step 4: Sales Tracking"}
-          </span>
-        </div>
-
-        {/* Content Area with Animations */}
-        <div className="w-full pt-6 flex-grow flex items-center justify-center">
-          <AnimatePresence mode="wait">
-            {activeTab === 'connect' && (
-              <motion.div
-                key="connect"
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                transition={{ duration: 0.3 }}
-                className="w-full flex flex-col items-center gap-6"
-              >
-                <div className="flex items-center gap-8 relative">
-                  {/* Instagram Logo */}
-                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-[#f9ce34] via-[#ee2a7b] to-[#6228d7] flex items-center justify-center shadow-lg shadow-pink-500/10">
-                    <Instagram size={32} className="text-white" />
-                  </div>
-
-                  {/* Pulsing Connector Line */}
-                  <div className="flex items-center justify-center relative w-20">
-                    <div className="w-full h-1 bg-white/10 rounded-full overflow-hidden">
-                      <motion.div
-                        className="h-full bg-gradient-to-r from-brand-pink to-brand-purple"
-                        animate={{ x: [-80, 80] }}
-                        transition={{ repeat: Infinity, duration: 1.5, ease: "linear" }}
-                        style={{ width: "30px" }}
-                      />
-                    </div>
-                    <div className="absolute bg-[#11141D] border border-white/10 p-1.5 rounded-full">
-                      <Lock size={12} className="text-brand-purple" />
-                    </div>
-                  </div>
-
-                  {/* ReplyZens Logo */}
-                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-brand-pink to-brand-purple flex items-center justify-center shadow-lg shadow-brand-purple/20">
-                    <Zap size={32} className="text-white" />
-                  </div>
-                </div>
-
-                <div className="flex flex-col items-center gap-2 mt-2">
-                  <motion.button
-                    initial={{ backgroundColor: "rgba(139, 92, 246, 0.1)", color: "#8b5cf6" }}
-                    animate={{
-                      backgroundColor: ["rgba(139, 92, 246, 0.1)", "rgba(16, 185, 129, 0.1)", "rgba(16, 185, 129, 0.1)"],
-                      color: ["#8b5cf6", "#10b981", "#10b981"],
-                      borderColor: ["rgba(139, 92, 246, 0.2)", "rgba(16, 185, 129, 0.2)", "rgba(16, 185, 129, 0.2)"]
-                    }}
-                    transition={{ repeat: Infinity, duration: 4, repeatDelay: 1 }}
-                    className="px-6 py-2.5 rounded-xl border text-xs font-bold flex items-center gap-2 shadow-sm"
-                  >
-                    <Instagram size={14} />
-                    Link Instagram Page
-                  </motion.button>
-                  <motion.span
-                    animate={{ opacity: [0, 1, 1, 0] }}
-                    transition={{ repeat: Infinity, duration: 4, repeatDelay: 1 }}
-                    className="text-[10px] text-emerald-500 font-bold flex items-center gap-1"
-                  >
-                    <Check size={10} strokeWidth={3} /> Connected Successfully!
-                  </motion.span>
-                </div>
-              </motion.div>
-            )}
-
-            {activeTab === 'train' && (
-              <motion.div
-                key="train"
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                transition={{ duration: 0.3 }}
-                className="w-full max-w-sm flex flex-col gap-5"
-              >
-                {/* Simulated File Box */}
-                <div className="bg-[#11141D] border border-white/5 rounded-2xl p-4 flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-xl bg-brand-pink/10 border border-brand-pink/20 flex items-center justify-center text-brand-pink shrink-0">
-                    <FileText size={20} />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="text-xs font-bold text-white truncate">product_shipping_faq.pdf</div>
-                    <div className="text-[10px] text-zinc-500 mt-0.5">Size: 1.2 MB</div>
-                  </div>
-                  <Upload size={16} className="text-zinc-400 animate-bounce" />
-                </div>
-
-                {/* Progress Bar & Status */}
-                <div className="flex flex-col gap-2">
-                  <div className="flex justify-between text-[10px] font-bold text-zinc-400">
-                    <span>Maya Assistant Training</span>
-                    <TrainingPercentage />
-                  </div>
-                  <div className="w-full h-2 bg-white/5 rounded-full overflow-hidden">
-                    <motion.div
-                      className="h-full bg-gradient-to-r from-brand-pink to-brand-purple"
-                      initial={{ width: "0%" }}
-                      animate={{ width: "100%" }}
-                      transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
-                    />
-                  </div>
-                </div>
-
-                {/* Simulated Brain Synced Checkboxes */}
-                <div className="grid grid-cols-2 gap-2 mt-1">
-                  {[
-                    "Shoe sizes & inventory",
-                    "Return policy facts",
-                    "Shipping fees & rates",
-                    "FAQ answers trained"
-                  ].map((text, i) => (
-                    <motion.div
-                      key={i}
-                      initial={{ opacity: 0, x: -10 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: i * 0.4, duration: 0.3 }}
-                      className="flex items-center gap-1.5 text-[10px] font-bold text-zinc-400"
-                    >
-                      <CheckCircle2 size={12} className="text-emerald-500 shrink-0" />
-                      <span>{text}</span>
-                    </motion.div>
-                  ))}
-                </div>
-              </motion.div>
-            )}
-
-            {activeTab === 'automate' && (
-              <motion.div
-                key="automate"
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                transition={{ duration: 0.3 }}
-                className="w-full max-w-sm flex flex-col gap-3"
-              >
-                {/* Chat Header */}
-                <div className="flex items-center justify-between border-b border-white/5 pb-2.5 mb-1">
-                  <div className="flex items-center gap-2">
-                    <div className="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-[10px] font-extrabold text-zinc-300">
-                      JS
-                    </div>
-                    <div className="flex flex-col">
-                      <span className="text-[10px] font-bold text-zinc-300">@john_smith</span>
-                      <span className="text-[8px] text-emerald-400 font-semibold flex items-center gap-0.5">● Active</span>
-                    </div>
-                  </div>
-                  <span className="text-[8px] text-zinc-500 font-bold uppercase bg-white/5 px-2 py-0.5 rounded-full border border-white/5">
-                    Customer Chat
-                  </span>
-                </div>
-
-                {/* Message Bubble 1 (Customer) */}
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.5 }}
-                  className="bg-white/5 border border-white/5 rounded-2xl rounded-tl-none p-3 max-w-[85%] self-start"
-                >
-                  <p className="text-[11px] text-zinc-300 font-medium">
-                    Hi! Do you have the white sneaker in size 10? How much is it?
-                  </p>
-                </motion.div>
-
-                {/* AI Processing / Typing Indicator */}
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{
-                    opacity: [0, 1, 1, 0],
-                  }}
-                  transition={{
-                    duration: 2,
-                    repeat: Infinity,
-                    repeatDelay: 3,
-                    times: [0, 0.1, 0.9, 1]
-                  }}
-                  className="flex items-center gap-1 bg-brand-purple/10 border border-brand-purple/10 rounded-full px-3 py-1.5 w-max self-end mr-2"
-                >
-                  <span className="text-[8px] font-bold text-brand-purple mr-1">Maya is typing</span>
-                  <div className="flex gap-0.5">
-                    <span className="w-1 h-1 bg-brand-purple rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                    <span className="w-1 h-1 bg-brand-purple rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                    <span className="w-1 h-1 bg-brand-purple rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
-                  </div>
-                </motion.div>
-
-                {/* Message Bubble 2 (Maya AI Reply) */}
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 2.5 }}
-                  className="bg-brand-purple text-white rounded-2xl rounded-tr-none p-3 max-w-[85%] self-end relative"
-                >
-                  <p className="text-[11px] font-medium leading-relaxed">
-                    Yes! We have 3 pairs left in size 10. The price is ₹2,499 with free shipping. Would you like a direct payment checkout link?
-                  </p>
-                  <div className="absolute -bottom-4 right-1 flex items-center gap-1 text-[8px] font-extrabold text-brand-pink bg-zinc-950 px-2 py-0.5 rounded-full border border-white/5">
-                    <Sparkles size={8} /> Auto-Answered by AI
-                  </div>
-                </motion.div>
-              </motion.div>
-            )}
-
-            {activeTab === 'crm' && (
-              <motion.div
-                key="crm"
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                transition={{ duration: 0.3 }}
-                className="w-full max-w-sm flex flex-col gap-3"
-              >
-                {/* Lead List Header */}
-                <div className="flex items-center justify-between pb-2 border-b border-white/5">
-                  <span className="text-xs font-bold text-white">Live Customer Tracker</span>
-                  <span className="text-[9px] font-bold text-zinc-500 flex items-center gap-1 bg-[#11141D] border border-white/5 px-2 py-0.5 rounded-md">
-                    <TrendingUp size={10} className="text-brand-pink" /> 3 New Leads Today
-                  </span>
-                </div>
-
-                {/* Lead Items */}
-                <div className="flex flex-col gap-2">
-                  {/* Lead 1 */}
-                  <div className="bg-[#11141D] border border-white/5 p-2.5 rounded-xl flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <div className="w-6 h-6 rounded-full bg-brand-purple/10 border border-brand-purple/20 flex items-center justify-center text-[9px] font-bold text-brand-purple">
-                        AJ
-                      </div>
-                      <div className="flex flex-col">
-                        <span className="text-[10px] font-bold text-zinc-300">@alex_jones</span>
-                        <span className="text-[8px] text-zinc-500">Asked about pricing</span>
-                      </div>
-                    </div>
-                    <span className="text-[8px] font-extrabold bg-brand-pink/10 text-brand-pink border border-brand-pink/10 px-2 py-0.5 rounded-md">
-                      Warm Lead 🔥
-                    </span>
-                  </div>
-
-                  {/* Lead 2 */}
-                  <div className="bg-[#11141D] border border-white/5 p-2.5 rounded-xl flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <div className="w-6 h-6 rounded-full bg-brand-pink/10 border border-brand-pink/20 flex items-center justify-center text-[9px] font-bold text-brand-pink">
-                        SM
-                      </div>
-                      <div className="flex flex-col">
-                        <span className="text-[10px] font-bold text-zinc-300">@sara.miller</span>
-                        <span className="text-[8px] text-zinc-500">Requested checkout link</span>
-                      </div>
-                    </div>
-                    <span className="text-[8px] font-extrabold bg-emerald-500/10 text-emerald-400 border border-emerald-500/10 px-2 py-0.5 rounded-md">
-                      Converted 👑
-                    </span>
-                  </div>
-
-                  {/* Animated Incoming Lead Row */}
-                  <motion.div
-                    initial={{ opacity: 0, height: 0, y: -10 }}
-                    animate={{ opacity: 1, height: "auto", y: 0 }}
-                    transition={{ delay: 1, duration: 0.4 }}
-                    className="bg-[#11141D] border border-brand-purple/30 p-2.5 rounded-xl flex items-center justify-between shadow-lg shadow-brand-purple/5"
-                  >
-                    <div className="flex items-center gap-2">
-                      <div className="w-6 h-6 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-[9px] font-bold text-emerald-400">
-                        JD
-                      </div>
-                      <div className="flex flex-col">
-                        <span className="text-[10px] font-bold text-zinc-300">@johndoe</span>
-                        <span className="text-[8px] text-zinc-400">Purchased Pro Plan</span>
-                      </div>
-                    </div>
-                    <div className="flex flex-col items-end gap-1">
-                      <span className="text-[8px] font-extrabold bg-emerald-500 text-white px-2 py-0.5 rounded-md">
-                        +₹2,499
-                      </span>
-                      <span className="text-[7px] font-bold text-brand-purple">Saved to Sheets</span>
-                    </div>
-                  </motion.div>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-const NoiseFilterMockup: React.FC = () => {
-  return (
-    <div className="dark w-full bg-zinc-950 border border-white/5 rounded-3xl overflow-hidden shadow-2xl shadow-black/40 flex flex-col h-[400px]">
-      {/* Browser Bar */}
-      <div className="h-10 bg-[#11141D] border-b border-white/5 flex items-center justify-between px-4">
-        <div className="flex gap-1.5">
-          <div className="w-2.5 h-2.5 rounded-full bg-white/10" />
-          <div className="w-2.5 h-2.5 rounded-full bg-white/10" />
-          <div className="w-2.5 h-2.5 rounded-full bg-white/10" />
-        </div>
-        <div className="flex items-center gap-1.5 px-3 py-1 bg-zinc-900/50 rounded-lg border border-white/5">
-          <Shield size={10} className="text-success" />
-          <span className="text-[9px] text-zinc-400 font-mono">noise-filter-engine.bin</span>
-        </div>
-        <div className="w-4" />
-      </div>
-
-      {/* Main Panel Content */}
-      <div className="flex-1 p-5 flex flex-col gap-4 overflow-y-auto premium-scroll">
-
-        {/* Spam / Casual Chat - FILTERED */}
-        <div className="flex items-start gap-3 p-3 bg-white/[0.02] border border-white/5 rounded-2xl opacity-40 hover:opacity-60 transition-opacity">
-          <div className="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center text-xs font-bold text-zinc-400">AJ</div>
-          <div className="flex-1">
-            <div className="flex items-center justify-between mb-1">
-              <span className="text-xs font-bold text-zinc-300">@alex_jones</span>
-              <span className="text-[9px] font-bold text-zinc-500 uppercase tracking-wider bg-white/5 px-2 py-0.5 rounded-md">Casual</span>
-            </div>
-            <p className="text-[11px] text-zinc-400 font-medium">"Wow nice post, check out my profile!"</p>
-          </div>
-          <div className="text-[9px] font-bold text-zinc-500 uppercase px-2 py-1 bg-white/5 rounded-lg border border-white/5 self-center">
-            Filtered
-          </div>
-        </div>
-
-        {/* Lead with Intent - ESCALATED */}
-        <div className="flex items-start gap-3 p-3 bg-brand-purple/5 border border-brand-purple/20 rounded-2xl relative shadow-lg shadow-brand-purple/5">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-brand-pink to-brand-purple flex items-center justify-center text-xs font-bold text-white shadow-md">SM</div>
-          <div className="flex-1">
-            <div className="flex items-center justify-between mb-1">
-              <span className="text-xs font-bold text-white">@sophia_m</span>
-              <span className="text-[9px] font-bold text-brand-pink bg-brand-pink/10 px-2 py-0.5 rounded-md border border-brand-pink/20 uppercase tracking-wider">High Intent</span>
-            </div>
-            <p className="text-[11px] text-zinc-300 font-medium">"Hey! Do you ship to Australia? I want to buy the premium package."</p>
-          </div>
-          <div className="text-[9px] font-bold text-brand-purple uppercase px-2 py-1 bg-brand-purple/10 rounded-lg border border-brand-purple/20 self-center animate-pulse">
-            Active Lead
-          </div>
-        </div>
-
-        {/* Spam / Casual Chat - FILTERED */}
-        <div className="flex items-start gap-3 p-3 bg-white/[0.02] border border-white/5 rounded-2xl opacity-40 hover:opacity-60 transition-opacity">
-          <div className="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center text-xs font-bold text-zinc-400">K9</div>
-          <div className="flex-1">
-            <div className="flex items-center justify-between mb-1">
-              <span className="text-xs font-bold text-zinc-300">@kristina99</span>
-              <span className="text-[9px] font-bold text-zinc-500 uppercase tracking-wider bg-white/5 px-2 py-0.5 rounded-md">Spam</span>
-            </div>
-            <p className="text-[11px] text-zinc-400 font-medium">"Earn 500$ daily working from home, dm me."</p>
-          </div>
-          <div className="text-[9px] font-bold text-zinc-500 uppercase px-2 py-1 bg-white/5 rounded-lg border border-white/5 self-center">
-            Blocked
-          </div>
-        </div>
-
-      </div>
-
-      <div className="h-11 bg-[#11141D] border-t border-white/5 flex items-center justify-between px-5 text-[10px] font-mono text-zinc-500">
-        <span>Filtered 293 Spam Messages today</span>
-        <span className="text-brand-purple font-bold">Accuracy: 98.6%</span>
-      </div>
-    </div>
-  );
-};
-
-const InteractivePhoneMockup: React.FC = () => {
-  const welcomeMessage = {
-    sender: 'ai' as const,
-    text: "Welcome to jordan.design! 👋 Let us know if you have any questions about pricing, sizing, or shipping."
-  };
-
-  const [messages, setMessages] = useState<Array<{ sender: 'user' | 'ai'; text: string }>>([welcomeMessage]);
-  const [typing, setTyping] = useState(false);
-  const [syncStatus, setSyncStatus] = useState(false);
-
-  useEffect(() => {
-    let active = true;
-    const runAnimation = async () => {
-      if (!active) return;
-      setMessages([welcomeMessage]);
-      setTyping(false);
-      setSyncStatus(false);
-
-      // Step 1: User message 1
-      await new Promise(r => setTimeout(r, 1600));
-      if (!active) return;
-      setMessages(prev => [...prev, { sender: 'user', text: "Hey! Do you ship to Canada? 🇨🇦" }]);
-
-      // Step 2: AI Typing
-      await new Promise(r => setTimeout(r, 1000));
-      if (!active) return;
-      setTyping(true);
-
-      // Step 3: AI Message 1
-      await new Promise(r => setTimeout(r, 1500));
-      if (!active) return;
-      setTyping(false);
-      setMessages(prev => [...prev, {
-        sender: 'ai',
-        text: "Yes, we ship standard worldwide! 🌍 Shipping to Canada is ₹499. Would you like me to hold one?"
-      }]);
-
-      // Step 4: User message 2
-      await new Promise(r => setTimeout(r, 2200));
-      if (!active) return;
-      setMessages(prev => [...prev, { sender: 'user', text: "Yes please! The standard hoodie in black, size L." }]);
-
-      // Step 5: AI Typing
-      await new Promise(r => setTimeout(r, 1000));
-      if (!active) return;
-      setTyping(true);
-
-      // Step 6: AI Message 2 + Sync
-      await new Promise(r => setTimeout(r, 1500));
-      if (!active) return;
-      setTyping(false);
-      setMessages(prev => [...prev, {
-        sender: 'ai',
-        text: "Done! 💳 Checkout link: replyzens.com/checkout/hoodie-l"
-      }]);
-
-      // Step 7: CRM Sync Banner
-      await new Promise(r => setTimeout(r, 1200));
-      if (!active) return;
-      setSyncStatus(true);
-
-      // Hold before reset
-      await new Promise(r => setTimeout(r, 6500));
-      if (active) {
-        runAnimation();
-      }
-    };
-
-    runAnimation();
-    return () => {
-      active = false;
-    };
-  }, []);
-
-  return (
-    <div className="dark relative mx-auto py-6 px-4 sm:px-6">
-      {/* Physical Volume Buttons on the Left */}
-      <div className="absolute left-[14px] sm:left-[22px] top-28 w-[3px] h-6 bg-[#2d2d30] rounded-l-md border-y border-l border-white/10 z-10" />
-      <div className="absolute left-[14px] sm:left-[22px] top-38 w-[3px] h-10 bg-[#2d2d30] rounded-l-md border-y border-l border-white/10 z-10" />
-      <div className="absolute left-[14px] sm:left-[22px] top-50 w-[3px] h-10 bg-[#2d2d30] rounded-l-md border-y border-l border-white/10 z-10" />
-
-      {/* Physical Power Button on the Right */}
-      <div className="absolute right-[14px] sm:right-[22px] top-42 w-[3px] h-14 bg-[#2d2d30] rounded-r-md border-y border-r border-white/10 z-10" />
-
-      {/* Outer Phone Container - Styled with Metallic Bezel and Premium Drop Shadows */}
-      <div className="relative w-[280px] h-[540px] sm:w-[300px] sm:h-[580px] bg-gradient-to-b from-[#3a3a40] via-[#1a1a1c] to-[#0a0a0c] rounded-[46px] p-2.5 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.8)] ring-1 ring-white/20 overflow-hidden font-sans select-none z-10">
-
-        {/* Dynamic Island with Subtle Camera Lens Reflection */}
-        <div className="absolute top-4 left-1/2 -translate-x-1/2 w-24 h-5 bg-[#000] rounded-full z-30 flex items-center justify-center border border-zinc-900 shadow-inner">
-          <div className="w-1.5 h-1.5 rounded-full bg-[#071328] border-[0.5px] border-zinc-800 shadow-[inset_0_0_2px_rgba(0,255,200,0.5)] mr-3 ml-auto opacity-70" />
-        </div>
-
-        {/* Screen Glass Shine / Reflection Overlay */}
-        <div className="absolute inset-2.5 bg-gradient-to-tr from-transparent via-white/[0.02] to-white/[0.06] pointer-events-none z-20 rounded-[38px] mix-blend-overlay" />
-
-        {/* Screen Content */}
-        <div className="w-full h-full bg-[#050508] rounded-[38px] overflow-hidden relative flex flex-col pt-7 border border-white/10">
-
-          {/* iOS Status Bar */}
-          <div className="h-5 px-5 flex items-center justify-between text-[8px] font-semibold text-zinc-300 z-20 relative bg-[#050508]/80 select-none shrink-0">
-            <span>9:41</span>
-            <div className="flex items-center gap-1.5">
-              {/* Signal Bars */}
-              <div className="flex items-end gap-[1px] h-1.5">
-                <div className="w-[1px] h-[2px] bg-zinc-300 rounded-2xs" />
-                <div className="w-[1px] h-[3px] bg-zinc-300 rounded-2xs" />
-                <div className="w-[1px] h-[4px] bg-zinc-300 rounded-2xs" />
-                <div className="w-[1px] h-[5px] bg-zinc-300 rounded-2xs" />
-              </div>
-
-              {/* Wifi Icon */}
-              <svg className="w-2 h-2 text-zinc-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-                <path d="M12 20h.01M8.5 16.5a5 5 0 0 1 7 0M5 13a10 10 0 0 1 14 0M1.5 9.5a15 15 0 0 1 21 0" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-
-              {/* Battery Icon */}
-              <div className="w-3.5 h-1.5 border border-zinc-400 rounded-[2px] p-[0.5px] flex items-center relative">
-                <div className="h-full w-2 bg-emerald-500 rounded-[0.5px]" />
-                <div className="w-[0.5px] h-0.75 bg-zinc-400 rounded-r-[0.5px] absolute -right-[1.5px]" />
-              </div>
-            </div>
-          </div>
-
-          {/* Instagram DM Header */}
-          <div className="h-12 border-b border-white/5 px-3 flex items-center justify-between bg-[#0B0A0F]/90 backdrop-blur-md shrink-0">
-            <div className="flex items-center gap-1.5">
-              <ChevronLeft size={16} className="text-zinc-300 hover:text-white cursor-pointer shrink-0" />
-
-              {/* Profile Image Container with Story Gradient Ring */}
-              <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#f9ce34] via-[#ee2a7b] to-[#6228d7] p-[1.5px] shrink-0">
-                <div className="w-full h-full rounded-full bg-[#050508] p-[1px]">
-                  <div className="w-full h-full rounded-full bg-gradient-to-br from-brand-pink to-brand-purple flex items-center justify-center text-[7px] font-extrabold text-white font-outfit">
-                    JD
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex flex-col text-left">
-                <div className="flex items-center gap-0.5">
-                  <span className="text-[9px] font-bold text-zinc-100 leading-tight truncate max-w-[70px] sm:max-w-[90px]">jordan.design</span>
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#0095F6] flex items-center justify-center shrink-0 shadow-sm scale-75">
-                    <svg className="w-1.5 h-1.5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4">
-                      <polyline points="20 6 9 17 4 12" />
-                    </svg>
-                  </span>
-                </div>
-                <span className="text-[6.5px] text-emerald-400 font-semibold flex items-center gap-0.5 leading-none mt-0.5">
-                  <span className="w-1 h-1 rounded-full bg-emerald-400 animate-pulse" /> Active now
-                </span>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3 pr-1.5">
-              <Phone size={13} className="text-zinc-300 hover:text-white cursor-pointer transition-colors shrink-0" />
-              <Video size={13} className="text-zinc-300 hover:text-white cursor-pointer transition-colors shrink-0" />
-              <Info size={13} className="text-zinc-300 hover:text-white cursor-pointer transition-colors shrink-0" />
-            </div>
-          </div>
-
-          {/* Message Feed with Midnight Glow Background */}
-          <div className="flex-1 p-3 space-y-3.5 overflow-y-auto premium-scroll flex flex-col bg-gradient-to-b from-[#050508] via-[#08070D] to-[#050508]">
-            <AnimatePresence>
-              {messages.map((msg, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, y: 12, scale: 0.96 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  transition={{ duration: 0.35, ease: "easeOut" }}
-                  className={`flex w-full ${msg.sender === 'ai' ? 'justify-end' : 'justify-start'}`}
-                >
-                  <div className={`flex items-end gap-1.5 max-w-[85%] ${msg.sender === 'ai' ? 'flex-row-reverse' : 'flex-row'}`}>
-                    {/* User profile icon to the left of incoming messages */}
-                    {msg.sender === 'user' && (
-                      <div className="w-5 h-5 rounded-full bg-zinc-800 flex items-center justify-center text-[7px] font-bold text-zinc-300 border border-white/5 shrink-0 select-none">
-                        US
-                      </div>
-                    )}
-
-                    <div className="flex flex-col">
-                      <div
-                        className={`px-3 py-2 rounded-[18px] text-[9.5px] font-medium leading-normal text-left ${msg.sender === 'ai'
-                          ? 'bg-gradient-to-tr from-brand-pink via-[#8B5CF6] to-brand-purple text-white rounded-tr-none shadow-md shadow-brand-purple/10'
-                          : 'bg-zinc-800/90 text-zinc-100 rounded-tl-none border border-white/5 shadow-sm'
-                          }`}
-                      >
-                        {msg.text}
-                      </div>
-
-                      {msg.sender === 'ai' && (
-                        <span className="text-[6px] font-bold text-brand-pink/90 mt-1 flex items-center gap-0.5 justify-end mr-0.5 select-none uppercase tracking-wide">
-                          <Sparkles size={6} className="text-brand-pink fill-brand-pink animate-pulse" /> Auto-reply
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-
-              {typing && (
-                <motion.div
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0 }}
-                  className="self-end flex flex-col items-end max-w-[85%]"
-                >
-                  <div className="bg-gradient-to-tr from-brand-pink via-[#8B5CF6] to-brand-purple text-white px-3.5 py-2.5 rounded-[18px] rounded-tr-none flex items-center gap-1.5 shadow-md shadow-brand-purple/10">
-                    <div className="flex gap-1 py-0.5">
-                      <span className="w-1 h-1 bg-white rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                      <span className="w-1 h-1 bg-white rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                      <span className="w-1 h-1 bg-white rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
-                    </div>
-                  </div>
-                  <span className="text-[6px] font-bold text-brand-purple mt-1 flex items-center gap-0.5 self-end mr-1 select-none uppercase tracking-wide">
-                    <Zap size={6} className="text-brand-purple fill-brand-purple animate-pulse" /> Agent typing
-                  </span>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-
-          {/* Instagram Message Input Bar */}
-          <div className="p-2.5 pb-4 border-t border-white/5 bg-[#050508] shrink-0 flex items-center gap-2">
-            {/* Blue camera button */}
-            <div className="w-6.5 h-6.5 rounded-full bg-[#0095F6] flex items-center justify-center text-white shrink-0 cursor-pointer hover:bg-blue-600 transition-colors">
-              <Camera size={11} className="stroke-[2.5]" />
-            </div>
-
-            {/* Input Field Pill */}
-            <div className="flex-1 bg-[#1C1C1E] border border-white/5 rounded-full h-7 px-2.5 flex items-center justify-between">
-              <span className="text-[9px] text-zinc-500 font-medium select-none">Message...</span>
-              <div className="flex items-center gap-2 text-zinc-400 pr-0.5">
-                <Mic size={11} className="cursor-pointer hover:text-white transition-colors" />
-                <Image size={11} className="cursor-pointer hover:text-white transition-colors" />
-                <Smile size={11} className="cursor-pointer hover:text-white transition-colors" />
-              </div>
-            </div>
-          </div>
-
-          {/* Home swipe indicator at bottom */}
-          <div className="absolute bottom-1 w-20 h-1 bg-white/20 rounded-full left-1/2 -translate-x-1/2 pointer-events-none z-30" />
-        </div>
-      </div>
-
-      {/* CRM Sync Floating Tag (Placed outside overflow-hidden chassis, completely clear on the right side) */}
-      <AnimatePresence>
-        {syncStatus && (
-          <motion.div
-            initial={{ opacity: 0, x: 20, scale: 0.9 }}
-            animate={{ opacity: 1, x: 0, scale: 1 }}
-            exit={{ opacity: 0, x: 20, scale: 0.9 }}
-            className="absolute top-[35%] -right-6 sm:-right-12 bg-[#120F22]/95 border border-brand-purple/30 backdrop-blur-md p-2.5 rounded-xl shadow-2xl flex items-center gap-2.5 w-44 z-30"
-          >
-            <div className="w-7 h-7 rounded-lg bg-brand-purple/10 border border-brand-purple/20 flex items-center justify-center text-brand-pink shrink-0">
-              <Database size={11} />
-            </div>
-            <div className="text-left">
-              <div className="text-[9px] font-bold text-zinc-200 leading-tight">CRM Sync Event</div>
-              <div className="text-[7px] text-success font-semibold leading-none mt-0.5">Synced Lead to Sheets</div>
-            </div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -841,968 +1014,941 @@ const InteractivePhoneMockup: React.FC = () => {
   );
 };
 
-
-
-const TrainingPercentage: React.FC = () => {
-  const [percent, setPercent] = useState(0);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setPercent((prev) => {
-        if (prev >= 100) return 0;
-        return prev + 1;
-      });
-    }, 35);
-    return () => clearInterval(interval);
-  }, []);
-
-  return <span>{percent}%</span>;
+const faqMarkdownLinkFix = (text: string) => {
+  return text;
 };
 
-const PIPELINE_STEPS = [
-  {
-    id: 1,
-    title: "1. The Midnight Question",
-    subtitle: "Alex DMs Sarah at 1:00 AM",
-    desc: "Alex is scrolling Instagram late at night and sees Sarah's Canva Template pack. He sends a DM asking if it's still on sale and leaves his email: alex@gmail.com.",
-  },
-  {
-    id: 2,
-    title: "2. AI Assistant Steps In",
-    subtitle: "Maya reads & drafts a reply while Sarah sleeps",
-    desc: "While Sarah is asleep, the AI assistant instantly reads Alex's message. It understands he wants to buy, extracts his email, checks stock, and writes a friendly checkout reply.",
-  },
-  {
-    id: 3,
-    title: "3. The Win-Win Sync",
-    subtitle: "Alex buys instantly, Sarah wakes up to a synced lead",
-    desc: "Alex receives the reply in seconds and purchases the template. Meanwhile, his handle, email, and order choice are synced directly to Sarah's Google Sheets lead sheet.",
-  }
-];
-
-const PipelineFlowSection: React.FC = () => {
-  const [activeStep, setActiveStep] = useState<number>(1);
-  const [isHovered, setIsHovered] = useState<boolean>(false);
-
-  // Auto cycle steps every 7 seconds unless hovered
-  useEffect(() => {
-    if (isHovered) return;
-    const timer = setInterval(() => {
-      setActiveStep((prev) => (prev === 3 ? 1 : prev + 1));
-    }, 7000);
-    return () => clearInterval(timer);
-  }, [isHovered]);
-
-  return (
-    <section id="how-it-works" className="py-24 border-t border-white/5 relative bg-gradient-to-b from-black/20 to-black/5" onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
-      <div className="max-w-6xl mx-auto px-6">
-        {/* Section Title */}
-        <div className="text-center max-w-2xl mx-auto mb-16">
-          <span className="text-xs font-bold uppercase tracking-widest text-brand-pink">How ReplyZens Works</span>
-          <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-white mt-3 mb-4 leading-tight">
-            From raw message to structured CRM lead in seconds.
-          </h2>
-          <p className="text-sm md:text-base text-zinc-400 font-medium leading-relaxed">
-            See how our intelligent DM pipeline routes, processes, and synchronizes your customer inquiries automatically.
-          </p>
-        </div>
-
-        {/* Pipeline Interface Container */}
-        <div className="grid lg:grid-cols-[1.1fr_0.9fr] gap-12 md:gap-16 items-center bg-zinc-50 border border-zinc-200/60 p-8 md:p-12 rounded-[2.5rem] shadow-sm">
-
-          {/* Left Side: Step Details & Console Simulator */}
-          <div className="flex flex-col justify-between h-full">
-
-            <div className="flex flex-col gap-8">
-              {/* Step Selection Buttons */}
-              <div className="flex flex-wrap gap-3">
-                {PIPELINE_STEPS.map((step) => (
-                  <button
-                    key={step.id}
-                    onClick={() => setActiveStep(step.id)}
-                    className={`px-4 py-2.5 rounded-full text-[11px] font-bold transition-all cursor-pointer text-left flex items-center gap-2.5 ${activeStep === step.id
-                      ? 'bg-[#Ece4ff] text-[#8b5cf6]'
-                      : 'bg-transparent text-zinc-500 hover:bg-zinc-100'
-                      }`}
-                  >
-                    <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-extrabold ${activeStep === step.id ? 'bg-[#8b5cf6] text-white' : 'bg-zinc-200 text-zinc-500'
-                      }`}>
-                      {step.id}
-                    </span>
-                    {step.title.split('. ')[1]}
-                  </button>
-                ))}
-              </div>
-
-              {/* Step Description */}
-              <div className="text-left mt-2">
-                <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#8b5cf6]">
-                  {PIPELINE_STEPS[activeStep - 1].subtitle}
-                </span>
-                <h3 className="text-2xl md:text-3xl font-bold text-zinc-900 mt-2 mb-4">
-                  {PIPELINE_STEPS[activeStep - 1].title}
-                </h3>
-                <p className="text-sm text-zinc-600 leading-relaxed font-medium max-w-lg">
-                  {PIPELINE_STEPS[activeStep - 1].desc}
-                </p>
-              </div>
-            </div>
-
-            {/* Console Simulator Box */}
-            <div className="relative rounded-[1.25rem] bg-[#111111] border border-[#222] overflow-hidden p-6 min-h-[220px] flex flex-col justify-center shadow-xl text-left font-sans mt-8">
-
-              {/* Console Header */}
-              <div className="absolute top-0 left-0 right-0 h-10 bg-[#1a1a1a] border-b border-[#333] flex items-center px-4 gap-2">
-                <div className="w-2.5 h-2.5 rounded-full bg-[#ff5f56]" />
-                <div className="w-2.5 h-2.5 rounded-full bg-[#ffbd2e]" />
-                <div className="w-2.5 h-2.5 rounded-full bg-[#27c93f]" />
-
-                <span className="ml-auto text-[8px] font-mono text-zinc-500 uppercase tracking-widest flex items-center gap-1.5 select-none">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                  {activeStep === 1 && "1:00 AM: INCOMING MESSAGE"}
-                  {activeStep === 2 && "MAYA AI READING DETAILS"}
-                  {activeStep === 3 && "GOOGLE SHEETS (AUTO-SYNCED)"}
-                </span>
-              </div>
-
-              {/* Console Content based on activeStep */}
-              <div className="pt-6 flex-grow flex flex-col justify-center">
-                <AnimatePresence mode="wait">
-                  {activeStep === 1 && (
-                    <motion.div
-                      key="step1"
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      transition={{ duration: 0.3 }}
-                      className="space-y-4"
-                    >
-                      <div className="flex items-center gap-2 text-[9px] font-mono text-brand-pink bg-brand-pink/5 border border-brand-pink/10 px-3 py-1.5 w-max rounded-md select-none">
-                        <Zap size={12} /> Message Received from @alex_scrolls
-                      </div>
-
-                      {/* Customer IG Bubble Mockup */}
-                      <div className="flex items-start gap-3 max-w-[90%] bg-[#1a1a1a] border border-[#333] p-4 rounded-2xl rounded-tl-none shadow-sm">
-                        <div className="w-8 h-8 rounded-full bg-[#333] flex items-center justify-center text-[9px] font-bold text-zinc-400 uppercase shrink-0">
-                          AL
-                        </div>
-                        <div>
-                          <div className="text-[9px] font-bold text-zinc-400 mb-1">@alex_scrolls</div>
-                          <p className="text-xs text-zinc-200 leading-relaxed font-medium">
-                            "Hey! Is the Custom Canva Template bundle still on sale? I want to buy it. Send details to alex@gmail.com"
-                          </p>
-                        </div>
-                      </div>
-                    </motion.div>
-                  )}
-
-                  {activeStep === 2 && (
-                    <motion.div
-                      key="step2"
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      transition={{ duration: 0.3 }}
-                      className="grid md:grid-cols-2 gap-5"
-                    >
-                      {/* Text highlighting column */}
-                      <div className="bg-[#1a1a1a] border border-[#333] rounded-xl p-4 flex flex-col justify-between shadow-sm">
-                        <div className="text-[9px] font-bold text-zinc-500 uppercase tracking-wider mb-3 select-none">Incoming Message</div>
-                        <p className="text-xs text-zinc-300 font-medium leading-relaxed">
-                          "Hey! Is the <span className="bg-brand-pink/10 text-brand-pink border border-brand-pink/20 px-1 rounded">Custom Canva Template</span> still on sale? Send details to <span className="bg-brand-purple/10 text-brand-purple border border-brand-purple/20 px-1 rounded">alex@gmail.com</span>"
-                        </p>
-                      </div>
-
-                      {/* AI Parsing column */}
-                      <div className="bg-[#1a1a1a] border border-[#333] rounded-xl p-4 space-y-3 shadow-sm">
-                        <div className="text-[9px] font-bold text-zinc-500 uppercase tracking-wider mb-2 select-none">Extracted Entities</div>
-
-                        <div className="flex justify-between items-center text-[10px] border-b border-[#333] pb-1.5">
-                          <span className="text-zinc-500 font-medium">Intent</span>
-                          <span className="text-zinc-200 font-bold bg-brand-purple/20 px-2 py-0.5 rounded text-brand-purple border border-brand-purple/20">Wants to Buy</span>
-                        </div>
-
-                        <div className="flex justify-between items-center text-[10px] border-b border-[#333] pb-1.5">
-                          <span className="text-zinc-500 font-medium">Product</span>
-                          <span className="text-zinc-200 font-bold">Canva Template</span>
-                        </div>
-
-                        <div className="flex justify-between items-center text-[10px] border-b border-[#333] pb-1.5">
-                          <span className="text-zinc-500 font-medium">Email</span>
-                          <span className="text-brand-pink font-bold">alex@gmail.com</span>
-                        </div>
-
-                        <div className="flex justify-between items-center text-[10px]">
-                          <span className="text-zinc-500 font-medium">Spam Score</span>
-                          <span className="text-emerald-400 font-bold flex items-center gap-1"><Check size={10} strokeWidth={3} /> Safe</span>
-                        </div>
-                      </div>
-                    </motion.div>
-                  )}
-
-                  {activeStep === 3 && (
-                    <motion.div
-                      key="step3"
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      transition={{ duration: 0.3 }}
-                      className="space-y-4"
-                    >
-                      {/* Synced row overlay mockup */}
-                      <div className="bg-[#1a1a1a] border border-brand-purple/30 rounded-xl p-4 flex flex-col gap-3 relative shadow-lg shadow-brand-purple/10">
-                        <div className="flex justify-between items-center">
-                          <span className="text-[9px] font-bold text-zinc-500 uppercase tracking-wider">Lead Database</span>
-                          <span className="text-[9px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-full flex items-center gap-1.5 shadow-sm">
-                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" /> Auto-Synced
-                          </span>
-                        </div>
-
-                        {/* Mock spreadsheet headers */}
-                        <div className="grid grid-cols-4 gap-2 text-[9px] font-bold text-zinc-500 bg-[#111] p-1.5 rounded select-none border border-[#333]">
-                          <span className="px-1">Handle</span>
-                          <span className="px-1">Email</span>
-                          <span className="px-1">Product</span>
-                          <span className="px-1">Interest</span>
-                        </div>
-
-                        {/* Mock spreadsheet row */}
-                        <motion.div
-                          initial={{ opacity: 0, x: -10 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: 0.2 }}
-                          className="grid grid-cols-4 gap-2 text-[10px] font-medium text-zinc-200 p-1.5"
-                        >
-                          <span className="truncate px-1">@alex_scrolls</span>
-                          <span className="truncate px-1">alex@gmail.com</span>
-                          <span className="truncate px-1">Canva Template</span>
-                          <span className="text-brand-pink font-bold px-1">🔥 High</span>
-                        </motion.div>
-                      </div>
-
-                      {/* Automated Reply Sent Badge */}
-                      <div className="flex items-center gap-2 justify-end text-[10px] text-zinc-400 font-medium pr-1">
-                        <CheckCircle2 size={14} className="text-emerald-500" />
-                        <span>Auto-reply successfully dispatched.</span>
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-
-            </div>
-
-          </div>
-
-          {/* Right Side: Flow Graph Visualizer */}
-          <div className="flex items-center justify-center min-h-[420px] rounded-[1.5rem] bg-[#09090C] relative overflow-hidden p-8 shadow-2xl">
-
-            {/* Grid Pattern Background */}
-            <div className="absolute inset-0 dot-grid opacity-[0.15] pointer-events-none" />
-
-            {/* Glowing background circles for active node */}
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-              <AnimatePresence mode="wait">
-                {activeStep === 1 && (
-                  <motion.div
-                    key="glow1"
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 0.15, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.8 }}
-                    className="w-56 h-56 rounded-full bg-brand-pink blur-[50px]"
-                  />
-                )}
-                {activeStep === 2 && (
-                  <motion.div
-                    key="glow2"
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 0.2, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.8 }}
-                    className="w-56 h-56 rounded-full bg-brand-purple blur-[50px]"
-                  />
-                )}
-                {activeStep === 3 && (
-                  <motion.div
-                    key="glow3"
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 0.15, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.8 }}
-                    className="w-56 h-56 rounded-full bg-emerald-500 blur-[50px]"
-                  />
-                )}
-              </AnimatePresence>
-            </div>
-
-            {/* SVG Connecting Conduit Line */}
-            <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ minHeight: "100%" }}>
-              <defs>
-                <linearGradient id="flow-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                  <stop offset="0%" stopColor="#ff4fd8" />
-                  <stop offset="50%" stopColor="#8b5cf6" />
-                  <stop offset="100%" stopColor="#10b981" />
-                </linearGradient>
-              </defs>
-
-              {/* Path from Node 1 (Instagram) to Node 2 (AI Core) */}
-              <motion.path
-                d="M 150 90 L 150 210"
-                stroke="rgba(255,255,255,0.08)"
-                strokeWidth="4"
-                fill="none"
-              />
-              <motion.path
-                d="M 150 90 L 150 210"
-                stroke="url(#flow-gradient)"
-                strokeWidth="2"
-                fill="none"
-                strokeDasharray="8 8"
-                animate={activeStep === 1 || activeStep === 2 ? { strokeDashoffset: [-32, 0] } : {}}
-                transition={{ repeat: Infinity, duration: 1.5, ease: "linear" }}
-              />
-
-              {/* Path from Node 2 (AI Core) to Node 3 (CRM) */}
-              <motion.path
-                d="M 150 210 L 150 330"
-                stroke="rgba(255,255,255,0.08)"
-                strokeWidth="4"
-                fill="none"
-              />
-              <motion.path
-                d="M 150 210 L 150 330"
-                stroke="url(#flow-gradient)"
-                strokeWidth="2"
-                fill="none"
-                strokeDasharray="8 8"
-                animate={activeStep === 2 || activeStep === 3 ? { strokeDashoffset: [-32, 0] } : {}}
-                transition={{ repeat: Infinity, duration: 1.5, ease: "linear" }}
-              />
-
-              {/* Glowing Data Packet Circle */}
-              <AnimatePresence>
-                {activeStep === 1 && (
-                  <motion.circle
-                    cx="150"
-                    cy="90"
-                    r="5"
-                    fill="#ff4fd8"
-                    className="shadow-[0_0_10px_#ff4fd8]"
-                    animate={{ cy: [90, 210] }}
-                    transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
-                  />
-                )}
-                {activeStep === 2 && (
-                  <motion.circle
-                    cx="150"
-                    cy="210"
-                    r="5"
-                    fill="#8b5cf6"
-                    className="shadow-[0_0_10px_#8b5cf6]"
-                    animate={{ cy: [210, 330] }}
-                    transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
-                  />
-                )}
-              </AnimatePresence>
-            </svg>
-
-            {/* Nodes Layout Grid */}
-            <div className="flex flex-col justify-between items-center gap-[4rem] relative z-10 w-full max-w-[240px]">
-
-              {/* Node 1: Instagram */}
-              <button
-                onClick={() => setActiveStep(1)}
-                className={`w-16 h-16 rounded-[1rem] flex items-center justify-center border transition-all cursor-pointer relative group ${activeStep === 1
-                  ? 'bg-gradient-to-tr from-[#f9ce34] via-[#ee2a7b] to-[#6228d7] text-white border-white/20 shadow-[0_0_25px_rgba(238,42,123,0.5)] scale-110'
-                  : 'bg-zinc-900 border-white/5 text-slate-500 hover:text-slate-300'
-                  }`}
-              >
-                <Instagram size={28} />
-                <span className="absolute left-20 bg-[#1a1a1a] border border-[#333] px-3 py-1.5 rounded-lg text-[9px] font-bold text-zinc-300 uppercase tracking-wider pointer-events-none transition-opacity whitespace-nowrap shadow-xl">
-                  1. INSTAGRAM DM
-                </span>
-              </button>
-
-              {/* Node 2: ReplyZens AI Core */}
-              <button
-                onClick={() => setActiveStep(2)}
-                className={`w-16 h-16 rounded-full flex items-center justify-center border transition-all cursor-pointer relative group ${activeStep === 2
-                  ? 'bg-[#111] text-white border-brand-purple/50 shadow-[0_0_30px_rgba(139,92,246,0.3)] scale-110'
-                  : 'bg-zinc-900 border-white/5 text-slate-500 hover:text-slate-300'
-                  }`}
-              >
-                <Zap size={24} className={activeStep === 2 ? "text-brand-purple" : ""} />
-                <span className="absolute left-20 bg-[#1a1a1a] border border-[#333] px-3 py-1.5 rounded-lg text-[9px] font-bold text-zinc-300 uppercase tracking-wider pointer-events-none transition-opacity whitespace-nowrap shadow-xl">
-                  2. AI PARSING CORE
-                </span>
-              </button>
-
-              {/* Node 3: Your CRM */}
-              <button
-                onClick={() => setActiveStep(3)}
-                className={`w-14 h-14 rounded-[1rem] flex items-center justify-center border transition-all cursor-pointer relative group ${activeStep === 3
-                  ? 'bg-[#111] text-emerald-400 border-emerald-500/50 shadow-[0_0_30px_rgba(16,185,129,0.3)] scale-110'
-                  : 'bg-zinc-900 border-white/5 text-slate-500 hover:text-slate-300'
-                  }`}
-              >
-                <Database size={24} />
-                <span className="absolute left-20 bg-[#1a1a1a] border border-[#333] px-3 py-1.5 rounded-lg text-[9px] font-bold text-zinc-300 uppercase tracking-wider pointer-events-none transition-opacity whitespace-nowrap shadow-xl">
-                  3. CRM / DATABASE
-                </span>
-              </button>
-
-            </div>
-
-          </div>
-
-        </div>
-
-      </div>
-    </section>
-  );
-};
-
-
-const Metrics = () => (
-  <section className="py-16 border-y border-white/5 bg-zinc-900/50 backdrop-blur-xl relative z-10">
-    <div className="max-w-6xl mx-auto px-6">
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:divide-x divide-white/5">
-        {[
-          { label: "Conversations Automated", value: "10,000+" },
-          { label: "Faster Response Time", value: "85%" },
-          { label: "More Qualified Leads", value: "3x" },
-          { label: "AI Availability", value: "24/7" },
-        ].map((m, i) => (
-          <motion.div initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} key={i} className="text-center px-4">
-            <div className="text-3xl md:text-4xl font-extrabold text-white mb-2 tracking-tight">{m.value}</div>
-            <div className="text-[10px] md:text-xs font-bold text-zinc-500 uppercase tracking-wider">{m.label}</div>
-          </motion.div>
-        ))}
-      </div>
-    </div>
-  </section>
-);
-
-const Problem = () => (
-  <section className="py-24 relative bg-background">
-    <div className="max-w-6xl mx-auto px-6">
-      <div className="text-center max-w-3xl mx-auto mb-16">
-        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-          <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-4 text-white">Every Missed DM Is <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-pink to-brand-purple">Lost Revenue</span></h2>
-          <p className="text-sm md:text-base text-zinc-400 font-medium leading-relaxed">Manual replies can't scale. While you sleep or focus on growing the business, your competitors are answering your customers instantly.</p>
-        </motion.div>
-      </div>
-      
-      <div className="grid md:grid-cols-3 gap-6">
-        {[
-          { icon: <Clock size={24} />, title: "Slow Responses", desc: "Customers leave before you reply. 78% of buyers purchase from the company that responds first." },
-          { icon: <MessageCircle size={24} />, title: "Repetitive Questions", desc: "Your team wastes hours answering the same pricing, sizing, and shipping questions daily." },
-          { icon: <X size={24} />, title: "Missed Opportunities", desc: "Potential buyers ghost you because they never get followed up or guided to checkout." }
-        ].map((p, i) => (
-          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} key={i}>
-            <div className="p-8 rounded-3xl bg-card/20 border border-white/5 hover:border-white/10 transition-colors h-full shadow-lg">
-              <div className="w-12 h-12 rounded-xl bg-red-500/10 text-red-400 flex items-center justify-center mb-6">
-                {p.icon}
-              </div>
-              <h3 className="text-xl font-bold mb-3 text-white">{p.title}</h3>
-              <p className="text-zinc-400 leading-relaxed text-sm">{p.desc}</p>
-            </div>
-          </motion.div>
-        ))}
-      </div>
-    </div>
-  </section>
-);
-
-const DiagramNode = ({ icon, title, desc, active = false }: { icon: React.ReactNode, title: string, desc: string, active?: boolean }) => (
-  <div className={`flex flex-col items-center text-center p-6 rounded-2xl w-40 shrink-0 transition-all duration-500 ${active ? 'bg-brand-purple/10 border border-brand-purple/50 shadow-[0_0_30px_rgba(139,92,246,0.3)] scale-105 z-10' : 'bg-white/5 border border-white/10 scale-100 opacity-50'}`}>
-    <div className={`w-12 h-12 rounded-full flex items-center justify-center mb-3 transition-colors duration-500 ${active ? 'bg-brand-purple text-white shadow-[0_0_15px_rgba(139,92,246,0.8)]' : 'bg-zinc-900 text-zinc-500'}`}>
-      {icon}
-    </div>
-    <div className={`font-bold text-sm mb-1 transition-colors duration-500 ${active ? 'text-white' : 'text-zinc-400'}`}>{title}</div>
-    <div className="text-[10px] text-zinc-500">{desc}</div>
-  </div>
-);
-
-const DiagramArrow = ({ active = false }: { active?: boolean }) => (
-  <div className="hidden lg:flex flex-col items-center justify-center w-12 shrink-0 overflow-hidden">
-    <div className={`h-0.5 w-full relative transition-colors duration-500 ${active ? 'bg-brand-purple' : 'bg-black/10 dark:bg-white/10'}`}>
-      {active && (
-        <motion.div
-          className="absolute inset-0 bg-gradient-to-r from-transparent via-brand-pink to-transparent"
-          initial={{ x: '-100%' }}
-          animate={{ x: '100%' }}
-          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-        />
-      )}
-      <div className={`absolute right-0 top-1/2 -translate-y-1/2 border-t-[4px] border-b-[4px] border-l-[4px] border-transparent transition-colors duration-500 ${active ? 'border-l-brand-purple' : 'border-l-black/20 dark:border-l-white/20'}`} />
-    </div>
-  </div>
-);
-
-const Solution = () => {
-  const [step, setStep] = useState(1);
+// ==========================================
+// 4B. INSTAGRAM MOBILE MOCKUP COMPONENT
+// ==========================================
+const InstagramMobileMockup = () => {
+  const [step, setStep] = useState(0);
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setStep((prev) => (prev >= 4 ? 1 : prev + 1));
-    }, 2500);
+      setStep((prev) => (prev + 1) % 7);
+    }, 2800);
     return () => clearInterval(timer);
   }, []);
 
   return (
-    <section className="py-24 border-y border-white/5 relative overflow-hidden bg-zinc-950/50">
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-brand-purple/10 blur-[120px] rounded-full pointer-events-none" />
-      <div className="max-w-6xl mx-auto px-6 relative z-10">
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-brand-purple/10 border border-brand-purple/30 text-brand-purple text-[10px] font-bold uppercase tracking-widest mb-6">
-               <Bot size={14} /> Meet Your AI Assistant
-            </div>
-            <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-4 text-white">Your AI Instagram Sales Assistant</h2>
-            <p className="text-sm md:text-base text-zinc-400 font-medium">A seamless architecture designed to convert engagement into revenue without human intervention.</p>
-          </motion.div>
-        </div>
+    <div className="relative mx-auto w-[310px] sm:w-[320px] h-[620px] rounded-[44px] border-[10px] border-zinc-800 bg-[#000000] shadow-[0_25px_60px_rgba(59,130,246,0.15)] flex flex-col overflow-hidden select-none mockup-dark">
+      {/* Notch / Dynamic Island */}
+      <div className="absolute top-2.5 left-1/2 -translate-x-1/2 w-28 h-5.5 bg-zinc-900 rounded-full z-40 flex items-center justify-center border border-white/5">
+        <div className="w-2.5 h-2.5 rounded-full bg-zinc-800 absolute right-4" />
+      </div>
 
-        <motion.div initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ delay: 0.2 }}>
-          <div className="max-w-5xl mx-auto p-1 rounded-[32px] bg-gradient-to-b from-white/10 to-transparent border border-white/10">
-             <div className="bg-zinc-950 rounded-[28px] p-8 lg:p-12 shadow-2xl relative overflow-hidden">
-               <div className="absolute inset-0 opacity-[0.03] bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]" />
-               
-               <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-6 lg:gap-4">
-                  <DiagramNode icon={<MessageCircle size={20} />} title="Instagram DM" desc="Customer messages you" active={step >= 1} />
-                  <DiagramArrow active={step >= 2} />
-                  <DiagramNode icon={<Bot size={20} className={step >= 2 ? "text-white" : ""} />} title="AI Understands Intent" desc="NLP processes context" active={step >= 2} />
-                  <DiagramArrow active={step >= 3} />
-                  <div className="flex flex-col gap-4">
-                    <DiagramNode icon={<Zap size={20} />} title="Replies Instantly" desc="Answers questions" active={step >= 3} />
-                    <DiagramNode icon={<Users size={20} />} title="Captures Lead" desc="Extracts email/phone" active={step >= 3} />
-                    <DiagramNode icon={<Calendar size={20} />} title="Books Meeting" desc="Shares calendar link" active={step >= 3} />
-                  </div>
-                  <DiagramArrow active={step >= 4} />
-                  <DiagramNode icon={<Database size={20} />} title="Sends To CRM" desc="Syncs data automatically" active={step >= 4} />
-               </div>
-             </div>
+      {/* Screen Header / Status Bar */}
+      <div className="h-12 bg-black flex items-end justify-between px-6 pb-2 text-[10px] text-white/95 font-semibold shrink-0 z-30">
+        <span>9:41</span>
+        <div className="flex items-center gap-1.5">
+          {/* Signal */}
+          <div className="flex items-end gap-[1px] h-2">
+            <div className="w-[2px] h-[3px] bg-white rounded-[0.5px]" />
+            <div className="w-[2px] h-[4.5px] bg-white rounded-[0.5px]" />
+            <div className="w-[2px] h-[6px] bg-white rounded-[0.5px]" />
+            <div className="w-[2px] h-[8px] bg-white rounded-[0.5px]" />
           </div>
-        </motion.div>
-      </div>
-    </section>
-  );
-};
-
-const NewFeatures = () => (
-  <section className="py-24 relative bg-background">
-    <div className="max-w-6xl mx-auto px-6">
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {[
-          { icon: <Bot size={24} />, title: "AI Replies", desc: "Natural, human-like conversations powered by advanced AI that learns from your business." },
-          { icon: <MessageCircle size={24} />, title: "Comment-to-DM", desc: "Instantly convert post and reel engagement into direct messages and leads." },
-          { icon: <Users size={24} />, title: "Lead Qualification", desc: "Automatically collect and qualify customer details before passing them to your team." },
-          { icon: <Inbox size={24} />, title: "Smart Inbox", desc: "Manage all your automated and manual conversations in one clean, unified workspace." },
-          { icon: <Calendar size={24} />, title: "Appointment Booking", desc: "Let AI book meetings and schedule calls directly inside Instagram DMs." },
-          { icon: <BarChart3 size={24} />, title: "Analytics Dashboard", desc: "Track leads, conversion rates, and response metrics to measure your ROI." }
-        ].map((f, i) => (
-          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} key={i}>
-            <div className="p-8 rounded-3xl bg-card/20 border border-white/5 hover:border-brand-purple/30 hover:shadow-[0_0_30px_rgba(139,92,246,0.1)] transition-all group h-full">
-              <div className="w-14 h-14 rounded-2xl bg-zinc-900 border border-white/10 flex items-center justify-center mb-6 group-hover:bg-brand-purple/20 group-hover:text-brand-purple group-hover:border-brand-purple/30 transition-colors text-zinc-400">
-                {f.icon}
-              </div>
-              <h3 className="text-lg font-bold mb-3 text-white">{f.title}</h3>
-              <p className="text-zinc-400 leading-relaxed text-sm">{f.desc}</p>
-            </div>
-          </motion.div>
-        ))}
-      </div>
-    </div>
-  </section>
-);
-
-const Automations = () => (
-  <section className="py-24 relative border-t border-white/5 bg-zinc-950/50">
-    <div className="max-w-6xl mx-auto px-6">
-      <div className="text-center max-w-3xl mx-auto mb-16">
-        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-          <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-4 text-white">Automations That Drive Growth</h2>
-          <p className="text-sm md:text-base text-zinc-400 font-medium">Pre-built flows that generate revenue while you sleep.</p>
-        </motion.div>
-      </div>
-
-      <div className="grid md:grid-cols-3 gap-6">
-        {[
-          { title: 'Comment "PRICE"', flows: ["Post Comment", "DM Sent", "Lead Captured"] },
-          { title: 'Story Reply', flows: ["Story Reply", "AI Qualification", "Appointment Booked"] },
-          { title: 'Keyword Message', flows: ["Keyword DM", "Product Recommendation", "Sale Closed"] },
-        ].map((a, i) => (
-          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} key={i}>
-            <div className="p-8 rounded-3xl bg-card/30 border border-white/5 hover:border-brand-pink/30 transition-colors shadow-lg group">
-               <h3 className="text-xl font-bold mb-8 text-white group-hover:text-brand-pink transition-colors">{a.title}</h3>
-               <div className="space-y-4 relative">
-                 <div className="absolute left-6 top-6 bottom-6 w-px bg-gradient-to-b from-brand-purple to-brand-pink opacity-50 group-hover:opacity-100 transition-opacity" />
-                 {a.flows.map((step, j) => (
-                   <div key={j} className="flex items-center gap-4 relative z-10">
-                     <div className="w-12 h-12 rounded-full bg-zinc-950 border-2 border-white/10 flex items-center justify-center text-brand-purple font-bold shadow-lg text-sm group-hover:border-brand-pink/30 group-hover:text-brand-pink transition-colors">
-                       {j + 1}
-                     </div>
-                     <div className="font-semibold text-zinc-300 text-sm bg-white/5 px-4 py-3 rounded-xl flex-1 border border-white/5">
-                       {step}
-                     </div>
-                   </div>
-                 ))}
-               </div>
-            </div>
-          </motion.div>
-        ))}
-      </div>
-    </div>
-  </section>
-);
-
-const Comparison = () => (
-  <section className="py-24 bg-background relative border-t border-black/5 dark:border-white/5">
-    <div className="max-w-5xl mx-auto px-6 relative z-10">
-      <div className="text-center mb-16">
-        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-          <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-4 text-foreground">Why upgrade from Manual DMs?</h2>
-        </motion.div>
-      </div>
-      
-      <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.2 }}>
-        <div className="relative max-w-4xl mx-auto">
-          {/* Floating Highlight for ReplyZens */}
-          <div className="absolute top-0 bottom-0 left-1/3 w-1/3 bg-white dark:bg-zinc-900 rounded-3xl shadow-[0_0_40px_rgba(139,92,246,0.15)] border border-brand-purple/20 -z-10 transform scale-y-110" />
-          
-          <div className="grid grid-cols-3 items-center">
-            {/* Headers */}
-            <div className="p-4 md:p-8 font-bold text-xs md:text-sm uppercase tracking-widest text-zinc-400">Core Capabilities</div>
-            <div className="p-4 md:p-8 text-center flex flex-col items-center justify-center">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-purple/10 text-brand-purple font-bold text-[10px] uppercase tracking-wider mb-2 md:mb-3">
-                 <Sparkles size={12} /> The Smart Way
-              </div>
-              <div className="font-extrabold text-lg md:text-2xl text-foreground">ReplyZens</div>
-            </div>
-            <div className="p-4 md:p-8 font-bold text-center text-xs md:text-sm uppercase tracking-widest text-zinc-400">Manual DMs</div>
-
-            {/* Rows */}
-            {[
-              { label: "Response Time", pro: "Instant (< 1s)", con: "Hours or Days" },
-              { label: "Availability", pro: "24/7/365", con: "Business Hours" },
-              { label: "Lead Qualification", pro: "Automated & Scored", con: "Manual Guesswork" },
-              { label: "Meeting Booking", pro: "Directly in Chat", con: "Back-and-forth Links" },
-              { label: "CRM Syncing", pro: "Real-time Sync", con: "Manual Data Entry" },
-              { label: "Cost to Scale", pro: "$0 Extra", con: "Hire More Staff" }
-            ].map((row, i) => (
-              <React.Fragment key={i}>
-                <div className="p-4 md:p-6 border-t border-black/5 dark:border-white/5 font-semibold text-xs md:text-base text-foreground flex items-center">
-                  {row.label}
-                </div>
-                <div className="p-4 md:p-6 border-t border-brand-purple/10 text-center font-bold text-xs md:text-base text-brand-purple">
-                  {row.pro}
-                </div>
-                <div className="p-4 md:p-6 border-t border-black/5 dark:border-white/5 text-center font-medium text-xs md:text-base text-zinc-500">
-                  {row.con}
-                </div>
-              </React.Fragment>
-            ))}
+          {/* Wifi */}
+          <svg className="w-3 h-3 fill-current" viewBox="0 0 24 24">
+            <path d="M12 21l-12-12c6.627-6.627 17.373-6.627 24 0l-12 12zm0-18c-5.114 0-9.845 2.062-13.332 5.393l1.328 1.328c3.136-2.954 7.348-4.721 12.004-4.721 4.656 0 8.868 1.767 12.004 4.721l1.328-1.328c-3.487-3.331-8.218-5.393-13.332-5.393z" />
+          </svg>
+          {/* Battery */}
+          <div className="w-5 h-2.5 rounded-[3px] border border-white/50 p-[1px] flex items-center">
+            <div className="h-full w-3.5 bg-white rounded-[1px]" />
           </div>
         </div>
-      </motion.div>
-    </div>
-  </section>
-);
+      </div>
 
-const ROICalculator = () => {
-  const [dms, setDms] = useState(1000);
-  const [conversion, setConversion] = useState(5);
-  const [value, setValue] = useState(100);
-
-  const missedRevenue = Math.round((dms * 0.4) * (conversion / 100) * value);
-
-  return (
-    <section className="py-24 relative border-t border-white/5 bg-zinc-950/50">
-      <div className="max-w-6xl mx-auto px-6">
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
-          <div>
-            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-              <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-6 text-white">Calculate Your Lost Revenue</h2>
-              <p className="text-sm md:text-base text-zinc-400 mb-10">See how much money you are leaving on the table by not automating your Instagram DMs.</p>
-              
-              <div className="space-y-8">
-                <div>
-                  <div className="flex justify-between mb-3">
-                    <label className="font-bold text-white text-sm">Monthly DMs</label>
-                    <span className="text-brand-purple font-bold text-sm">{dms.toLocaleString()}</span>
-                  </div>
-                  <input type="range" min="100" max="10000" step="100" value={dms} onChange={e => setDms(Number(e.target.value))} className="w-full h-1.5 bg-black/10 dark:bg-white/10 rounded-lg appearance-none cursor-pointer accent-brand-purple" />
-                </div>
-                <div>
-                  <div className="flex justify-between mb-3">
-                    <label className="font-bold text-white text-sm">Conversion Rate (%)</label>
-                    <span className="text-brand-purple font-bold text-sm">{conversion}%</span>
-                  </div>
-                  <input type="range" min="1" max="20" step="1" value={conversion} onChange={e => setConversion(Number(e.target.value))} className="w-full h-1.5 bg-black/10 dark:bg-white/10 rounded-lg appearance-none cursor-pointer accent-brand-purple" />
-                </div>
-                <div>
-                  <div className="flex justify-between mb-3">
-                    <label className="font-bold text-white text-sm">Average Deal Value ($)</label>
-                    <span className="text-brand-purple font-bold text-sm">${value.toLocaleString()}</span>
-                  </div>
-                  <input type="range" min="10" max="1000" step="10" value={value} onChange={e => setValue(Number(e.target.value))} className="w-full h-1.5 bg-black/10 dark:bg-white/10 rounded-lg appearance-none cursor-pointer accent-brand-purple" />
-                </div>
-              </div>
-            </motion.div>
-          </div>
-          
-          <motion.div initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ delay: 0.2 }}>
-            <div className="bg-gradient-to-br from-brand-purple to-brand-pink p-[1px] rounded-3xl shadow-[0_0_40px_rgba(139,92,246,0.2)]">
-              <div className="bg-zinc-950 rounded-[23px] p-10 md:p-12 text-center relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-brand-purple/20 blur-[80px] -z-10" />
-                <h3 className="text-lg font-bold text-zinc-400 uppercase tracking-widest mb-4">Revenue You're Missing</h3>
-                <div className="text-5xl md:text-7xl font-extrabold text-white mb-6 tracking-tighter">
-                  ${missedRevenue.toLocaleString()}
-                </div>
-                <p className="text-sm text-zinc-500 mb-8 font-medium">Per month due to slow replies and uncaptured leads.</p>
-                <Link to="/signup" className="block w-full py-4 rounded-xl bg-brand-purple text-white font-bold text-sm hover:bg-brand-purple/90 transition-colors shadow-xl">
-                  Stop Losing Money
-                </Link>
+      {/* Instagram App Header */}
+      <div className="bg-[#0c0c0d] border-b border-zinc-900/60 py-2.5 px-3 flex items-center justify-between shrink-0 z-20">
+        <div className="flex items-center gap-2">
+          <ChevronLeft size={20} className="text-white cursor-pointer" />
+          {/* Profile Picture */}
+          <div className="relative">
+            <div className="w-8 h-8 rounded-full p-[1.5px] bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600 flex items-center justify-center">
+              <div className="w-full h-full rounded-full bg-[#121214] flex items-center justify-center text-[9px] font-black text-white">
+                JD
               </div>
             </div>
-          </motion.div>
+            <div className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-500 border border-[#0c0c0d]" />
+          </div>
+          {/* Username & Status */}
+          <div className="flex flex-col text-left">
+            <div className="flex items-center gap-1">
+              <span className="text-xs font-bold text-white tracking-tight">jordan.design</span>
+              <svg className="w-3.5 h-3.5 text-[#38BDF8]" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
+              </svg>
+            </div>
+            <span className="text-[7.5px] text-[#00e676] font-extrabold tracking-wide uppercase">● Active now</span>
+          </div>
+        </div>
+
+        {/* Header Icons */}
+        <div className="flex items-center gap-4 text-white/90">
+          <Phone size={16} className="cursor-pointer hover:opacity-80" />
+          <Video size={16} className="cursor-pointer hover:opacity-80" />
+          <Info size={16} className="cursor-pointer hover:opacity-80" />
         </div>
       </div>
-    </section>
+
+      {/* Chat Messages Feed Area */}
+      <div className="flex-1 bg-black p-4 overflow-y-auto flex flex-col gap-4 text-left font-sans text-xs scrollbar-none z-10">
+        {/* Step 0+: Welcome Auto-Reply message */}
+        {step >= 0 && (
+          <div className="flex flex-col items-end gap-1.5 self-end max-w-[85%] animate-in fade-in slide-in-from-bottom-2 duration-300">
+            <div className="bg-gradient-to-r from-[#7C3AED] to-[#EC4899] text-white p-3 rounded-2xl rounded-tr-sm shadow-md leading-relaxed font-semibold">
+              Welcome to jordan.design! 👋 Let us know if you have any questions about pricing, sizing, or shipping.
+            </div>
+            <span className="text-[7.5px] font-bold text-[#EC4899] uppercase tracking-widest mr-1">
+              ✨ AUTO-REPLY
+            </span>
+          </div>
+        )}
+
+        {/* Step 1: User Typing Indicator */}
+        {step === 1 && (
+          <div className="flex gap-2 items-center self-start">
+            <div className="w-6 h-6 rounded-full bg-zinc-800 flex items-center justify-center text-[7.5px] font-bold text-zinc-400">US</div>
+            <div className="bg-[#26262b] px-3.5 py-2.5 rounded-2xl rounded-tl-sm flex gap-1">
+              <span className="w-1.5 h-1.5 bg-zinc-405 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+              <span className="w-1.5 h-1.5 bg-zinc-405 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+              <span className="w-1.5 h-1.5 bg-zinc-405 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+            </div>
+          </div>
+        )}
+
+        {/* Step 2+: User Inbound Message 1 */}
+        {step >= 2 && (
+          <div className="flex gap-2 items-start self-start max-w-[85%] animate-in fade-in slide-in-from-bottom-2 duration-300">
+            <div className="w-6 h-6 rounded-full bg-zinc-850 flex items-center justify-center text-[7.5px] font-bold text-zinc-305 shrink-0 select-none">US</div>
+            <div className="bg-[#26262b] text-white p-3 rounded-2xl rounded-tl-sm font-semibold">
+              Hey! Do you ship to Canada? CA
+            </div>
+          </div>
+        )}
+
+        {/* Step 3: Agent Typing Indicator */}
+        {step === 3 && (
+          <div className="flex flex-col items-end gap-1.5 self-end max-w-[85%]">
+            <div className="bg-gradient-to-r from-[#7C3AED] to-[#EC4899] px-4 py-2.5 rounded-2xl rounded-tr-sm flex gap-1 items-center justify-center shadow-md">
+              <span className="w-1.5 h-1.5 bg-white rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+              <span className="w-1.5 h-1.5 bg-white rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+              <span className="w-1.5 h-1.5 bg-white rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+            </div>
+            <span className="text-[7.5px] font-bold text-[#8B5CF6] uppercase tracking-widest mr-1 flex items-center gap-1 select-none">
+              ⚡ AGENT TYPING
+            </span>
+          </div>
+        )}
+
+        {/* Step 4+: AI Response 2 */}
+        {step >= 4 && (
+          <div className="flex flex-col items-end gap-1.5 self-end max-w-[85%] animate-in fade-in slide-in-from-bottom-2 duration-300">
+            <div className="bg-gradient-to-r from-[#7C3AED] to-[#EC4899] text-white p-3 rounded-2xl rounded-tr-sm shadow-md leading-relaxed font-semibold">
+              Yes, we ship standard worldwide! 🌏 Shipping to Canada is ₹499. Would you like me to hold one?
+            </div>
+            <span className="text-[7.5px] font-bold text-[#EC4899] uppercase tracking-widest mr-1">
+              ✨ AUTO-REPLY
+            </span>
+          </div>
+        )}
+
+        {/* Step 5: User Typing Indicator 2 */}
+        {step === 5 && (
+          <div className="flex gap-2 items-center self-start">
+            <div className="w-6 h-6 rounded-full bg-zinc-800 flex items-center justify-center text-[7.5px] font-bold text-zinc-400">US</div>
+            <div className="bg-[#26262b] px-3.5 py-2.5 rounded-2xl rounded-tl-sm flex gap-1">
+              <span className="w-1.5 h-1.5 bg-zinc-405 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+              <span className="w-1.5 h-1.5 bg-zinc-405 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+              <span className="w-1.5 h-1.5 bg-zinc-405 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+            </div>
+          </div>
+        )}
+
+        {/* Step 6+: User Inbound Message 2 */}
+        {step >= 6 && (
+          <div className="flex gap-2 items-start self-start max-w-[85%] animate-in fade-in slide-in-from-bottom-2 duration-300">
+            <div className="w-6 h-6 rounded-full bg-zinc-850 flex items-center justify-center text-[7.5px] font-bold text-zinc-305 shrink-0 select-none">US</div>
+            <div className="bg-[#26262b] text-white p-3 rounded-2xl rounded-tl-sm font-semibold">
+              Yes please! The standard hoodie in black, size L.
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Instagram Message Input Footer Bar */}
+      <div className="p-3 bg-[#0c0c0d] border-t border-zinc-900/60 flex items-center gap-2.5 shrink-0 z-20">
+        <div className="w-7 h-7 rounded-full bg-[#0095f6] flex items-center justify-center text-white cursor-pointer hover:bg-[#1880e6] transition-colors">
+          <Camera size={14} fill="currentColor" />
+        </div>
+        <div className="flex-1 bg-black border border-zinc-800/80 rounded-full h-8.5 px-3.5 flex items-center justify-between text-[11px] text-zinc-400">
+          <span>Message...</span>
+          <div className="flex items-center gap-3 text-zinc-500">
+            <Mic size={14} className="cursor-pointer hover:text-white transition-colors" />
+            <Image size={14} className="cursor-pointer hover:text-white transition-colors" />
+            <Smile size={14} className="cursor-pointer hover:text-white transition-colors" />
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 
-const NewPricing = () => {
-  const navigate = useNavigate();
-  return (
-    <section id="pricing" className="py-24 border-t border-black/5 dark:border-white/5 relative bg-background">
-      <div className="max-w-6xl mx-auto px-6">
-        <div className="text-center max-w-2xl mx-auto mb-16">
-          <span className="text-xs font-bold uppercase tracking-widest text-brand-pink">Simple & Transparent</span>
-          <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-foreground mt-3 mb-4 leading-tight">
-            Pricing that scales with you.
-          </h2>
-          <p className="text-sm md:text-base text-zinc-500 font-medium leading-relaxed">
-            Start completely free with zero credit card required. Upgrade as your automated volume increases.
-          </p>
-        </div>
 
-        <div className="grid md:grid-cols-3 gap-8 max-w-[1000px] mx-auto">
-          {[
-            { 
-              name: "Free", 
-              for: "Explore basic automation features", 
-              price: "₹0", 
-              volume: "25",
-              btnText: "Start For Free",
-              features: ["Connect 1 IG Account", "4 Basic Automations", "1 Team User"] 
-            },
-            { 
-              name: "Pro", 
-              for: "For scaling creators & agencies", 
-              price: "₹2,499", 
-              popular: true, 
-              volume: "2,500",
-              btnText: "Try 14 Days Free",
-              features: ["Connect 3 IG Accounts", "Advanced AI Automations", "3 Team Users", "Full AI Features & Sync"] 
-            },
-            { 
-              name: "Business", 
-              for: "For high-growth enterprise brands", 
-              price: "₹5,999", 
-              volume: "7,500",
-              btnText: "Start Trial",
-              features: ["Unlimited IG Accounts", "Dedicated Sync Server", "Unlimited Team Users", "Priority 24/7 VIP Support"] 
-            }
-          ].map((p, i) => (
-            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} key={i}>
-              <div className={`p-8 rounded-[32px] border h-full flex flex-col relative ${p.popular ? 'bg-[#0B0A10] border-brand-purple shadow-[0_0_40px_rgba(139,92,246,0.15)] transform md:-translate-y-4' : 'bg-card/20 border-black/10 dark:border-white/10 mt-4'}`}>
-                 {p.popular && (
-                   <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-brand-purple text-[#ffffff] text-[10px] font-extrabold px-4 py-1.5 rounded-full uppercase tracking-wider shadow-lg">
-                     Most Popular
-                   </div>
-                 )}
-                 <div className="mb-6">
-                   <h3 className={`text-2xl font-bold mb-2 ${p.popular ? 'text-[#ffffff]' : 'text-foreground'}`}>{p.name}</h3>
-                   <p className={`text-xs font-medium ${p.popular ? 'text-brand-pink' : 'text-zinc-500'}`}>{p.for}</p>
-                 </div>
-                 
-                 <div className="mb-6 flex items-baseline gap-1">
-                   <span className={`text-4xl font-extrabold ${p.popular ? 'text-[#ffffff]' : 'text-foreground'}`}>{p.price}</span>
-                   <span className={`text-sm font-bold ${p.popular ? 'text-zinc-400' : 'text-zinc-500'}`}>/mo</span>
-                 </div>
-                 
-                 <div className="mb-8">
-                   <div className={`text-2xl font-bold mb-1 ${p.popular ? 'text-[#ffffff]' : 'text-foreground'}`}>{p.volume}</div>
-                   <div className={`text-[10px] font-bold uppercase tracking-wider ${p.popular ? 'text-zinc-400' : 'text-zinc-500'}`}>Active Contacts / Mo</div>
-                 </div>
-                 
-                 <button onClick={() => navigate('/signup')} className={`w-full py-3.5 rounded-xl font-bold text-sm text-center transition-all mb-8 ${p.popular ? 'bg-brand-purple text-[#ffffff] hover:bg-brand-purple/90 shadow-lg shadow-brand-purple/20' : 'bg-black/5 dark:bg-white/5 text-foreground hover:bg-black/10 dark:hover:bg-white/10 border border-black/10 dark:border-white/10'}`}>
-                   {p.btnText}
-                 </button>
-                 
-                 <div className="space-y-4 flex-1">
-                   {p.features.map((f, j) => (
-                     <div key={j} className="flex items-center gap-3">
-                       <Check size={14} className={p.popular ? "text-brand-pink" : "text-zinc-400"} />
-                       <span className={`text-xs font-medium ${p.popular ? 'text-[#e2e8f0]' : 'text-zinc-600 dark:text-zinc-400'}`}>{f}</span>
-                     </div>
-                   ))}
-                 </div>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-};
+// ==========================================
+// 5. MAIN LANDING COMPONENT
+// ==========================================
+type TabType = 'inbox' | 'agent' | 'builder' | 'analytics' | 'settings';
 
-const NewCTA = () => {
-  const navigate = useNavigate();
-  return (
-    <section className="py-32 border-t border-white/5 relative overflow-hidden text-center bg-zinc-950/50">
-      <div className="absolute inset-0 bg-gradient-to-b from-brand-purple/5 to-transparent pointer-events-none" />
-      <div className="max-w-4xl mx-auto px-6 relative z-10">
-        <h2 className="text-4xl md:text-6xl font-extrabold text-white mb-6 leading-tight tracking-tight">
-          Stop Losing Leads In Your Instagram Inbox
-        </h2>
-        <p className="text-base md:text-lg text-zinc-400 max-w-xl mx-auto mb-10">
-          Start automating conversations, qualifying prospects, and growing your business today.
-        </p>
-        <button
-          onClick={() => navigate('/signup')}
-          className="w3-button-primary bg-gradient-to-r from-brand-pink to-brand-purple font-bold px-10 py-5 rounded-xl text-sm shadow-xl shadow-brand-pink/20 hover:scale-[1.02] active:scale-95 transition-all inline-flex items-center gap-2 group"
-        >
-          Start Free Trial
-          <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
-        </button>
-      </div>
-    </section>
-  );
-};
 const Landing: React.FC = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="landing-page bg-background text-foreground font-inter selection:bg-brand-purple/30 selection:text-white min-h-screen relative overflow-hidden">
-
-      {/* Background Decorative Mesh Gradients (Formcarry-inspired styling) */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[500px] bg-gradient-to-b from-brand-purple/10 to-transparent blur-[120px] pointer-events-none" />
-      <div className="absolute top-[800px] right-0 w-[400px] h-[400px] bg-brand-pink/5 blur-[100px] pointer-events-none" />
+    <div className="landing-page bg-[#fafafa] dark:bg-[#09090b] text-zinc-900 dark:text-white font-inter selection:bg-[#38BDF8]/10 selection:text-[#38BDF8] min-h-screen relative overflow-x-hidden">
+      
+      {/* Decorative gradient radial glows */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[550px] bg-gradient-to-b from-[#3B82F6]/5 dark:from-[#3B82F6]/10 to-transparent blur-[120px] pointer-events-none" />
+      <div className="absolute top-[800px] right-0 w-[450px] h-[450px] bg-[#6366F1]/5 blur-[100px] pointer-events-none" />
+      <div className="absolute top-[1800px] left-0 w-[500px] h-[500px] bg-[#38BDF8]/5 blur-[120px] pointer-events-none" />
 
       {/* NAVBAR */}
       <Navbar />
 
       <main className="pt-[72px]">
 
-        {/* 1. HERO SECTION */}
-        <section className="relative pt-20 lg:pt-20 pb-20 z-10 overflow-hidden">
-          <div className="max-w-6xl mx-auto px-6 grid lg:grid-cols-[1.2fr_0.8fr] gap-12 lg:gap-16 items-center relative z-10">
+        {/* ==========================================
+            SECTION 1 — HERO
+            ========================================== */}
+        <section className="relative pt-12 pb-24 z-10 overflow-hidden">
+          <div className="max-w-6xl mx-auto px-6 grid lg:grid-cols-2 gap-12 items-center relative z-10">
             {/* Left Content Column */}
             <div className="flex flex-col items-center lg:items-start text-center lg:text-left">
               {/* Tag / Badge */}
-              {/* <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-pink/10 border border-brand-pink/20 mb-6 animate-fade-in">
-                <span className="w-1.5 h-1.5 rounded-full bg-brand-pink animate-pulse" />
-                <span className="text-[10px] font-bold uppercase tracking-wider text-brand-pink">Formcarry-Inspired DM API</span>
-              </div> */}
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#4F39F6]/10 border border-[#4F39F6]/20 mb-6 select-none animate-fade-in">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#4F39F6] animate-pulse" />
+                <span className="text-[10px] font-bold uppercase tracking-widest text-[#4F39F6] dark:text-[#818CF8]">
+                  AI Instagram Sales Agent
+                </span>
+              </div>
 
-              {/* Headline */}
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight mb-6 text-white leading-[1.1] text-balance">
-                Turn Every <span className="gradient-text-ai">Instagram DM</span> Into Revenue
+              {/* Headline with visual gradient spec */}
+              <h1 className="text-4xl sm:text-5xl lg:text-[54px] lg:leading-[1.1] font-extrabold tracking-tight mb-6 text-balance text-zinc-950 dark:text-white">
+                Turn Every Instagram <span className="text-headline-gradient">DM Into Revenue</span>
               </h1>
 
-              {/* Subtext */}
-              <p className="text-sm sm:text-base text-zinc-400 font-medium leading-relaxed max-w-xl mb-8 text-balance">
-                ReplyZens automatically replies to Instagram messages, qualifies leads, answers questions, and books appointments—24/7.
+              {/* Subheadline */}
+              <p className="text-base text-zinc-650 dark:text-zinc-400 font-medium leading-relaxed mb-10 text-balance max-w-xl">
+                ReplyZens automatically replies to Instagram messages, qualifies leads, captures customer information, answers questions, and books appointments while you focus on growing your business.
               </p>
 
-              {/* CTA Buttons */}
-              <div className="flex flex-col sm:flex-row items-center gap-4 w-full max-w-md lg:max-w-none mb-10">
+              {/* CTA Buttons using btn-premium-cta styles */}
+              <div className="flex flex-col sm:flex-row items-center gap-4 w-full max-w-md mb-8">
                 <button
                   onClick={() => navigate('/signup')}
-                  className="w-full sm:w-auto w3-button-primary bg-gradient-to-r from-brand-pink to-brand-purple font-bold px-8 py-4 rounded-xl text-sm shadow-xl shadow-brand-pink/20 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2 group"
+                  className="btn-premium-cta w-full sm:w-auto px-8 py-4.5 text-sm font-bold flex items-center justify-center gap-2 group"
                 >
-                  Get Started
+                  Start Free Trial
                   <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
                 </button>
                 <a
-                  href="#how-it-works"
-                  className="w-full sm:w-auto px-8 py-4 rounded-xl text-sm font-semibold bg-white/5 border border-white/10 text-zinc-300 hover:bg-white/10 hover:border-white/20 transition-all flex items-center justify-center gap-2"
+                  href="#demo"
+                  className="w-full sm:w-auto px-8 py-4.5 rounded-xl text-sm font-bold bg-white dark:bg-[#121826] border border-zinc-200 dark:border-white/10 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-white/10 hover:border-zinc-300 dark:hover:border-white/20 transition-all flex items-center justify-center gap-2 shadow-sm"
                 >
                   <Play size={14} fill="currentColor" />
-                  How It Works
+                  Watch Demo
                 </a>
-              </div>
-
-              {/* Features Quick List */}
-              <div className="flex flex-wrap justify-center lg:justify-start items-center gap-5 text-[11px] font-bold text-zinc-500 border-t border-white/5 pt-6 w-full">
-                <span className="flex items-center gap-1.5"><CheckCircle2 size={13} className="text-success" /> Meta Partner Verified</span>
-                <span className="flex items-center gap-1.5"><CheckCircle2 size={13} className="text-success" /> 3-Minute Setup</span>
-                <span className="flex items-center gap-1.5"><CheckCircle2 size={13} className="text-success" /> 98.6% Spam Shield</span>
               </div>
             </div>
 
-            {/* Right Column: Animated Live Phone Mockup */}
-            <div className="flex items-center justify-center relative w-full lg:h-full">
-              <div className="absolute w-[350px] h-[350px] bg-brand-purple/10 blur-[80px] pointer-events-none rounded-full" />
-              <InteractivePhoneMockup />
+            {/* Right Interactive Mobile Mockup Column */}
+            <div className="w-full flex justify-center items-center mockup-dark">
+              <InstagramMobileMockup />
             </div>
           </div>
         </section>
 
-        {/* INTERACTIVE WORKFLOW PIPELINE */}
-        <PipelineFlowSection />
+
+        {/* ==========================================
+            SECTION 2 — SOCIAL PROOF
+            ========================================== */}
+        <section className="py-20 border-y border-zinc-200/80 dark:border-white/5 bg-zinc-100/50 dark:bg-[#121826]/30 backdrop-blur-xl relative z-10">
+          <div className="max-w-6xl mx-auto px-6">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
+              {[
+                { label: "Conversations Automated", value: "10,000+", icon: <MessageCircle size={20} /> },
+                { label: "Faster Response Times", value: "85%", icon: <Clock size={20} /> },
+                { label: "More Qualified Leads", value: "3X", icon: <TrendingUp size={20} /> },
+                { label: "AI Availability", value: "24/7", icon: <Sparkles size={20} /> },
+              ].map((metric, i) => (
+                <motion.div
+                  initial={{ opacity: 0, y: 15 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.1 }}
+                  key={i}
+                  className="bg-[#121826]/50 border border-white/5 p-6 rounded-2xl flex flex-col items-center text-center relative group hover:border-[#38BDF8]/40 hover:bg-[#121826]/80 transition-all shadow-sm"
+                >
+                  <div className="w-10 h-10 rounded-xl bg-white/[0.02] border border-white/5 flex items-center justify-center mb-4 text-[#38BDF8] group-hover:scale-110 transition-transform">
+                    {metric.icon}
+                  </div>
+                  <div className="text-3xl md:text-4xl font-extrabold text-white mb-2 tracking-tight">
+                    {metric.value}
+                  </div>
+                  <div className="text-[10px] md:text-xs font-bold text-zinc-550 uppercase tracking-widest font-mono">
+                    {metric.label}
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
 
 
-        {/* INTERACTIVE WORKFLOW PIPELINE */}
-        <PipelineFlowSection />
-        
-        <Metrics />
-        <Problem />
-        <Solution />
-        <NewFeatures />
-        <Automations />
-        <Comparison />
-        <ROICalculator />
-        <NewPricing />
-        
-        {/* FAQ ACCORDION SECTION (Original) */}
-        <section id="faq" className="py-24 border-t border-white/5 bg-zinc-950/50 relative">
+        {/* ==========================================
+            SECTION 3 — PROBLEM
+            ========================================== */}
+        <section className="py-28 relative bg-[#fafafa] dark:bg-[#09090b]">
+          <div className="max-w-6xl mx-auto px-6">
+            <div className="text-center max-w-2xl mx-auto mb-16">
+              <span className="text-xs font-bold uppercase tracking-widest text-[#4F39F6] dark:text-[#818CF8]">The Hard Truth</span>
+              <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-4 text-white leading-tight mt-3">
+                Every Missed Instagram Message Is Lost Revenue
+              </h2>
+              <p className="text-sm md:text-base text-zinc-400 font-medium leading-relaxed mt-1">
+                Manual Instagram management scales poorly. Customers expect immediate replies, and while you sleep or focus on operations, leads are leaking.
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-6">
+              {[
+                {
+                  title: "Slow Responses",
+                  desc: "Customers leave before businesses can reply. 78% of buyers purchase from the brand that responds first.",
+                  glow: "group-hover:border-[#38BDF8]/50 group-hover:shadow-lg group-hover:shadow-[#38BDF8]/5",
+                  badge: "Friction"
+                },
+                {
+                  title: "Repetitive Questions",
+                  desc: "Teams waste hours answering the same questions about pricing, stock availability, and shipping info.",
+                  glow: "group-hover:border-[#38BDF8]/50 group-hover:shadow-lg group-hover:shadow-[#38BDF8]/5",
+                  badge: "Inefficiency"
+                },
+                {
+                  title: "Lost Opportunities",
+                  desc: "Potential buyers never receive follow-up messages, checkouts, or demo links, disappearing forever.",
+                  glow: "group-hover:border-[#38BDF8]/50 group-hover:shadow-lg group-hover:shadow-[#38BDF8]/5",
+                  badge: "Lost Sales"
+                }
+              ].map((p, i) => (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.1 }}
+                  key={i}
+                  className="group"
+                >
+                  <div className={`p-8 rounded-3xl bg-[#121826]/40 border border-white/5 h-full flex flex-col justify-between transition-all duration-300 hover:bg-[#121826]/70 shadow-sm ${p.glow}`}>
+                    <div>
+                      <div className="flex justify-between items-center mb-6">
+                        <div className="w-10 h-10 rounded-xl bg-[#38BDF8]/10 text-[#38BDF8] flex items-center justify-center">
+                          <X size={18} />
+                        </div>
+                        <span className="text-[8.5px] font-bold text-zinc-555 uppercase tracking-widest">{p.badge}</span>
+                      </div>
+                      <h3 className="text-xl font-bold mb-3 text-white">{p.title}</h3>
+                      <p className="text-zinc-400 leading-relaxed text-sm font-medium">{p.desc}</p>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+
+        {/* ==========================================
+            SECTION 4 — SOLUTION
+            ========================================== */}
+        <section className="py-28 border-t border-zinc-200/80 dark:border-white/5 relative overflow-hidden bg-gradient-to-b from-[#fafafa] via-zinc-100/50 to-[#fafafa] dark:from-[#09090b] dark:via-[#121826]/30 dark:to-[#09090b]">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#3B82F6]/5 blur-[120px] rounded-full pointer-events-none" />
+          
+          <div className="max-w-6xl mx-auto px-6 relative z-10">
+            <div className="text-center max-w-2xl mx-auto mb-20">
+              <span className="text-xs font-bold uppercase tracking-widest text-zinc-500">Core Architecture</span>
+              <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-4 text-white mt-3 animate-fade-in">
+                Meet Your AI Instagram Growth Engine
+              </h2>
+              <p className="text-sm md:text-base text-zinc-400 font-medium">
+                ReplyZens streamlines your sales funnel, seamlessly taking prospects from a simple message to a confirmed conversion.
+              </p>
+            </div>
+
+            {/* Workflow Architecture Map */}
+            <div className="max-w-4xl mx-auto bg-[#121826]/50 border border-white/5 p-8 md:p-12 rounded-[2.5rem] relative overflow-hidden shadow-2xl">
+              <div className="absolute inset-0 opacity-[0.02] bg-[linear-gradient(to_right,#808080_1px,transparent_1px),linear-gradient(to_bottom,#808080_1px,transparent_1px)] bg-[size:24px_24px]" />
+              
+              <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6 md:gap-4 flex-wrap lg:flex-nowrap">
+                {[
+                  { title: "Instagram Message", desc: "Trigger received", icon: <MessageCircle size={16} /> },
+                  { title: "AI Understanding", desc: "Intent parsing", icon: <Bot size={16} /> },
+                  { title: "Smart Response", desc: "FAQ answered", icon: <Zap size={16} /> },
+                  { title: "Lead Capture", desc: "Contact details", icon: <Users size={16} /> },
+                  { title: "Qualification", desc: "Intent scoring", icon: <Star size={16} /> },
+                  { title: "CRM Integration", desc: "System updated", icon: <Database size={16} /> },
+                  { title: "Appointment Booking", desc: "Sale closed", icon: <Calendar size={16} /> }
+                ].map((node, idx) => (
+                  <React.Fragment key={idx}>
+                    {/* Node */}
+                    <div className="flex flex-col items-center text-center p-4 bg-[#0B1020]/80 border border-white/5 rounded-2xl w-32 shrink-0 group hover:border-[#38BDF8] hover:shadow-lg hover:shadow-[#38BDF8]/5 transition-all">
+                      <div className="w-10 h-10 rounded-full bg-[#121826] border border-white/10 text-white flex items-center justify-center mb-3 group-hover:bg-[#38BDF8] group-hover:text-white transition-colors">
+                        {node.icon}
+                      </div>
+                      <span className="text-[10px] font-bold text-white block mb-0.5 leading-tight">{node.title}</span>
+                      <span className="text-[8.5px] text-zinc-555 block font-medium">{node.desc}</span>
+                    </div>
+
+                    {/* Arrow (hidden after the last node) */}
+                    {idx < 6 && (
+                      <div className="hidden lg:flex flex-col justify-center items-center text-[#38BDF8] shrink-0">
+                        <ArrowRight size={14} className="opacity-70 transition-colors" />
+                      </div>
+                    )}
+                  </React.Fragment>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+
+        {/* ==========================================
+            SECTION 5 — FEATURE GRID WITH ELEGANT GRADIENT BORDERS
+            ========================================== */}
+        <section className="py-28 relative bg-[#fafafa] dark:bg-[#09090b]">
+          <div className="max-w-6xl mx-auto px-6">
+            <div className="text-center max-w-2xl mx-auto mb-16">
+              <span className="text-xs font-bold uppercase tracking-widest text-[#4F39F6] dark:text-[#818CF8]">Built For scale</span>
+              <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-white mt-3 mb-4 leading-tight">
+                Enterprise Features, Zero Complexity
+              </h2>
+              <p className="text-sm md:text-base text-zinc-400 font-medium">
+                Everything you need to automate conversations, capture customer insights, and increase revenue.
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {[
+                {
+                  icon: <Bot size={20} />,
+                  title: "AI-Powered Conversations",
+                  desc: "Maya AI parses customer inquiries and replies naturally in 40+ languages based on your knowledge base docs."
+                },
+                {
+                  icon: <MessageCircle size={20} />,
+                  title: "Comment-to-DM Automation",
+                  desc: "Instantly reply to comments on posts, reels, and stories with personalized DMs to funnel engagement."
+                },
+                {
+                  icon: <Workflow size={20} />,
+                  title: "Lead Qualification Workflows",
+                  desc: "Automatically filter out casual browsers and extract email addresses, phone numbers, and location info."
+                },
+                {
+                  icon: <Inbox size={20} />,
+                  title: "Unified Smart Inbox",
+                  desc: "Monitor automated live chats, take over manual conversations, and tag customer statuses in real time."
+                },
+                {
+                  icon: <Calendar size={20} />,
+                  title: "Appointment Scheduling",
+                  desc: "Connect Cal.com or Calendly. Let the AI share available slots and book client appointments in-thread."
+                },
+                {
+                  icon: <BarChart3 size={20} />,
+                  title: "Analytics & Reporting",
+                  desc: "Track critical ROI metrics including total conversations automated, leads collected, and estimated revenue growth."
+                }
+              ].map((feature, i) => (
+                <motion.div
+                  initial={{ opacity: 0, y: 15 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.08 }}
+                  key={i}
+                >
+                  <div className="premium-gradient-border h-full">
+                    <div className="premium-card-content p-8 flex flex-col justify-between text-left">
+                      <div>
+                        <div className="w-12 h-12 rounded-xl bg-[#0B1020] border border-white/10 flex items-center justify-center mb-6 group-hover:border-[#38BDF8]/50 group-hover:bg-[#38BDF8]/10 group-hover:text-[#38BDF8] transition-all text-[#38BDF8] font-semibold">
+                          {feature.icon}
+                        </div>
+                        <h3 className="text-lg font-bold mb-2.5 text-white">{feature.title}</h3>
+                        <p className="text-zinc-400 leading-relaxed text-sm font-medium">{feature.desc}</p>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+
+        {/* ==========================================
+            SECTION 6 — PRODUCT SHOWCASE
+            ========================================== */}
+        <section id="demo" className="py-28 border-t border-zinc-200/80 dark:border-white/5 bg-zinc-100/20 dark:bg-[#121826]/20 relative overflow-hidden">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-[#3B82F6]/5 blur-[150px] rounded-full pointer-events-none" />
+          
+          <div className="max-w-6xl mx-auto px-6 relative z-10">
+            <div className="text-center max-w-2xl mx-auto mb-16">
+              <span className="text-xs font-bold uppercase tracking-widest text-[#4F39F6] dark:text-[#818CF8]">Interactive Console</span>
+              <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-4 text-white mt-3">
+                Experience the ReplyZens Platform
+              </h2>
+              <p className="text-sm md:text-base text-zinc-400 font-medium">
+                Click through the tabs below to explore the premium interface digital brands use to control their automation funnel.
+              </p>
+            </div>
+
+            {/* Showcase dashboard viewport container */}
+            <ProductShowcase />
+          </div>
+        </section>
+
+
+        {/* ==========================================
+            SECTION 7 — AUTOMATION EXAMPLES
+            ========================================== */}
+        <section className="py-28 relative bg-[#fafafa] dark:bg-[#09090b] border-t border-zinc-200/80 dark:border-white/5">
+          <div className="max-w-6xl mx-auto px-6">
+            <div className="text-center max-w-2xl mx-auto mb-16">
+              <span className="text-xs font-bold uppercase tracking-widest text-[#4F39F6] dark:text-[#818CF8]">Playbooks</span>
+              <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-4 text-white mt-3">
+                Automations That Drive Growth
+              </h2>
+              <p className="text-sm md:text-base text-zinc-400 font-medium mt-1">
+                Deploy templates that work 24/7 to convert story replies, comments, and DMs into pipeline sales.
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-6 text-left">
+              {[
+                {
+                  title: 'Comment → DM → Lead Captured',
+                  desc: 'Perfect for e-commerce brands launching new collections or catalogs.',
+                  steps: ["User comments 'GUIDE' on your post", "AI sends direct message link", "AI extracts email, syncing details"]
+                },
+                {
+                  title: 'Story Reply → AI Qualification → Appointment Booked',
+                  desc: 'Ideal for coaches, consultants, and agencies seeking consultation calls.',
+                  steps: ["Prospect responds to story highlight", "Maya asks qualifying questions", "AI shares custom Cal.com invite"]
+                },
+                {
+                  title: 'Keyword Trigger → Product Recommendation → Sale',
+                  desc: 'Excellent for stores looking to close transactions immediately in DMs.',
+                  steps: ["User sends DM containing keyword", "AI reviews stock & recommends product", "Direct checkout invoice generated"]
+                }
+              ].map((recipe, i) => (
+                <motion.div
+                  initial={{ opacity: 0, y: 15 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.1 }}
+                  key={i}
+                  className="group"
+                >
+                  <div className="p-8 rounded-3xl bg-[#121826]/40 border border-white/5 hover:border-[#38BDF8] hover:bg-[#121826]/60 transition-all shadow-lg h-full flex flex-col justify-between">
+                    <div>
+                      <h3 className="text-lg font-bold mb-4 text-white group-hover:text-[#38BDF8] transition-colors font-inter">
+                        {recipe.title}
+                      </h3>
+                      <p className="text-xs text-zinc-400 leading-relaxed font-medium mb-8">
+                        {recipe.desc}
+                      </p>
+                    </div>
+
+                    <div className="space-y-4 relative">
+                      <div className="absolute left-6 top-6 bottom-6 w-px bg-gradient-to-b from-[#38BDF8] to-[#6366F1] opacity-35" />
+                      {recipe.steps.map((step, idx) => (
+                        <div key={idx} className="flex items-center gap-4 relative z-10">
+                          <div className="w-12 h-12 rounded-full bg-[#0B1020] border border-white/10 flex items-center justify-center text-white font-bold text-xs shrink-0 group-hover:border-[#38BDF8] transition-colors">
+                            {idx + 1}
+                          </div>
+                          <div className="text-xs font-semibold text-zinc-300 bg-white/[0.02] border border-white/5 px-4 py-3 rounded-xl flex-1">
+                            {step}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+
+        {/* ==========================================
+            SECTION 8 — COMPARISON
+            ========================================== */}
+        <section className="py-28 bg-[#fafafa] dark:bg-[#09090b] border-t border-zinc-200/80 dark:border-white/5 relative z-10">
+          <div className="max-w-5xl mx-auto px-6 relative z-10">
+            <div className="text-center mb-16">
+              <span className="text-xs font-bold uppercase tracking-widest text-[#4F39F6] dark:text-[#818CF8]">Side-by-side</span>
+              <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-4 text-white mt-3">
+                Why Businesses Choose ReplyZens
+              </h2>
+            </div>
+            
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1 }}
+              className="relative max-w-4xl mx-auto"
+            >
+              {/* Highlight Column Glow behind ReplyZens */}
+              <div className="absolute top-0 bottom-0 left-[35%] w-[33%] bg-[#38BDF8]/5 rounded-3xl shadow-sm border border-[#38BDF8]/20 -z-10 transform scale-y-[1.05]" />
+              
+              <div className="grid grid-cols-[1.2fr_1fr_1fr] items-center text-left">
+                {/* Header row */}
+                <div className="p-4 md:p-6 font-bold text-xs uppercase tracking-widest text-zinc-400">
+                  Capabilities
+                </div>
+                <div className="p-4 md:p-6 text-center flex flex-col items-center justify-center">
+                  <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#3B82F6] text-white font-bold text-[9px] uppercase tracking-wider mb-2 shadow-md shadow-[#3B82F6]/20">
+                    <Sparkles size={10} /> Autopilot
+                  </div>
+                  <div className="font-extrabold text-base md:text-lg text-white font-inter">ReplyZens</div>
+                </div>
+                <div className="p-4 md:p-6 font-bold text-center text-xs uppercase tracking-widest text-zinc-400">
+                  Manual DMs
+                </div>
+
+                {/* Rows */}
+                {[
+                  { feat: "Instant replies", reply: "Instant (< 1s)", manual: "Hours or days" },
+                  { feat: "24/7 Availability", reply: "Always online", manual: "Work hours only" },
+                  { feat: "Lead qualification", reply: "AI entity extraction", manual: "Manual questioning" },
+                  { feat: "CRM integration", reply: "Real-time automated sync", manual: "Manual copy-paste" },
+                  { feat: "Appointment booking", reply: "Direct in-chat schedule", manual: "Back-and-forth links" },
+                  { feat: "Analytics & stats", reply: "Live dashboard reports", manual: "None" }
+                ].map((row, i) => (
+                  <React.Fragment key={i}>
+                    <div className="p-4 md:p-5 border-t border-white/5 font-semibold text-xs md:text-sm text-zinc-300">
+                      {row.feat}
+                    </div>
+                    <div className="p-4 md:p-5 border-t border-white/10 text-center font-bold text-xs md:text-sm text-[#38BDF8]">
+                      {row.reply}
+                    </div>
+                    <div className="p-4 md:p-5 border-t border-white/5 text-center font-medium text-xs md:text-sm text-zinc-500">
+                      {row.manual}
+                    </div>
+                  </React.Fragment>
+                ))}
+              </div>
+            </motion.div>
+          </div>
+        </section>
+
+
+        {/* ==========================================
+            SECTION 9 — ROI CALCULATOR
+            ========================================== */}
+        <section className="py-28 relative border-t border-zinc-200/80 dark:border-white/5 bg-zinc-100/10 dark:bg-[#121826]/10">
+          <div className="max-w-6xl mx-auto px-6">
+            <div className="text-center max-w-2xl mx-auto mb-16">
+              <span className="text-xs font-bold uppercase tracking-widest text-[#4F39F6] dark:text-[#818CF8]">ROI Calculator</span>
+              <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-4 text-white mt-3">
+                Calculate Your Recovered Revenue
+              </h2>
+              <p className="text-sm md:text-base text-zinc-400 font-medium">
+                See how much revenue is left unrecovered without automated lead pipelines.
+              </p>
+            </div>
+
+            <ROICalculator />
+          </div>
+        </section>
+
+
+        {/* ==========================================
+            SECTION 10 — TESTIMONIALS WITH ELEGANT GRADIENT BORDERS
+            ========================================== */}
+        <section className="py-28 relative bg-[#fafafa] dark:bg-[#09090b] border-t border-zinc-200/80 dark:border-white/5">
+          <div className="max-w-6xl mx-auto px-6">
+            <div className="text-center max-w-2xl mx-auto mb-20">
+              <span className="text-xs font-bold uppercase tracking-widest text-[#4F39F6] dark:text-[#818CF8]">Success Stories</span>
+              <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-white mt-3 mb-4 leading-tight">
+                Trusted by Scaling Brands
+              </h2>
+              <p className="text-sm md:text-base text-zinc-400 font-medium">
+                See how high-growth creators and digital shops use ReplyZens to optimize conversions.
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-8 text-left">
+              {[
+                {
+                  quote: "Waking up to direct payment confirmations and booked consulting calls in my CRM is a complete game-changer. ReplyZens automated over 90% of our inbox inquiries, recovering $8,400 in lost revenue in our first month alone.",
+                  name: "Sarah Jenkins",
+                  role: "Founder, Zenith Templates",
+                  stats: "+340% Conversions",
+                  avatar: "SJ"
+                },
+                {
+                  quote: "We were scaling our reel ads but losing half of our leads in the inbox due to slow replies. Setting up ReplyZens comment-to-DM triggers took less than 5 minutes. Response times dropped to under 1s, and our sales increased by 3X.",
+                  name: "Marcus Thorne",
+                  role: "Director of Growth, HypeFit",
+                  stats: "3X Lead Growth",
+                  avatar: "MT"
+                }
+              ].map((t, i) => (
+                <motion.div
+                  initial={{ opacity: 0, y: 15 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.1 }}
+                  key={i}
+                  className="premium-gradient-border"
+                >
+                  <div className="premium-card-content p-8 flex flex-col justify-between h-full">
+                    <div>
+                      {/* Stars */}
+                      <div className="flex gap-1 mb-6">
+                        {[...Array(5)].map((_, idx) => (
+                          <Star key={idx} size={14} className="fill-[#38BDF8] text-[#38BDF8]" />
+                        ))}
+                      </div>
+                      <p className="text-sm md:text-base text-zinc-200 leading-relaxed font-medium italic mb-8 font-inter">
+                        &quot;{t.quote}&quot;
+                      </p>
+                    </div>
+
+                    <div className="flex items-center justify-between border-t border-white/5 pt-6">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full bg-[#3B82F6] flex items-center justify-center text-xs font-bold text-white shadow-lg">
+                          {t.avatar}
+                        </div>
+                        <div className="flex flex-col">
+                          <span className="text-sm font-bold text-white leading-tight font-inter">{t.name}</span>
+                          <span className="text-xs text-zinc-500 mt-0.5">{t.role}</span>
+                        </div>
+                      </div>
+                      <div className="bg-[#38BDF8]/10 border border-[#38BDF8]/20 px-3.5 py-1.5 rounded-full text-xs font-bold text-[#38BDF8]">
+                        {t.stats}
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+
+        {/* ==========================================
+            SECTION 11 — PRICING WITH ELEGANT GRADIENT BORDERS
+            ========================================== */}
+        <section id="pricing" className="py-28 border-t border-zinc-200/80 dark:border-white/5 bg-zinc-100/10 dark:bg-[#121826]/10 relative">
+          <div className="max-w-6xl mx-auto px-6">
+            <div className="text-center max-w-2xl mx-auto mb-16">
+              <span className="text-xs font-bold uppercase tracking-widest text-[#4F39F6] dark:text-[#818CF8]">Pricing Plans</span>
+              <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-white mt-3 mb-4 leading-tight">
+                Simple, Transparent Pricing
+              </h2>
+              <p className="text-sm md:text-base text-zinc-400 font-medium leading-relaxed">
+                Scale your automated interactions without hidden fees. Choose a plan that matches your audience volume.
+              </p>
+            </div>
+
+            {/* Pricing tiers grid */}
+            <div className="grid md:grid-cols-3 gap-8 max-w-[1000px] mx-auto items-stretch text-left">
+              {[
+                {
+                  name: "Starter",
+                  desc: "Perfect for new creators & personal brands",
+                  price: "$29",
+                  volume: "500",
+                  btn: "Start Free Trial",
+                  popular: false,
+                  features: [
+                    "Connect 1 Instagram Account",
+                    "Basic FAQ Automations",
+                    "Google Sheets Lead Sync",
+                    "Email Support (24h response)"
+                  ]
+                },
+                {
+                  name: "Growth",
+                  desc: "Ideal for scaling e-commerce & active creators",
+                  price: "$79",
+                  volume: "3,000",
+                  btn: "Start 14-Day Trial",
+                  popular: true,
+                  features: [
+                    "Connect 3 Instagram Accounts",
+                    "Advanced Maya AI Agent Setup",
+                    "Instant Google Sheets & HubSpot Sync",
+                    "Unlimited Comment-to-DM triggers",
+                    "Cal.com / Calendly scheduling nodes",
+                    "Priority Discord & Email Support"
+                  ]
+                },
+                {
+                  name: "Agency",
+                  desc: "For multi-client social brands & enterprise",
+                  price: "$199",
+                  volume: "10,000",
+                  btn: "Get Agency Trial",
+                  popular: false,
+                  features: [
+                    "Connect 10 Instagram Accounts",
+                    "Dedicated High-Performance Sync Nodes",
+                    "Custom Webhooks & Developer API access",
+                    "White-labeled client dashboards",
+                    "Dedicated Account Success Manager",
+                    "24/7 VIP Zoom Support"
+                  ]
+                }
+              ].map((tier, idx) => (
+                <motion.div
+                  initial={{ opacity: 0, y: 15 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: idx * 0.1 }}
+                  key={idx}
+                  className="flex"
+                >
+                  <div className={`premium-gradient-border flex-1 flex ${tier.popular ? 'border-[#38BDF8] md:-translate-y-4' : 'mt-4'}`}>
+                    <div className="premium-card-content p-8 flex flex-col justify-between flex-grow relative">
+                      {tier.popular && (
+                        <span className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-[#38BDF8] to-[#6366F1] text-white text-[9px] font-extrabold px-4 py-1.5 rounded-full uppercase tracking-widest shadow-lg shadow-[#38BDF8]/20">
+                          Most Popular
+                        </span>
+                      )}
+
+                      <div>
+                        <div className="mb-6">
+                          <h3 className="text-xl font-bold text-white mb-1.5 font-inter">{tier.name}</h3>
+                          <p className="text-xs text-zinc-400 font-medium leading-relaxed">{tier.desc}</p>
+                        </div>
+
+                        <div className="flex items-baseline gap-1 mb-4">
+                          <span className="text-4xl font-extrabold text-white">{tier.price}</span>
+                          <span className="text-sm font-bold text-zinc-500">/mo</span>
+                        </div>
+
+                        <div className="mb-8 border-b border-white/5 pb-6">
+                          <span className="text-lg font-bold text-[#38BDF8] font-mono">{tier.volume}</span>
+                          <span className="text-[10px] text-zinc-500 uppercase font-bold tracking-wider block mt-1">
+                            Automated DMs / Month
+                          </span>
+                        </div>
+
+                        <ul className="space-y-4 mb-8">
+                          {tier.features.map((feat, j) => (
+                            <li key={j} className="flex items-center gap-3">
+                              <Check size={14} className="text-[#38BDF8]" />
+                              <span className="text-xs text-zinc-300 font-medium leading-relaxed font-inter">{feat}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+
+                      <button
+                        onClick={() => navigate('/signup')}
+                        className={`w-full py-4 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                          tier.popular
+                            ? 'btn-premium-cta font-bold'
+                            : 'bg-zinc-100 dark:bg-white/5 border border-zinc-200 dark:border-white/10 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200/50 dark:hover:bg-white/10'
+                        }`}
+                      >
+                        {tier.btn}
+                      </button>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+
+        {/* ==========================================
+            SECTION 12 — FAQ
+            ========================================== */}
+        <section id="faq" className="py-28 border-t border-zinc-200/80 dark:border-white/5 bg-[#fafafa] dark:bg-[#09090b] relative">
           <div className="max-w-3xl mx-auto px-6">
             <div className="text-center mb-16">
-              <span className="text-xs font-bold uppercase tracking-widest text-brand-purple">Have Questions?</span>
+              <span className="text-xs font-bold uppercase tracking-widest text-[#4F39F6] dark:text-[#818CF8]">Have Questions?</span>
               <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-white mt-3 leading-tight">
                 Frequently Asked Questions
               </h2>
             </div>
 
-            <motion.div
-              variants={{
-                hidden: {},
-                show: {
-                  transition: {
-                    staggerChildren: 0.1
-                  }
-                }
-              }}
-              initial="hidden"
-              whileInView="show"
-              viewport={{ once: true, margin: "-100px" }}
-              className="flex flex-col gap-4"
-            >
+            <div className="flex flex-col gap-4">
               {[
-                { q: "What is ReplyZens?", a: "ReplyZens is an Instagram DM automation and CRM platform. It connects with your Instagram business page via official Meta APIs and acts as a backend dashboard to automate customer replies, score lead intent, filter noise, and sync customer data to Google Sheets." },
-                { q: "Is it safe to connect my Instagram account?", a: "Yes, 100%. We utilize Meta's official Graph API and OAuth protocol. Your account details remain completely private, and we strictly follow Instagram Platform Policies." },
-                { q: "Does the AI support languages other than English?", a: "Yes, our integrated AI Assistant (Maya) automatically detects and answers messages in over 40 languages including Spanish, German, French, Portuguese, Hindi, and more." },
-                { q: "Can I cancel or upgrade my subscription plan anytime?", a: "Yes, you can upgrade, downgrade, or cancel your subscription plan at any time directly through your billing portal. There are no locking periods or cancellation fees." }
+                {
+                  q: "What is ReplyZens?",
+                  a: "ReplyZens is an enterprise-grade AI-powered Instagram DM automation platform. It integrates directly with your Instagram business profile via Meta's secure Graph API. It automatically draft responses, answers FAQs, filters spam content, books user appointments in calendar slots, and syncs collected lead lists directly to Google Sheets and major CRMs."
+                },
+                {
+                  q: "Is it safe to connect my Instagram account?",
+                  a: "Absolutely. ReplyZens utilizes Meta's official Graph API and secure OAuth protocol. We never store or access your personal passwords, and our automated messaging pipeline strictly complies with Instagram's Developer Policies, ensuring your account is 100% safe."
+                },
+                {
+                  q: "How does the AI learn about my business?",
+                  a: "You can train your AI assistant (Maya) by typing custom system instructions, uploading FAQs, product catalogs, shipping rules, or policy sheets (in pdf or txt format). Maya parses this raw text and answers questions accordingly with a human-like tone."
+                },
+                {
+                  q: "Does the AI support languages other than English?",
+                  a: "Yes! Maya automatically detects the customer's language and replies natively. She supports over 40 languages including Spanish, French, German, Italian, Portuguese, Japanese, Hindi, and more."
+                },
+                {
+                  q: "Can I take over automated conversations manually?",
+                  a: "Yes. Our Unified Smart Inbox allows you to pause the AI autopilot with a single click. You or your team agents can reply manually at any point, and reactivate the autopilot whenever you are ready."
+                }
               ].map((faq, i) => (
-                <FAQItem key={i} question={faq.q} answer={faq.a} />
+                <FAQItemComponent key={i} question={faq.q} answer={faq.a} />
               ))}
-            </motion.div>
+            </div>
           </div>
         </section>
 
-        <NewCTA />
+
+        {/* ==========================================
+            SECTION 13 — FINAL CTA
+            ========================================== */}
+        <section className="py-32 border-t border-zinc-200/80 dark:border-white/5 relative overflow-hidden text-center bg-gradient-to-b from-zinc-50 to-[#fafafa] dark:from-zinc-950 dark:to-[#09090b]">
+          <div className="max-w-4xl mx-auto px-6 relative z-10">
+            <h2 className="text-4xl md:text-6xl font-extrabold text-white mb-6 leading-tight tracking-tight">
+              Stop Losing Leads In Your Instagram Inbox
+            </h2>
+            <p className="text-base md:text-lg text-zinc-400 max-w-2xl mx-auto mb-10 font-medium leading-relaxed">
+              Automate conversations, qualify prospects, and convert more customers with ReplyZens.
+            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full max-w-md mx-auto">
+              <button
+                onClick={() => navigate('/signup')}
+                className="btn-premium-cta w-full sm:w-auto px-10 py-5 text-sm font-bold flex items-center justify-center gap-2 group"
+              >
+                Start Free Trial
+                <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+              </button>
+              <a
+                href="#demo"
+                className="w-full sm:w-auto px-10 py-5 rounded-xl text-sm font-bold bg-white dark:bg-[#121826] border border-zinc-200 dark:border-white/10 text-zinc-650 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-white/10 hover:border-zinc-300 dark:hover:border-white/20 transition-all flex items-center justify-center gap-2 shadow-sm"
+              >
+                Book Demo
+              </a>
+            </div>
+          </div>
+        </section>
 
       </main>
 
