@@ -602,7 +602,7 @@
   background: none !important;
 }
 
-:root.light .logo-text {
+:root.light .logo-text-primary {
   color: #09090b !important;
 }
 

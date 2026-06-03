@@ -12,9 +12,11 @@ const Sidebar: React.FC = () => {
   return (
     <aside className={`sidebar ${isCollapsed ? 'collapsed' : ''}`}>
       <div className="logo-container">
-        <div className="logo">
-          <img src="/logo.png" alt="ReplyZens Logo" className="w-14 h-14 object-contain transition-transform duration-300 hover:scale-105" />
-          <span className="logo-text">ReplyZens</span>
+        <div className="logo gap-2">
+          <img src="/logo.png" alt="ReplyZens Logo" className="w-[60px] h-[60px] object-contain transition-transform duration-300 hover:scale-105" />
+          <span className="logo-text text-lg font-extrabold tracking-tight uppercase font-outfit">
+            <span className="logo-text-primary text-white">Reply</span><span className="text-purple-600">Zens</span>
+          </span>
         </div>
         <button 
           onClick={() => setIsCollapsed(!isCollapsed)} 

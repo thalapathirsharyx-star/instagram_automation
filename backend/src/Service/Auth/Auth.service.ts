@@ -121,6 +121,69 @@ export class AuthService {
     return { api_token, user: payload };
   }
 
+  async GoogleLogin(email: string): Promise<any> {
+    const UserData = await user.findOne({
+      where: { email: email },
+      relations: ['user_role', 'company']
+    });
+
+    if (!UserData) {
+      throw new Error('User not found');
+    }
+    if (UserData.status == false) {
+      throw new Error('User suspended, contanct administration');
+    }
+    if (UserData.company && UserData.company.status === false) {
+      throw new Error('Your company account has been suspended by the administration.');
+    }
+    
+    // Auto-verify if they login with Google
+    if (UserData.is_verified === false) {
+      UserData.is_verified = true;
+      await UserData.save();
+    }
+
+    if (UserData.user_role?.code === 'SUPER_ADMIN' && UserData.failed_login_count > 0) {
+      UserData.failed_login_count = 0;
+      await UserData.save();
+    }
+
+    let companyData = UserData.company;
+    if (!companyData) {
+      const companies = await company.find({ relations: ["currency"] });
+      companyData = companies[0] || null;
+    }
+
+    if (UserData.two_factor_enabled) {
+      const tempPayload = {
+        email: UserData.email,
+        user_id: UserData.id,
+        pending_2fa: true
+      };
+      const temp_token = this._JwtService.sign(tempPayload, { expiresIn: '5m' });
+      return { status: 'pending_2fa', temp_token };
+    }
+
+    if (UserData.user_role?.code === 'SUPER_ADMIN' && !UserData.super_admin_sub_role) {
+      UserData.super_admin_sub_role = 'Owner';
+      await UserData.save();
+    }
+
+    const payload = {
+      email: UserData.email,
+      user_id: UserData.id,
+      user_role_id: UserData.user_role_id,
+      user_role_code: UserData.user_role?.code || 'CLIENT',
+      user_role_name: UserData.user_role?.name || 'Client',
+      company: companyData,
+      company_id: companyData?.id,
+      super_admin_sub_role: UserData.super_admin_sub_role,
+      two_factor_enabled: UserData.two_factor_enabled
+    };
+    const api_token = this._JwtService.sign(payload);
+    return { api_token, user: payload };
+  }
+
   async Setup2FA(userId: string) {
     const u = await user.findOne({ where: { id: userId } });
     if (!u) {

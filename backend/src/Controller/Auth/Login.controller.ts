@@ -42,6 +42,12 @@ export class LoginController extends AuthBaseController {
     return { Type: ResponseEnum.Success, Message: 'Login Successfully', result };
   }
 
+  @Post('GoogleLogin')
+  async GoogleLogin(@Body() data: { email: string }) {
+    const result = await this._AuthService.GoogleLogin(data.email);
+    return { Type: ResponseEnum.Success, Message: 'Logged in via Google Successfully', result };
+  }
+
   @Post('Register')
   async Register(@Body() RegisterData: RegisterModel) {
     const result = await this._AuthService.Register(RegisterData);
