@@ -606,6 +606,11 @@
   color: #09090b !important;
 }
 
+:root.light img[src*="logo.png"] {
+  filter: brightness(0) invert(0) !important; /* Turns white logo black */
+  opacity: 0.9 !important;
+}
+
 :root.light .nav-item {
   color: #71717a !important;
   font-weight: 500 !important;
