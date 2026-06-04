@@ -66,8 +66,8 @@ const HeroWorkflow = () => {
     {
       title: "AI Agent",
       icon: <Bot size={18} />,
-      badge: "ReplyZen AI",
-      detail: "ReplyZen processes intent in <0.2s",
+      badge: "Flazly AI",
+      detail: "Flazly processes intent in <0.2s",
       glow: "from-[#3B82F6] to-[#6366F1]",
       color: "text-[#3B82F6] bg-[#3B82F6]/10 border-[#3B82F6]/20 dark:text-[#3B82F6]"
     },
@@ -213,7 +213,7 @@ const ProductShowcase = () => {
 
   const tabs = [
     { id: 'inbox' as TabType, label: 'Smart Inbox', icon: <Inbox size={14} /> },
-    { id: 'agent' as TabType, label: 'AI Agent (ReplyZen)', icon: <Bot size={14} /> },
+    { id: 'agent' as TabType, label: 'AI Agent (Flazly)', icon: <Bot size={14} /> },
     { id: 'builder' as TabType, label: 'Automation Builder', icon: <Workflow size={14} /> },
     { id: 'analytics' as TabType, label: 'Analytics & ROI', icon: <BarChart3 size={14} /> },
     { id: 'settings' as TabType, label: 'Integrations & Settings', icon: <Sliders size={14} /> }
@@ -367,7 +367,7 @@ const InboxMockup = () => {
                 Yes! We have 3 pairs left in size 10. The price is $129 with free shipping. Would you like a checkout link?
               </p>
               <span className="text-[6.5px] font-bold text-zinc-450 uppercase tracking-wide mt-1 block">
-                ✦ Automated by ReplyZen
+                ✦ Automated by Flazly
               </span>
             </div>
             <div className="w-5 h-5 rounded-full bg-[#38BDF8] flex items-center justify-center text-[7px] font-bold shrink-0 text-white font-mono">AI</div>
@@ -390,7 +390,7 @@ const InboxMockup = () => {
                 Awesome! I've saved daniel@gmail.com. Here is your checkout link: flazly.com/chk/shoes-10
               </p>
               <span className="text-[6.5px] font-bold text-[#38BDF8] uppercase tracking-wide mt-1 block font-extrabold">
-                ✦ Automated by ReplyZen
+                ✦ Automated by Flazly
               </span>
             </div>
             <div className="w-5 h-5 rounded-full bg-[#38BDF8] flex items-center justify-center text-[7px] font-bold shrink-0 text-white font-mono">AI</div>
@@ -467,7 +467,7 @@ const AgentMockup = () => {
           <label className="text-xs font-bold text-zinc-350">Agent Persona / System Prompt</label>
           <textarea
             readOnly
-            value="You are ReplyZen, an AI assistant representing flazly.com. Your tone should be extremely friendly, helpful, and outcome-oriented. Help visitors qualify their DMs, answer FAQs regarding products, pricing, features, and setup. Capture lead details from high-intent buyers, or provide a purchase link if they inquire about pricing. If you do not know the answer, ask for their email so our human staff can follow up."
+            value="You are Flazly, an AI assistant representing flazly.com. Your tone should be extremely friendly, helpful, and outcome-oriented. Help visitors qualify their DMs, answer FAQs regarding products, pricing, features, and setup. Capture lead details from high-intent buyers, or provide a purchase link if they inquire about pricing. If you do not know the answer, ask for their email so our human staff can follow up."
             className="w-full h-32 bg-black/40 border border-white/10 rounded-xl p-3 text-[10px] text-zinc-400 font-mono leading-relaxed resize-none outline-none focus:border-[#38BDF8]/50"
           />
         </div>
@@ -2156,8 +2156,8 @@ const Landing: React.FC = () => {
                     },
                     {
                       step: "02",
-                      title: "ReplyZen AI Responds & Qualifies Leads Automatically",
-                      desc: "ReplyZen instantly greets prospects, answers FAQs using your knowledge docs, and qualifies their intent."
+                      title: "Flazly AI Responds & Qualifies Leads Automatically",
+                      desc: "Flazly instantly greets prospects, answers FAQs using your knowledge docs, and qualifies their intent."
                     },
                     {
                       step: "03",
@@ -2207,7 +2207,7 @@ const Landing: React.FC = () => {
             {/* Examples block below */}
             <div className="bg-zinc-100/50 dark:bg-[#121826]/20 border border-zinc-200/80 dark:border-white/5 p-8 rounded-3xl max-w-4xl mx-auto mt-20">
               <h4 className="text-sm font-bold text-zinc-650 dark:text-zinc-300 uppercase tracking-widest text-center mb-8">
-                What ReplyZen AI Captures In Real-Time
+                What Flazly AI Captures In Real-Time
               </h4>
               <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
                 {[
@@ -2481,7 +2481,7 @@ const Landing: React.FC = () => {
                   )
                 },
                 {
-                  title: "ReplyZen AI Agent",
+                  title: "Flazly AI Agent",
                   desc: "Conversational agent qualified to speak in 40+ languages. Uses warm, sales-focused tones to maximize conversions.",
                   feats: ["Multilingual recognition", "Custom system prompts", "Adjustable confidence limits"],
                   gridClass: "md:col-span-2",
@@ -2495,7 +2495,7 @@ const Landing: React.FC = () => {
                             <span className="absolute bottom-0 right-0 w-2 h-2 bg-emerald-500 border-2 border-white dark:border-[#0c0f1a] rounded-full"></span>
                           </div>
                           <div>
-                            <div className="text-[11px] font-bold text-zinc-900 dark:text-white">ReplyZen AI</div>
+                            <div className="text-[11px] font-bold text-zinc-900 dark:text-white">Flazly AI</div>
                             <div className="text-[8px] text-emerald-500 font-bold uppercase tracking-wide">Autopilot</div>
                           </div>
                         </div>
@@ -2518,7 +2518,7 @@ const Landing: React.FC = () => {
                 },
                 {
                   title: "Knowledge Base",
-                  desc: "Train ReplyZen on your business guides. Upload product sheets, return rules, and policies (PDF/TXT) for instant learning.",
+                  desc: "Train Flazly on your business guides. Upload product sheets, return rules, and policies (PDF/TXT) for instant learning.",
                   feats: ["PDF & TXT training docs", "FAQ overriding builder", "Static fact book storage"],
                   gridClass: "md:col-span-1",
                   visual: (
@@ -2931,7 +2931,7 @@ const Landing: React.FC = () => {
                   popular: true,
                   features: [
                     "Connect 3 Instagram Accounts",
-                    "Advanced ReplyZen AI Agent Setup",
+                    "Advanced Flazly AI Agent Setup",
                     "Instant Google Sheets & HubSpot Sync",
                     "Unlimited Comment-to-DM triggers",
                     "CRM integration & webhook nodes",
@@ -3041,15 +3041,15 @@ const Landing: React.FC = () => {
                 },
                 {
                   q: "Can I manually take over conversations?",
-                  a: "Yes. The Unified Smart Inbox allows you or your staff agents to pause autopilot with a single click, type manual answers, and reactivate ReplyZen AI autopilot whenever you are ready."
+                  a: "Yes. The Unified Smart Inbox allows you or your staff agents to pause autopilot with a single click, type manual answers, and reactivate Flazly AI autopilot whenever you are ready."
                 },
                 {
-                  q: "Can ReplyZen AI answer custom questions?",
-                  a: "Absolutely. ReplyZen uses your Knowledge Base PDFs, FAQ spreadsheets, fact sheets, or typed instructions to reply to questions in your exact brand tone."
+                  q: "Can Flazly AI answer custom questions?",
+                  a: "Absolutely. Flazly uses your Knowledge Base PDFs, FAQ spreadsheets, fact sheets, or typed instructions to reply to questions in your exact brand tone."
                 },
                 {
                   q: "Can I collect customer contact information?",
-                  a: "Yes. ReplyZen is programmed to identify intent and politely extract contact info (emails, phone numbers, location, etc.) during natural dialog flows, saving them to your leads database."
+                  a: "Yes. Flazly is programmed to identify intent and politely extract contact info (emails, phone numbers, location, etc.) during natural dialog flows, saving them to your leads database."
                 },
                 {
                   q: "Can I use multiple Instagram accounts?",
@@ -3074,7 +3074,7 @@ const Landing: React.FC = () => {
               Stop Losing Leads Inside Your <span className="text-logo-gradient">Instagram DMs</span>
             </h2>
             <p className="text-base md:text-lg text-zinc-400 max-w-2xl mx-auto mb-10 font-medium leading-relaxed">
-              Let ReplyZen AI respond instantly, qualify prospects, capture customer details, and help your business convert more conversations into revenue.
+              Let Flazly AI respond instantly, qualify prospects, capture customer details, and help your business convert more conversations into revenue.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full max-w-md mx-auto">
               <button

@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
@@ -36,13 +36,13 @@ const Navbar: React.FC = () => {
 
           <div className="flex items-center gap-4 ml-4">
             <button
-              onClick={() => navigate('/login')}
+              onClick={() => window.location.href = 'https://app.flazly.com/login'}
               className="text-sm font-semibold text-zinc-555 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white transition-colors"
             >
               Log in
             </button>
             <button
-              onClick={() => navigate('/signup')}
+              onClick={() => window.location.href = 'https://app.flazly.com/signup'}
               className="btn-premium-cta px-5 py-2.5 text-xs font-bold"
             >
               Start Free Trial
@@ -76,13 +76,13 @@ const Navbar: React.FC = () => {
               ))}
               <div className="h-px bg-zinc-200 dark:bg-white/5 my-2" />
               <button
-                onClick={() => { navigate('/login'); setMobileOpen(false); }}
+                onClick={() => { window.location.href = 'https://app.flazly.com/login'; setMobileOpen(false); }}
                 className="w-full text-center py-3 border border-zinc-255 dark:border-white/10 rounded-xl text-zinc-850 dark:text-zinc-300 font-semibold"
               >
                 Log in
               </button>
               <button
-                onClick={() => { navigate('/signup'); setMobileOpen(false); }}
+                onClick={() => { window.location.href = 'https://app.flazly.com/signup'; setMobileOpen(false); }}
                 className="btn-premium-cta py-3.5 w-full text-sm font-bold"
               >
                 Start Free Trial
