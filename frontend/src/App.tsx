@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
 import Dashboard from './pages/Dashboard';
@@ -41,7 +41,7 @@ function AppContent() {
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
 
   const hostname = window.location.hostname;
-  const isLandingDomain = hostname === 'flazly.in' || hostname === 'www.flazly.in' || hostname.startsWith('landing.');
+  const isLandingDomain = hostname === 'flazly.com' || hostname === 'www.flazly.com' || hostname.startsWith('landing.');
 
   const handleStopImpersonation = () => {
     const adminToken = localStorage.getItem('admin_token');
@@ -69,14 +69,14 @@ function AppContent() {
     }
   }, [theme]);
 
-  // Routing for landing page domain (flazly.in)
+  // Routing for landing page domain (flazly.com)
   if (isLandingDomain) {
     if (location.pathname === '/login') {
-      window.location.href = 'https://app.flazly.in/login';
+      window.location.href = 'https://app.flazly.com/login';
       return null;
     }
     if (location.pathname === '/signup') {
-      window.location.href = 'https://app.flazly.in/signup';
+      window.location.href = 'https://app.flazly.com/signup';
       return null;
     }
 
@@ -98,17 +98,17 @@ function AppContent() {
     }
   }
 
-  // Routing for main app domain (app.flazly.in)
+  // Routing for main app domain (app.flazly.com)
   if (location.pathname === '/privacy') {
-    window.location.href = 'https://flazly.in/privacy';
+    window.location.href = 'https://flazly.com/privacy';
     return null;
   }
   if (location.pathname === '/terms') {
-    window.location.href = 'https://flazly.in/terms';
+    window.location.href = 'https://flazly.com/terms';
     return null;
   }
   if (location.pathname === '/data-deletion') {
-    window.location.href = 'https://flazly.in/data-deletion';
+    window.location.href = 'https://flazly.com/data-deletion';
     return null;
   }
   if (location.pathname === '/landing') {
