@@ -43,7 +43,9 @@ import {
   Layers,
   Send,
   Plus,
-  Star
+  Star,
+  RefreshCw,
+  AlertCircle
 } from 'lucide-react';
 
 // ==========================================
@@ -64,8 +66,8 @@ const HeroWorkflow = () => {
     {
       title: "AI Agent",
       icon: <Bot size={18} />,
-      badge: "Maya AI",
-      detail: "Maya processes intent in <0.2s",
+      badge: "ReplyZen AI",
+      detail: "ReplyZen processes intent in <0.2s",
       glow: "from-[#3B82F6] to-[#6366F1]",
       color: "text-[#3B82F6] bg-[#3B82F6]/10 border-[#3B82F6]/20 dark:text-[#3B82F6]"
     },
@@ -86,18 +88,18 @@ const HeroWorkflow = () => {
       color: "text-[#38BDF8] bg-[#38BDF8]/10 border-[#38BDF8]/20 dark:text-white dark:bg-white/10 dark:border-white/20"
     },
     {
-      title: "Appointment Booking",
-      icon: <Calendar size={18} />,
-      badge: "Cal.com",
-      detail: "Cal link sent to book consultation",
+      title: "Lead Handoff",
+      icon: <Send size={18} />,
+      badge: "CRM Sync",
+      detail: "Qualified lead synced to your database",
       glow: "from-[#3B82F6] to-[#6366F1]",
-      color: "text-[#3B82F6] bg-[#3B82F6]/10 border-[#3B82F6]/20 dark:text-[#3B82F6]"
+      color: "text-[#3B82F6] bg-[#38BDF8]/10 border-[#38BDF8]/20 dark:text-[#38BDF8]"
     },
     {
       title: "Revenue",
       icon: <DollarSign size={18} />,
       badge: "Sale Closed",
-      detail: "Booking completed: +$499 Revenue",
+      detail: "Pipeline updated: +$499 Revenue",
       glow: "from-[#6366F1] to-[#38BDF8]",
       color: "text-emerald-400 bg-emerald-500/10 border-emerald-500/20 dark:text-white dark:bg-[#3B82F6]/20 dark:border-[#3B82F6]/35"
     }
@@ -139,13 +141,12 @@ const HeroWorkflow = () => {
             <div
               key={idx}
               onClick={() => setActiveStep(idx)}
-              className={`flex flex-col p-4 rounded-2xl border transition-all duration-500 cursor-pointer relative group text-left h-full ${
-                isSelected
+              className={`flex flex-col p-4 rounded-2xl border transition-all duration-500 cursor-pointer relative group text-left h-full ${isSelected
                   ? `bg-[#121826] border-[#38BDF8] shadow-lg shadow-[#38BDF8]/10 scale-[1.03]`
                   : isPassed
-                  ? "bg-[#121826]/30 border-white/10 opacity-70"
-                  : "bg-transparent border-white/5 opacity-50 hover:opacity-75"
-              }`}
+                    ? "bg-[#121826]/30 border-white/10 opacity-70"
+                    : "bg-transparent border-white/5 opacity-50 hover:opacity-75"
+                }`}
             >
               {/* Connector line (hidden on last node) */}
               {idx < steps.length - 1 && (
@@ -154,9 +155,8 @@ const HeroWorkflow = () => {
 
               {/* Step number / Badge */}
               <div className="flex items-center justify-between mb-3">
-                <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider ${
-                  isSelected ? "bg-[#38BDF8] text-white" : "bg-white/5 text-zinc-400"
-                }`}>
+                <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider ${isSelected ? "bg-[#38BDF8] text-white" : "bg-white/5 text-zinc-400"
+                  }`}>
                   Step {idx + 1}
                 </span>
                 <span className={`text-[8px] font-bold ${isSelected ? "text-[#38BDF8]" : "text-zinc-500"}`}>
@@ -213,7 +213,7 @@ const ProductShowcase = () => {
 
   const tabs = [
     { id: 'inbox' as TabType, label: 'Smart Inbox', icon: <Inbox size={14} /> },
-    { id: 'agent' as TabType, label: 'AI Agent (Maya)', icon: <Bot size={14} /> },
+    { id: 'agent' as TabType, label: 'AI Agent (ReplyZen)', icon: <Bot size={14} /> },
     { id: 'builder' as TabType, label: 'Automation Builder', icon: <Workflow size={14} /> },
     { id: 'analytics' as TabType, label: 'Analytics & ROI', icon: <BarChart3 size={14} /> },
     { id: 'settings' as TabType, label: 'Integrations & Settings', icon: <Sliders size={14} /> }
@@ -227,11 +227,10 @@ const ProductShowcase = () => {
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
-              activeTab === tab.id
+            className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${activeTab === tab.id
                 ? 'bg-[#3B82F6] text-white shadow-md shadow-[#3B82F6]/20 border border-white/10'
                 : 'text-zinc-400 hover:text-zinc-200 border border-transparent'
-            }`}
+              }`}
           >
             {tab.icon}
             {tab.label}
@@ -297,7 +296,7 @@ const InboxMockup = () => {
       {/* Left Chat List Panel */}
       <div className="bg-black/30 border border-white/5 rounded-2xl p-3 flex flex-col gap-2 overflow-y-auto">
         <span className="text-[9px] font-bold text-zinc-555 uppercase tracking-wider px-2 mb-1">Conversations</span>
-        
+
         {/* Chat Item 1 */}
         <div className="p-2 rounded-xl bg-white/5 border border-zinc-700 flex flex-col gap-1 cursor-pointer">
           <div className="flex justify-between items-center">
@@ -312,9 +311,9 @@ const InboxMockup = () => {
         <div className="p-2 rounded-xl bg-white/[0.02] border border-white/5 flex flex-col gap-1 hover:bg-white/[0.04] transition-colors cursor-pointer opacity-70">
           <div className="flex justify-between items-center">
             <span className="text-xs font-bold text-zinc-300">@sarah.fit</span>
-            <span className="text-[7px] text-emerald-400 font-bold bg-emerald-500/10 px-1.5 py-0.5 rounded">Booked</span>
+            <span className="text-[7px] text-emerald-400 font-bold bg-emerald-500/10 px-1.5 py-0.5 rounded">Lead</span>
           </div>
-          <span className="text-[9px] text-zinc-500 truncate">Booked demo for 10am</span>
+          <span className="text-[9px] text-zinc-500 truncate">Qualified lead: Fitness</span>
           <span className="text-[7.5px] text-zinc-455 font-semibold mt-1">Synced to CRM</span>
         </div>
 
@@ -368,7 +367,7 @@ const InboxMockup = () => {
                 Yes! We have 3 pairs left in size 10. The price is $129 with free shipping. Would you like a checkout link?
               </p>
               <span className="text-[6.5px] font-bold text-zinc-450 uppercase tracking-wide mt-1 block">
-                ✦ Automated by Maya
+                ✦ Automated by ReplyZen
               </span>
             </div>
             <div className="w-5 h-5 rounded-full bg-[#38BDF8] flex items-center justify-center text-[7px] font-bold shrink-0 text-white font-mono">AI</div>
@@ -391,7 +390,7 @@ const InboxMockup = () => {
                 Awesome! I've saved daniel@gmail.com. Here is your checkout link: replyzens.com/chk/shoes-10
               </p>
               <span className="text-[6.5px] font-bold text-[#38BDF8] uppercase tracking-wide mt-1 block font-extrabold">
-                ✦ Automated by Maya
+                ✦ Automated by ReplyZen
               </span>
             </div>
             <div className="w-5 h-5 rounded-full bg-[#38BDF8] flex items-center justify-center text-[7px] font-bold shrink-0 text-white font-mono">AI</div>
@@ -468,7 +467,7 @@ const AgentMockup = () => {
           <label className="text-xs font-bold text-zinc-350">Agent Persona / System Prompt</label>
           <textarea
             readOnly
-            value="You are Maya, an AI assistant representing replyzens.com. Your tone should be extremely friendly, helpful, and outcome-oriented. Help visitors qualify their DMs, answer FAQs regarding products, pricing, features, and setup. Push high-intent buyers to schedule a call via Cal.com link, or provide a purchase link if they inquire about pricing. If you do not know the answer, ask for their email so our human staff can follow up."
+            value="You are ReplyZen, an AI assistant representing replyzens.com. Your tone should be extremely friendly, helpful, and outcome-oriented. Help visitors qualify their DMs, answer FAQs regarding products, pricing, features, and setup. Capture lead details from high-intent buyers, or provide a purchase link if they inquire about pricing. If you do not know the answer, ask for their email so our human staff can follow up."
             className="w-full h-32 bg-black/40 border border-white/10 rounded-xl p-3 text-[10px] text-zinc-400 font-mono leading-relaxed resize-none outline-none focus:border-[#38BDF8]/50"
           />
         </div>
@@ -497,13 +496,13 @@ const AgentMockup = () => {
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <label className="text-xs font-bold text-zinc-350">Default Call to Action Node</label>
+          <label className="text-xs font-bold text-zinc-350">Default Integration Action</label>
           <div className="bg-white/[0.02] border border-[#38BDF8]/20 p-3 rounded-xl flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Calendar size={14} className="text-[#38BDF8]" />
-              <span className="text-[10px] font-bold text-white">Book Introductory Call</span>
+              <Database size={14} className="text-[#38BDF8]" />
+              <span className="text-[10px] font-bold text-white">Sync Lead to CRM</span>
             </div>
-            <span className="text-[8px] text-zinc-555 font-mono">Cal.com/replyzens/15min</span>
+            <span className="text-[8px] text-zinc-555 font-mono">hubspot.crm/leads/replyzens</span>
           </div>
         </div>
       </div>
@@ -684,11 +683,11 @@ const AnalyticsMockup = () => {
               <div className="w-6 h-6 rounded-full bg-zinc-800 flex items-center justify-center text-[8px] text-zinc-200 font-bold">SM</div>
               <div className="flex flex-col">
                 <span className="text-[10px] font-bold text-white">@sarah_fit</span>
-                <span className="text-[8px] text-zinc-500">Booked Demo: Consultation</span>
+                <span className="text-[8px] text-zinc-505">Captured Email: sarah@fit.co</span>
               </div>
             </div>
             <span className="text-[8px] font-extrabold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded">
-              Booked
+              Lead
             </span>
           </div>
 
@@ -802,19 +801,19 @@ const SettingsMockup = () => {
       <div className="bg-black/30 border border-white/5 rounded-2xl p-4 flex flex-col gap-4">
         <h5 className="text-[10px] font-bold text-zinc-555 uppercase tracking-widest border-b border-white/5 pb-2">Custom Webhooks</h5>
         <p className="text-[10px] text-zinc-455 leading-normal font-medium">
-          Send webhook events to your backend on lead qualifications, appointment bookings, or payment updates.
+          Send webhook events to your backend on lead qualifications, new lead captures, or payment updates.
         </p>
 
         <div className="bg-white/[0.02] border border-[#38BDF8]/20 p-3 rounded-xl text-left">
           <span className="text-[8px] font-bold text-zinc-300 uppercase font-mono block">Webhook Endpoint</span>
           <span className="text-[10px] font-mono text-zinc-200 mt-1 block truncate">https://api.yourdomain.com/webhook</span>
-          
+
           <div className="flex gap-1.5 mt-3">
             <span className="text-[7px] font-bold text-[#38BDF8] bg-[#38BDF8]/10 border border-[#38BDF8]/20 px-2 py-0.5 rounded">
               on_lead_qualify
             </span>
             <span className="text-[7px] font-bold text-[#38BDF8] bg-[#38BDF8]/10 border border-[#38BDF8]/20 px-2 py-0.5 rounded">
-              on_appointment
+              on_lead_capture
             </span>
           </div>
         </div>
@@ -972,12 +971,10 @@ const FAQItemComponent = ({ question, answer }: { question: string; answer: stri
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className={`border border-white/5 rounded-2xl p-6 bg-[#121826]/40 hover:bg-[#121826]/60 transition-all duration-300 relative overflow-hidden text-left ${
-      isOpen ? 'ring-1 ring-[#38BDF8]/20 border-[#38BDF8]' : ''
-    }`}>
-      <div className={`absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-[#38BDF8] to-[#6366F1] transition-all duration-500 origin-top ${
-        isOpen ? 'scale-y-100 opacity-100' : 'scale-y-0 opacity-0'
-      }`} />
+    <div className={`border border-white/5 rounded-2xl p-6 bg-[#121826]/40 hover:bg-[#121826]/60 transition-all duration-300 relative overflow-hidden text-left ${isOpen ? 'ring-1 ring-[#38BDF8]/20 border-[#38BDF8]' : ''
+      }`}>
+      <div className={`absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-[#38BDF8] to-[#6366F1] transition-all duration-500 origin-top ${isOpen ? 'scale-y-100 opacity-100' : 'scale-y-0 opacity-0'
+        }`} />
 
       <button
         onClick={() => setIsOpen(!isOpen)}
@@ -986,11 +983,10 @@ const FAQItemComponent = ({ question, answer }: { question: string; answer: stri
         <span className="text-base font-bold text-white group-hover:text-[#38BDF8] transition-colors font-inter">
           {question}
         </span>
-        <div className={`w-8 h-8 rounded-full flex items-center justify-center border transition-all shrink-0 ${
-          isOpen
+        <div className={`w-8 h-8 rounded-full flex items-center justify-center border transition-all shrink-0 ${isOpen
             ? 'border-[#38BDF8] bg-[#38BDF8]/10 text-[#38BDF8]'
             : 'border-white/10 text-zinc-555 group-hover:border-white/20'
-        }`}>
+          }`}>
           <ChevronDown size={14} className={`transform transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
         </div>
       </button>
@@ -1196,6 +1192,770 @@ const InstagramMobileMockup = () => {
   );
 };
 
+// ==========================================
+const ProblemStorytelling = () => {
+  const sectionRef = React.useRef<HTMLDivElement>(null);
+  const [isIntersecting, setIsIntersecting] = useState(false);
+  const [scene, setScene] = useState(1);
+  const [timer, setTimer] = useState("00:00");
+  const [status, setStatus] = useState("Interested");
+  const [showAiReply, setShowAiReply] = useState(false);
+  const [showTyping, setShowTyping] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsIntersecting(entry.isIntersecting);
+      },
+      { threshold: 0.15 }
+    );
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!isIntersecting) {
+      setScene(1);
+      setTimer("00:00");
+      setStatus("Interested");
+      setShowAiReply(false);
+      setShowTyping(false);
+      return;
+    }
+
+    let timeouts: any[] = [];
+    const schedule = (fn: () => void, delay: number) => {
+      timeouts.push(setTimeout(fn, delay));
+    };
+
+    const runAnimation = () => {
+      // Clear previous timeouts
+      timeouts.forEach(clearTimeout);
+      timeouts = [];
+
+      // Scene 1: New Lead Arrives
+      setScene(1);
+      setTimer("00:00");
+      setStatus("Interested");
+      setShowAiReply(false);
+      setShowTyping(false);
+
+      // Scene 2: Waiting
+      schedule(() => {
+        setScene(2);
+        setTimer("00:00");
+        setStatus("Interested");
+      }, 2500);
+
+      schedule(() => { setTimer("00:30"); setStatus("Waiting"); }, 3300);
+      schedule(() => { setTimer("01:00"); setStatus("Waiting"); }, 4100);
+      schedule(() => { setTimer("03:00"); setStatus("Losing Interest"); }, 4900);
+      schedule(() => { setTimer("05:00"); setStatus("Gone"); }, 5700);
+
+      // Scene 3: Lost Opportunity
+      schedule(() => {
+        setScene(3);
+        setTimer("05:00");
+        setStatus("Gone");
+      }, 6200);
+
+      // Scene 4: Time Rewinds
+      schedule(() => {
+        setScene(4);
+        setTimer("Rewinding...");
+        setStatus("Resetting");
+      }, 8700);
+
+      // Scene 5: Instant AI Response
+      schedule(() => {
+        setScene(5);
+        setTimer("⚡ < 2s");
+        setStatus("Active");
+        setShowTyping(true);
+      }, 10500);
+
+      schedule(() => {
+        setShowTyping(false);
+        setShowAiReply(true);
+      }, 11500);
+
+      // Scene 6: Automated Workflow
+      schedule(() => {
+        setScene(6);
+        setTimer("⚡ < 2s");
+        setStatus("Automating");
+      }, 13000);
+
+      // Scene 7: Conversion
+      schedule(() => {
+        setScene(7);
+        setTimer("⚡ < 2s");
+        setStatus("Success");
+      }, 16000);
+    };
+
+    runAnimation();
+    const interval = setInterval(runAnimation, 19500);
+
+    return () => {
+      timeouts.forEach(clearTimeout);
+      clearInterval(interval);
+    };
+  }, [isIntersecting]);
+
+  return (
+    <div ref={sectionRef} className="grid lg:grid-cols-12 gap-8 items-stretch mt-16 w-full text-zinc-900 dark:text-white">
+      {/* MOCKUP CONTAINER - 7 cols */}
+      <div className="lg:col-span-7 flex flex-col items-center justify-center">
+        <div className="mockup-dark w-full max-w-[360px] h-[540px] rounded-[32px] border border-zinc-200/20 dark:border-zinc-800 bg-[#09090b] text-white flex flex-col shadow-2xl relative overflow-hidden">
+          {/* Header Status Bar Mockup */}
+          <div className="px-5 pt-3 pb-2 flex items-center justify-between text-[9px] font-bold text-zinc-400 select-none border-b border-zinc-900/40 shrink-0">
+            <span>9:41</span>
+            <div className="flex items-center gap-1.5">
+              <svg className="w-2.5 h-2.5 text-zinc-400" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 3c-4.97 0-9 4.03-9 9 0 2.12.74 4.07 1.97 5.61L4.35 19.4c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0l1.9-1.9C9.07 20.2 10.47 20.5 12 20.5c4.97 0 9-4.03 9-9s-4.03-9-9-9zm0 15c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6z"/>
+              </svg>
+              <div className="w-4 h-2 rounded-[2px] border border-zinc-500 flex items-center p-[1px]">
+                <div className="w-full h-full bg-zinc-400 rounded-[1px]" />
+              </div>
+            </div>
+          </div>
+
+          {/* Instagram Chat Header */}
+          <div className="bg-[#0c0c0d] border-b border-zinc-900/60 py-3 px-4 flex items-center justify-between shrink-0 z-10">
+            <div className="flex items-center gap-2.5">
+              <ChevronLeft size={18} className="text-white cursor-pointer hover:opacity-80" />
+              <div className="relative">
+                <div className="w-7 h-7 rounded-full p-[1.5px] bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600 flex items-center justify-center">
+                  <div className="w-full h-full rounded-full bg-[#121214] flex items-center justify-center text-[8px] font-black text-white">
+                    AR
+                  </div>
+                </div>
+                {scene !== 3 && scene !== 4 && (
+                  <div className={`absolute bottom-0 right-0 w-2 h-2 rounded-full border border-[#0c0c0d] ${
+                    scene === 1 || scene >= 5 ? 'bg-emerald-500' : 'bg-amber-500'
+                  }`} />
+                )}
+              </div>
+              <div className="flex flex-col text-left">
+                <span className="text-xs font-bold text-white tracking-tight">alex.rivera</span>
+                <span className={`text-[7.5px] font-extrabold tracking-wide uppercase ${
+                  scene === 1 ? 'text-emerald-400' :
+                  scene === 2 && timer === "00:00" ? 'text-emerald-400' :
+                  scene === 2 && timer === "00:30" ? 'text-amber-400' :
+                  scene === 2 && timer === "01:00" ? 'text-amber-400' :
+                  scene === 2 && timer === "03:00" ? 'text-orange-400' :
+                  scene === 2 && timer === "05:00" ? 'text-rose-500' :
+                  scene === 3 ? 'text-rose-500' :
+                  scene === 4 ? 'text-indigo-400' :
+                  'text-purple-400'
+                }`}>
+                  {scene === 1 && "● Active now"}
+                  {scene === 2 && `● Active ${timer} ago`}
+                  {scene === 3 && "● Offline (Gone)"}
+                  {scene === 4 && "● Rewinding..."}
+                  {scene >= 5 && "⚡ ReplyZens AI Active"}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Chat Messages Feed Area */}
+          <div className="flex-1 bg-black p-4 overflow-y-auto flex flex-col gap-3 text-left font-sans text-xs scrollbar-none z-10 relative">
+            <AnimatePresence mode="popLayout">
+              {scene === 4 ? (
+                <motion.div
+                  key="rewind"
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.9 }}
+                  className="absolute inset-0 flex flex-col items-center justify-center bg-black/80 gap-3 z-25"
+                >
+                  <motion.div
+                    animate={{ rotate: -360 }}
+                    transition={{ repeat: Infinity, duration: 1.5, ease: "linear" }}
+                  >
+                    <RefreshCw size={28} className="text-[#818CF8]" />
+                  </motion.div>
+                  <span className="text-xs font-bold text-[#818CF8] tracking-widest uppercase animate-pulse">Now with ReplyZens</span>
+                </motion.div>
+              ) : null}
+
+              {/* Customer message - visible in all scenes except rewind */}
+              {scene !== 4 && (
+                <motion.div
+                  key="customer-msg"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="flex flex-col max-w-[80%] self-start"
+                >
+                  <div className="p-3 rounded-2xl text-[11px] leading-relaxed font-semibold bg-zinc-900 text-zinc-100 rounded-tl-sm border border-zinc-800">
+                    Hi, I'm interested in your service. Can you share pricing?
+                  </div>
+                  <span className="text-[7.5px] font-bold text-zinc-500 uppercase tracking-widest mt-1 ml-1">
+                    Alex Rivera
+                  </span>
+                </motion.div>
+              )}
+
+              {/* Scene 5, 6, 7 AI Typing Bubble */}
+              {scene >= 5 && showTyping && (
+                <motion.div
+                  key="ai-typing"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className="self-end max-w-[80%] flex flex-col items-end"
+                >
+                  <div className="bg-gradient-to-r from-[#818CF8]/25 to-[#4F39F6]/25 border border-[#4F39F6]/30 text-white p-3 rounded-2xl rounded-tr-sm flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 bg-[#818CF8] rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                    <span className="w-1.5 h-1.5 bg-[#818CF8] rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                    <span className="w-1.5 h-1.5 bg-[#818CF8] rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                  </div>
+                  <span className="text-[7.5px] font-bold text-zinc-500 uppercase tracking-widest mt-1 mr-1">
+                    ReplyZens AI typing...
+                  </span>
+                </motion.div>
+              )}
+
+              {/* Scene 5, 6, 7 AI Reply */}
+              {scene >= 5 && showAiReply && (
+                <motion.div
+                  key="ai-reply"
+                  initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  transition={{ type: "spring", stiffness: 200, damping: 20 }}
+                  className="flex flex-col max-w-[85%] self-end"
+                >
+                  <div className="bg-gradient-to-r from-[#818CF8] to-[#4F39F6] text-white p-3 rounded-2xl rounded-tr-sm shadow-lg leading-relaxed font-semibold">
+                    Thanks for reaching out. I'd be happy to help. What service are you interested in?
+                  </div>
+                  <span className="text-[7.5px] font-bold text-[#818CF8] uppercase tracking-widest mt-1 mr-1 self-end flex items-center gap-1">
+                    ✨ ReplyZens AI
+                  </span>
+                </motion.div>
+              )}
+
+              {/* Scene 6 & 7 Customer response */}
+              {scene >= 6 && (
+                <motion.div
+                  key="customer-reply"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4 }}
+                  className="flex flex-col max-w-[80%] self-start"
+                >
+                  <div className="p-3 rounded-2xl text-[11px] leading-relaxed font-semibold bg-zinc-900 text-zinc-100 rounded-tl-sm border border-zinc-800">
+                    I'm looking for lead generation for my D2C brand.
+                  </div>
+                </motion.div>
+              )}
+
+              {/* Scene 6 & 7 AI follow-up response */}
+              {scene >= 6 && (
+                <motion.div
+                  key="ai-followup"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 1.2 }}
+                  className="flex flex-col max-w-[85%] self-end"
+                >
+                  <div className="bg-gradient-to-r from-[#818CF8] to-[#4F39F6] text-white p-3 rounded-2xl rounded-tr-sm shadow-lg leading-relaxed font-semibold">
+                    Perfect! We sync lead data automatically. Can I get your email to send the details?
+                  </div>
+                  <span className="text-[7.5px] font-bold text-[#818CF8] uppercase tracking-widest mt-1 mr-1 self-end">
+                    ✨ ReplyZens AI
+                  </span>
+                </motion.div>
+              )}
+
+              {/* Scene 7 Customer email capture */}
+              {scene >= 7 && (
+                <motion.div
+                  key="customer-email"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.6 }}
+                  className="flex flex-col max-w-[80%] self-start"
+                >
+                  <div className="p-3 rounded-2xl text-[11px] leading-relaxed font-semibold bg-zinc-900 text-zinc-100 rounded-tl-sm border border-zinc-800">
+                    Sure, it's alex@riveramedia.co
+                  </div>
+                </motion.div>
+              )}
+
+              {/* Scene 7 AI capture success */}
+              {scene >= 7 && (
+                <motion.div
+                  key="ai-capture-success"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 1.4 }}
+                  className="flex flex-col max-w-[85%] self-end"
+                >
+                  <div className="bg-gradient-to-r from-[#818CF8] to-[#4F39F6] text-white p-3 rounded-2xl rounded-tr-sm shadow-lg leading-relaxed font-semibold">
+                    Captured! Details sent. Here's a link to schedule a strategy call if you want: replyzens.com/book
+                  </div>
+                  <span className="text-[7.5px] font-bold text-[#818CF8] uppercase tracking-widest mt-1 mr-1 self-end">
+                    ✨ ReplyZens AI
+                  </span>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
+          {/* Instagram Chat Footer Input Mockup */}
+          <div className="p-3 bg-[#09090b] border-t border-zinc-900 flex items-center gap-2 shrink-0 z-10">
+            <div className="flex-1 bg-zinc-900 border border-zinc-800/80 rounded-full h-8 px-3 flex items-center justify-between text-[10px] text-zinc-500 select-none">
+              <span>Message...</span>
+              <div className="flex items-center gap-2">
+                <Mic size={12} className="text-zinc-500" />
+                <Image size={12} className="text-zinc-500" />
+                <Smile size={12} className="text-zinc-500" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* DASHBOARD / STATUS PANEL - 5 cols */}
+      <div className="lg:col-span-5 flex flex-col justify-center">
+        <div className="bg-white dark:bg-[#121826]/40 border border-zinc-200/80 dark:border-white/5 p-8 rounded-3xl min-h-[460px] flex flex-col justify-between shadow-md hover:shadow-lg transition-all duration-300">
+          
+          {/* Header Dynamic Status */}
+          <div className="flex items-center justify-between border-b border-zinc-100 dark:border-white/5 pb-4">
+            <span className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-widest">
+              Live Pipeline State
+            </span>
+            <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${
+              scene === 1 ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20' :
+              scene === 2 && (timer === "00:00" || timer === "00:30" || timer === "01:00") ? 'bg-amber-500/10 text-amber-500 border border-amber-500/20' :
+              scene === 2 && timer === "03:00" ? 'bg-orange-500/10 text-orange-500 border border-orange-500/20' :
+              scene === 2 && timer === "05:00" ? 'bg-rose-500/10 text-rose-500 border border-rose-500/20' :
+              scene === 3 ? 'bg-rose-500/10 text-rose-500 border border-rose-500/20' :
+              scene === 4 ? 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 animate-pulse' :
+              'bg-[#4F39F6]/10 text-[#818CF8] border border-[#4F39F6]/20'
+            }`}>
+              <span className={`w-1.5 h-1.5 rounded-full ${
+                scene === 1 || (scene === 2 && (timer === "00:00" || timer === "00:30")) ? 'bg-emerald-500' :
+                scene === 2 && (timer === "01:00" || timer === "03:00") ? 'bg-amber-500' :
+                scene === 2 && timer === "05:00" ? 'bg-rose-500' :
+                scene === 3 ? 'bg-rose-500' :
+                scene === 4 ? 'bg-indigo-400 animate-ping' :
+                'bg-[#818CF8] animate-pulse'
+              }`} />
+              {scene === 1 && "Interested"}
+              {scene === 2 && (timer === "00:00" || timer === "00:30" || timer === "01:00" ? "Waiting" : "Losing Interest")}
+              {scene === 3 && "Gone"}
+              {scene === 4 && "Resetting"}
+              {scene === 5 && "AI Active"}
+              {scene === 6 && "Qualifying"}
+              {scene === 7 && "Success"}
+            </span>
+          </div>
+
+          {/* Middle Clock / Metrics Card */}
+          <div className="my-8 text-left">
+            <span className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-widest block mb-2">
+              Elapsed Time
+            </span>
+            <div className="flex items-center gap-4">
+              <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shadow-inner ${
+                scene >= 5 ? 'bg-emerald-500/10 text-emerald-500' :
+                scene === 3 ? 'bg-rose-500/10 text-rose-500' :
+                scene === 4 ? 'bg-indigo-500/10 text-indigo-400' :
+                'bg-zinc-100 dark:bg-zinc-800 text-zinc-450'
+              }`}>
+                {scene >= 5 ? <Bot size={24} /> : scene === 4 ? <RefreshCw size={24} className="animate-spin" /> : <Clock size={24} />}
+              </div>
+              <div className="flex flex-col">
+                <span className={`text-4xl font-extrabold tracking-tight tabular-nums ${
+                  scene >= 5 ? 'text-emerald-500' :
+                  scene === 3 ? 'text-rose-500' :
+                  scene === 4 ? 'text-indigo-400' :
+                  'text-zinc-900 dark:text-white'
+                }`}>
+                  {timer}
+                </span>
+                <span className="text-xs text-zinc-500 font-medium">
+                  {scene >= 5 ? "Autopilot response speed" : "Average response limit is 5 mins"}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Bottom Card Context */}
+          <div className="flex-1 flex flex-col justify-end text-left border-t border-zinc-100 dark:border-white/5 pt-6">
+            <AnimatePresence mode="wait">
+              {/* Scene 1 & 2 */}
+              {(scene === 1 || scene === 2) && (
+                <motion.div
+                  key="waiting-state"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className="space-y-2"
+                >
+                  <h4 className="text-sm font-bold text-zinc-800 dark:text-zinc-200">
+                    Lead is waiting in DM queue
+                  </h4>
+                  <p className="text-xs text-zinc-500 leading-relaxed font-medium">
+                    Prospect has sent an inquiry. If they are left waiting, high-intent interest drops rapidly, leading to lost sales.
+                  </p>
+                </motion.div>
+              )}
+
+              {/* Scene 3: Lost Opportunity */}
+              {scene === 3 && (
+                <motion.div
+                  key="lost-state"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className="space-y-3"
+                >
+                  <h4 className="text-sm font-extrabold text-rose-500 flex items-center gap-1.5">
+                    <AlertCircle size={16} /> Leakage: Lost Opportunity
+                  </h4>
+                  <div className="grid grid-cols-2 gap-2.5">
+                    {[
+                      "Lead Lost",
+                      "No Follow-up",
+                      "No Contact Captured",
+                      "Revenue Missed"
+                    ].map((item, index) => (
+                      <motion.div
+                        key={index}
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: index * 0.1 }}
+                        className="flex items-center gap-2 p-2.5 rounded-xl bg-rose-500/5 border border-rose-500/10 text-rose-500 text-xs font-bold"
+                      >
+                        <X size={12} className="stroke-[3]" />
+                        {item}
+                      </motion.div>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+
+              {/* Scene 4: Rewind */}
+              {scene === 4 && (
+                <motion.div
+                  key="rewind-state"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className="space-y-2"
+                >
+                  <h4 className="text-sm font-bold text-indigo-400">
+                    Deploying ReplyZens AI
+                  </h4>
+                  <p className="text-xs text-zinc-500 leading-relaxed font-medium animate-pulse">
+                    Implementing instant, context-aware reply loops.
+                  </p>
+                </motion.div>
+              )}
+
+              {/* Scene 5 */}
+              {scene === 5 && (
+                <motion.div
+                  key="ai-active-state"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className="space-y-2"
+                >
+                  <h4 className="text-sm font-bold text-emerald-500 flex items-center gap-1.5">
+                    <Bot size={16} /> Instant AI Reply Triggered
+                  </h4>
+                  <p className="text-xs text-zinc-500 leading-relaxed font-medium">
+                    ReplyZens AI instantly reads context, answers the pricing query, and prompts the prospect, saving the opportunity.
+                  </p>
+                </motion.div>
+              )}
+
+              {/* Scene 6 */}
+              {scene === 6 && (
+                <motion.div
+                  key="workflow-state"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className="space-y-3"
+                >
+                  <h4 className="text-sm font-bold text-emerald-500 flex items-center gap-1.5">
+                    <CheckCircle size={16} /> Automated Engagement Flow
+                  </h4>
+                  <div className="grid grid-cols-2 gap-2">
+                    {[
+                      "Instant Reply",
+                      "Lead Qualification",
+                      "Contact Capture",
+                      "CRM Sync",
+                      "Follow-Up Automation"
+                    ].map((item, index) => (
+                      <motion.div
+                        key={index}
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: index * 0.08 }}
+                        className="flex items-center gap-1.5 p-2 rounded-xl bg-emerald-500/5 border border-emerald-500/10 text-emerald-500 text-[10.5px] font-bold"
+                      >
+                        <Check size={10} className="stroke-[3]" />
+                        {item}
+                      </motion.div>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+
+              {/* Scene 7 */}
+              {scene === 7 && (
+                <motion.div
+                  key="conversion-state"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className="space-y-3"
+                >
+                  <h4 className="text-sm font-extrabold text-emerald-500 flex items-center gap-1.5">
+                    <Sparkles size={16} /> Conversion Pipeline Complete
+                  </h4>
+                  <div className="space-y-2">
+                    {[
+                      { icon: "🎉", label: "Qualified Lead Captured" },
+                      { icon: "📅", label: "Meeting Booked" },
+                      { icon: "💰", label: "New Revenue Generated" }
+                    ].map((item, index) => (
+                      <motion.div
+                        key={index}
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: index * 0.15, type: "spring", stiffness: 150 }}
+                        className="flex items-center gap-3 p-3 rounded-2xl bg-emerald-500/5 border border-emerald-500/15 text-emerald-500 text-xs font-extrabold"
+                      >
+                        <span className="text-sm">{item.icon}</span>
+                        {item.label}
+                      </motion.div>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+
+// ==========================================
+// 4.6. HOW IT WORKS INTEGRATIONS FLOW CANVAS
+// ==========================================
+const IntegrationsFlowCanvas = ({ activeStep }: { activeStep: number }) => {
+  return (
+    <div className="relative w-full max-w-[440px] h-[340px] rounded-3xl border border-zinc-200/80 dark:border-white/5 bg-white dark:bg-[#0c0f17] p-6 flex flex-col justify-between shadow-lg overflow-hidden mockup-dark text-left">
+      {/* Grid background lines */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808008_1px,transparent_1px),linear-gradient(to_bottom,#80808008_1px,transparent_1px)] bg-[size:16px_16px] pointer-events-none" />
+      
+      {/* Top bar info */}
+      <div className="flex items-center justify-between border-b border-zinc-100 dark:border-white/5 pb-3 z-10 shrink-0">
+        <div className="flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+          <span className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-widest">
+            {activeStep === 0 && "Step 1: Secure Integration"}
+            {activeStep === 1 && "Step 2: Intent Engine"}
+            {activeStep === 2 && "Step 3: Webhook Pipeline"}
+          </span>
+        </div>
+        <span className="text-[9px] font-mono text-zinc-500 dark:text-zinc-400 bg-zinc-100 dark:bg-white/5 px-2 py-0.5 rounded border border-zinc-200/50 dark:border-white/5">
+          {activeStep === 0 && "oauth.meta.api"}
+          {activeStep === 1 && "replyzens.ai.engine"}
+          {activeStep === 2 && "webhook.delivery"}
+        </span>
+      </div>
+
+      {/* Main interactive nodes canvas */}
+      <div className="flex-1 flex items-center justify-center relative my-4 z-10">
+        <AnimatePresence mode="wait">
+          {activeStep === 0 && (
+            <motion.div
+              key="step-0"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.3 }}
+              className="w-full h-full flex flex-col items-center justify-center relative"
+            >
+              {/* Instagram Source Node and ReplyZens Node connected */}
+              <div className="flex items-center justify-between w-full max-w-[320px] relative">
+                {/* SVG connection line with pulsing dashed dashArray */}
+                <svg className="absolute top-1/2 -translate-y-1/2 left-0 w-full h-2 z-0" pointerEvents="none">
+                  <line
+                    x1="20%"
+                    y1="50%"
+                    x2="80%"
+                    y2="50%"
+                    stroke="#4F39F6"
+                    strokeWidth="2"
+                    strokeDasharray="6 4"
+                    className="animate-[dash_15s_linear_infinite]"
+                  />
+                </svg>
+
+                {/* Left Node: Instagram Logo */}
+                <div className="relative z-10 flex flex-col items-center gap-2">
+                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-purple-600 via-pink-500 to-yellow-500 flex items-center justify-center shadow-lg text-white">
+                    <svg className="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                      <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+                    </svg>
+                  </div>
+                  <span className="text-[10px] font-bold text-zinc-400">Instagram DM</span>
+                </div>
+
+                {/* Middle connector status */}
+                <div className="bg-[#4F39F6]/10 border border-[#4F39F6]/30 text-[#818CF8] text-[9px] px-2.5 py-1 rounded-full font-bold z-10 backdrop-blur-sm">
+                  OAuth Handshake
+                </div>
+
+                {/* Right Node: ReplyZens Engine */}
+                <div className="relative z-10 flex flex-col items-center gap-2">
+                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-[#818CF8] to-[#4F39F6] flex items-center justify-center shadow-lg text-white shadow-[#4F39F6]/20">
+                    <Zap size={28} className="fill-white/10" />
+                  </div>
+                  <span className="text-[10px] font-bold text-[#818CF8]">ReplyZens AI</span>
+                </div>
+              </div>
+
+              {/* Security Dialog Card overlay */}
+              <div className="mt-6 bg-zinc-50 dark:bg-[#121826]/40 border border-zinc-200/50 dark:border-white/5 p-3 rounded-xl flex items-center gap-3 w-full max-w-[280px]">
+                <Shield className="text-emerald-500 shrink-0" size={18} />
+                <div className="flex flex-col text-left">
+                  <span className="text-[10px] font-bold text-zinc-800 dark:text-zinc-200">Meta API Compliance Verified</span>
+                  <span className="text-[8px] text-zinc-500 font-medium">SSL Encrypted token rotation key</span>
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+          {activeStep === 1 && (
+            <motion.div
+              key="step-1"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.3 }}
+              className="w-full h-full flex flex-col items-center justify-center"
+            >
+              {/* Intent flow diagram */}
+              <div className="w-full max-w-[340px] space-y-3">
+                {/* Simulated Inbound message */}
+                <div className="flex items-center gap-2.5">
+                  <div className="w-6 h-6 rounded-full bg-zinc-800 flex items-center justify-center text-[7.5px] font-bold text-zinc-400">US</div>
+                  <div className="bg-zinc-100 dark:bg-zinc-850 p-2.5 rounded-xl text-[10.5px] leading-snug font-medium text-zinc-700 dark:text-zinc-305 max-w-[220px]">
+                    "Can I buy the hoodie? Do you ship to Germany?"
+                  </div>
+                </div>
+
+                {/* Processing node */}
+                <div className="flex items-center justify-center gap-3 py-1">
+                  <div className="h-[1px] bg-zinc-200 dark:bg-zinc-800 flex-1" />
+                  <div className="bg-[#4F39F6]/10 border border-[#4F39F6]/20 px-3 py-1 rounded-full text-[9px] font-mono text-[#818CF8] flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#818CF8] animate-ping" />
+                    ReplyZens NLP Processing
+                  </div>
+                  <div className="h-[1px] bg-zinc-200 dark:bg-zinc-800 flex-1" />
+                </div>
+
+                {/* Extracted Intent / Reply */}
+                <div className="flex flex-col items-end gap-1.5">
+                  <div className="bg-gradient-to-r from-[#818CF8] to-[#4F39F6] text-white p-2.5 rounded-xl text-[10.5px] leading-snug font-semibold max-w-[220px]">
+                    "Yes! Shipping to Germany is €4.99. What color would you like?"
+                  </div>
+                  <div className="flex gap-2">
+                    <span className="text-[8px] bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 px-2 py-0.5 rounded font-bold">
+                      ✓ Intent: Shipping
+                    </span>
+                    <span className="text-[8px] bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 px-2 py-0.5 rounded font-bold">
+                      ✓ Location: Germany
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+          {activeStep === 2 && (
+            <motion.div
+              key="step-2"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.3 }}
+              className="w-full h-full flex flex-col items-center justify-center relative"
+            >
+              <div className="flex items-center justify-between w-full max-w-[320px] relative">
+                {/* Core Node left */}
+                <div className="flex flex-col items-center gap-1.5 z-10">
+                  <div className="w-12 h-12 rounded-xl bg-gradient-to-tr from-[#818CF8] to-[#4F39F6] flex items-center justify-center shadow-lg text-white">
+                    <Zap size={22} />
+                  </div>
+                  <span className="text-[9px] font-bold text-[#818CF8]">ReplyZens AI</span>
+                </div>
+
+                {/* Dash branch lines */}
+                <svg className="absolute inset-0 w-full h-full z-0" pointerEvents="none" viewBox="0 0 320 120">
+                  {/* Branch to top right */}
+                  <path d="M 50 60 Q 120 20 240 25" fill="none" stroke="#4F39F6" strokeWidth="1.5" strokeDasharray="5 3" className="animate-[dash_10s_linear_infinite]" />
+                  {/* Branch to middle right */}
+                  <path d="M 50 60 L 240 60" fill="none" stroke="#38BDF8" strokeWidth="1.5" strokeDasharray="5 3" className="animate-[dash_10s_linear_infinite]" />
+                  {/* Branch to bottom right */}
+                  <path d="M 50 60 Q 120 100 240 95" fill="none" stroke="#818CF8" strokeWidth="1.5" strokeDasharray="5 3" className="animate-[dash_10s_linear_infinite]" />
+                </svg>
+
+                {/* Right integration stack */}
+                <div className="flex flex-col gap-2.5 z-10 w-[150px]">
+                  {/* Sheets Node */}
+                  <div className="flex items-center gap-2 bg-emerald-500/5 dark:bg-emerald-500/10 border border-emerald-500/25 p-2 rounded-lg text-[9px] font-bold text-emerald-500">
+                    <Database size={12} />
+                    <span className="truncate">Google Sheets Sync</span>
+                  </div>
+
+                  {/* HubSpot Node */}
+                  <div className="flex items-center gap-2 bg-orange-500/5 dark:bg-orange-500/10 border border-orange-500/25 p-2 rounded-lg text-[9px] font-bold text-orange-500">
+                    <Workflow size={12} />
+                    <span className="truncate">HubSpot CRM Deal</span>
+                  </div>
+
+                  {/* Webhook Node */}
+                  <div className="flex items-center gap-2 bg-[#818CF8]/5 dark:bg-[#818CF8]/10 border border-[#818CF8]/25 p-2 rounded-lg text-[9px] font-bold text-[#818CF8]">
+                    <Send size={12} />
+                    <span className="truncate">Slack Lead Alert</span>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+
+      {/* Footer detail */}
+      <div className="border-t border-zinc-100 dark:border-white/5 pt-3 flex items-center justify-between text-[8.5px] font-bold uppercase tracking-widest text-zinc-400 dark:text-zinc-500 shrink-0 z-10">
+        <span>Pipeline Activity Monitor</span>
+        <span>Secure connection active</span>
+      </div>
+    </div>
+  );
+};
+
 
 // ==========================================
 // 5. MAIN LANDING COMPONENT
@@ -1204,10 +1964,20 @@ type TabType = 'inbox' | 'agent' | 'builder' | 'analytics' | 'settings';
 
 const Landing: React.FC = () => {
   const navigate = useNavigate();
+  const [activeStep, setActiveStep] = useState(0);
+  const [autoRotate, setAutoRotate] = useState(true);
+
+  useEffect(() => {
+    if (!autoRotate) return;
+    const interval = setInterval(() => {
+      setActiveStep((prev) => (prev + 1) % 3);
+    }, 4500);
+    return () => clearInterval(interval);
+  }, [autoRotate]);
 
   return (
     <div className="landing-page bg-[#fafafa] dark:bg-[#09090b] text-zinc-900 dark:text-white font-inter selection:bg-[#38BDF8]/10 selection:text-[#38BDF8] min-h-screen relative overflow-x-hidden">
-      
+
       {/* Decorative gradient radial glows */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[550px] bg-gradient-to-b from-[#3B82F6]/5 dark:from-[#3B82F6]/10 to-transparent blur-[120px] pointer-events-none" />
       <div className="absolute top-[800px] right-0 w-[450px] h-[450px] bg-[#6366F1]/5 blur-[100px] pointer-events-none" />
@@ -1219,204 +1989,196 @@ const Landing: React.FC = () => {
       <main className="pt-[72px]">
 
         {/* ==========================================
-            SECTION 1 — HERO
+            SECTION 1 — HERO WITH EMBEDDED PRODUCT SHOWCASE
             ========================================== */}
-        <section className="relative pt-12 pb-24 z-10 overflow-hidden">
-          <div className="max-w-6xl mx-auto px-6 grid lg:grid-cols-2 gap-12 items-center relative z-10">
-            {/* Left Content Column */}
-            <div className="flex flex-col items-center lg:items-start text-center lg:text-left">
-              {/* Tag / Badge */}
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#4F39F6]/10 border border-[#4F39F6]/20 mb-6 select-none animate-fade-in">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#4F39F6] animate-pulse" />
-                <span className="text-[10px] font-bold uppercase tracking-widest text-[#4F39F6] dark:text-[#818CF8]">
-                  AI Instagram Sales Agent
-                </span>
-              </div>
+        <section className="relative pt-16 pb-28 z-10 overflow-hidden text-center">
+          <div className="max-w-6xl mx-auto px-6 relative z-10 flex flex-col items-center">
+            {/* Tag / Badge */}
+            {/* <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#4F39F6]/10 border border-[#4F39F6]/20 mb-6 select-none">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#4F39F6] animate-pulse" />
+              <span className="text-[10px] font-bold uppercase tracking-widest text-[#4F39F6] dark:text-[#818CF8]">
+                AI Instagram Lead Capture & DM Automation
+              </span>
+            </div> */}
 
-              {/* Headline with visual gradient spec */}
-              <h1 className="text-4xl sm:text-5xl lg:text-[54px] lg:leading-[1.1] font-extrabold tracking-tight mb-6 text-balance text-zinc-950 dark:text-white">
-                Turn Every Instagram <span className="text-headline-gradient">DM Into Revenue</span>
-              </h1>
+            {/* Headline with visual gradient spec */}
+            <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight mb-6 text-balance text-zinc-950 dark:text-white max-w-4xl leading-[1.1]">
+              Turn Instagram DMs Into <span className="text-headline-gradient">Qualified Leads</span> Automatically
+            </h1>
 
-              {/* Subheadline */}
-              <p className="text-base text-zinc-650 dark:text-zinc-400 font-medium leading-relaxed mb-10 text-balance max-w-xl">
-                ReplyZens automatically replies to Instagram messages, qualifies leads, captures customer information, answers questions, and books appointments while you focus on growing your business.
-              </p>
+            {/* Subheadline */}
+            <p className="text-base sm:text-lg text-zinc-650 dark:text-zinc-400 font-medium leading-relaxed mb-10 text-balance max-w-3xl">
+              ReplyZens instantly responds to DMs, story replies, and comment triggers, qualifies prospects with AI, captures customer details, and helps businesses convert more conversations into customers.
+            </p>
 
-              {/* CTA Buttons using btn-premium-cta styles */}
-              <div className="flex flex-col sm:flex-row items-center gap-4 w-full max-w-md mb-8">
-                <button
-                  onClick={() => navigate('/signup')}
-                  className="btn-premium-cta w-full sm:w-auto px-8 py-4.5 text-sm font-bold flex items-center justify-center gap-2 group"
-                >
-                  Start Free Trial
-                  <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
-                </button>
-                <a
-                  href="#demo"
-                  className="w-full sm:w-auto px-8 py-4.5 rounded-xl text-sm font-bold bg-white dark:bg-[#121826] border border-zinc-200 dark:border-white/10 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-white/10 hover:border-zinc-300 dark:hover:border-white/20 transition-all flex items-center justify-center gap-2 shadow-sm"
-                >
-                  <Play size={14} fill="currentColor" />
-                  Watch Demo
-                </a>
-              </div>
+            {/* CTA Buttons */}
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full max-w-md mb-16">
+              <button
+                onClick={() => navigate('/signup')}
+                className="btn-premium-cta w-full sm:w-auto px-10 py-5 text-sm font-bold flex items-center justify-center gap-2 group"
+              >
+                Start Free 14-Day Trial
+                <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+              </button>
+              <a
+                href="#demo"
+                className="w-full sm:w-auto px-10 py-5 rounded-xl text-sm font-bold bg-white dark:bg-[#121826] border border-zinc-200 dark:border-white/10 text-zinc-650 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-white/10 hover:border-zinc-300 dark:hover:border-white/20 transition-all flex items-center justify-center gap-2 shadow-sm"
+              >
+                <Play size={14} fill="currentColor" />
+                Watch Demo
+              </a>
             </div>
 
-            {/* Right Interactive Mobile Mockup Column */}
-            <div className="w-full flex justify-center items-center mockup-dark">
-              <InstagramMobileMockup />
+            {/* Showcase dashboard preview directly in the Hero */}
+            <div id="demo" className="w-full mt-4">
+              <ProductShowcase />
             </div>
           </div>
         </section>
 
 
         {/* ==========================================
-            SECTION 2 — SOCIAL PROOF
+            SECTION 2 — TRUST STRIP
             ========================================== */}
-        <section className="py-20 border-y border-zinc-200/80 dark:border-white/5 bg-zinc-100/50 dark:bg-[#121826]/30 backdrop-blur-xl relative z-10">
+        <section className="py-8 border-y border-zinc-200/80 dark:border-white/5 bg-zinc-100/30 dark:bg-[#121826]/10 backdrop-blur-xl relative z-10">
           <div className="max-w-6xl mx-auto px-6">
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
-              {[
-                { label: "Conversations Automated", value: "10,000+", icon: <MessageCircle size={20} /> },
-                { label: "Faster Response Times", value: "85%", icon: <Clock size={20} /> },
-                { label: "More Qualified Leads", value: "3X", icon: <TrendingUp size={20} /> },
-                { label: "AI Availability", value: "24/7", icon: <Sparkles size={20} /> },
-              ].map((metric, i) => (
-                <motion.div
-                  initial={{ opacity: 0, y: 15 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.1 }}
-                  key={i}
-                  className="bg-[#121826]/50 border border-white/5 p-6 rounded-2xl flex flex-col items-center text-center relative group hover:border-[#38BDF8]/40 hover:bg-[#121826]/80 transition-all shadow-sm"
-                >
-                  <div className="w-10 h-10 rounded-xl bg-white/[0.02] border border-white/5 flex items-center justify-center mb-4 text-[#38BDF8] group-hover:scale-110 transition-transform">
-                    {metric.icon}
-                  </div>
-                  <div className="text-3xl md:text-4xl font-extrabold text-white mb-2 tracking-tight">
-                    {metric.value}
-                  </div>
-                  <div className="text-[10px] md:text-xs font-bold text-zinc-550 uppercase tracking-widest font-mono">
-                    {metric.label}
-                  </div>
-                </motion.div>
-              ))}
+            <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-6 text-zinc-550 dark:text-zinc-400 text-xs font-bold tracking-wider uppercase">
+              <span className="flex items-center gap-2">
+                <CheckCircle2 size={16} className="text-emerald-500" /> Meta Graph API Integration
+              </span>
+              <span className="flex items-center gap-2">
+                <Lock size={16} className="text-[#38BDF8]" /> Secure OAuth Auth
+              </span>
+              <span className="flex items-center gap-2">
+                <Bot size={16} className="text-[#3B82F6]" /> AI-Powered Conversations
+              </span>
+              <span className="flex items-center gap-2">
+                <Users size={16} className="text-purple-400" /> Human Takeover Available
+              </span>
+              <span className="flex items-center gap-2">
+                <Database size={16} className="text-blue-400" /> Sheets & CRM Sync
+              </span>
+              <span className="flex items-center gap-2">
+                <Workflow size={16} className="text-pink-400" /> Webhook Support
+              </span>
             </div>
           </div>
         </section>
 
 
         {/* ==========================================
-            SECTION 3 — PROBLEM
+            SECTION 3 — PROBLEM SECTION
             ========================================== */}
-        <section className="py-28 relative bg-[#fafafa] dark:bg-[#09090b]">
-          <div className="max-w-6xl mx-auto px-6">
-            <div className="text-center max-w-2xl mx-auto mb-16">
-              <span className="text-xs font-bold uppercase tracking-widest text-[#4F39F6] dark:text-[#818CF8]">The Hard Truth</span>
-              <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-4 text-white leading-tight mt-3">
-                Every Missed Instagram Message Is Lost Revenue
+        <section className="py-28 relative bg-[#fafafa] dark:bg-[#09090b] border-t border-zinc-200/80 dark:border-white/5">
+          <div className="max-w-6xl mx-auto px-6 text-center">
+            <div className="max-w-2xl mx-auto mb-16">
+              <span className="text-xs font-bold uppercase tracking-widest text-[#4F39F6] dark:text-[#818CF8]">THE COST OF MANUAL DM MANAGEMENT</span>
+              <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-4 text-zinc-900 dark:text-white leading-tight mt-3">
+                Every Unanswered DM Is Lost Revenue
               </h2>
-              <p className="text-sm md:text-base text-zinc-400 font-medium leading-relaxed mt-1">
-                Manual Instagram management scales poorly. Customers expect immediate replies, and while you sleep or focus on operations, leads are leaking.
+              <p className="text-sm md:text-base text-zinc-650 dark:text-zinc-400 font-medium leading-relaxed mt-2 text-balance">
+                Potential customers are messaging your business right now. Slow replies, missed follow-ups, and manual processes cause leads to disappear before they ever become customers.
               </p>
             </div>
 
-            <div className="grid md:grid-cols-3 gap-6">
-              {[
-                {
-                  title: "Slow Responses",
-                  desc: "Customers leave before businesses can reply. 78% of buyers purchase from the brand that responds first.",
-                  glow: "group-hover:border-[#38BDF8]/50 group-hover:shadow-lg group-hover:shadow-[#38BDF8]/5",
-                  badge: "Friction"
-                },
-                {
-                  title: "Repetitive Questions",
-                  desc: "Teams waste hours answering the same questions about pricing, stock availability, and shipping info.",
-                  glow: "group-hover:border-[#38BDF8]/50 group-hover:shadow-lg group-hover:shadow-[#38BDF8]/5",
-                  badge: "Inefficiency"
-                },
-                {
-                  title: "Lost Opportunities",
-                  desc: "Potential buyers never receive follow-up messages, checkouts, or demo links, disappearing forever.",
-                  glow: "group-hover:border-[#38BDF8]/50 group-hover:shadow-lg group-hover:shadow-[#38BDF8]/5",
-                  badge: "Lost Sales"
-                }
-              ].map((p, i) => (
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.1 }}
-                  key={i}
-                  className="group"
-                >
-                  <div className={`p-8 rounded-3xl bg-[#121826]/40 border border-white/5 h-full flex flex-col justify-between transition-all duration-300 hover:bg-[#121826]/70 shadow-sm ${p.glow}`}>
-                    <div>
-                      <div className="flex justify-between items-center mb-6">
-                        <div className="w-10 h-10 rounded-xl bg-[#38BDF8]/10 text-[#38BDF8] flex items-center justify-center">
-                          <X size={18} />
-                        </div>
-                        <span className="text-[8.5px] font-bold text-zinc-555 uppercase tracking-widest">{p.badge}</span>
-                      </div>
-                      <h3 className="text-xl font-bold mb-3 text-white">{p.title}</h3>
-                      <p className="text-zinc-400 leading-relaxed text-sm font-medium">{p.desc}</p>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
+            <ProblemStorytelling />
           </div>
         </section>
 
 
         {/* ==========================================
-            SECTION 4 — SOLUTION
+            SECTION 4 — HOW REPLYZENS WORKS
             ========================================== */}
         <section className="py-28 border-t border-zinc-200/80 dark:border-white/5 relative overflow-hidden bg-gradient-to-b from-[#fafafa] via-zinc-100/50 to-[#fafafa] dark:from-[#09090b] dark:via-[#121826]/30 dark:to-[#09090b]">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#3B82F6]/5 blur-[120px] rounded-full pointer-events-none" />
-          
           <div className="max-w-6xl mx-auto px-6 relative z-10">
-            <div className="text-center max-w-2xl mx-auto mb-20">
-              <span className="text-xs font-bold uppercase tracking-widest text-zinc-500">Core Architecture</span>
-              <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-4 text-white mt-3 animate-fade-in">
-                Meet Your AI Instagram Growth Engine
-              </h2>
-              <p className="text-sm md:text-base text-zinc-400 font-medium">
-                ReplyZens streamlines your sales funnel, seamlessly taking prospects from a simple message to a confirmed conversion.
-              </p>
+            <div className="grid lg:grid-cols-2 gap-16 items-center">
+              {/* Left Column: 3 Steps */}
+              <div className="flex flex-col text-left">
+                <span className="text-xs font-bold uppercase tracking-widest text-[#4F39F6] dark:text-[#818CF8]">How It Works</span>
+                <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-zinc-900 dark:text-white mt-3 mb-6">
+                  3 Steps to Automated Lead Capture
+                </h2>
+                <p className="text-sm md:text-base text-zinc-550 dark:text-zinc-400 font-medium mb-12">
+                  Turn your Instagram profile into a 24/7 lead generation engine in minutes.
+                </p>
+
+                <div className="space-y-6">
+                  {[
+                    {
+                      step: "01",
+                      title: "Connect Instagram Business Account",
+                      desc: "Connect your Instagram profile securely with one-click Meta OAuth login. No password sharing required."
+                    },
+                    {
+                      step: "02",
+                      title: "ReplyZen AI Responds & Qualifies Leads Automatically",
+                      desc: "ReplyZen instantly greets prospects, answers FAQs using your knowledge docs, and qualifies their intent."
+                    },
+                    {
+                      step: "03",
+                      title: "Capture Lead Details And Convert More Customers",
+                      desc: "Automatically extract emails, phone numbers, and interests, syncing them immediately to your lead lists."
+                    }
+                  ].map((step, idx) => (
+                    <div
+                      key={idx}
+                      onClick={() => {
+                        setActiveStep(idx);
+                        setAutoRotate(false);
+                      }}
+                      className={`flex gap-6 p-4 rounded-2xl cursor-pointer transition-all duration-300 border ${
+                        activeStep === idx
+                          ? "bg-white dark:bg-[#121826]/40 border-zinc-200/80 dark:border-white/5 shadow-sm"
+                          : "border-transparent opacity-65 hover:opacity-100"
+                      }`}
+                    >
+                      <div className={`w-12 h-12 rounded-2xl flex items-center justify-center font-bold font-mono shrink-0 transition-all duration-300 ${
+                        activeStep === idx
+                          ? "bg-[#4F39F6] text-white shadow-md shadow-[#4F39F6]/20"
+                          : "bg-[#3B82F6]/10 text-[#38BDF8]"
+                      }`}>
+                        {step.step}
+                      </div>
+                      <div>
+                        <h3 className={`text-base font-bold mb-1 transition-colors duration-300 ${
+                          activeStep === idx ? "text-[#4F39F6] dark:text-[#818CF8]" : "text-zinc-900 dark:text-white"
+                        }`}>{step.title}</h3>
+                        <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed font-medium">{step.desc}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Right Column: Interactive Platform Pipeline */}
+              <div className="flex flex-col items-center justify-center">
+                <IntegrationsFlowCanvas activeStep={activeStep} />
+                <span className="text-[10px] text-zinc-500 uppercase tracking-widest font-mono mt-6">
+                  Interactive Platform Pipeline
+                </span>
+              </div>
             </div>
 
-            {/* Workflow Architecture Map */}
-            <div className="max-w-4xl mx-auto bg-[#121826]/50 border border-white/5 p-8 md:p-12 rounded-[2.5rem] relative overflow-hidden shadow-2xl">
-              <div className="absolute inset-0 opacity-[0.02] bg-[linear-gradient(to_right,#808080_1px,transparent_1px),linear-gradient(to_bottom,#808080_1px,transparent_1px)] bg-[size:24px_24px]" />
-              
-              <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6 md:gap-4 flex-wrap lg:flex-nowrap">
+            {/* Examples block below */}
+            <div className="bg-zinc-100/50 dark:bg-[#121826]/20 border border-zinc-200/80 dark:border-white/5 p-8 rounded-3xl max-w-4xl mx-auto mt-20">
+              <h4 className="text-sm font-bold text-zinc-650 dark:text-zinc-300 uppercase tracking-widest text-center mb-8">
+                What ReplyZen AI Captures In Real-Time
+              </h4>
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
                 {[
-                  { title: "Instagram Message", desc: "Trigger received", icon: <MessageCircle size={16} /> },
-                  { title: "AI Understanding", desc: "Intent parsing", icon: <Bot size={16} /> },
-                  { title: "Smart Response", desc: "FAQ answered", icon: <Zap size={16} /> },
-                  { title: "Lead Capture", desc: "Contact details", icon: <Users size={16} /> },
-                  { title: "Qualification", desc: "Intent scoring", icon: <Star size={16} /> },
-                  { title: "CRM Integration", desc: "System updated", icon: <Database size={16} /> },
-                  { title: "Appointment Booking", desc: "Sale closed", icon: <Calendar size={16} /> }
-                ].map((node, idx) => (
-                  <React.Fragment key={idx}>
-                    {/* Node */}
-                    <div className="flex flex-col items-center text-center p-4 bg-[#0B1020]/80 border border-white/5 rounded-2xl w-32 shrink-0 group hover:border-[#38BDF8] hover:shadow-lg hover:shadow-[#38BDF8]/5 transition-all">
-                      <div className="w-10 h-10 rounded-full bg-[#121826] border border-white/10 text-white flex items-center justify-center mb-3 group-hover:bg-[#38BDF8] group-hover:text-white transition-colors">
-                        {node.icon}
-                      </div>
-                      <span className="text-[10px] font-bold text-white block mb-0.5 leading-tight">{node.title}</span>
-                      <span className="text-[8.5px] text-zinc-555 block font-medium">{node.desc}</span>
-                    </div>
-
-                    {/* Arrow (hidden after the last node) */}
-                    {idx < 6 && (
-                      <div className="hidden lg:flex flex-col justify-center items-center text-[#38BDF8] shrink-0">
-                        <ArrowRight size={14} className="opacity-70 transition-colors" />
-                      </div>
-                    )}
-                  </React.Fragment>
+                  { label: "Email Collected", detail: "alex@example.com", badge: "Contact" },
+                  { label: "Phone Captured", detail: "+1 (555) 019-2834", badge: "Contact" },
+                  { label: "Product Interest", detail: "Standard Hoodie (L)", badge: "Intent" },
+                  { label: "Consultation Request", detail: "Prefers Morning slots", badge: "Action" },
+                  { label: "Purchase Intent", detail: "Ready to order", badge: "Intent" }
+                ].map((item, idx) => (
+                  <div key={idx} className="bg-white dark:bg-[#121826]/60 border border-zinc-200/80 dark:border-white/5 p-4 rounded-2xl text-left shadow-sm">
+                    <span className="text-[8px] font-bold text-[#38BDF8] bg-[#38BDF8]/10 px-2 py-0.5 rounded-full uppercase tracking-wider">
+                      {item.badge}
+                    </span>
+                    <span className="text-xs font-bold text-zinc-800 dark:text-white block mt-3 mb-1">{item.label}</span>
+                    <span className="text-[10px] text-zinc-500 dark:text-zinc-400 font-mono block truncate">{item.detail}</span>
+                  </div>
                 ))}
               </div>
             </div>
@@ -1425,276 +2187,542 @@ const Landing: React.FC = () => {
 
 
         {/* ==========================================
-            SECTION 5 — FEATURE GRID WITH ELEGANT GRADIENT BORDERS
+            SECTION 5 — BENEFITS
             ========================================== */}
         <section className="py-28 relative bg-[#fafafa] dark:bg-[#09090b]">
           <div className="max-w-6xl mx-auto px-6">
             <div className="text-center max-w-2xl mx-auto mb-16">
-              <span className="text-xs font-bold uppercase tracking-widest text-[#4F39F6] dark:text-[#818CF8]">Built For scale</span>
+              <span className="text-xs font-bold uppercase tracking-widest text-[#4F39F6] dark:text-[#818CF8]">Business Outcomes</span>
               <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-white mt-3 mb-4 leading-tight">
-                Enterprise Features, Zero Complexity
+                Capture Leads On Autopilot, 24/7
               </h2>
               <p className="text-sm md:text-base text-zinc-400 font-medium">
-                Everything you need to automate conversations, capture customer insights, and increase revenue.
+                Designed to minimize manual workload and maximize conversion rates inside Instagram.
               </p>
             </div>
 
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {/* Desktop Layout: Central AI Engine with connection lines and floating cards */}
+            {/* Desktop Layout: Central AI Engine with connection lines and floating cards */}
+            <div className="hidden md:block relative w-full h-[680px] mx-auto overflow-visible">
+              
+              {/* Dynamic Connection Lines */}
+              <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 1000 680" fill="none">
+                <defs>
+                  <linearGradient id="line-pulse-1" x1="1" y1="1" x2="0" y2="0">
+                    <stop offset="0%" stopColor="#4F39F6" stopOpacity="0.1" />
+                    <stop offset="50%" stopColor="#38BDF8" stopOpacity="0.8" />
+                    <stop offset="100%" stopColor="#4F39F6" stopOpacity="0.1" />
+                  </linearGradient>
+                  <linearGradient id="line-pulse-2" x1="0" y1="1" x2="1" y2="0">
+                    <stop offset="0%" stopColor="#4F39F6" stopOpacity="0.1" />
+                    <stop offset="50%" stopColor="#38BDF8" stopOpacity="0.8" />
+                    <stop offset="100%" stopColor="#4F39F6" stopOpacity="0.1" />
+                  </linearGradient>
+                </defs>
+
+                {/* Connection lines background */}
+                <path d="M 500 340 C 420 340, 380 115, 310 115" stroke="rgba(129, 140, 248, 0.12)" strokeWidth="2" fill="none" />
+                <path d="M 500 340 C 580 340, 620 115, 690 115" stroke="rgba(129, 140, 248, 0.12)" strokeWidth="2" fill="none" />
+                <path d="M 500 340 C 420 340, 380 373, 310 373" stroke="rgba(129, 140, 248, 0.12)" strokeWidth="2" fill="none" />
+                <path d="M 500 340 C 580 340, 620 373, 690 373" stroke="rgba(129, 140, 248, 0.12)" strokeWidth="2" fill="none" />
+                <path d="M 500 340 L 500 530" stroke="rgba(129, 140, 248, 0.12)" strokeWidth="2" fill="none" />
+
+                {/* Connection lines animated pulses */}
+                <path d="M 500 340 C 420 340, 380 115, 310 115" stroke="url(#line-pulse-1)" strokeWidth="2.5" strokeDasharray="30 150" className="animate-dash" fill="none" />
+                <path d="M 500 340 C 580 340, 620 115, 690 115" stroke="url(#line-pulse-2)" strokeWidth="2.5" strokeDasharray="30 150" className="animate-dash" fill="none" />
+                <path d="M 500 340 C 420 340, 380 373, 310 373" stroke="url(#line-pulse-1)" strokeWidth="2.5" strokeDasharray="30 150" className="animate-dash" fill="none" />
+                <path d="M 500 340 C 580 340, 620 373, 690 373" stroke="url(#line-pulse-2)" strokeWidth="2.5" strokeDasharray="30 150" className="animate-dash" fill="none" />
+                <path d="M 500 340 L 500 530" stroke="url(#line-pulse-1)" strokeWidth="2.5" strokeDasharray="30 150" className="animate-dash" fill="none" />
+              </svg>
+
+              <style dangerouslySetInnerHTML={{__html: `
+                @keyframes dash {
+                  to {
+                    stroke-dashoffset: -180;
+                  }
+                }
+                .animate-dash {
+                  animation: dash 5s linear infinite;
+                }
+              `}} />
+
+              {/* Central AI Engine Dial */}
+              <div className="absolute top-[340px] left-[500px] -translate-x-1/2 -translate-y-1/2 z-20">
+                <div className="relative w-52 h-52 flex items-center justify-center">
+                  <div className="absolute w-40 h-40 rounded-full bg-[#4F39F6]/15 dark:bg-[#4F39F6]/25 blur-2xl animate-pulse"></div>
+                  <div className="absolute w-48 h-48 rounded-full border border-dashed border-[#818CF8]/30 animate-spin" style={{ animationDuration: '40s' }}></div>
+                  <div className="absolute w-40 h-40 rounded-full border border-zinc-200/50 dark:border-white/5 animate-spin" style={{ animationDuration: '25s', animationDirection: 'reverse' }}></div>
+
+                  <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
+                    <svg className="w-44 h-44 animate-spin" style={{ animationDuration: '60s' }} viewBox="0 0 200 200">
+                      <path id="textPathOutcomes" d="M 100, 100 m -60, 0 a 60,60 0 1,1 120,0 a 60,60 0 1,1 -120,0" fill="none" />
+                      <text className="text-[10px] font-bold fill-zinc-500 dark:fill-zinc-400 uppercase tracking-[0.2em] font-sans">
+                        <textPath href="#textPathOutcomes" startOffset="0%">
+                          • ReplyZens Core AI Engine • Autopilot Mode
+                        </textPath>
+                      </text>
+                    </svg>
+                  </div>
+
+                  <div className="absolute w-28 h-28 rounded-full bg-gradient-to-b from-white to-zinc-50 dark:from-[#1E293B] dark:to-[#0F172A] border border-zinc-200/50 dark:border-white/10 shadow-[0_10px_25px_rgba(0,0,0,0.1),inset_0_1px_1px_rgba(255,255,255,0.15)] dark:shadow-[0_10px_25px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.05)] flex flex-col items-center justify-center z-10">
+                    <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[#4F39F6] via-[#818CF8] to-[#38BDF8] flex items-center justify-center shadow-[0_0_30px_rgba(79,57,246,0.5)] p-4">
+                      <img src="/Dark theme.png" alt="ReplyZens Logo" className="hidden dark:block w-12 h-12 object-contain" />
+                      <img src="/Light Theme.png" alt="ReplyZens Logo" className="block dark:hidden w-12 h-12 object-contain" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Floating Cards */}
               {[
                 {
                   icon: <Bot size={20} />,
-                  title: "AI-Powered Conversations",
-                  desc: "Maya AI parses customer inquiries and replies naturally in 40+ languages based on your knowledge base docs."
-                },
-                {
-                  icon: <MessageCircle size={20} />,
-                  title: "Comment-to-DM Automation",
-                  desc: "Instantly reply to comments on posts, reels, and stories with personalized DMs to funnel engagement."
+                  title: "Never Miss A Lead",
+                  desc: "Reply instantly 24/7. Always capture warm leads when user intent and attention is highest.",
+                  pos: "top-[8%] left-[4%] w-[270px]",
+                  delay: 0
                 },
                 {
                   icon: <Workflow size={20} />,
-                  title: "Lead Qualification Workflows",
-                  desc: "Automatically filter out casual browsers and extract email addresses, phone numbers, and location info."
+                  title: "Qualify Leads Automatically",
+                  desc: "Identify serious buyers, extract email/phone contact details, and score interest in-thread.",
+                  pos: "top-[8%] right-[4%] w-[270px]",
+                  delay: 1.2
                 },
                 {
-                  icon: <Inbox size={20} />,
-                  title: "Unified Smart Inbox",
-                  desc: "Monitor automated live chats, take over manual conversations, and tag customer statuses in real time."
+                  icon: <MessageCircle size={20} />,
+                  title: "Convert Comments Into Conversations",
+                  desc: "Automatically DM users who comment on your posts or reels to launch automated qualification flows.",
+                  pos: "top-[46%] right-[4%] w-[270px]",
+                  delay: 2.4
                 },
                 {
-                  icon: <Calendar size={20} />,
-                  title: "Appointment Scheduling",
-                  desc: "Connect Cal.com or Calendly. Let the AI share available slots and book client appointments in-thread."
+                  icon: <Clock size={20} />,
+                  title: "Save Hours Every Week",
+                  desc: "Eliminate manual copy-pasting, repetitive FAQ handling, and tedious lead logging workflows.",
+                  pos: "top-[46%] left-[4%] w-[270px]",
+                  delay: 3.6
                 },
                 {
-                  icon: <BarChart3 size={20} />,
-                  title: "Analytics & Reporting",
-                  desc: "Track critical ROI metrics including total conversations automated, leads collected, and estimated revenue growth."
+                  icon: <Users size={20} />,
+                  title: "Human Takeover Anytime",
+                  desc: "Seamlessly pause the AI autopilot to step in and converse with high-value leads manually.",
+                  pos: "top-[78%] left-1/2 -translate-x-1/2 w-[270px]",
+                  delay: 4.8
                 }
-              ].map((feature, i) => (
+              ].map((benefit, idx) => (
                 <motion.div
-                  initial={{ opacity: 0, y: 15 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.08 }}
-                  key={i}
+                  key={idx}
+                  className={`absolute ${benefit.pos}`}
+                  animate={{ y: [0, -12, 0] }}
+                  transition={{
+                    duration: 6,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                    delay: benefit.delay
+                  }}
                 >
-                  <div className="premium-gradient-border h-full">
-                    <div className="premium-card-content p-8 flex flex-col justify-between text-left">
-                      <div>
-                        <div className="w-12 h-12 rounded-xl bg-[#0B1020] border border-white/10 flex items-center justify-center mb-6 group-hover:border-[#38BDF8]/50 group-hover:bg-[#38BDF8]/10 group-hover:text-[#38BDF8] transition-all text-[#38BDF8] font-semibold">
-                          {feature.icon}
-                        </div>
-                        <h3 className="text-lg font-bold mb-2.5 text-white">{feature.title}</h3>
-                        <p className="text-zinc-400 leading-relaxed text-sm font-medium">{feature.desc}</p>
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-
-        {/* ==========================================
-            SECTION 6 — PRODUCT SHOWCASE
-            ========================================== */}
-        <section id="demo" className="py-28 border-t border-zinc-200/80 dark:border-white/5 bg-zinc-100/20 dark:bg-[#121826]/20 relative overflow-hidden">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-[#3B82F6]/5 blur-[150px] rounded-full pointer-events-none" />
-          
-          <div className="max-w-6xl mx-auto px-6 relative z-10">
-            <div className="text-center max-w-2xl mx-auto mb-16">
-              <span className="text-xs font-bold uppercase tracking-widest text-[#4F39F6] dark:text-[#818CF8]">Interactive Console</span>
-              <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-4 text-white mt-3">
-                Experience the ReplyZens Platform
-              </h2>
-              <p className="text-sm md:text-base text-zinc-400 font-medium">
-                Click through the tabs below to explore the premium interface digital brands use to control their automation funnel.
-              </p>
-            </div>
-
-            {/* Showcase dashboard viewport container */}
-            <ProductShowcase />
-          </div>
-        </section>
-
-
-        {/* ==========================================
-            SECTION 7 — AUTOMATION EXAMPLES
-            ========================================== */}
-        <section className="py-28 relative bg-[#fafafa] dark:bg-[#09090b] border-t border-zinc-200/80 dark:border-white/5">
-          <div className="max-w-6xl mx-auto px-6">
-            <div className="text-center max-w-2xl mx-auto mb-16">
-              <span className="text-xs font-bold uppercase tracking-widest text-[#4F39F6] dark:text-[#818CF8]">Playbooks</span>
-              <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-4 text-white mt-3">
-                Automations That Drive Growth
-              </h2>
-              <p className="text-sm md:text-base text-zinc-400 font-medium mt-1">
-                Deploy templates that work 24/7 to convert story replies, comments, and DMs into pipeline sales.
-              </p>
-            </div>
-
-            <div className="grid md:grid-cols-3 gap-6 text-left">
-              {[
-                {
-                  title: 'Comment → DM → Lead Captured',
-                  desc: 'Perfect for e-commerce brands launching new collections or catalogs.',
-                  steps: ["User comments 'GUIDE' on your post", "AI sends direct message link", "AI extracts email, syncing details"]
-                },
-                {
-                  title: 'Story Reply → AI Qualification → Appointment Booked',
-                  desc: 'Ideal for coaches, consultants, and agencies seeking consultation calls.',
-                  steps: ["Prospect responds to story highlight", "Maya asks qualifying questions", "AI shares custom Cal.com invite"]
-                },
-                {
-                  title: 'Keyword Trigger → Product Recommendation → Sale',
-                  desc: 'Excellent for stores looking to close transactions immediately in DMs.',
-                  steps: ["User sends DM containing keyword", "AI reviews stock & recommends product", "Direct checkout invoice generated"]
-                }
-              ].map((recipe, i) => (
-                <motion.div
-                  initial={{ opacity: 0, y: 15 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.1 }}
-                  key={i}
-                  className="group"
-                >
-                  <div className="p-8 rounded-3xl bg-[#121826]/40 border border-white/5 hover:border-[#38BDF8] hover:bg-[#121826]/60 transition-all shadow-lg h-full flex flex-col justify-between">
+                  <div className="bg-white dark:bg-[#121826]/40 border border-zinc-200/80 dark:border-white/5 rounded-[24px] p-6 text-left hover:border-[#38BDF8]/20 dark:hover:border-[#38BDF8]/40 transition-all shadow-sm hover:shadow-md flex flex-col justify-between h-full">
                     <div>
-                      <h3 className="text-lg font-bold mb-4 text-white group-hover:text-[#38BDF8] transition-colors font-inter">
-                        {recipe.title}
-                      </h3>
-                      <p className="text-xs text-zinc-400 leading-relaxed font-medium mb-8">
-                        {recipe.desc}
-                      </p>
-                    </div>
-
-                    <div className="space-y-4 relative">
-                      <div className="absolute left-6 top-6 bottom-6 w-px bg-gradient-to-b from-[#38BDF8] to-[#6366F1] opacity-35" />
-                      {recipe.steps.map((step, idx) => (
-                        <div key={idx} className="flex items-center gap-4 relative z-10">
-                          <div className="w-12 h-12 rounded-full bg-[#0B1020] border border-white/10 flex items-center justify-center text-white font-bold text-xs shrink-0 group-hover:border-[#38BDF8] transition-colors">
-                            {idx + 1}
-                          </div>
-                          <div className="text-xs font-semibold text-zinc-300 bg-white/[0.02] border border-white/5 px-4 py-3 rounded-xl flex-1">
-                            {step}
-                          </div>
-                        </div>
-                      ))}
+                      <div className="w-10 h-10 rounded-xl bg-sky-500/10 text-[#38BDF8] border border-sky-500/20 flex items-center justify-center mb-4 shrink-0 font-semibold">
+                        {benefit.icon}
+                      </div>
+                      <h3 className="text-base font-bold mb-2 text-zinc-900 dark:text-white font-inter">{benefit.title}</h3>
+                      <p className="text-xs text-zinc-650 dark:text-zinc-400 leading-relaxed font-medium font-sans">{benefit.desc}</p>
                     </div>
                   </div>
                 </motion.div>
               ))}
             </div>
-          </div>
-        </section>
 
-
-        {/* ==========================================
-            SECTION 8 — COMPARISON
-            ========================================== */}
-        <section className="py-28 bg-[#fafafa] dark:bg-[#09090b] border-t border-zinc-200/80 dark:border-white/5 relative z-10">
-          <div className="max-w-5xl mx-auto px-6 relative z-10">
-            <div className="text-center mb-16">
-              <span className="text-xs font-bold uppercase tracking-widest text-[#4F39F6] dark:text-[#818CF8]">Side-by-side</span>
-              <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-4 text-white mt-3">
-                Why Businesses Choose ReplyZens
-              </h2>
-            </div>
-            
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.1 }}
-              className="relative max-w-4xl mx-auto"
-            >
-              {/* Highlight Column Glow behind ReplyZens */}
-              <div className="absolute top-0 bottom-0 left-[35%] w-[33%] bg-[#38BDF8]/5 rounded-3xl shadow-sm border border-[#38BDF8]/20 -z-10 transform scale-y-[1.05]" />
-              
-              <div className="grid grid-cols-[1.2fr_1fr_1fr] items-center text-left">
-                {/* Header row */}
-                <div className="p-4 md:p-6 font-bold text-xs uppercase tracking-widest text-zinc-400">
-                  Capabilities
-                </div>
-                <div className="p-4 md:p-6 text-center flex flex-col items-center justify-center">
-                  <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#3B82F6] text-white font-bold text-[9px] uppercase tracking-wider mb-2 shadow-md shadow-[#3B82F6]/20">
-                    <Sparkles size={10} /> Autopilot
+            {/* Mobile Layout: Stacked Grid */}
+            <div className="md:hidden flex flex-col gap-8">
+              {/* Centered dial header */}
+              <div className="flex items-center justify-center mb-4">
+                <div className="relative w-44 h-44 flex items-center justify-center">
+                  <div className="absolute w-36 h-36 rounded-full bg-[#4F39F6]/10 dark:bg-[#4F39F6]/20 blur-xl animate-pulse"></div>
+                  <div className="absolute w-40 h-40 rounded-full border border-dashed border-[#818CF8]/25 animate-spin" style={{ animationDuration: '50s' }}></div>
+                  <div className="absolute w-24 h-24 rounded-full bg-gradient-to-b from-white to-zinc-50 dark:from-[#1E293B] dark:to-[#0F172A] border border-zinc-200/50 dark:border-white/10 shadow-sm flex flex-col items-center justify-center z-10">
+                    <div className="w-18 h-18 rounded-full bg-gradient-to-br from-[#4F39F6] via-[#818CF8] to-[#38BDF8] flex flex-col items-center justify-center shadow-[0_0_20px_rgba(79,57,246,0.4)]">
+                      <span className="text-white font-black text-sm tracking-wider font-outfit uppercase">AI</span>
+                      <span className="text-[7px] text-white/90 font-extrabold uppercase tracking-widest">Auto</span>
+                    </div>
                   </div>
-                  <div className="font-extrabold text-base md:text-lg text-white font-inter">ReplyZens</div>
                 </div>
-                <div className="p-4 md:p-6 font-bold text-center text-xs uppercase tracking-widest text-zinc-400">
-                  Manual DMs
-                </div>
+              </div>
 
-                {/* Rows */}
+              {/* Grid cards */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 {[
-                  { feat: "Instant replies", reply: "Instant (< 1s)", manual: "Hours or days" },
-                  { feat: "24/7 Availability", reply: "Always online", manual: "Work hours only" },
-                  { feat: "Lead qualification", reply: "AI entity extraction", manual: "Manual questioning" },
-                  { feat: "CRM integration", reply: "Real-time automated sync", manual: "Manual copy-paste" },
-                  { feat: "Appointment booking", reply: "Direct in-chat schedule", manual: "Back-and-forth links" },
-                  { feat: "Analytics & stats", reply: "Live dashboard reports", manual: "None" }
-                ].map((row, i) => (
-                  <React.Fragment key={i}>
-                    <div className="p-4 md:p-5 border-t border-white/5 font-semibold text-xs md:text-sm text-zinc-300">
-                      {row.feat}
+                  {
+                    icon: <Bot size={20} />,
+                    title: "Never Miss A Lead",
+                    desc: "Reply instantly 24/7. Always capture warm leads when user intent and attention is highest."
+                  },
+                  {
+                    icon: <Workflow size={20} />,
+                    title: "Qualify Leads Automatically",
+                    desc: "Identify serious buyers, extract email/phone contact details, and score interest in-thread."
+                  },
+                  {
+                    icon: <MessageCircle size={20} />,
+                    title: "Convert Comments Into Conversations",
+                    desc: "Automatically DM users who comment on your posts or reels to launch automated qualification flows."
+                  },
+                  {
+                    icon: <Clock size={20} />,
+                    title: "Save Hours Every Week",
+                    desc: "Eliminate manual copy-pasting, repetitive FAQ handling, and tedious lead logging workflows."
+                  },
+                  {
+                    icon: <Users size={20} />,
+                    title: "Human Takeover Anytime",
+                    desc: "Seamlessly pause the AI autopilot to step in and converse with high-value leads manually."
+                  }
+                ].map((benefit, idx) => (
+                  <div key={idx} className="bg-white dark:bg-[#121826]/40 border border-zinc-200/80 dark:border-white/5 rounded-3xl p-6 text-left shadow-sm">
+                    <div className="w-10 h-10 rounded-xl bg-sky-500/10 text-[#38BDF8] border border-sky-500/20 flex items-center justify-center mb-4 shrink-0 font-semibold">
+                      {benefit.icon}
                     </div>
-                    <div className="p-4 md:p-5 border-t border-white/10 text-center font-bold text-xs md:text-sm text-[#38BDF8]">
-                      {row.reply}
-                    </div>
-                    <div className="p-4 md:p-5 border-t border-white/5 text-center font-medium text-xs md:text-sm text-zinc-500">
-                      {row.manual}
-                    </div>
-                  </React.Fragment>
+                    <h3 className="text-base font-bold mb-2 text-zinc-900 dark:text-white font-inter">{benefit.title}</h3>
+                    <p className="text-xs text-zinc-650 dark:text-zinc-450 leading-relaxed font-medium font-sans">{benefit.desc}</p>
+                  </div>
                 ))}
               </div>
-            </motion.div>
+            </div>
           </div>
         </section>
 
 
         {/* ==========================================
-            SECTION 9 — ROI CALCULATOR
+            SECTION 6 — PRODUCT SHOWCASE / MODULE DEEP DIVE
             ========================================== */}
-        <section className="py-28 relative border-t border-zinc-200/80 dark:border-white/5 bg-zinc-100/10 dark:bg-[#121826]/10">
+        <section className="py-28 border-t border-zinc-200/80 dark:border-white/5 bg-zinc-100/10 dark:bg-[#121826]/10 relative overflow-hidden">
           <div className="max-w-6xl mx-auto px-6">
-            <div className="text-center max-w-2xl mx-auto mb-16">
-              <span className="text-xs font-bold uppercase tracking-widest text-[#4F39F6] dark:text-[#818CF8]">ROI Calculator</span>
-              <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-4 text-white mt-3">
-                Calculate Your Recovered Revenue
+            <div className="text-center max-w-2xl mx-auto mb-20">
+              <span className="text-xs font-bold uppercase tracking-widest text-[#4F39F6] dark:text-[#818CF8]">Core Capabilities</span>
+              <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-white mt-3 mb-4">
+                Designed to Generate More Business Leads
               </h2>
               <p className="text-sm md:text-base text-zinc-400 font-medium">
-                See how much revenue is left unrecovered without automated lead pipelines.
+                Everything you need to automate conversations, capture details, and scale lead collection.
               </p>
             </div>
 
-            <ROICalculator />
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {[
+                {
+                  title: "Smart Inbox",
+                  desc: "Human-in-the-loop control. Monitor automated conversations, toggle autopilot pause/resume, and tag client statuses.",
+                  feats: ["Live chat stream", "One-click AI pause", "Lead status tags"],
+                  gridClass: "md:col-span-1",
+                  visual: (
+                    <div className="w-full bg-zinc-50/50 dark:bg-[#121826]/30 border border-zinc-200/50 dark:border-white/5 p-4 rounded-2xl flex flex-col gap-2.5 mb-5 shadow-[inset_0_1px_2px_rgba(0,0,0,0.01)]">
+                      <div className="flex justify-between items-center text-[9px] font-bold text-zinc-400 uppercase tracking-wider">
+                        <span>Inbox Stream</span>
+                        <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse"></span>Live</span>
+                      </div>
+                      <div className="flex items-center justify-between bg-white dark:bg-[#090b11]/80 p-2.5 rounded-xl border border-zinc-150 dark:border-white/5 shadow-sm">
+                        <div className="flex items-center gap-2 min-w-0">
+                          <div className="w-7 h-7 rounded-full bg-indigo-500/10 text-indigo-500 border border-indigo-500/20 flex items-center justify-center text-[10px] font-extrabold shrink-0">JD</div>
+                          <div className="flex flex-col min-w-0">
+                            <span className="text-[10px] font-bold text-zinc-900 dark:text-white truncate">John Doe</span>
+                            <span className="text-[8px] text-zinc-500 dark:text-zinc-450 truncate">"Price list please?"</span>
+                          </div>
+                        </div>
+                        <span className="px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-600 dark:text-purple-400 text-[8px] font-bold uppercase tracking-wide border border-purple-500/20 shrink-0">Autopilot</span>
+                      </div>
+                    </div>
+                  )
+                },
+                {
+                  title: "ReplyZen AI Agent",
+                  desc: "Conversational agent qualified to speak in 40+ languages. Uses warm, sales-focused tones to maximize conversions.",
+                  feats: ["Multilingual recognition", "Custom system prompts", "Adjustable confidence limits"],
+                  gridClass: "md:col-span-2",
+                  special: true,
+                  visual: (
+                    <div className="bg-zinc-50/50 dark:bg-[#121826]/30 border border-zinc-200/50 dark:border-white/5 p-5 rounded-2xl flex flex-col gap-3 min-w-[280px] w-full lg:w-auto shrink-0 shadow-[inset_0_1px_2px_rgba(0,0,0,0.01)]">
+                      <div className="flex items-center justify-between border-b border-zinc-150 dark:border-white/5 pb-2.5">
+                        <div className="flex items-center gap-2">
+                          <div className="w-8 h-8 rounded-full bg-[#4F39F6]/10 text-[#4F39F6] dark:text-indigo-400 border border-[#4F39F6]/20 flex items-center justify-center relative shrink-0">
+                            <Bot size={16} />
+                            <span className="absolute bottom-0 right-0 w-2 h-2 bg-emerald-500 border-2 border-white dark:border-[#0c0f1a] rounded-full"></span>
+                          </div>
+                          <div>
+                            <div className="text-[11px] font-bold text-zinc-900 dark:text-white">ReplyZen AI</div>
+                            <div className="text-[8px] text-emerald-500 font-bold uppercase tracking-wide">Autopilot</div>
+                          </div>
+                        </div>
+                        <span className="text-[9px] text-zinc-400 font-semibold">99.8% Accuracy</span>
+                      </div>
+                      <div className="flex flex-col gap-2">
+                        <div className="bg-white dark:bg-black/20 p-2.5 rounded-2xl rounded-tr-none text-[10px] text-zinc-650 dark:text-zinc-300 self-end max-w-[85%] border border-zinc-100 dark:border-white/5 shadow-sm">
+                          "Do you ship to Germany? mark@web.de"
+                        </div>
+                        <div className="bg-indigo-500/10 dark:bg-indigo-500/10 p-2.5 rounded-2xl rounded-tl-none text-[10px] text-indigo-600 dark:text-indigo-300 self-start max-w-[85%] border border-indigo-500/10">
+                          "Yes! Worldwide shipping is available. 📦 I've locked in your email."
+                        </div>
+                        <div className="flex gap-1.5 mt-1 justify-start">
+                          <span className="px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20 text-[8px] font-bold">Email Captured</span>
+                          <span className="px-2 py-0.5 rounded-full bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-500/20 text-[8px] font-bold">Germany</span>
+                        </div>
+                      </div>
+                    </div>
+                  )
+                },
+                {
+                  title: "Knowledge Base",
+                  desc: "Train ReplyZen on your business guides. Upload product sheets, return rules, and policies (PDF/TXT) for instant learning.",
+                  feats: ["PDF & TXT training docs", "FAQ overriding builder", "Static fact book storage"],
+                  gridClass: "md:col-span-1",
+                  visual: (
+                    <div className="w-full bg-zinc-50/50 dark:bg-[#121826]/30 border border-zinc-200/50 dark:border-white/5 p-4 rounded-2xl flex flex-col gap-2.5 mb-5 shadow-[inset_0_1px_2px_rgba(0,0,0,0.01)]">
+                      <div className="flex justify-between items-center text-[9px] font-bold text-zinc-400 uppercase tracking-wider">
+                        <span>Source Material</span>
+                        <span className="text-emerald-500 font-bold">Trained</span>
+                      </div>
+                      <div className="flex items-center gap-3 bg-white dark:bg-[#090b11]/80 p-2.5 rounded-xl border border-zinc-150 dark:border-white/5 shadow-sm">
+                        <div className="w-8 h-8 rounded-lg bg-indigo-500/10 text-indigo-500 border border-indigo-500/20 flex items-center justify-center shrink-0">
+                          <FileText size={16} />
+                        </div>
+                        <div className="flex-grow min-w-0">
+                          <div className="text-[10px] font-bold text-zinc-900 dark:text-white truncate">product_catalog_2026.pdf</div>
+                          <div className="w-full bg-zinc-100 dark:bg-zinc-800 h-1.5 rounded-full mt-1.5 overflow-hidden">
+                            <div className="bg-indigo-500 h-full w-full rounded-full"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )
+                },
+                {
+                  title: "Automation Builder",
+                  desc: "Easily map and schedule lead capture sequences. Connect comments, reels, and stories to DM steps.",
+                  feats: ["Visual workflow node map", "Keyword rule matching", "Flexible webhook nodes"],
+                  gridClass: "md:col-span-1",
+                  visual: (
+                    <div className="w-full bg-zinc-50/50 dark:bg-[#121826]/30 border border-zinc-200/50 dark:border-white/5 p-4 rounded-2xl flex items-center justify-between gap-2 mb-5 shadow-[inset_0_1px_2px_rgba(0,0,0,0.01)]">
+                      <div className="bg-white dark:bg-[#090b11]/80 px-2.5 py-1.5 rounded-xl border border-zinc-150 dark:border-white/5 shadow-sm text-[9px] font-bold text-zinc-700 dark:text-zinc-350">
+                        Trigger "Price"
+                      </div>
+                      <div className="flex-grow border-t border-dashed border-zinc-300 dark:border-zinc-700 relative">
+                        <span className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-indigo-500 flex items-center justify-center text-[7px] text-white shadow-sm">⚡</span>
+                      </div>
+                      <div className="bg-indigo-500 text-white px-2.5 py-1.5 rounded-xl text-[9px] font-bold shadow-sm">
+                        Send DM
+                      </div>
+                    </div>
+                  )
+                },
+                {
+                  title: "Comment-To-DM Workflows",
+                  desc: "Trigger DM sequences to anybody who comments on posts, reels, or stories to start conversational qualification.",
+                  feats: ["Reels & post comment hook", "Post-specific keywords", "Automated outbound links"],
+                  gridClass: "md:col-span-1",
+                  visual: (
+                    <div className="w-full bg-zinc-50/50 dark:bg-[#121826]/30 border border-zinc-200/50 dark:border-white/5 p-4 rounded-2xl flex flex-col gap-2.5 mb-5 shadow-[inset_0_1px_2px_rgba(0,0,0,0.01)]">
+                      <div className="flex justify-between items-center text-[9px] font-bold text-zinc-400 uppercase tracking-wider">
+                        <span>Comment Trigger</span>
+                        <span className="text-[#818CF8] font-bold">Active</span>
+                      </div>
+                      <div className="bg-white dark:bg-[#090b11]/80 p-2.5 rounded-xl border border-zinc-150 dark:border-white/5 shadow-sm flex flex-col gap-1">
+                        <div className="text-[10px] text-zinc-800 dark:text-zinc-200 font-bold">"@alex: Send details!"</div>
+                        <div className="flex items-center gap-1.5 text-[8px] text-emerald-500 font-bold">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                          Auto-DM Sent
+                        </div>
+                      </div>
+                    </div>
+                  )
+                },
+                {
+                  title: "Lead Capture System",
+                  desc: "Automatic parsing of customer detail fields. Sync collected leads directly to Sheets and CRMs in real time.",
+                  feats: ["Entity extraction logic", "Google Sheets sync", "HubSpot CRM plugin"],
+                  gridClass: "md:col-span-2",
+                  visual: (
+                    <div className="bg-zinc-50/50 dark:bg-[#121826]/30 border border-zinc-200/50 dark:border-white/5 p-5 rounded-2xl flex flex-col gap-2 min-w-[280px] w-full lg:w-auto shrink-0 shadow-[inset_0_1px_2px_rgba(0,0,0,0.01)]">
+                      <div className="text-[9px] font-bold text-zinc-400 uppercase tracking-wider mb-1">Live Sync Queue</div>
+                      <div className="flex flex-col gap-1.5">
+                        {[
+                          { handle: "@alex_runner", email: "alex@gmail.com", status: "Synced to Sheets" },
+                          { handle: "@sophie_travel", email: "sophie@outlook.com", status: "Synced to HubSpot" }
+                        ].map((lead, i) => (
+                          <div key={i} className="flex justify-between items-center bg-white dark:bg-black/20 p-2.5 rounded-xl border border-zinc-100 dark:border-white/5 text-[9px] shadow-sm">
+                            <div className="flex flex-col min-w-0 pr-2">
+                              <span className="font-bold text-zinc-900 dark:text-white truncate">{lead.handle}</span>
+                              <span className="text-zinc-500 dark:text-zinc-450 truncate">{lead.email}</span>
+                            </div>
+                            <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 font-bold uppercase tracking-tighter text-[7px] shrink-0">{lead.status}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )
+                },
+                {
+                  title: "Broadcast Campaigns",
+                  desc: "Send automated follow-ups or campaign schedules to segments of qualified leads in bulk directly in-thread.",
+                  feats: ["Lead segment selection", "Sequential broadcasts", "Delivered stats reporting"],
+                  gridClass: "md:col-span-1",
+                  visual: (
+                    <div className="w-full bg-zinc-50/50 dark:bg-[#121826]/30 border border-zinc-200/50 dark:border-white/5 p-4 rounded-2xl flex flex-col gap-2.5 mb-5 shadow-[inset_0_1px_2px_rgba(0,0,0,0.01)]">
+                      <div className="flex justify-between items-center text-[9px] font-bold text-zinc-400 uppercase tracking-wider">
+                        <span>Campaign Delivery</span>
+                        <span className="text-indigo-500 font-bold">Sending</span>
+                      </div>
+                      <div className="bg-white dark:bg-[#090b11]/80 p-2.5 rounded-xl border border-zinc-150 dark:border-white/5 shadow-sm flex items-center justify-between">
+                        <div className="flex flex-col min-w-0 pr-2">
+                          <span className="text-[10px] font-bold text-zinc-900 dark:text-white truncate">Summer Launch</span>
+                          <span className="text-[8px] text-zinc-500 dark:text-zinc-450">1,240 recipients</span>
+                        </div>
+                        <div className="text-[11px] font-extrabold text-indigo-500 shrink-0">92%</div>
+                      </div>
+                    </div>
+                  )
+                }
+              ].map((mod, idx) => {
+                const isColSpan2 = mod.gridClass.includes('col-span-2');
+                const cardContent = (
+                  <div className={`flex flex-col h-full justify-between gap-6 ${isColSpan2 ? 'lg:flex-row lg:items-center' : ''}`}>
+                    {/* Render visual at the top for 1-column cards */}
+                    {!isColSpan2 && mod.visual && (
+                      <div className="w-full shrink-0">
+                        {mod.visual}
+                      </div>
+                    )}
+
+                    <div className="flex-grow flex flex-col justify-between">
+                      <div>
+                        <h3 className="text-lg font-bold text-zinc-900 dark:text-white mb-2 font-inter">{mod.title}</h3>
+                        <p className="text-xs text-zinc-650 dark:text-zinc-400 leading-relaxed mb-6 font-medium font-sans">{mod.desc}</p>
+                      </div>
+                      <ul className="space-y-2.5 border-t border-zinc-100 dark:border-white/5 pt-5">
+                        {mod.feats.map((f, i) => (
+                          <li key={i} className="flex items-center gap-2.5 text-xs text-zinc-700 dark:text-zinc-300 font-medium font-sans">
+                            <Check size={12} className="text-[#38BDF8] shrink-0" />
+                            {f}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    {/* Render visual at the right for 2-column cards */}
+                    {isColSpan2 && mod.visual && (
+                      <div className="flex items-center justify-center shrink-0 w-full lg:w-auto">
+                        {mod.visual}
+                      </div>
+                    )}
+                  </div>
+                );
+
+                if (mod.special) {
+                  return (
+                    <div key={idx} className={`${mod.gridClass} relative p-[1px] rounded-[32px] bg-gradient-to-br from-[#4F39F6] via-[#818CF8] to-[#38BDF8] dark:from-[#4F39F6] dark:to-[#38BDF8] shadow-[0_4px_30px_rgba(0,0,0,0.02)] dark:shadow-none hover:shadow-[0_12px_40px_rgba(79,57,246,0.1)] transition-all duration-300`}>
+                      <div className="bg-gradient-to-b from-white to-zinc-50/50 dark:from-[#0f1220] dark:to-[#090b14] rounded-[31px] p-8 h-full text-left">
+                        {cardContent}
+                      </div>
+                    </div>
+                  );
+                }
+
+                return (
+                  <div key={idx} className={`${mod.gridClass} bg-gradient-to-b from-white to-zinc-50/30 dark:from-[#131929]/50 dark:to-[#0f1422]/50 border border-zinc-200/50 dark:border-white/5 rounded-[32px] p-8 text-left hover:border-[#38BDF8]/20 dark:hover:border-[#38BDF8]/30 transition-all duration-300 shadow-[0_4px_30px_rgba(0,0,0,0.01)] hover:shadow-[0_8px_40px_rgba(0,0,0,0.03)] dark:shadow-none`}>
+                    {cardContent}
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </section>
 
 
         {/* ==========================================
-            SECTION 10 — TESTIMONIALS WITH ELEGANT GRADIENT BORDERS
+            SECTION 7 — USE CASES
             ========================================== */}
-        <section className="py-28 relative bg-[#fafafa] dark:bg-[#09090b] border-t border-zinc-200/80 dark:border-white/5">
+        <section className="py-28 relative bg-[#fafafa] dark:bg-[#09090b]">
+          <div className="max-w-6xl mx-auto px-6">
+            <div className="text-center max-w-2xl mx-auto mb-16">
+              <span className="text-xs font-bold uppercase tracking-widest text-[#4F39F6] dark:text-[#818CF8]">Tailored Solutions</span>
+              <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-white mt-3 mb-4">
+                Who Uses ReplyZens?
+              </h2>
+              <p className="text-sm md:text-base text-zinc-400 font-medium">
+                Maximize the ROI of your social audience and convert inbound intent.
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-6 text-left">
+              {[
+                {
+                  title: "E-commerce Brands",
+                  desc: "Generate more qualified leads and sales from product availability or shipping inquiries in the inbox."
+                },
+                {
+                  title: "Coaches & Consultants",
+                  desc: "Qualify inbound prospects and capture email/phone details before directing them to consultation links."
+                },
+                {
+                  title: "Agencies",
+                  desc: "Manage and run high-performing Instagram lead generation campaigns for multiple client accounts seamlessly."
+                },
+                {
+                  title: "Creators",
+                  desc: "Automatically DM commenters and story replies, converting views and followers into qualified leads."
+                },
+                {
+                  title: "Local Businesses",
+                  desc: "Capture store inquiries, location requests, and customer contact information 24/7."
+                }
+              ].map((uc, i) => (
+                <div key={i} className="p-6 rounded-3xl bg-white dark:bg-[#121826]/40 border border-zinc-200/80 dark:border-white/5 flex flex-col justify-between hover:border-[#38BDF8]/20 dark:hover:border-[#38BDF8]/40 transition-all shadow-sm hover:shadow-md">
+                  <div>
+                    <h3 className="text-base font-bold text-zinc-900 dark:text-white mb-2 font-inter">{uc.title}</h3>
+                    <p className="text-xs text-zinc-650 dark:text-zinc-400 leading-relaxed font-medium">{uc.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+
+        {/* ==========================================
+            SECTION 8 — SOCIAL PROOF & OUTCOMES
+            ========================================== */}
+        <section className="py-28 border-t border-zinc-200/80 dark:border-white/5 bg-zinc-100/20 dark:bg-[#121826]/20 relative overflow-hidden">
           <div className="max-w-6xl mx-auto px-6">
             <div className="text-center max-w-2xl mx-auto mb-20">
               <span className="text-xs font-bold uppercase tracking-widest text-[#4F39F6] dark:text-[#818CF8]">Success Stories</span>
               <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-white mt-3 mb-4 leading-tight">
-                Trusted by Scaling Brands
+                Trusted by High-Growth Brands
               </h2>
-              <p className="text-sm md:text-base text-zinc-400 font-medium">
-                See how high-growth creators and digital shops use ReplyZens to optimize conversions.
-              </p>
             </div>
 
+            {/* Metrics Row */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+              {[
+                { label: "DMs Automated", value: "10M+", icon: <MessageCircle size={20} /> },
+                { label: "Leads Captured", value: "500K+", icon: <Users size={20} /> },
+                { label: "Response Time", value: "< 1s", icon: <Clock size={20} /> },
+                { label: "Businesses Connected", value: "5,000+", icon: <Sparkles size={20} /> },
+              ].map((metric, i) => (
+                <div key={i} className="bg-[#121826]/40 border border-white/5 p-6 rounded-2xl flex flex-col items-center text-center">
+                  <div className="w-10 h-10 rounded-xl bg-white/[0.02] border border-white/5 flex items-center justify-center mb-4 text-[#38BDF8]">
+                    {metric.icon}
+                  </div>
+                  <div className="text-3xl md:text-4xl font-extrabold text-white mb-2 tracking-tight">{metric.value}</div>
+                  <div className="text-[10px] font-bold text-zinc-550 uppercase tracking-widest font-mono">{metric.label}</div>
+                </div>
+              ))}
+            </div>
+
+            {/* Testimonials */}
             <div className="grid md:grid-cols-2 gap-8 text-left">
               {[
                 {
-                  quote: "Waking up to direct payment confirmations and booked consulting calls in my CRM is a complete game-changer. ReplyZens automated over 90% of our inbox inquiries, recovering $8,400 in lost revenue in our first month alone.",
+                  quote: "Waking up to direct payment confirmations and qualified leads in my CRM is a complete game-changer. ReplyZens automated over 90% of our inbox inquiries, recovering $8,400 in lost revenue in our first month alone.",
                   name: "Sarah Jenkins",
                   role: "Founder, Zenith Templates",
                   stats: "+340% Conversions",
@@ -1708,17 +2736,9 @@ const Landing: React.FC = () => {
                   avatar: "MT"
                 }
               ].map((t, i) => (
-                <motion.div
-                  initial={{ opacity: 0, y: 15 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.1 }}
-                  key={i}
-                  className="premium-gradient-border"
-                >
+                <div key={i} className="premium-gradient-border">
                   <div className="premium-card-content p-8 flex flex-col justify-between h-full">
                     <div>
-                      {/* Stars */}
                       <div className="flex gap-1 mb-6">
                         {[...Array(5)].map((_, idx) => (
                           <Star key={idx} size={14} className="fill-[#38BDF8] text-[#38BDF8]" />
@@ -1744,7 +2764,7 @@ const Landing: React.FC = () => {
                       </div>
                     </div>
                   </div>
-                </motion.div>
+                </div>
               ))}
             </div>
           </div>
@@ -1752,7 +2772,81 @@ const Landing: React.FC = () => {
 
 
         {/* ==========================================
-            SECTION 11 — PRICING WITH ELEGANT GRADIENT BORDERS
+            SECTION 9 — SECURITY & TRUST
+            ========================================== */}
+        <section className="py-28 relative bg-[#fafafa] dark:bg-[#09090b] border-t border-zinc-200/80 dark:border-white/5">
+          <div className="max-w-6xl mx-auto px-6">
+            <div className="text-center max-w-2xl mx-auto mb-16">
+              <span className="text-xs font-bold uppercase tracking-widest text-[#4F39F6] dark:text-[#818CF8]">Enterprise Security</span>
+              <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-white mt-3 mb-4 leading-tight">
+                Secure Connections, Complete Control
+              </h2>
+              <p className="text-sm md:text-base text-zinc-400 font-medium">
+                We safeguard your Instagram business account with enterprise-grade data protection.
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 text-left">
+              {[
+                {
+                  title: "Official Meta Graph API",
+                  desc: "Approved connection built directly on Meta's official API framework. Zero risk of account bans or shadowbans."
+                },
+                {
+                  title: "Secure OAuth Authentication",
+                  desc: "Zero password sharing required. Authorize connections securely through Meta's native Login dialog."
+                },
+                {
+                  title: "Data Protection",
+                  desc: "Lead details and contact logs are fully encrypted. GDPR and CCPA compliant data protection protocols."
+                },
+                {
+                  title: "Role-Based Access",
+                  desc: "Protect sensitive lead data and settings with team access permissions for your support staff."
+                },
+                {
+                  title: "Business Account Security",
+                  desc: "Sandbox environment validation and compliance audits ensure safety for large brand channels."
+                },
+                {
+                  title: "Human Oversight Controls",
+                  desc: "Seamless AI override systems mean your team can step in and take manual control at any instant."
+                }
+              ].map((sec, idx) => (
+                <div key={idx} className="bg-white dark:bg-[#121826]/40 border border-zinc-200/80 dark:border-white/5 rounded-3xl p-8 hover:border-[#38BDF8]/20 dark:hover:border-[#38BDF8]/40 transition-all flex flex-col justify-between shadow-sm hover:shadow-md">
+                  <div>
+                    <h3 className="text-base font-bold text-zinc-900 dark:text-white mb-3 font-inter">{sec.title}</h3>
+                    <p className="text-xs text-zinc-650 dark:text-zinc-400 leading-relaxed font-medium">{sec.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+
+        {/* ==========================================
+            SECTION 10 — ROI CALCULATOR
+            ========================================== */}
+        <section className="py-28 relative border-t border-zinc-200/80 dark:border-white/5 bg-zinc-100/10 dark:bg-[#121826]/10">
+          <div className="max-w-6xl mx-auto px-6">
+            <div className="text-center max-w-2xl mx-auto mb-16">
+              <span className="text-xs font-bold uppercase tracking-widest text-[#4F39F6] dark:text-[#818CF8]">ROI Calculator</span>
+              <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-4 text-white mt-3">
+                Calculate Your Recovered Revenue
+              </h2>
+              <p className="text-sm md:text-base text-zinc-400 font-medium">
+                See how much revenue is left unrecovered without automated lead pipelines.
+              </p>
+            </div>
+
+            <ROICalculator />
+          </div>
+        </section>
+
+
+        {/* ==========================================
+            SECTION 11 — PRICING (GROWTH DOMINANT)
             ========================================== */}
         <section id="pricing" className="py-28 border-t border-zinc-200/80 dark:border-white/5 bg-zinc-100/10 dark:bg-[#121826]/10 relative">
           <div className="max-w-6xl mx-auto px-6">
@@ -1762,7 +2856,7 @@ const Landing: React.FC = () => {
                 Simple, Transparent Pricing
               </h2>
               <p className="text-sm md:text-base text-zinc-400 font-medium leading-relaxed">
-                Scale your automated interactions without hidden fees. Choose a plan that matches your audience volume.
+                Scale your lead capture volume. All plans include our 14-day free trial.
               </p>
             </div>
 
@@ -1770,11 +2864,11 @@ const Landing: React.FC = () => {
             <div className="grid md:grid-cols-3 gap-8 max-w-[1000px] mx-auto items-stretch text-left">
               {[
                 {
-                  name: "Starter",
+                  name: "Basic",
                   desc: "Perfect for new creators & personal brands",
                   price: "$29",
-                  volume: "500",
-                  btn: "Start Free Trial",
+                  volume: "1,000",
+                  btn: "Start Free 14-Day Trial",
                   popular: false,
                   features: [
                     "Connect 1 Instagram Account",
@@ -1788,14 +2882,14 @@ const Landing: React.FC = () => {
                   desc: "Ideal for scaling e-commerce & active creators",
                   price: "$79",
                   volume: "3,000",
-                  btn: "Start 14-Day Trial",
+                  btn: "Start Free 14-Day Trial",
                   popular: true,
                   features: [
                     "Connect 3 Instagram Accounts",
-                    "Advanced Maya AI Agent Setup",
+                    "Advanced ReplyZen AI Agent Setup",
                     "Instant Google Sheets & HubSpot Sync",
                     "Unlimited Comment-to-DM triggers",
-                    "Cal.com / Calendly scheduling nodes",
+                    "CRM integration & webhook nodes",
                     "Priority Discord & Email Support"
                   ]
                 },
@@ -1804,7 +2898,7 @@ const Landing: React.FC = () => {
                   desc: "For multi-client social brands & enterprise",
                   price: "$199",
                   volume: "10,000",
-                  btn: "Get Agency Trial",
+                  btn: "Start Free 14-Day Trial",
                   popular: false,
                   features: [
                     "Connect 10 Instagram Accounts",
@@ -1824,7 +2918,7 @@ const Landing: React.FC = () => {
                   key={idx}
                   className="flex"
                 >
-                  <div className={`premium-gradient-border flex-1 flex ${tier.popular ? 'border-[#38BDF8] md:-translate-y-4' : 'mt-4'}`}>
+                  <div className={`premium-gradient-border flex-1 flex ${tier.popular ? 'border-[#38BDF8] md:-translate-y-4 shadow-xl shadow-[#38BDF8]/10' : 'mt-4'}`}>
                     <div className="premium-card-content p-8 flex flex-col justify-between flex-grow relative">
                       {tier.popular && (
                         <span className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-[#38BDF8] to-[#6366F1] text-white text-[9px] font-extrabold px-4 py-1.5 rounded-full uppercase tracking-widest shadow-lg shadow-[#38BDF8]/20">
@@ -1862,11 +2956,10 @@ const Landing: React.FC = () => {
 
                       <button
                         onClick={() => navigate('/signup')}
-                        className={`w-full py-4 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                          tier.popular
+                        className={`w-full py-4 rounded-xl text-xs font-bold transition-all cursor-pointer ${tier.popular
                             ? 'btn-premium-cta font-bold'
                             : 'bg-zinc-100 dark:bg-white/5 border border-zinc-200 dark:border-white/10 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200/50 dark:hover:bg-white/10'
-                        }`}
+                          }`}
                       >
                         {tier.btn}
                       </button>
@@ -1894,24 +2987,28 @@ const Landing: React.FC = () => {
             <div className="flex flex-col gap-4">
               {[
                 {
-                  q: "What is ReplyZens?",
-                  a: "ReplyZens is an enterprise-grade AI-powered Instagram DM automation platform. It integrates directly with your Instagram business profile via Meta's secure Graph API. It automatically draft responses, answers FAQs, filters spam content, books user appointments in calendar slots, and syncs collected lead lists directly to Google Sheets and major CRMs."
+                  q: "Will Instagram ban my account?",
+                  a: "No. ReplyZens communicates via Meta's official Graph API and adheres strictly to Instagram's official developer policies and messaging guidelines. Your profile remains completely safe."
                 },
                 {
-                  q: "Is it safe to connect my Instagram account?",
-                  a: "Absolutely. ReplyZens utilizes Meta's official Graph API and secure OAuth protocol. We never store or access your personal passwords, and our automated messaging pipeline strictly complies with Instagram's Developer Policies, ensuring your account is 100% safe."
+                  q: "How does ReplyZens connect to Instagram?",
+                  a: "Integration takes less than a minute. Log in with your Facebook credentials using our secure Meta OAuth setup and authorize your linked Instagram Business profile. We never ask for or store your passwords."
                 },
                 {
-                  q: "How does the AI learn about my business?",
-                  a: "You can train your AI assistant (Maya) by typing custom system instructions, uploading FAQs, product catalogs, shipping rules, or policy sheets (in pdf or txt format). Maya parses this raw text and answers questions accordingly with a human-like tone."
+                  q: "Can I manually take over conversations?",
+                  a: "Yes. The Unified Smart Inbox allows you or your staff agents to pause autopilot with a single click, type manual answers, and reactivate ReplyZen AI autopilot whenever you are ready."
                 },
                 {
-                  q: "Does the AI support languages other than English?",
-                  a: "Yes! Maya automatically detects the customer's language and replies natively. She supports over 40 languages including Spanish, French, German, Italian, Portuguese, Japanese, Hindi, and more."
+                  q: "Can ReplyZen AI answer custom questions?",
+                  a: "Absolutely. ReplyZen uses your Knowledge Base PDFs, FAQ spreadsheets, fact sheets, or typed instructions to reply to questions in your exact brand tone."
                 },
                 {
-                  q: "Can I take over automated conversations manually?",
-                  a: "Yes. Our Unified Smart Inbox allows you to pause the AI autopilot with a single click. You or your team agents can reply manually at any point, and reactivate the autopilot whenever you are ready."
+                  q: "Can I collect customer contact information?",
+                  a: "Yes. ReplyZen is programmed to identify intent and politely extract contact info (emails, phone numbers, location, etc.) during natural dialog flows, saving them to your leads database."
+                },
+                {
+                  q: "Can I use multiple Instagram accounts?",
+                  a: "Yes. Our Growth plan supports up to 3 accounts, and the Agency plan supports up to 10 connected Instagram profiles."
                 }
               ].map((faq, i) => (
                 <FAQItemComponent key={i} question={faq.q} answer={faq.a} />
@@ -1925,27 +3022,27 @@ const Landing: React.FC = () => {
             SECTION 13 — FINAL CTA
             ========================================== */}
         <section className="py-32 border-t border-zinc-200/80 dark:border-white/5 relative overflow-hidden text-center bg-gradient-to-b from-zinc-50 to-[#fafafa] dark:from-zinc-950 dark:to-[#09090b]">
-          <div className="max-w-4xl mx-auto px-6 relative z-10">
+          <div className="max-w-4xl mx-auto px-6 relative z-10 font-inter">
             <h2 className="text-4xl md:text-6xl font-extrabold text-white mb-6 leading-tight tracking-tight">
-              Stop Losing Leads In Your Instagram Inbox
+              Stop Losing Leads Inside Your Instagram DMs
             </h2>
             <p className="text-base md:text-lg text-zinc-400 max-w-2xl mx-auto mb-10 font-medium leading-relaxed">
-              Automate conversations, qualify prospects, and convert more customers with ReplyZens.
+              Let ReplyZen AI respond instantly, qualify prospects, capture customer details, and help your business convert more conversations into revenue.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full max-w-md mx-auto">
               <button
                 onClick={() => navigate('/signup')}
                 className="btn-premium-cta w-full sm:w-auto px-10 py-5 text-sm font-bold flex items-center justify-center gap-2 group"
               >
-                Start Free Trial
+                Start Free 14-Day Trial
                 <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
               </button>
-              <a
-                href="#demo"
-                className="w-full sm:w-auto px-10 py-5 rounded-xl text-sm font-bold bg-white dark:bg-[#121826] border border-zinc-200 dark:border-white/10 text-zinc-650 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-white/10 hover:border-zinc-300 dark:hover:border-white/20 transition-all flex items-center justify-center gap-2 shadow-sm"
+              <button
+                onClick={() => navigate('/signup')}
+                className="w-full sm:w-auto px-10 py-5 rounded-xl text-sm font-bold bg-white dark:bg-[#121826] border border-zinc-200 dark:border-white/10 text-zinc-650 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-white/10 hover:border-zinc-300 dark:hover:border-white/20 transition-all flex items-center justify-center gap-2 shadow-sm cursor-pointer"
               >
-                Book Demo
-              </a>
+                Book A Demo
+              </button>
             </div>
           </div>
         </section>

@@ -122,7 +122,7 @@ You MUST include this exact message in your reply to manage expectations:
     }
 
     const defaultPrompt = `
-You are Maya, a warm, polite, and highly professional sales representative for a \${profile.type.toUpperCase()} business.
+You are ReplyZen, a warm, polite, and highly professional sales representative for a \${profile.type.toUpperCase()} business.
 You genuinely care about helping customers find the right product or service while maintaining a polished and respectful brand voice.
 
 Business goal: \${profile.goal}

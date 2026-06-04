@@ -1339,8 +1339,8 @@
   color: #ff4fd8 !important;
 }
 
-:root.light .site-footer span,
-.site-footer span {
+:root.light .site-footer span:not(.logo-text):not(.logo-text *),
+.site-footer span:not(.logo-text):not(.logo-text *) {
   color: #52525b !important;
 }
 
@@ -1765,6 +1765,7 @@
 }
 
 .btn-premium-cta {
+  background-color: #4f39f6; /* Fallback brand color to prevent dark subpixel bleeding */
   background: linear-gradient(135deg, #818CF8 0%, #4F39F6 50%, #3730A3 100%);
   border-radius: 13px; /* 12-14px rounded corners */
   font-weight: 700; /* bold font weight */
@@ -1777,7 +1778,7 @@
   align-items: center;
   justify-content: center;
   position: relative;
-  overflow: hidden;
+  background-clip: padding-box; /* Prevent background from bleeding into border */
 }
 
 .btn-premium-cta:hover {

@@ -171,8 +171,8 @@ const Signup: React.FC = () => {
       <div className="w-full lg:w-1/2 flex flex-col items-center justify-center p-6 md:p-12 z-20 overflow-y-auto premium-scroll">
         <div className="w-full max-w-lg bg-white rounded-[2rem] p-10 md:p-12 shadow-[0_8px_40px_rgb(0,0,0,0.04)] border border-zinc-100 relative my-8">
           <div className="mb-10 text-center">
-            <div className="bg-transparent flex items-center justify-center mx-auto">
-              <img src="/logo.png" alt="ReplyZens Logo" className="w-20 h-20 object-contain" />
+            <div className="bg-transparent flex items-center justify-center mx-auto mb-2">
+              <img src="/Light Theme.png" alt="ReplyZens Logo" className="w-14 h-14 object-contain transition-transform duration-500 hover:scale-105" />
             </div>
             <h1 className="text-3xl font-extrabold tracking-tight text-zinc-900 mb-2">Create Account</h1>
             <p className="text-zinc-500 font-semibold">Join us today and start growing</p>
