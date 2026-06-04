@@ -27,8 +27,8 @@ jobs:
             git config --global http.ipresolve v4
 
             # 2. Navigate to project root & Pull Latest Code
-            cd /var/www/Thalapathi/Replyzens
-            git config --global --add safe.directory /var/www/Thalapathi/Replyzens
+            cd /var/www/Thalapathi/Flazly
+            git config --global --add safe.directory /var/www/Thalapathi/Flazly
             
             # Print diagnostic info before pull
             echo "--- Checking Github Connectivity ---"
@@ -41,17 +41,17 @@ jobs:
             }
 
             # Ensure proper execution permissions for local .bin tools
-            chmod -R +w /var/www/Thalapathi/Replyzens/backend 2>/dev/null || true
+            chmod -R +w /var/www/Thalapathi/Flazly/backend 2>/dev/null || true
 
             # 3. Build Frontend
             echo "--- Building Frontend ---"
-            cd /var/www/Thalapathi/Replyzens/frontend
+            cd /var/www/Thalapathi/Flazly/frontend
             npm install
             node node_modules/typescript/bin/tsc -b && node node_modules/vite/bin/vite.js build
 
             # 4. Build Backend
             echo "--- Building Backend ---"
-            cd /var/www/Thalapathi/Replyzens/backend
+            cd /var/www/Thalapathi/Flazly/backend
             npm install
             npm run build
 
