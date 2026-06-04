@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { 
   Shield, 
@@ -380,7 +380,7 @@ const Settings: React.FC = () => {
                         {user?.email?.[0] || 'A'}
                       </div>
                       <div>
-                        <div className="font-bold text-zinc-100">{user?.email || 'admin@replyzens.in'}</div>
+                        <div className="font-bold text-zinc-100">{user?.email || 'admin@flazly.in'}</div>
                         <div className="text-xs text-zinc-500 font-medium mt-0.5">{user?.role || 'Administrator Access'}</div>
                       </div>
                     </div>

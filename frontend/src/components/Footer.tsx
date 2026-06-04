@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Link } from 'react-router-dom';
 
 const Footer: React.FC = () => {
@@ -10,11 +10,11 @@ const Footer: React.FC = () => {
             <Link to="/" className="flex items-center gap-2.5 mb-6 group">
               <img
                 src="/Dark theme.png"
-                alt="ReplyZens Logo"
+                alt="Flazly Logo"
                 className="w-9 h-9 object-contain transition-transform duration-300 group-hover:scale-105"
               />
               <span className="text-lg font-bold tracking-tight text-white uppercase font-inter logo-text">
-                Reply<span className="text-logo-gradient">Zens</span>
+                Flaz<span className="text-logo-gradient">ly</span>
               </span>
             </Link>
             <p className="text-zinc-500 text-xs leading-relaxed max-w-sm mb-6">
@@ -74,7 +74,7 @@ const Footer: React.FC = () => {
         </div>
 
         <div className="pt-8 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4 text-zinc-600 text-[10px] font-bold">
-          <span>© 2026 ReplyZens Inc. All rights reserved.</span>
+          <span>© 2026 Flazly Inc. All rights reserved.</span>
           <span>Built with ❤ for professional Instagram automation.</span>
         </div>
       </div>

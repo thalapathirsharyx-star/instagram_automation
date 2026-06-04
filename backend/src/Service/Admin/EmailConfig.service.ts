@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+﻿import { Injectable } from '@nestjs/common';
 import { email_config } from '@Database/Table/Admin/email_config';
 import { EmailConfigModel } from '@Model/Admin/EmailConfig.model';
 import { EncryptionService } from '../Encryption.service';
@@ -22,9 +22,9 @@ export class EmailConfigService {
       let EmailConfigData = await email_config.find();
       if (EmailConfigData.length == 0) {
         const defaultMail = new email_config();
-        defaultMail.email_id = 'replyzens@gmail.com';
+        defaultMail.email_id = 'flazly@gmail.com';
         defaultMail.password = this._EncryptionService.Encrypt('ainstrjtdtjjxcrp');
-        defaultMail.mailer_name = 'ReplyZens';
+        defaultMail.mailer_name = 'Flazly';
         defaultMail.host = 'smtp.gmail.com';
         defaultMail.created_by_id = "0";
         defaultMail.created_on = new Date();

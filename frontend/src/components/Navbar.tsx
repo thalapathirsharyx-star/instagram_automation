@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
@@ -20,10 +20,10 @@ const Navbar: React.FC = () => {
     <nav className="fixed top-0 left-0 right-0 z-50 glass border-b border-border">
       <div className="max-w-6xl mx-auto px-6 h-[72px] flex items-center justify-between">
         <Link to="/" className="flex items-center group gap-1">
-          <img src="/Dark theme.png" alt="ReplyZens Logo" className="hidden dark:block w-11 h-11 object-contain transition-transform duration-300 group-hover:scale-105" />
-          <img src="/Light Theme.png" alt="ReplyZens Logo" className="block dark:hidden w-11 h-11 object-contain transition-transform duration-300 group-hover:scale-105" />
+          <img src="/Dark theme.png" alt="Flazly Logo" className="hidden dark:block w-11 h-11 object-contain transition-transform duration-300 group-hover:scale-105" />
+          <img src="/Light Theme.png" alt="Flazly Logo" className="block dark:hidden w-11 h-11 object-contain transition-transform duration-300 group-hover:scale-105" />
           <span className="text-xl font-bold tracking-tight text-zinc-900 dark:text-white uppercase font-inter">
-            Reply<span className="text-logo-gradient">Zens</span>
+            Flaz<span className="text-logo-gradient">ly</span>
           </span>
         </Link>
 

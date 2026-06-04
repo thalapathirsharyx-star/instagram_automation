@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { ShieldCheck, ShieldAlert, Loader2, ArrowRight } from 'lucide-react';
 import api from '../lib/axios';
@@ -53,7 +53,7 @@ const VerifyEmail: React.FC = () => {
           {/* Top Logo */}
           <div className="mb-8">
             <span className="text-2xl font-extrabold text-white tracking-tight">
-              Reply<span className="text-logo-gradient">Zens</span>
+              Flaz<span className="text-logo-gradient">ly</span>
             </span>
           </div>
 
@@ -64,7 +64,7 @@ const VerifyEmail: React.FC = () => {
                 <Loader2 className="w-10 h-10 text-purple-500 animate-spin relative" />
               </div>
               <h2 className="text-xl font-bold text-zinc-100 mb-2">Verifying your email</h2>
-              <p className="text-zinc-400 text-sm">Securing your ReplyZens dashboard...</p>
+              <p className="text-zinc-400 text-sm">Securing your Flazly dashboard...</p>
             </div>
           )}
 

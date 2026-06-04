@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 
@@ -14,17 +14,17 @@ const PrivacyContent: React.FC = () => (
     <section>
       <h2>1. Overview & Commitment to Privacy</h2>
       <p>
-        At ReplyZens, we build enterprise-grade automation and customer relationship management (CRM) solutions for professional Instagram creators, agencies, and businesses. We value your trust and are fully committed to protecting the privacy, security, and integrity of your personal information, as well as the data processed through our application.
+        At Flazly, we build enterprise-grade automation and customer relationship management (CRM) solutions for professional Instagram creators, agencies, and businesses. We value your trust and are fully committed to protecting the privacy, security, and integrity of your personal information, as well as the data processed through our application.
       </p>
       <p>
-        This Privacy Policy explains how ReplyZens ("we", "us", "our") collects, stores, processes, shares, and protects your information, and how we handle data from Meta (Facebook and Instagram) APIs. By using our platform, you consent to the data practices described in this policy.
+        This Privacy Policy explains how Flazly ("we", "us", "our") collects, stores, processes, shares, and protects your information, and how we handle data from Meta (Facebook and Instagram) APIs. By using our platform, you consent to the data practices described in this policy.
       </p>
     </section>
 
     <section>
       <h2>2. Meta API Integration & Data Authority</h2>
       <p>
-        ReplyZens integrates with the official Meta Graph API (Instagram Messaging API) to provide unified CRM inboxes, lead routing, and automated reply flows. In compliance with the Meta Platform Terms and Developer Policies:
+        Flazly integrates with the official Meta Graph API (Instagram Messaging API) to provide unified CRM inboxes, lead routing, and automated reply flows. In compliance with the Meta Platform Terms and Developer Policies:
       </p>
       <ul>
         <li><strong>Authorized Access Only:</strong> We access your Instagram messaging data solely after you explicitly authorize access using Meta OAuth.</li>
@@ -119,7 +119,7 @@ const PrivacyContent: React.FC = () => (
         If you have any questions, concerns, or requests regarding this Privacy Policy, please contact our Data Protection Officer at:
       </p>
       <p className="font-bold">
-        Email: support@replyzens.in
+        Email: support@flazly.in
       </p>
     </section>
   </>
@@ -133,14 +133,14 @@ const TermsContent: React.FC = () => (
     <section>
       <h2>1. Acceptance of Terms</h2>
       <p>
-        By creating an account, accessing, or using ReplyZens ("Service"), you agree to be bound by these Terms of Service ("Terms") and our Privacy Policy. If you do not agree to these Terms, you are prohibited from using the Service.
+        By creating an account, accessing, or using Flazly ("Service"), you agree to be bound by these Terms of Service ("Terms") and our Privacy Policy. If you do not agree to these Terms, you are prohibited from using the Service.
       </p>
     </section>
 
     <section>
       <h2>2. Description of Service</h2>
       <p>
-        ReplyZens is a SaaS platform providing Instagram messaging automation, AI assistant routing, and customer relationship management (CRM) tools. The Service is provided "as is" and "as available". We reserve the right to modify, suspend, or discontinue any part of the Service at any time without notice.
+        Flazly is a SaaS platform providing Instagram messaging automation, AI assistant routing, and customer relationship management (CRM) tools. The Service is provided "as is" and "as available". We reserve the right to modify, suspend, or discontinue any part of the Service at any time without notice.
       </p>
     </section>
 
@@ -150,7 +150,7 @@ const TermsContent: React.FC = () => (
         Our Service relies on integration with Meta (Facebook/Instagram) APIs.
       </p>
       <ul>
-        <li><strong>Compliance:</strong> You must comply with all Meta Platform Terms, Instagram Community Guidelines, and Meta Developer Policies while using ReplyZens.</li>
+        <li><strong>Compliance:</strong> You must comply with all Meta Platform Terms, Instagram Community Guidelines, and Meta Developer Policies while using Flazly.</li>
         <li><strong>Account Integrity:</strong> You are responsible for ensuring your Instagram account configuration allows official API access. We are not liable for any restriction, suspension, or termination of your Meta account by Meta.</li>
         <li><strong>Rate Limits:</strong> You agree not to exceed or attempt to bypass Meta API rate limit controls.</li>
       </ul>
@@ -183,14 +183,14 @@ const TermsContent: React.FC = () => (
     <section>
       <h2>6. Intellectual Property Rights</h2>
       <p>
-        ReplyZens and its original logo, graphics, user interface design, and codebase are the exclusive property of ReplyZens Inc. and are protected by international copyright and trademark laws. You receive a limited, revocable, non-transferable license to use the Service for your business operations.
+        Flazly and its original logo, graphics, user interface design, and codebase are the exclusive property of Flazly Inc. and are protected by international copyright and trademark laws. You receive a limited, revocable, non-transferable license to use the Service for your business operations.
       </p>
     </section>
 
     <section>
       <h2>7. Limitation of Liability</h2>
       <p>
-        To the maximum extent permitted by law, ReplyZens Inc. shall not be liable for any indirect, incidental, special, consequential, or punitive damages, including loss of profits, data, goodwill, or Meta account status, resulting from your use of or inability to use the Service.
+        To the maximum extent permitted by law, Flazly Inc. shall not be liable for any indirect, incidental, special, consequential, or punitive damages, including loss of profits, data, goodwill, or Meta account status, resulting from your use of or inability to use the Service.
       </p>
     </section>
 
@@ -211,16 +211,16 @@ const DeletionContent: React.FC = () => (
     <section>
       <h2>How to Manage and Delete Your Data</h2>
       <p>
-        At ReplyZens, we respect your privacy and provide a fully compliant, self-serve way to revoke platform access and permanently delete all your data from our systems.
+        At Flazly, we respect your privacy and provide a fully compliant, self-serve way to revoke platform access and permanently delete all your data from our systems.
       </p>
     </section>
 
     <section>
       <h2>Option 1: Complete Account & Data Purge (In-App)</h2>
       <p>
-        If you want to permanently delete your ReplyZens account and purge all databases containing your profile information, connected channels, and CRM logs:
+        If you want to permanently delete your Flazly account and purge all databases containing your profile information, connected channels, and CRM logs:
       </p>
-      <p>1. Log in to your <strong>ReplyZens Dashboard</strong>.</p>
+      <p>1. Log in to your <strong>Flazly Dashboard</strong>.</p>
       <p>2. Navigate to <strong>Settings</strong> &gt; <strong>Account Management</strong>.</p>
       <p>3. Under the "Danger Zone" section, click <strong>Delete Account & Purge Data</strong>.</p>
       <p>4. Confirm your password. All access tokens, CRM logs, message metadata, and settings will be permanently and irreversibly deleted from our servers within 10 minutes.</p>
@@ -229,12 +229,12 @@ const DeletionContent: React.FC = () => (
     <section>
       <h2>Option 2: Disconnect via Meta (Facebook / Instagram)</h2>
       <p>
-        You can revoke ReplyZens' permissions to your Facebook and Instagram accounts directly through Meta's platform settings:
+        You can revoke Flazly' permissions to your Facebook and Instagram accounts directly through Meta's platform settings:
       </p>
       <p>1. Go to your Facebook profile's <strong>Settings & Privacy</strong> &gt; <strong>Settings</strong>.</p>
       <p>2. In the left-hand menu, click on <strong>Apps and Websites</strong>.</p>
-      <p>3. Locate <strong>ReplyZens</strong> in the active list and click <strong>Remove</strong>.</p>
-      <p>4. Check the box to confirm removal. This invalidates all API OAuth tokens instantly on Meta's side, preventing any future data access by ReplyZens.</p>
+      <p>3. Locate <strong>Flazly</strong> in the active list and click <strong>Remove</strong>.</p>
+      <p>4. Check the box to confirm removal. This invalidates all API OAuth tokens instantly on Meta's side, preventing any future data access by Flazly.</p>
     </section>
 
     <section>
@@ -243,7 +243,7 @@ const DeletionContent: React.FC = () => (
         If you are unable to access your dashboard or want to request a manual deletion of all personal data held by us, please submit a request to our data engineering team:
       </p>
       <ul>
-        <li><strong>Email:</strong> support@replyzens.in</li>
+        <li><strong>Email:</strong> support@flazly.in</li>
         <li><strong>Subject Line:</strong> Data Deletion Request (Meta API)</li>
         <li><strong>Required Info:</strong> Please include your registered account email and your connected Instagram business handle.</li>
       </ul>

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+﻿import { Injectable } from '@nestjs/common';
 import { MailerService } from './Mailer.service';
 import { CommonService } from './Common.service';
 
@@ -36,7 +36,7 @@ export class EmailService {
   async SendVerificationEmail(emailId: string, firstName: string, verifyUrl: string, tempPassword?: string) {
     const Res = await this._MailerService.SendMail({
       to: emailId,
-      subject: "Activate Your Account - ReplyZens",
+      subject: "Activate Your Account - Flazly",
       template: "VerifyEmail",
       html: true,
       context: {

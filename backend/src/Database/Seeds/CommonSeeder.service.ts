@@ -1,4 +1,4 @@
-import { DataSource } from 'typeorm';
+﻿import { DataSource } from 'typeorm';
 import { user_role } from '../Table/Admin/user_role';
 import { user } from '../Table/Admin/user';
 import { currency } from '../Table/Admin/currency';
@@ -182,9 +182,9 @@ export class CommonSeederService {
         .into(email_config)
         .values([
           {
-            email_id: 'replyzens@gmail.com',
+            email_id: 'flazly@gmail.com',
             password: this._EncryptionService.Encrypt('ainstrjtdtjjxcrp'),
-            mailer_name: 'ReplyZens',
+            mailer_name: 'Flazly',
             host: 'smtp.gmail.com',
             created_by_id: "0",
             created_on: new Date()

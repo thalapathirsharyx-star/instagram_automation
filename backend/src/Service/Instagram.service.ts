@@ -1,4 +1,4 @@
-import { Injectable, Inject } from '@nestjs/common';
+﻿import { Injectable, Inject } from '@nestjs/common';
 import { instagram_lead } from '@Database/Table/CRM/instagram_lead';
 import { instagram_message } from '@Database/Table/CRM/instagram_message';
 import { knowledge_base } from '@Database/Table/CRM/knowledge_base';
@@ -274,7 +274,7 @@ export class InstagramService {
         let textToSend = company.welcome_message;
         const limits = PLAN_LIMITS[company?.plan || 'Free'] || PLAN_LIMITS.Free;
         if (limits.hasBranding) {
-          textToSend += "\n\n⚡ Powered by ReplyZens";
+          textToSend += "\n\n⚡ Powered by Flazly";
         }
         await this.sendInstagramMessage(lead.instagram_handle, textToSend, company.instagram_access_token);
         await this.logOutboundMessage(lead, { reply: textToSend, action: 'welcome' } as any);
@@ -365,7 +365,7 @@ export class InstagramService {
         const limits = PLAN_LIMITS[currentPlan] || PLAN_LIMITS.Free;
         let textToSend = company.story_mention_message;
         if (limits.hasBranding) {
-          textToSend += "\n\n⚡ Powered by ReplyZens";
+          textToSend += "\n\n⚡ Powered by Flazly";
         }
         
         await this.logOutboundMessage(lead, {
@@ -392,7 +392,7 @@ export class InstagramService {
       const limits = PLAN_LIMITS[currentPlan] || PLAN_LIMITS.Free;
       let replyText = "I received your image! Let me connect you with a human to check it.";
       if (limits.hasBranding) {
-        replyText += "\n\n⚡ Powered by ReplyZens";
+        replyText += "\n\n⚡ Powered by Flazly";
       }
       const handoffResponse: any = {
         reply: replyText,
@@ -457,7 +457,7 @@ export class InstagramService {
         const currentPlan = company?.plan || 'Free';
         const limits = PLAN_LIMITS[currentPlan] || PLAN_LIMITS.Free;
         if (limits.hasBranding) {
-          textToSend += "\n\n⚡ Powered by ReplyZens";
+          textToSend += "\n\n⚡ Powered by Flazly";
         }
         directResponse.reply = textToSend;
         await this.logOutboundMessage(lead, directResponse as any);
@@ -503,7 +503,7 @@ export class InstagramService {
         const currentPlan = company?.plan || 'Free';
         const limits = PLAN_LIMITS[currentPlan] || PLAN_LIMITS.Free;
         if (limits.hasBranding) {
-          combinedText += "\n\n⚡ Powered by ReplyZens";
+          combinedText += "\n\n⚡ Powered by Flazly";
         }
 
         const directResponse: any = {
@@ -589,7 +589,7 @@ export class InstagramService {
       const currentPlan = company?.plan || 'Free';
       const limits = PLAN_LIMITS[currentPlan] || PLAN_LIMITS.Free;
       if (limits.hasBranding) {
-        textToSend += "\n\n⚡ Powered by ReplyZens";
+        textToSend += "\n\n⚡ Powered by Flazly";
       }
       aiResponse.reply = textToSend;
       await this.logOutboundMessage(lead, aiResponse);
@@ -627,7 +627,7 @@ export class InstagramService {
         await this.mailerService.SendMail({
           to: company.email,
           subject: `[ALERT] AI Response Limits Reached - ${company.name}`,
-          template: `Hello,\n\nYour company "${company.name}" has reached 100% of its monthly AI messaging limits (${usage}/${limit} messages) for the '${company.plan}' plan.\n\nAutomated AI responses are temporarily offline until the counter resets or you upgrade your plan.\n\nBest regards,\nReplyZens Team`,
+          template: `Hello,\n\nYour company "${company.name}" has reached 100% of its monthly AI messaging limits (${usage}/${limit} messages) for the '${company.plan}' plan.\n\nAutomated AI responses are temporarily offline until the counter resets or you upgrade your plan.\n\nBest regards,\nFlazly Team`,
           context: {},
           html: false
         });
@@ -643,7 +643,7 @@ export class InstagramService {
         await this.mailerService.SendMail({
           to: company.email,
           subject: `[WARNING] AI Response Limit approaching 80% - ${company.name}`,
-          template: `Hello,\n\nYour company "${company.name}" has used ${usage} out of ${limit} of its monthly AI messaging limits (80% reached) for the '${company.plan}' plan.\n\nTo ensure uninterrupted service, you can upgrade your plan in the billing settings.\n\nBest regards,\nReplyZens Team`,
+          template: `Hello,\n\nYour company "${company.name}" has used ${usage} out of ${limit} of its monthly AI messaging limits (80% reached) for the '${company.plan}' plan.\n\nTo ensure uninterrupted service, you can upgrade your plan in the billing settings.\n\nBest regards,\nFlazly Team`,
           context: {},
           html: false
         });

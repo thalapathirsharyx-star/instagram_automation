@@ -25,7 +25,7 @@ const SplashScreen: React.FC<SplashScreenProps> = () => {
         {/* Loading Text */}
         <div className="mt-8 flex flex-col items-center gap-2">
           <span className="text-xl font-black tracking-widest text-foreground uppercase">
-            Reply<span className="gradient-text-premium">Zens</span>
+            Flaz<span className="gradient-text-premium">ly</span>
           </span>
           <div className="flex gap-1.5">
             <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-bounce" style={{ animationDelay: '0s' }} />

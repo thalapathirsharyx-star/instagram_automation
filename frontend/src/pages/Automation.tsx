@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { 
   Sparkles, 
   MessageSquare, 
@@ -120,7 +120,7 @@ const Automation: React.FC = () => {
         // If empty, we can provide a default example or leave empty
         setPlaybookSteps([
           { id: '1', type: 'trigger', title: 'When user sends DM containing keyword', value: 'price, cost, buy' },
-          { id: '2', type: 'action', title: 'Send Automated Catalog & Pricing Menu', value: 'ReplyZens Pro Catalog Link' }
+          { id: '2', type: 'action', title: 'Send Automated Catalog & Pricing Menu', value: 'Flazly Pro Catalog Link' }
         ]);
       }
     } catch (error) {
@@ -503,7 +503,7 @@ const Automation: React.FC = () => {
                   <Sparkles size={18} /> Smart Playbooks
                 </h4>
                 <p className="text-sm font-medium leading-relaxed text-purple-100/80 mb-4">
-                  ReplyZens playbooks allow you to map out paths the AI should steer leads through. Ask for key criteria, evaluate intent, and handover to sales seamlessly.
+                  Flazly playbooks allow you to map out paths the AI should steer leads through. Ask for key criteria, evaluate intent, and handover to sales seamlessly.
                 </p>
                 <div className="flex gap-2">
                   <button className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg text-xs font-bold transition-all flex items-center gap-2">

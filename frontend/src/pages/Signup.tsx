@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Mail, Lock, User, Building2, UserPlus, AlertCircle, Loader2, Eye, EyeOff } from 'lucide-react';
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
@@ -162,7 +162,7 @@ const Signup: React.FC = () => {
               Scale Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-indigo-600">Influence</span>
             </h2>
             <p className="text-lg text-zinc-600 leading-relaxed font-semibold">
-              Join the elite league of creators using ReplyZens to manage their growth with precision and ease.
+              Join the elite league of creators using Flazly to manage their growth with precision and ease.
             </p>
           </div>
         </div>
@@ -172,7 +172,7 @@ const Signup: React.FC = () => {
         <div className="w-full max-w-lg bg-white rounded-[2rem] p-10 md:p-12 shadow-[0_8px_40px_rgb(0,0,0,0.04)] border border-zinc-100 relative my-8">
           <div className="mb-10 text-center">
             <div className="bg-transparent flex items-center justify-center mx-auto mb-2">
-              <img src="/Light Theme.png" alt="ReplyZens Logo" className="w-14 h-14 object-contain transition-transform duration-500 hover:scale-105" />
+              <img src="/Light Theme.png" alt="Flazly Logo" className="w-14 h-14 object-contain transition-transform duration-500 hover:scale-105" />
             </div>
             <h1 className="text-3xl font-extrabold tracking-tight text-zinc-900 mb-2">Create Account</h1>
             <p className="text-zinc-500 font-semibold">Join us today and start growing</p>

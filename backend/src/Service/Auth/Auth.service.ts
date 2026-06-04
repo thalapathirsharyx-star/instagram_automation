@@ -1,4 +1,4 @@
-import { Injectable, Inject } from '@nestjs/common';
+﻿import { Injectable, Inject } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { company } from '@Database/Table/Admin/company';
 import { user } from '@Database/Table/Admin/user';
@@ -189,7 +189,7 @@ export class AuthService {
     if (!u) {
       throw new Error('User not found');
     }
-    const secret = speakeasy.generateSecret({ length: 20, name: `ReplyZens:${u.email}` });
+    const secret = speakeasy.generateSecret({ length: 20, name: `Flazly:${u.email}` });
     await this._RedisClient.set(`2fa_temp:${userId}`, secret.base32, 'EX', 600);
     const qrCodeUrl = await QRCode.toDataURL(secret.otpauth_url);
     const recoveryCodes = Array.from({ length: 8 }, () => randomstring.generate({ length: 10, charset: 'alphanumeric' }).toUpperCase());

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useLocation } from 'react-router-dom';
 import { CreditCard, Check, Zap, Shield, Sparkles, Lock, X, FileText } from 'lucide-react';
@@ -80,7 +80,7 @@ const Billing: React.FC = () => {
         key: 'rzp_test_SuNSItBA5F58KR', // Test Key passed directly for client
         amount: orderData.amount,
         currency: orderData.currency,
-        name: 'ReplyZens',
+        name: 'Flazly',
         description: `Upgrade to ${planId} Plan`,
         order_id: orderData.id,
         handler: async function (response: any) {
@@ -148,7 +148,7 @@ const Billing: React.FC = () => {
       'Basic automations (up to 4)',
       '1 user',
       'Unified inbox',
-      'ReplyZens branding on replies'
+      'Flazly branding on replies'
     ],
     'Pro': [
       'Connect 3 IG Accounts',
@@ -308,14 +308,14 @@ const Billing: React.FC = () => {
                 <li className="flex items-start gap-2"><Check size={14} className="text-purple-500 mt-0.5 shrink-0" /> Basic automations (up to 4)</li>
                 <li className="flex items-start gap-2"><Check size={14} className="text-purple-500 mt-0.5 shrink-0" /> 1 user</li>
                 <li className="flex items-start gap-2"><Check size={14} className="text-purple-500 mt-0.5 shrink-0" /> Unified inbox</li>
-                <li className="flex items-start gap-2"><Check size={14} className="text-purple-500 mt-0.5 shrink-0" /> ReplyZens branding on replies</li>
+                <li className="flex items-start gap-2"><Check size={14} className="text-purple-500 mt-0.5 shrink-0" /> Flazly branding on replies</li>
               </ul>
             </div>
 
             {/* Pro Plan */}
             <div className="w3-card flex flex-col border-purple-500/50 relative transform hover:-translate-y-1 transition-all duration-500 shadow-[0_10px_40px_rgba(168,85,247,0.15)] !overflow-visible">
               <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-gradient-to-r from-purple-500 to-indigo-500 text-white px-4 py-1 text-[10px] font-black uppercase tracking-widest rounded-full shadow-lg flex items-center gap-1 whitespace-nowrap">
-                <Sparkles size={12} /> ReplyZens AI
+                <Sparkles size={12} /> Flazly AI
               </div>
               <h3 className="text-lg font-bold text-zinc-900 mb-2">Pro</h3>
               <p className="text-zinc-500 text-xs mb-6 font-medium h-8">For scaling creators & businesses</p>
@@ -347,7 +347,7 @@ const Billing: React.FC = () => {
 
             {/* Business Plan */}
             <div className="w3-card flex flex-col hover:border-purple-500/30 transition-all duration-500 relative !overflow-visible">
-              <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-purple-500/10 text-purple-600 border border-purple-500/20 px-3 py-1 text-[10px] font-bold uppercase tracking-wider rounded-full whitespace-nowrap">ReplyZens AI</div>
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-purple-500/10 text-purple-600 border border-purple-500/20 px-3 py-1 text-[10px] font-bold uppercase tracking-wider rounded-full whitespace-nowrap">Flazly AI</div>
               <h3 className="text-lg font-bold text-zinc-900 mb-2">Business</h3>
               <p className="text-zinc-500 text-xs mb-6 font-medium h-8">For high-growth businesses</p>
               <div className="mb-6 flex items-baseline">

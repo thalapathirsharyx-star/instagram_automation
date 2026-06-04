@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Query, Req, UploadedFile, UseInterceptors } from '@nestjs/common';
+﻿import { Body, Controller, Delete, Get, Param, Post, Query, Req, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { InstagramService } from '@Service/Instagram.service';
@@ -102,7 +102,7 @@ export class InstagramController extends AuthBaseController {
     // and queue the user's data for deletion.
     
     return {
-      url: `${process.env.DOMAIN_NAME || 'https://replyzens.in'}/data-deletion`,
+      url: `${process.env.DOMAIN_NAME || 'https://flazly.in'}/data-deletion`,
       confirmation_code: `DEL-${Math.random().toString(36).substring(7).toUpperCase()}`
     };
   }

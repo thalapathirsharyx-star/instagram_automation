@@ -1,4 +1,4 @@
-{
+﻿{
   "object": "instagram",
   "entry": [
     {
@@ -9,7 +9,7 @@
           "field": "messages",
           "value": {
             "sender": { "id": "TEST_USER_999" },
-            "recipient": { "id": "REPLYZENS_BUSINESS" },
+            "recipient": { "id": "FLAZLY_BUSINESS" },
             "timestamp": "1527459824",
             "message": {
               "mid": "mid.test_123",

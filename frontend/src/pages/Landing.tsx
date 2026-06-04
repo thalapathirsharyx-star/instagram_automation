@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '../components/Navbar';
@@ -249,7 +249,7 @@ const ProductShowcase = () => {
               <div className="w-3 h-3 rounded-full bg-zinc-700" />
             </div>
             <span className="text-[10px] text-zinc-555 font-bold uppercase tracking-wider font-mono">
-              replyzens_cloud_v1.0.8 // {activeTab.toUpperCase()}
+              flazly_cloud_v1.0.8 // {activeTab.toUpperCase()}
             </span>
             <div className="w-12" />
           </div>
@@ -387,7 +387,7 @@ const InboxMockup = () => {
           <div className="flex gap-2 max-w-[85%] ml-auto justify-end">
             <div className="bg-zinc-850 p-2.5 rounded-2xl rounded-tr-none text-right border border-[#38BDF8]/25">
               <p className="text-[10px] text-white">
-                Awesome! I've saved daniel@gmail.com. Here is your checkout link: replyzens.com/chk/shoes-10
+                Awesome! I've saved daniel@gmail.com. Here is your checkout link: flazly.com/chk/shoes-10
               </p>
               <span className="text-[6.5px] font-bold text-[#38BDF8] uppercase tracking-wide mt-1 block font-extrabold">
                 ✦ Automated by ReplyZen
@@ -467,7 +467,7 @@ const AgentMockup = () => {
           <label className="text-xs font-bold text-zinc-350">Agent Persona / System Prompt</label>
           <textarea
             readOnly
-            value="You are ReplyZen, an AI assistant representing replyzens.com. Your tone should be extremely friendly, helpful, and outcome-oriented. Help visitors qualify their DMs, answer FAQs regarding products, pricing, features, and setup. Capture lead details from high-intent buyers, or provide a purchase link if they inquire about pricing. If you do not know the answer, ask for their email so our human staff can follow up."
+            value="You are ReplyZen, an AI assistant representing flazly.com. Your tone should be extremely friendly, helpful, and outcome-oriented. Help visitors qualify their DMs, answer FAQs regarding products, pricing, features, and setup. Capture lead details from high-intent buyers, or provide a purchase link if they inquire about pricing. If you do not know the answer, ask for their email so our human staff can follow up."
             className="w-full h-32 bg-black/40 border border-white/10 rounded-xl p-3 text-[10px] text-zinc-400 font-mono leading-relaxed resize-none outline-none focus:border-[#38BDF8]/50"
           />
         </div>
@@ -502,7 +502,7 @@ const AgentMockup = () => {
               <Database size={14} className="text-[#38BDF8]" />
               <span className="text-[10px] font-bold text-white">Sync Lead to CRM</span>
             </div>
-            <span className="text-[8px] text-zinc-555 font-mono">hubspot.crm/leads/replyzens</span>
+            <span className="text-[8px] text-zinc-555 font-mono">hubspot.crm/leads/flazly</span>
           </div>
         </div>
       </div>
@@ -511,7 +511,7 @@ const AgentMockup = () => {
       <div className="bg-black/30 border border-white/5 rounded-2xl p-4 flex flex-col gap-4 text-left">
         <h5 className="text-[10px] font-bold text-zinc-555 uppercase tracking-widest border-b border-white/5 pb-2">Knowledge Docs</h5>
         <p className="text-[10px] text-zinc-400 leading-normal font-medium">
-          Upload catalogs, spreadsheets, FAQs, or policies. ReplyZens learns instantly.
+          Upload catalogs, spreadsheets, FAQs, or policies. Flazly learns instantly.
         </p>
 
         {/* Upload box */}
@@ -749,7 +749,7 @@ const SettingsMockup = () => {
             <div>
               <span className="text-[10.5px] font-bold block text-white font-inter">Instagram Business</span>
               <span className="text-[7.5px] text-emerald-404 flex items-center gap-1 font-semibold mt-0.5">
-                ● Connected as @replyzens
+                ● Connected as @flazly
               </span>
             </div>
             <Check size={14} className="text-emerald-400 shrink-0" />
@@ -849,7 +849,7 @@ const ROICalculator = () => {
             <span className="text-xs font-bold uppercase tracking-widest text-zinc-500">Interactive Model</span>
             <h3 className="text-2xl md:text-3xl font-bold text-white mt-2 mb-3">Adjust Your Metrics</h3>
             <p className="text-xs text-zinc-450 leading-relaxed font-medium mt-1">
-              Fine-tune the parameters below to calculate how much revenue you stand to recover by deploying ReplyZens AI automations.
+              Fine-tune the parameters below to calculate how much revenue you stand to recover by deploying Flazly AI automations.
             </p>
           </div>
 
@@ -1358,7 +1358,7 @@ const ProblemStorytelling = () => {
                   {scene === 2 && `● Active ${timer} ago`}
                   {scene === 3 && "● Offline (Gone)"}
                   {scene === 4 && "● Rewinding..."}
-                  {scene >= 5 && "⚡ ReplyZens AI Active"}
+                  {scene >= 5 && "⚡ Flazly AI Active"}
                 </span>
               </div>
             </div>
@@ -1381,7 +1381,7 @@ const ProblemStorytelling = () => {
                   >
                     <RefreshCw size={28} className="text-[#818CF8]" />
                   </motion.div>
-                  <span className="text-xs font-bold text-[#818CF8] tracking-widest uppercase animate-pulse">Now with ReplyZens</span>
+                  <span className="text-xs font-bold text-[#818CF8] tracking-widest uppercase animate-pulse">Now with Flazly</span>
                 </motion.div>
               ) : null}
 
@@ -1417,7 +1417,7 @@ const ProblemStorytelling = () => {
                     <span className="w-1.5 h-1.5 bg-[#818CF8] rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
                   </div>
                   <span className="text-[7.5px] font-bold text-zinc-500 uppercase tracking-widest mt-1 mr-1">
-                    ReplyZens AI typing...
+                    Flazly AI typing...
                   </span>
                 </motion.div>
               )}
@@ -1435,7 +1435,7 @@ const ProblemStorytelling = () => {
                     Thanks for reaching out. I'd be happy to help. What service are you interested in?
                   </div>
                   <span className="text-[7.5px] font-bold text-[#818CF8] uppercase tracking-widest mt-1 mr-1 self-end flex items-center gap-1">
-                    ✨ ReplyZens AI
+                    ✨ Flazly AI
                   </span>
                 </motion.div>
               )}
@@ -1468,7 +1468,7 @@ const ProblemStorytelling = () => {
                     Perfect! We sync lead data automatically. Can I get your email to send the details?
                   </div>
                   <span className="text-[7.5px] font-bold text-[#818CF8] uppercase tracking-widest mt-1 mr-1 self-end">
-                    ✨ ReplyZens AI
+                    ✨ Flazly AI
                   </span>
                 </motion.div>
               )}
@@ -1498,10 +1498,10 @@ const ProblemStorytelling = () => {
                   className="flex flex-col max-w-[85%] self-end"
                 >
                   <div className="bg-gradient-to-r from-[#818CF8] to-[#4F39F6] text-white p-3 rounded-2xl rounded-tr-sm shadow-lg leading-relaxed font-semibold">
-                    Captured! Details sent. Here's a link to schedule a strategy call if you want: replyzens.com/book
+                    Captured! Details sent. Here's a link to schedule a strategy call if you want: flazly.com/book
                   </div>
                   <span className="text-[7.5px] font-bold text-[#818CF8] uppercase tracking-widest mt-1 mr-1 self-end">
-                    ✨ ReplyZens AI
+                    ✨ Flazly AI
                   </span>
                 </motion.div>
               )}
@@ -1653,7 +1653,7 @@ const ProblemStorytelling = () => {
                   className="space-y-2"
                 >
                   <h4 className="text-sm font-bold text-indigo-400">
-                    Deploying ReplyZens AI
+                    Deploying Flazly AI
                   </h4>
                   <p className="text-xs text-zinc-500 leading-relaxed font-medium animate-pulse">
                     Implementing instant, context-aware reply loops.
@@ -1674,7 +1674,7 @@ const ProblemStorytelling = () => {
                     <Bot size={16} /> Instant AI Reply Triggered
                   </h4>
                   <p className="text-xs text-zinc-500 leading-relaxed font-medium">
-                    ReplyZens AI instantly reads context, answers the pricing query, and prompts the prospect, saving the opportunity.
+                    Flazly AI instantly reads context, answers the pricing query, and prompts the prospect, saving the opportunity.
                   </p>
                 </motion.div>
               )}
@@ -1776,7 +1776,7 @@ const IntegrationsFlowCanvas = ({ activeStep }: { activeStep: number }) => {
         </div>
         <span className="text-[9px] font-mono text-zinc-500 dark:text-zinc-400 bg-zinc-100 dark:bg-white/5 px-2 py-0.5 rounded border border-zinc-200/50 dark:border-white/5">
           {activeStep === 0 && "oauth.meta.api"}
-          {activeStep === 1 && "replyzens.ai.engine"}
+          {activeStep === 1 && "flazly.ai.engine"}
           {activeStep === 2 && "webhook.delivery"}
         </span>
       </div>
@@ -1793,7 +1793,7 @@ const IntegrationsFlowCanvas = ({ activeStep }: { activeStep: number }) => {
               transition={{ duration: 0.3 }}
               className="w-full h-full flex flex-col items-center justify-center relative"
             >
-              {/* Instagram Source Node and ReplyZens Node connected */}
+              {/* Instagram Source Node and Flazly Node connected */}
               <div className="flex items-center justify-between w-full max-w-[320px] relative">
                 {/* SVG connection line with pulsing dashed dashArray */}
                 <svg className="absolute top-1/2 -translate-y-1/2 left-0 w-full h-2 z-0" pointerEvents="none">
@@ -1826,12 +1826,12 @@ const IntegrationsFlowCanvas = ({ activeStep }: { activeStep: number }) => {
                   OAuth Handshake
                 </div>
 
-                {/* Right Node: ReplyZens Engine */}
+                {/* Right Node: Flazly Engine */}
                 <div className="relative z-10 flex flex-col items-center gap-2">
                   <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-[#818CF8] to-[#4F39F6] flex items-center justify-center shadow-lg text-white shadow-[#4F39F6]/20">
                     <Zap size={28} className="fill-white/10" />
                   </div>
-                  <span className="text-[10px] font-bold text-[#818CF8]">ReplyZens AI</span>
+                  <span className="text-[10px] font-bold text-[#818CF8]">Flazly AI</span>
                 </div>
               </div>
 
@@ -1870,7 +1870,7 @@ const IntegrationsFlowCanvas = ({ activeStep }: { activeStep: number }) => {
                   <div className="h-[1px] bg-zinc-200 dark:bg-zinc-800 flex-1" />
                   <div className="bg-[#4F39F6]/10 border border-[#4F39F6]/20 px-3 py-1 rounded-full text-[9px] font-mono text-[#818CF8] flex items-center gap-1.5">
                     <span className="w-1.5 h-1.5 rounded-full bg-[#818CF8] animate-ping" />
-                    ReplyZens NLP Processing
+                    Flazly NLP Processing
                   </div>
                   <div className="h-[1px] bg-zinc-200 dark:bg-zinc-800 flex-1" />
                 </div>
@@ -1908,7 +1908,7 @@ const IntegrationsFlowCanvas = ({ activeStep }: { activeStep: number }) => {
                   <div className="w-12 h-12 rounded-xl bg-gradient-to-tr from-[#818CF8] to-[#4F39F6] flex items-center justify-center shadow-lg text-white">
                     <Zap size={22} />
                   </div>
-                  <span className="text-[9px] font-bold text-[#818CF8]">ReplyZens AI</span>
+                  <span className="text-[9px] font-bold text-[#818CF8]">Flazly AI</span>
                 </div>
 
                 {/* Dash branch lines */}
@@ -2053,7 +2053,7 @@ const Landing: React.FC = () => {
 
             {/* Subheadline */}
             <p className="text-base sm:text-lg text-zinc-650 dark:text-zinc-400 font-medium leading-relaxed mb-10 text-balance max-w-3xl">
-              ReplyZens instantly responds to DMs, story replies, and comment triggers, qualifies prospects with AI, captures customer details, and helps businesses convert more conversations into customers.
+              Flazly instantly responds to DMs, story replies, and comment triggers, qualifies prospects with AI, captures customer details, and helps businesses convert more conversations into customers.
             </p>
 
             {/* CTA Buttons */}
@@ -2132,7 +2132,7 @@ const Landing: React.FC = () => {
 
 
         {/* ==========================================
-            SECTION 4 — HOW REPLYZENS WORKS
+            SECTION 4 — HOW FLAZLY WORKS
             ========================================== */}
         <section className="py-28 border-t border-zinc-200/80 dark:border-white/5 relative overflow-hidden bg-gradient-to-b from-[#fafafa] via-zinc-100/50 to-[#fafafa] dark:from-[#09090b] dark:via-[#121826]/30 dark:to-[#09090b]">
           <div className="max-w-6xl mx-auto px-6 relative z-10">
@@ -2303,7 +2303,7 @@ const Landing: React.FC = () => {
                       <path id="textPathOutcomes" d="M 100, 100 m -76, 0 a 76,76 0 1,1 152,0 a 76,76 0 1,1 -152,0" fill="none" />
                       <text className="text-[11px] font-bold fill-zinc-650 dark:fill-zinc-350 uppercase tracking-[0.2em] font-sans">
                         <textPath href="#textPathOutcomes" startOffset="0%">
-                          • ReplyZens Core AI Engine • Autopilot Mode
+                          • Flazly Core AI Engine • Autopilot Mode
                         </textPath>
                       </text>
                     </svg>
@@ -2311,8 +2311,8 @@ const Landing: React.FC = () => {
 
                   <div className="absolute w-28 h-28 rounded-full bg-gradient-to-b from-white to-zinc-50 dark:from-[#1E293B] dark:to-[#0F172A] border border-zinc-200/50 dark:border-white/10 shadow-[0_10px_25px_rgba(0,0,0,0.1),inset_0_1px_1px_rgba(255,255,255,0.15)] dark:shadow-[0_10px_25px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.05)] flex flex-col items-center justify-center z-10">
                     <div className="w-20 h-20 rounded-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200/80 dark:border-zinc-800 flex items-center justify-center shadow-lg p-4">
-                      <img src="/Dark theme.png" alt="ReplyZens Logo" className="hidden dark:block w-12 h-12 object-contain" />
-                      <img src="/Light Theme.png" alt="ReplyZens Logo" className="block dark:hidden w-12 h-12 object-contain" />
+                      <img src="/Dark theme.png" alt="Flazly Logo" className="hidden dark:block w-12 h-12 object-contain" />
+                      <img src="/Light Theme.png" alt="Flazly Logo" className="block dark:hidden w-12 h-12 object-contain" />
                     </div>
                   </div>
                 </div>
@@ -2389,8 +2389,8 @@ const Landing: React.FC = () => {
                   <div className="absolute w-40 h-40 rounded-full border border-dashed border-[#818CF8]/25 animate-spin" style={{ animationDuration: '50s' }}></div>
                   <div className="absolute w-24 h-24 rounded-full bg-gradient-to-b from-white to-zinc-50 dark:from-[#1E293B] dark:to-[#0F172A] border border-zinc-200/50 dark:border-white/10 shadow-sm flex flex-col items-center justify-center z-10">
                     <div className="w-18 h-18 rounded-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200/80 dark:border-zinc-800 flex items-center justify-center shadow-md p-3.5">
-                      <img src="/Dark theme.png" alt="ReplyZens Logo" className="hidden dark:block w-9 h-9 object-contain" />
-                      <img src="/Light Theme.png" alt="ReplyZens Logo" className="block dark:hidden w-9 h-9 object-contain" />
+                      <img src="/Dark theme.png" alt="Flazly Logo" className="hidden dark:block w-9 h-9 object-contain" />
+                      <img src="/Light Theme.png" alt="Flazly Logo" className="block dark:hidden w-9 h-9 object-contain" />
                     </div>
                   </div>
                 </div>
@@ -2691,7 +2691,7 @@ const Landing: React.FC = () => {
             <div className="text-center max-w-2xl mx-auto mb-16">
               <span className="text-xs font-bold uppercase tracking-widest text-[#4F39F6] dark:text-[#818CF8]">Tailored Solutions</span>
               <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-white mt-3 mb-4">
-                Who Uses ReplyZens?
+                Who Uses Flazly?
               </h2>
               <p className="text-sm md:text-base text-zinc-400 font-medium">
                 Maximize the ROI of your social audience and convert inbound intent.
@@ -2767,14 +2767,14 @@ const Landing: React.FC = () => {
             <div className="grid md:grid-cols-2 gap-8 text-left">
               {[
                 {
-                  quote: "Waking up to direct payment confirmations and qualified leads in my CRM is a complete game-changer. ReplyZens automated over 90% of our inbox inquiries, recovering $8,400 in lost revenue in our first month alone.",
+                  quote: "Waking up to direct payment confirmations and qualified leads in my CRM is a complete game-changer. Flazly automated over 90% of our inbox inquiries, recovering $8,400 in lost revenue in our first month alone.",
                   name: "Sarah Jenkins",
                   role: "Founder, Zenith Templates",
                   stats: "+340% Conversions",
                   avatar: "SJ"
                 },
                 {
-                  quote: "We were scaling our reel ads but losing half of our leads in the inbox due to slow replies. Setting up ReplyZens comment-to-DM triggers took less than 5 minutes. Response times dropped to under 1s, and our sales increased by 3X.",
+                  quote: "We were scaling our reel ads but losing half of our leads in the inbox due to slow replies. Setting up Flazly comment-to-DM triggers took less than 5 minutes. Response times dropped to under 1s, and our sales increased by 3X.",
                   name: "Marcus Thorne",
                   role: "Director of Growth, HypeFit",
                   stats: "3X Lead Growth",
@@ -3033,10 +3033,10 @@ const Landing: React.FC = () => {
               {[
                 {
                   q: "Will Instagram ban my account?",
-                  a: "No. ReplyZens communicates via Meta's official Graph API and adheres strictly to Instagram's official developer policies and messaging guidelines. Your profile remains completely safe."
+                  a: "No. Flazly communicates via Meta's official Graph API and adheres strictly to Instagram's official developer policies and messaging guidelines. Your profile remains completely safe."
                 },
                 {
-                  q: "How does ReplyZens connect to Instagram?",
+                  q: "How does Flazly connect to Instagram?",
                   a: "Integration takes less than a minute. Log in with your Facebook credentials using our secure Meta OAuth setup and authorize your linked Instagram Business profile. We never ask for or store your passwords."
                 },
                 {

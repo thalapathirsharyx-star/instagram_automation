@@ -1,4 +1,4 @@
-import { NestFactory } from '@nestjs/core';
+﻿import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import compression from 'compression';
@@ -15,7 +15,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule, { 
     rawBody: true,
     cors: { 
-      origin: ["http://localhost:5173", "https://localhost:5173", "http://localhost:8000", "https://replyzens.in", "https://app.replyzens.in"], 
+      origin: ["http://localhost:5173", "https://localhost:5173", "http://localhost:8000", "https://flazly.in", "https://app.flazly.in"], 
       credentials: true, 
       exposedHeaders: "*" 
     } 
