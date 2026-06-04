@@ -92,10 +92,10 @@ const Sidebar: React.FC = () => {
               <Book size={20} />
               <span>Brain Base</span>
             </NavLink>
-            <NavLink to="/catalog" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+            {/* <NavLink to="/catalog" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
               <ShoppingBag size={20} />
               <span>Product Catalog</span>
-            </NavLink>
+            </NavLink> */}
             <NavLink to="/automation" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
               <Zap size={20} />
               <span>Automation</span>
