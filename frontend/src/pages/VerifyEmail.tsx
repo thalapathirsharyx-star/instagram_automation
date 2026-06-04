@@ -53,7 +53,7 @@ const VerifyEmail: React.FC = () => {
           {/* Top Logo */}
           <div className="mb-8">
             <span className="text-2xl font-extrabold text-white tracking-tight">
-              Reply<span className="text-purple-500">Zens</span>
+              Reply<span className="text-logo-gradient">Zens</span>
             </span>
           </div>
 

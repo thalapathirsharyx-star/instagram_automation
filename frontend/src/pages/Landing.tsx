@@ -2254,9 +2254,9 @@ const Landing: React.FC = () => {
                   <div className="absolute w-40 h-40 rounded-full border border-zinc-200/50 dark:border-white/5 animate-spin" style={{ animationDuration: '25s', animationDirection: 'reverse' }}></div>
 
                   <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
-                    <svg className="w-44 h-44 animate-spin" style={{ animationDuration: '60s' }} viewBox="0 0 200 200">
-                      <path id="textPathOutcomes" d="M 100, 100 m -60, 0 a 60,60 0 1,1 120,0 a 60,60 0 1,1 -120,0" fill="none" />
-                      <text className="text-[10px] font-bold fill-zinc-500 dark:fill-zinc-400 uppercase tracking-[0.2em] font-sans">
+                    <svg className="absolute w-[184px] h-[184px] animate-spin" style={{ animationDuration: '60s' }} viewBox="0 0 200 200">
+                      <path id="textPathOutcomes" d="M 100, 100 m -76, 0 a 76,76 0 1,1 152,0 a 76,76 0 1,1 -152,0" fill="none" />
+                      <text className="text-[11px] font-bold fill-zinc-650 dark:fill-zinc-350 uppercase tracking-[0.2em] font-sans">
                         <textPath href="#textPathOutcomes" startOffset="0%">
                           • ReplyZens Core AI Engine • Autopilot Mode
                         </textPath>
@@ -2265,7 +2265,7 @@ const Landing: React.FC = () => {
                   </div>
 
                   <div className="absolute w-28 h-28 rounded-full bg-gradient-to-b from-white to-zinc-50 dark:from-[#1E293B] dark:to-[#0F172A] border border-zinc-200/50 dark:border-white/10 shadow-[0_10px_25px_rgba(0,0,0,0.1),inset_0_1px_1px_rgba(255,255,255,0.15)] dark:shadow-[0_10px_25px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.05)] flex flex-col items-center justify-center z-10">
-                    <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[#4F39F6] via-[#818CF8] to-[#38BDF8] flex items-center justify-center shadow-[0_0_30px_rgba(79,57,246,0.5)] p-4">
+                    <div className="w-20 h-20 rounded-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200/80 dark:border-zinc-800 flex items-center justify-center shadow-lg p-4">
                       <img src="/Dark theme.png" alt="ReplyZens Logo" className="hidden dark:block w-12 h-12 object-contain" />
                       <img src="/Light Theme.png" alt="ReplyZens Logo" className="block dark:hidden w-12 h-12 object-contain" />
                     </div>
@@ -2343,9 +2343,9 @@ const Landing: React.FC = () => {
                   <div className="absolute w-36 h-36 rounded-full bg-[#4F39F6]/10 dark:bg-[#4F39F6]/20 blur-xl animate-pulse"></div>
                   <div className="absolute w-40 h-40 rounded-full border border-dashed border-[#818CF8]/25 animate-spin" style={{ animationDuration: '50s' }}></div>
                   <div className="absolute w-24 h-24 rounded-full bg-gradient-to-b from-white to-zinc-50 dark:from-[#1E293B] dark:to-[#0F172A] border border-zinc-200/50 dark:border-white/10 shadow-sm flex flex-col items-center justify-center z-10">
-                    <div className="w-18 h-18 rounded-full bg-gradient-to-br from-[#4F39F6] via-[#818CF8] to-[#38BDF8] flex flex-col items-center justify-center shadow-[0_0_20px_rgba(79,57,246,0.4)]">
-                      <span className="text-white font-black text-sm tracking-wider font-outfit uppercase">AI</span>
-                      <span className="text-[7px] text-white/90 font-extrabold uppercase tracking-widest">Auto</span>
+                    <div className="w-18 h-18 rounded-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200/80 dark:border-zinc-800 flex items-center justify-center shadow-md p-3.5">
+                      <img src="/Dark theme.png" alt="ReplyZens Logo" className="hidden dark:block w-9 h-9 object-contain" />
+                      <img src="/Light Theme.png" alt="ReplyZens Logo" className="block dark:hidden w-9 h-9 object-contain" />
                     </div>
                   </div>
                 </div>
@@ -3022,9 +3022,11 @@ const Landing: React.FC = () => {
             SECTION 13 — FINAL CTA
             ========================================== */}
         <section className="py-32 border-t border-zinc-200/80 dark:border-white/5 relative overflow-hidden text-center bg-gradient-to-b from-zinc-50 to-[#fafafa] dark:from-zinc-950 dark:to-[#09090b]">
+          {/* Ambient backdrop glow using logo colors */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-gradient-to-r from-[#EC4899]/10 via-[#818CF8]/10 to-[#4F39F6]/10 blur-[100px] pointer-events-none rounded-full" />
           <div className="max-w-4xl mx-auto px-6 relative z-10 font-inter">
-            <h2 className="text-4xl md:text-6xl font-extrabold text-white mb-6 leading-tight tracking-tight">
-              Stop Losing Leads Inside Your Instagram DMs
+            <h2 className="text-4xl md:text-6xl font-extrabold text-white mb-6 leading-tight tracking-tight cta-heading-glow">
+              Stop Losing Leads Inside Your <span className="text-logo-gradient">Instagram DMs</span>
             </h2>
             <p className="text-base md:text-lg text-zinc-400 max-w-2xl mx-auto mb-10 font-medium leading-relaxed">
               Let ReplyZen AI respond instantly, qualify prospects, capture customer details, and help your business convert more conversations into revenue.

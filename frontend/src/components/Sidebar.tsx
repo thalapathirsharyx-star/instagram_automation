@@ -15,8 +15,8 @@ const Sidebar: React.FC = () => {
         <div className="logo gap-2">
           <img src="/Dark theme.png" alt="ReplyZens Logo" className="hidden dark:block w-11 h-11 object-contain transition-transform duration-300 hover:scale-105" />
           <img src="/Light Theme.png" alt="ReplyZens Logo" className="block dark:hidden w-11 h-11 object-contain transition-transform duration-300 hover:scale-105" />
-          <span className="logo-text text-lg font-extrabold tracking-tight uppercase font-outfit">
-            <span className="logo-text-primary text-zinc-900 dark:text-white">Reply</span><span className="text-purple-600">Zens</span>
+          <span className="logo-text text-lg font-extrabold tracking-tight uppercase font-inter">
+            <span className="logo-text-primary text-zinc-900 dark:text-white">Reply</span><span className="text-logo-gradient">Zens</span>
           </span>
         </div>
         <button 

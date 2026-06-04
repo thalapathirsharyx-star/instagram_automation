@@ -13,8 +13,8 @@ const Footer: React.FC = () => {
                 alt="ReplyZens Logo"
                 className="w-9 h-9 object-contain transition-transform duration-300 group-hover:scale-105"
               />
-              <span className="text-lg font-bold tracking-tight text-white uppercase font-outfit logo-text">
-                Reply<span className="text-[#818CF8]">Zens</span>
+              <span className="text-lg font-bold tracking-tight text-white uppercase font-inter logo-text">
+                Reply<span className="text-logo-gradient">Zens</span>
               </span>
             </Link>
             <p className="text-zinc-500 text-xs leading-relaxed max-w-sm mb-6">

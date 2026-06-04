@@ -22,8 +22,8 @@ const Navbar: React.FC = () => {
         <Link to="/" className="flex items-center group gap-1">
           <img src="/Dark theme.png" alt="ReplyZens Logo" className="hidden dark:block w-11 h-11 object-contain transition-transform duration-300 group-hover:scale-105" />
           <img src="/Light Theme.png" alt="ReplyZens Logo" className="block dark:hidden w-11 h-11 object-contain transition-transform duration-300 group-hover:scale-105" />
-          <span className="text-xl font-bold tracking-tight text-zinc-900 dark:text-white uppercase font-outfit">
-            Reply<span className="text-[#4F39F6] dark:text-[#818CF8]">Zens</span>
+          <span className="text-xl font-bold tracking-tight text-zinc-900 dark:text-white uppercase font-inter">
+            Reply<span className="text-logo-gradient">Zens</span>
           </span>
         </Link>
 
