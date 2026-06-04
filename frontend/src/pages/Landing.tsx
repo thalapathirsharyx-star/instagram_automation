@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '../components/Navbar';
@@ -2039,12 +2039,12 @@ const Landing: React.FC = () => {
         <section className="relative pt-16 pb-28 z-10 overflow-hidden text-center">
           <div className="max-w-6xl mx-auto px-6 relative z-10 flex flex-col items-center">
             {/* Tag / Badge */}
-            {/* <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#4F39F6]/10 border border-[#4F39F6]/20 mb-6 select-none">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#4F39F6]/10 border border-[#4F39F6]/20 mb-6 select-none">
               <span className="w-1.5 h-1.5 rounded-full bg-[#4F39F6] animate-pulse" />
               <span className="text-[10px] font-bold uppercase tracking-widest text-[#4F39F6] dark:text-[#818CF8]">
-                AI Instagram Lead Capture & DM Automation
+                AI Instagram Sales Agent
               </span>
-            </div> */}
+            </div>
 
             {/* Headline with visual gradient spec */}
             <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight mb-6 text-balance text-zinc-950 dark:text-white max-w-4xl leading-[1.1]">

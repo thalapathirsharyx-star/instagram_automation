@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 
@@ -63,7 +63,7 @@ const PrivacyContent: React.FC = () => (
       </p>
       <ul>
         <li><strong>SaaS Delivery:</strong> To operate your account, synchronize your DMs with the web inbox, and route messages to team members.</li>
-        <li><strong>Workflow Automation:</strong> To trigger automated replies based on user-defined keywords, FAQ databases, and our custom AI assistant (ReplyZen).</li>
+        <li><strong>Workflow Automation:</strong> To trigger automated replies based on user-defined keywords, FAQ databases, and our custom AI assistant (Flazly).</li>
         <li><strong>External Integrations:</strong> To sync qualified lead information (handles, emails, interest levels) directly to your external databases, like Google Sheets, as configured in your dashboard.</li>
         <li><strong>Spam & Noise Filtering:</strong> To run incoming messages through NLP filters to block spam, emojis, and low-intent message flows.</li>
       </ul>

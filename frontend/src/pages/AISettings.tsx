@@ -94,7 +94,7 @@ const AISettings: React.FC = () => {
           </div>
           <div>
             <h1 className="text-3xl font-bold text-zinc-100 mb-1">AI Persona</h1>
-            <p className="text-zinc-400 font-medium">Define how ReplyZen interacts with your customers</p>
+            <p className="text-zinc-400 font-medium">Define how Flazly interacts with your customers</p>
           </div>
         </div>
         
@@ -133,7 +133,7 @@ const AISettings: React.FC = () => {
             className="flex-grow w-full min-h-[500px] w3-input p-6 text-sm font-medium font-mono leading-relaxed resize-none focus:ring-4 focus:ring-purple-500/10 bg-zinc-950/50 border-white/5"
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
-            placeholder="Describe ReplyZen's personality and rules here..."
+            placeholder="Describe Flazly's personality and rules here..."
           />
           
           <div className="mt-6 flex gap-4 p-4 bg-purple-500/10 rounded-2xl border border-purple-500/20 backdrop-blur-sm">
@@ -141,7 +141,7 @@ const AISettings: React.FC = () => {
               <AlertCircle size={18} />
             </div>
             <p className="text-xs text-purple-200/80 font-medium leading-relaxed">
-              <strong className="text-purple-300">Pro Tip:</strong> Use <code className="bg-zinc-900 px-1.5 py-0.5 rounded text-purple-400 border border-white/5">${'{'}context{'}'}</code>, <code className="bg-zinc-900 px-1.5 py-0.5 rounded text-purple-400 border border-white/5">${'{'}historyText{'}'}</code>, and <code className="bg-zinc-900 px-1.5 py-0.5 rounded text-purple-400 border border-white/5">${'{'}messageText{'}'}</code> to keep ReplyZen context-aware.
+              <strong className="text-purple-300">Pro Tip:</strong> Use <code className="bg-zinc-900 px-1.5 py-0.5 rounded text-purple-400 border border-white/5">${'{'}context{'}'}</code>, <code className="bg-zinc-900 px-1.5 py-0.5 rounded text-purple-400 border border-white/5">${'{'}historyText{'}'}</code>, and <code className="bg-zinc-900 px-1.5 py-0.5 rounded text-purple-400 border border-white/5">${'{'}messageText{'}'}</code> to keep Flazly context-aware.
             </p>
           </div>
         </div>
@@ -151,7 +151,7 @@ const AISettings: React.FC = () => {
             <h3 className="text-lg font-bold flex items-center gap-2 mb-6">
               <Sparkles size={18} className="text-purple-400" /> AI Tone Preset
             </h3>
-            <p className="text-xs text-zinc-400 font-medium mb-4">Select a preset to quickly set the tone of ReplyZen's responses.</p>
+            <p className="text-xs text-zinc-400 font-medium mb-4">Select a preset to quickly set the tone of Flazly's responses.</p>
             <div className="grid grid-cols-2 gap-3">
               {['Professional', 'Friendly', 'Salesy', 'Casual'].map((t) => (
                 <button
@@ -177,7 +177,7 @@ const AISettings: React.FC = () => {
               <ul className="space-y-6">
                 <li className="flex flex-col gap-2">
                   <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Tone</span>
-                  <p className="text-sm font-medium opacity-80 leading-relaxed text-zinc-300">"ReplyZen is warm, polite, and uses 'Akka/Anna' for respect."</p>
+                  <p className="text-sm font-medium opacity-80 leading-relaxed text-zinc-300">"Flazly is warm, polite, and uses 'Akka/Anna' for respect."</p>
                 </li>
                 <li className="flex flex-col gap-2">
                   <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Language</span>
@@ -195,7 +195,7 @@ const AISettings: React.FC = () => {
           <div className="w3-card bg-purple-500/5 border-purple-500/10">
             <h3 className="font-bold text-zinc-100 mb-4 flex items-center gap-2"><Sparkles size={16} className="text-purple-400" /> Need Help?</h3>
             <p className="text-sm text-zinc-400 font-medium leading-relaxed">
-              ReplyZen uses these instructions as its primary "brain." Updates are instant for all new incoming chats.
+              Flazly uses these instructions as its primary "brain." Updates are instant for all new incoming chats.
             </p>
           </div>
         </div>

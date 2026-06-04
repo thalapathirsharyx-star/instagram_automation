@@ -472,7 +472,7 @@ const Dashboard: React.FC = () => {
               </div>
               <h2 className="text-lg font-bold mb-2 leading-tight">Personality Tuning</h2>
               <p className="text-xs font-medium leading-relaxed text-purple-200/80 mb-4">
-                ReplyZen is currently using a <strong className="text-white font-bold">Professional Tone</strong>. Based on current lead behavior, switching to a <strong className="text-purple-300 font-bold">Friendly Tone</strong> could increase engagement by up to 18%.
+                Flazly is currently using a <strong className="text-white font-bold">Professional Tone</strong>. Based on current lead behavior, switching to a <strong className="text-purple-300 font-bold">Friendly Tone</strong> could increase engagement by up to 18%.
               </p>
               <button className="w3-button-primary bg-white/10 hover:bg-white/20 shadow-none border border-white/20 group py-2.5 text-xs">
                 <span>Adjust AI Persona</span>
