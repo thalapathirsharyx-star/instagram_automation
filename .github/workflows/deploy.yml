@@ -34,8 +34,9 @@ jobs:
             echo "--- Checking Github Connectivity ---"
             curl -I -m 5 https://github.com || echo "GitHub Connection timed out over HTTPS. Trying IPv4 fallback..."
             
-            git pull origin main || {
-              echo "Error: git pull failed. Checking DNS/Network settings..."
+            git fetch --all
+            git reset --hard origin/main || {
+              echo "Error: git pull/reset failed. Checking DNS/Network settings..."
               getent ahosts github.com
               exit 1
             }
