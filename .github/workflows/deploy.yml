@@ -57,8 +57,8 @@ jobs:
             npm run build
 
             # 5. Restart Backend Service via PM2
-            # Assumes you started it initially with: pm2 start dist/main.js --name replyzens-backend
-            pm2 restart replyzens-backend || pm2 start dist/main.js --name replyzens-backend
+            # Assumes you started it initially with: pm2 start dist/main.js --name flazly-backend
+            pm2 restart flazly-backend || pm2 start dist/main.js --name flazly-backend
             pm2 save
             
             echo "Deployment Completed Successfully!"
