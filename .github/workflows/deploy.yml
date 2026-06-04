@@ -23,24 +23,39 @@ jobs:
             [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
             export PATH="$HOME/.nvm/versions/node/$(ls $HOME/.nvm/versions/node/ | tail -1)/bin:$PATH"
 
-            # 1. Navigate to project root & Pull Latest Code
+            # 1. Force IPv4 for git to resolve broken IPv6 VPS routing timeouts
+            git config --global http.ipresolve v4
+
+            # 2. Navigate to project root & Pull Latest Code
             cd /var/www/Thalapathi/Replyzens
             git config --global --add safe.directory /var/www/Thalapathi/Replyzens
-            git pull origin main
+            
+            # Print diagnostic info before pull
+            echo "--- Checking Github Connectivity ---"
+            curl -I -m 5 https://github.com || echo "GitHub Connection timed out over HTTPS. Trying IPv4 fallback..."
+            
+            git pull origin main || {
+              echo "Error: git pull failed. Checking DNS/Network settings..."
+              getent ahosts github.com
+              exit 1
+            }
 
-            # 2. Build Frontend
+            # Ensure proper execution permissions for local .bin tools
+            chmod -R +w /var/www/Thalapathi/Replyzens/backend 2>/dev/null || true
+
+            # 3. Build Frontend
             echo "--- Building Frontend ---"
             cd /var/www/Thalapathi/Replyzens/frontend
             npm install
             node node_modules/typescript/bin/tsc -b && node node_modules/vite/bin/vite.js build
 
-            # 3. Build Backend
+            # 4. Build Backend
             echo "--- Building Backend ---"
             cd /var/www/Thalapathi/Replyzens/backend
             npm install
             npm run build
 
-            # 4. Restart Backend Service via PM2
+            # 5. Restart Backend Service via PM2
             # Assumes you started it initially with: pm2 start dist/main.js --name replyzens-backend
             pm2 restart replyzens-backend || pm2 start dist/main.js --name replyzens-backend
             pm2 save
