@@ -212,6 +212,60 @@
   animation: fadeIn 0.5s ease-out;
 }
 
+/* Premium AI SaaS Backdrop Animations & Classes */
+:root {
+  --grid-line-color: rgba(59, 130, 246, 0.035);
+}
+.dark {
+  --grid-line-color: rgba(59, 130, 246, 0.06);
+}
+
+.hero-line-grid {
+  background-size: 40px 40px;
+  background-image: 
+    linear-gradient(to right, var(--grid-line-color) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-line-color) 1px, transparent 1px);
+  animation: gridMove 60s linear infinite;
+  mask-image: radial-gradient(ellipse 60% 50% at 50% 30%, black, transparent);
+  -webkit-mask-image: radial-gradient(ellipse 60% 50% at 50% 30%, black, transparent);
+}
+
+@keyframes gridMove {
+  from { background-position: 0 0; }
+  to { background-position: 0 40px; }
+}
+
+@keyframes meshGlow1 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(4%, 6%) scale(1.05); }
+}
+@keyframes meshGlow2 {
+  0%, 100% { transform: translate(0, 0) scale(1.05); }
+  50% { transform: translate(-5%, -4%) scale(0.95); }
+}
+@keyframes meshGlow3 {
+  0%, 100% { transform: translate(0, 0) scale(0.95); }
+  50% { transform: translate(3%, -5%) scale(1.02); }
+}
+
+.animate-mesh-glow-1 {
+  animation: meshGlow1 25s ease-in-out infinite;
+}
+.animate-mesh-glow-2 {
+  animation: meshGlow2 30s ease-in-out infinite;
+}
+.animate-mesh-glow-3 {
+  animation: meshGlow3 22s ease-in-out infinite;
+}
+
+@keyframes flowDash {
+  to { strokeDashoffset: -40; }
+}
+.animate-flow-dash {
+  stroke-dasharray: 8 16;
+  animation: flowDash 3s linear infinite;
+}
+
 @layer utilities {
   .glass {
     @apply bg-zinc-900/60 backdrop-blur-xl border border-white/10;

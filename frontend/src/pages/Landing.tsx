@@ -1978,10 +1978,55 @@ const Landing: React.FC = () => {
   return (
     <div className="landing-page bg-[#fafafa] dark:bg-[#09090b] text-zinc-900 dark:text-white font-inter selection:bg-[#38BDF8]/10 selection:text-[#38BDF8] min-h-screen relative overflow-x-hidden">
 
-      {/* Decorative gradient radial glows */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[550px] bg-gradient-to-b from-[#3B82F6]/5 dark:from-[#3B82F6]/10 to-transparent blur-[120px] pointer-events-none" />
-      <div className="absolute top-[800px] right-0 w-[450px] h-[450px] bg-[#6366F1]/5 blur-[100px] pointer-events-none" />
-      <div className="absolute top-[1800px] left-0 w-[500px] h-[500px] bg-[#38BDF8]/5 blur-[120px] pointer-events-none" />
+      {/* Animated Grid Background for Hero Section */}
+      <div className="absolute top-0 inset-x-0 h-[1000px] hero-line-grid pointer-events-none select-none z-0" />
+
+      {/* Premium Shifting Mesh Gradient Backdrop */}
+      <div className="absolute top-0 inset-x-0 h-[1000px] overflow-hidden pointer-events-none select-none z-0">
+        <div className="absolute -top-[20%] left-[10%] w-[60%] h-[70%] rounded-full bg-[#818CF8]/5 dark:bg-[#818CF8]/10 blur-[120px] animate-mesh-glow-1" />
+        <div className="absolute -top-[30%] right-[10%] w-[50%] h-[60%] rounded-full bg-[#3B82F6]/6 dark:bg-[#3B82F6]/12 blur-[140px] animate-mesh-glow-2" />
+        <div className="absolute top-[10%] left-[30%] w-[40%] h-[50%] rounded-full bg-[#06B6D4]/4 dark:bg-[#06B6D4]/8 blur-[100px] animate-mesh-glow-3" />
+      </div>
+
+      {/* Left side automation connection lines */}
+      <div className="absolute top-[120px] left-0 w-[20%] max-w-[300px] h-[600px] pointer-events-none select-none z-0 hidden lg:block opacity-[0.6] dark:opacity-[0.7]">
+        <svg className="w-full h-full" viewBox="0 0 200 600" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M-50 50 C 150 150, 100 300, 50 450 C 0 550, 100 600, -50 650" stroke="url(#leftLineGrad)" strokeWidth="1.5" strokeDasharray="6 6" />
+          <path d="M-50 50 C 150 150, 100 300, 50 450 C 0 550, 100 600, -50 650" stroke="url(#leftLineGrad)" strokeWidth="1.5" className="animate-flow-dash" />
+          <circle r="3" fill="#3B82F6">
+            <animateMotion dur="10s" repeatCount="indefinite" path="M-50 50 C 150 150, 100 300, 50 450 C 0 550, 100 600, -50 650" />
+          </circle>
+          <defs>
+            <linearGradient id="leftLineGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#3B82F6" stopOpacity="0.1" />
+              <stop offset="50%" stopColor="#38BDF8" stopOpacity="0.5" />
+              <stop offset="100%" stopColor="#818CF8" stopOpacity="0.1" />
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+
+      {/* Right side automation connection lines */}
+      <div className="absolute top-[160px] right-0 w-[20%] max-w-[300px] h-[600px] pointer-events-none select-none z-0 hidden lg:block opacity-[0.6] dark:opacity-[0.7]">
+        <svg className="w-full h-full" viewBox="0 0 200 600" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M250 80 C 50 180, 100 320, 150 420 C 200 520, 80 580, 250 630" stroke="url(#rightLineGrad)" strokeWidth="1.5" strokeDasharray="6 6" />
+          <path d="M250 80 C 50 180, 100 320, 150 420 C 200 520, 80 580, 250 630" stroke="url(#rightLineGrad)" strokeWidth="1.5" className="animate-flow-dash" />
+          <circle r="3" fill="#06B6D4">
+            <animateMotion dur="12s" repeatCount="indefinite" path="M250 80 C 50 180, 100 320, 150 420 C 200 520, 80 580, 250 630" />
+          </circle>
+          <defs>
+            <linearGradient id="rightLineGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#818CF8" stopOpacity="0.1" />
+              <stop offset="50%" stopColor="#06B6D4" stopOpacity="0.5" />
+              <stop offset="100%" stopColor="#3B82F6" stopOpacity="0.1" />
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+
+      {/* Subtle bottom/mid radial glows for scroll depth */}
+      <div className="absolute top-[1500px] left-0 w-[500px] h-[500px] bg-[#3B82F6]/3 blur-[120px] pointer-events-none" />
+      <div className="absolute top-[2500px] right-0 w-[500px] h-[500px] bg-[#06B6D4]/3 blur-[120px] pointer-events-none" />
 
       {/* NAVBAR */}
       <Navbar />
