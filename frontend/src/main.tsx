@@ -5,7 +5,7 @@ import App from './App.tsx'
 
 import { GoogleOAuthProvider } from '@react-oauth/google';
 
-const GOOGLE_CLIENT_ID = "713891719947-lfs7vgnc5odf2lj968qcd4dom3tpn8um.apps.googleusercontent.com";
+const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || "426061817600-gf7lkgb76fmt5ju5vasqb7amcljqag8h.apps.googleusercontent.com";
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
