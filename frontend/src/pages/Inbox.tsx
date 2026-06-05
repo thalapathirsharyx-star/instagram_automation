@@ -186,7 +186,7 @@ const Inbox: React.FC = () => {
                     {/* Name and Timestamp Above Bubble */}
                     <div className={`flex items-center gap-2 mb-1.5 px-1 ${msg.direction === 'Outbound' ? 'flex-row-reverse' : 'flex-row'}`}>
                       <span className="text-xs font-medium text-zinc-600">
-                        {msg.direction === 'Outbound' ? 'Flazly Assistant' : selectedLead?.name || selectedLead?.instagram_handle || 'Customer'}
+                        {msg.direction === 'Outbound' ? 'Flazly Assistant' : selectedLead?.customer_name || selectedLead?.instagram_handle || 'Customer'}
                       </span>
                       <span className="text-[10px] font-medium text-zinc-400">
                         {(() => {
