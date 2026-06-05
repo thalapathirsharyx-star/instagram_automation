@@ -144,9 +144,9 @@ const ClientManagement: React.FC = () => {
               style={{ background: 'transparent', border: 'none', color: 'var(--text)', outline: 'none', fontSize: '0.9rem' }}
             />
           </div>
-          <button className="gradient-btn" style={{ padding: '10px 20px', borderRadius: '12px', fontSize: '0.9rem', fontWeight: 600 }}>
+          {/* <button onClick={() => window.open('/signup', '_blank')} className="gradient-btn" style={{ padding: '10px 20px', borderRadius: '12px', fontSize: '0.9rem', fontWeight: 600, cursor: 'pointer' }}>
             Register New Client
-          </button>
+          </button> */}
         </div>
       </div>
 
@@ -244,6 +244,7 @@ const ClientManagement: React.FC = () => {
                       >
                         {client.status ? 'Suspend' : 'Activate'}
                       </button>
+                      {/* 
                       <button 
                         onClick={() => handleImpersonate(client.id)}
                         className="glass-card" 
@@ -251,6 +252,7 @@ const ClientManagement: React.FC = () => {
                       >
                         Impersonate <ArrowRight size={14} />
                       </button>
+                      */}
                       <button className="glass-card" style={{ padding: '8px', cursor: 'pointer' }}>
                         <MoreVertical size={16} />
                       </button>

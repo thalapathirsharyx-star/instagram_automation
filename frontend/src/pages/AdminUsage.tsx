@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Activity, Search, Filter, Server } from 'lucide-react';
+import { Activity, Search, Filter, Server, Cloud, ChevronLeft, ChevronRight } from 'lucide-react';
 import api from '../lib/axios';
 
 const AdminUsage: React.FC = () => {
@@ -26,8 +26,8 @@ const AdminUsage: React.FC = () => {
   }, []);
 
   const filteredClients = clients.filter(c => 
-    c.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    c.email.toLowerCase().includes(searchTerm.toLowerCase())
+    c.name?.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    c.email?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   useEffect(() => {
@@ -41,53 +41,76 @@ const AdminUsage: React.FC = () => {
   );
 
   return (
-    <div className="dashboard-page" style={{ height: '100%', display: 'flex', flexDirection: 'column', gap: '32px' }}>
-      <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+    <div className="max-w-7xl mx-auto pb-12 font-sans animate-in fade-in duration-500 h-full flex flex-col" style={{ fontFamily: '"Inter", system-ui, sans-serif' }}>
+      
+      {/* Header */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8 border-b border-zinc-200/80 pb-6 shrink-0">
         <div>
-          <h1 style={{ margin: 0, fontSize: '1.8rem' }}>Tenant API Usage</h1>
-          <p style={{ margin: '8px 0 0', color: 'var(--text-dim)' }}>Monitor AI token consumption and limits across all accounts.</p>
+          <h1 className="text-2xl font-bold text-zinc-900 tracking-tight mb-2">Tenant AI Usage</h1>
+          <p className="text-sm text-zinc-500 font-medium">Monitor API consumption, token utilization, and rate limits across all SaaS accounts.</p>
         </div>
-        <div style={{ display: 'flex', gap: '12px' }}>
-          <div className="glass-card" style={{ padding: '8px 16px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <Search size={18} color="var(--text-dim)" />
+        
+        <div className="flex flex-col sm:flex-row gap-3">
+          <div className="relative group">
+            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 group-focus-within:text-violet-500 transition-colors" />
             <input 
               type="text" 
-              placeholder="Search clients..." 
+              placeholder="Search tenants..." 
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              style={{ background: 'transparent', border: 'none', color: 'var(--text)', outline: 'none', fontSize: '0.9rem' }}
+              className="w-full sm:w-64 bg-white border border-zinc-200 rounded-lg pl-9 pr-4 py-2.5 text-sm font-medium text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 transition-all shadow-sm"
             />
           </div>
+          <button className="flex items-center justify-center gap-2 px-4 py-2.5 bg-white border border-zinc-200 rounded-lg text-zinc-700 font-semibold hover:bg-zinc-50 hover:border-zinc-300 transition-all shadow-sm">
+            <Filter size={16} />
+            <span>Filter</span>
+          </button>
         </div>
       </div>
 
-      <div className="glass-card overflow-hidden" style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-        <div style={{ padding: '20px 24px', borderBottom: '1px solid var(--glass-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(255,255,255,0.02)' }}>
-          <div style={{ display: 'flex', gap: '24px', alignItems: 'center' }}>
-            <h3 style={{ margin: 0, fontSize: '1.1rem' }}>Usage Metrics</h3>
-            <div style={{ fontSize: '0.8rem', color: 'var(--text-dim)', fontWeight: 500 }}>
-              Showing {filteredClients.length} tenants
-            </div>
+      {/* Main Table Card */}
+      <div className="bg-white border border-zinc-200/80 rounded-2xl shadow-sm flex flex-col min-h-0 flex-grow">
+        
+        {/* Table Header Row */}
+        <div className="px-6 py-4 border-b border-zinc-100 bg-zinc-50 flex justify-between items-center shrink-0 rounded-t-2xl">
+          <div className="flex items-center gap-3">
+            <h3 className="text-sm font-bold text-zinc-900">Infrastructure Metrics</h3>
+            <span className="px-2.5 py-0.5 bg-zinc-200 text-zinc-700 rounded-full text-xs font-bold">{filteredClients.length} Tenants</span>
           </div>
-          <button style={{ background: 'transparent', border: 'none', color: 'var(--text-dim)', cursor: 'pointer' }}>
-            <Filter size={18} />
-          </button>
+          <Activity size={16} className="text-zinc-400" />
         </div>
 
-        <div style={{ overflowX: 'auto', overflowY: 'auto', flex: 1 }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
-            <thead>
-              <tr style={{ borderBottom: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.01)' }}>
-                <th className="sticky-th-company" style={{ padding: '12px 20px', fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-dim)', textTransform: 'uppercase' }}>Client</th>
-                <th className="sticky-th" style={{ padding: '12px 20px', fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-dim)', textTransform: 'uppercase' }}>Current Plan</th>
-                <th className="sticky-th" style={{ padding: '12px 20px', fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-dim)', textTransform: 'uppercase' }}>Monthly AI Credits Used</th>
-                <th className="sticky-th" style={{ padding: '12px 20px', fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-dim)', textTransform: 'uppercase' }}>Utilization</th>
+        <div className="overflow-x-auto overflow-y-auto flex-grow">
+          <table className="w-full text-left border-collapse whitespace-nowrap">
+            <thead className="sticky top-0 bg-white z-10 shadow-[0_1px_0_rgba(228,228,231,1)]">
+              <tr>
+                <th className="px-6 py-4 text-[11px] font-bold text-zinc-500 uppercase tracking-wider bg-zinc-50/50">Client Identity</th>
+                <th className="px-6 py-4 text-[11px] font-bold text-zinc-500 uppercase tracking-wider bg-zinc-50/50">Subscription Tier</th>
+                <th className="px-6 py-4 text-[11px] font-bold text-zinc-500 uppercase tracking-wider bg-zinc-50/50">Monthly AI Queries</th>
+                <th className="px-6 py-4 text-[11px] font-bold text-zinc-500 uppercase tracking-wider bg-zinc-50/50">Capacity Utilization</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className="divide-y divide-zinc-100">
               {isLoading ? (
                 <tr>
-                  <td colSpan={4} style={{ padding: '40px', textAlign: 'center', color: 'var(--text-dim)' }}>Loading usage data...</td>
+                  <td colSpan={4} className="py-24">
+                    <div className="flex flex-col items-center justify-center gap-4 text-zinc-500">
+                      <div className="w-8 h-8 border-4 border-violet-200 border-t-violet-600 rounded-full animate-spin"></div>
+                      <span className="text-sm font-medium">Aggregating telemetry...</span>
+                    </div>
+                  </td>
+                </tr>
+              ) : paginatedClients.length === 0 ? (
+                <tr>
+                  <td colSpan={4} className="py-24 text-center">
+                    <div className="flex flex-col items-center justify-center">
+                      <div className="w-16 h-16 bg-zinc-50 rounded-2xl flex items-center justify-center mb-4 border border-zinc-100">
+                        <Cloud size={24} className="text-zinc-400" />
+                      </div>
+                      <h3 className="text-base font-bold text-zinc-900 mb-1">No tenants found</h3>
+                      <p className="text-sm text-zinc-500 font-medium">Adjust search or check database connection.</p>
+                    </div>
+                  </td>
                 </tr>
               ) : paginatedClients.map((client) => {
                 // Hardcoded limits matching backend PlanLimits
@@ -99,38 +122,56 @@ const AdminUsage: React.FC = () => {
 
                 const usage = client.monthly_ai_usage || 0;
                 const percent = Math.min(100, Math.round((usage / limit) * 100));
+                
+                let percentColor = 'bg-emerald-500';
+                let textColor = 'text-emerald-700';
+                if (percent > 90) {
+                  percentColor = 'bg-rose-500';
+                  textColor = 'text-rose-600';
+                } else if (percent > 75) {
+                  percentColor = 'bg-amber-500';
+                  textColor = 'text-amber-600';
+                } else if (percent > 50) {
+                  percentColor = 'bg-blue-500';
+                  textColor = 'text-blue-700';
+                }
 
                 return (
-                  <tr key={client.id} className="table-row-hover" style={{ borderBottom: '1px solid var(--glass-border)' }}>
-                    <td className="sticky-td-company" style={{ padding: '12px 20px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                        <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'var(--glass-border)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-dim)' }}>
+                  <tr key={client.id} className="hover:bg-zinc-50 transition-colors duration-200 group">
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-4">
+                        <div className="w-10 h-10 rounded-xl bg-zinc-100 flex items-center justify-center text-zinc-500 font-bold border border-zinc-200 shadow-sm shrink-0">
                           <Server size={18} />
                         </div>
-                        <div>
-                          <div style={{ fontWeight: 600, fontSize: '0.95rem' }}>{client.name}</div>
-                          <div style={{ fontSize: '0.8rem', color: 'var(--text-dim)' }}>{client.email}</div>
+                        <div className="flex flex-col">
+                          <span className="font-bold text-zinc-900">{client.name || 'Unknown'}</span>
+                          <span className="text-xs text-zinc-500 font-medium mt-0.5">{client.email || 'No email'}</span>
                         </div>
                       </div>
                     </td>
-                    <td style={{ padding: '12px 20px' }}>
-                      <span className={`px-2 py-1 rounded text-[11px] font-bold uppercase ${client.plan !== 'Free' ? 'bg-purple-500/10 text-purple-400 border border-purple-500/20' : 'bg-zinc-800 text-zinc-400 border border-zinc-700'}`}>
+                    <td className="px-6 py-4">
+                      <span className={`px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider border
+                        ${client.plan !== 'Free' ? 'bg-violet-50 text-violet-700 border-violet-200' : 'bg-zinc-100 text-zinc-600 border-zinc-200'}`}>
                         {client.plan || 'Free'}
                       </span>
                     </td>
-                    <td style={{ padding: '12px 20px' }}>
-                      <div style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--primary)' }}>
-                        {usage.toLocaleString()} <span style={{ fontSize: '0.8rem', color: 'var(--text-dim)', fontWeight: 500 }}>/ {limit.toLocaleString()}</span>
+                    <td className="px-6 py-4">
+                      <div className="flex items-baseline gap-1.5">
+                        <span className="text-base font-bold text-zinc-900">{usage.toLocaleString()}</span>
+                        <span className="text-[11px] font-semibold text-zinc-400">/ {limit.toLocaleString()}</span>
                       </div>
                     </td>
-                    <td style={{ padding: '12px 20px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                        <div style={{ flex: 1, height: '6px', background: 'var(--glass-border)', borderRadius: '10px', overflow: 'hidden' }}>
-                          <div style={{ width: `${percent}%`, height: '100%', background: percent > 90 ? '#ef4444' : percent > 75 ? '#fbbf24' : 'var(--primary)', borderRadius: '10px' }}></div>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-3 w-40">
+                        <div className="h-2 w-full bg-zinc-100 rounded-full overflow-hidden">
+                          <div 
+                            className={`h-full rounded-full transition-all duration-1000 ${percentColor}`} 
+                            style={{ width: `${percent}%` }}
+                          />
                         </div>
-                        <div style={{ fontSize: '0.8rem', fontWeight: 600, color: percent > 90 ? '#ef4444' : 'var(--text-dim)', width: '35px' }}>
+                        <span className={`text-xs font-bold w-10 text-right ${textColor}`}>
                           {percent}%
-                        </div>
+                        </span>
                       </div>
                     </td>
                   </tr>
@@ -141,70 +182,44 @@ const AdminUsage: React.FC = () => {
         </div>
 
         {/* Pagination Controls */}
-        <div style={{ 
-          padding: '16px 24px', 
-          borderTop: '1px solid var(--glass-border)', 
-          display: 'flex', 
-          justifyContent: 'space-between', 
-          alignItems: 'center', 
-          background: 'rgba(255,255,255,0.01)',
-          flexShrink: 0
-        }}>
-          <div style={{ fontSize: '0.85rem', color: 'var(--text-dim)' }}>
-            Showing <strong style={{ color: 'var(--text)' }}>{filteredClients.length > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0}</strong> to{' '}
-            <strong style={{ color: 'var(--text)' }}>{Math.min(currentPage * itemsPerPage, filteredClients.length)}</strong> of{' '}
-            <strong style={{ color: 'var(--text)' }}>{filteredClients.length}</strong> tenants
+        <div className="px-6 py-4 border-t border-zinc-100 bg-white flex flex-col sm:flex-row justify-between items-center gap-4 shrink-0 rounded-b-2xl">
+          <div className="text-xs font-medium text-zinc-500">
+            Showing <strong className="text-zinc-900">{filteredClients.length > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0}</strong> to{' '}
+            <strong className="text-zinc-900">{Math.min(currentPage * itemsPerPage, filteredClients.length)}</strong> of{' '}
+            <strong className="text-zinc-900">{filteredClients.length}</strong> tenants
           </div>
           
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div className="flex items-center gap-2">
             <button
               onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
               disabled={currentPage === 1 || totalPages <= 1}
-              className="glass-card"
-              style={{
-                padding: '6px 12px',
-                fontSize: '0.8rem',
-                fontWeight: 600,
-                cursor: (currentPage === 1 || totalPages <= 1) ? 'not-allowed' : 'pointer',
-                opacity: (currentPage === 1 || totalPages <= 1) ? 0.4 : 1,
-                border: '1px solid var(--glass-border)'
-              }}
+              className="p-1.5 border border-zinc-200 rounded-md bg-white hover:bg-zinc-50 disabled:opacity-50 disabled:hover:bg-white text-zinc-600 transition-colors shadow-sm"
             >
-              Previous
+              <ChevronLeft size={16} />
             </button>
             
-            {Array.from({ length: Math.max(totalPages, 1) }, (_, i) => i + 1).map(pageNum => (
-              <button
-                key={pageNum}
-                onClick={() => setCurrentPage(pageNum)}
-                className={currentPage === pageNum ? 'gradient-btn' : 'glass-card'}
-                style={{
-                  padding: '6px 12px',
-                  fontSize: '0.8rem',
-                  fontWeight: 600,
-                  cursor: 'pointer',
-                  borderRadius: '8px',
-                  border: currentPage === pageNum ? 'none' : '1px solid var(--glass-border)'
-                }}
-              >
-                {pageNum}
-              </button>
-            ))}
+            <div className="flex items-center gap-1">
+              {Array.from({ length: Math.max(totalPages, 1) }, (_, i) => i + 1).map(pageNum => (
+                <button
+                  key={pageNum}
+                  onClick={() => setCurrentPage(pageNum)}
+                  className={`w-8 h-8 flex items-center justify-center rounded-md text-xs font-bold transition-colors ${
+                    currentPage === pageNum 
+                      ? 'bg-zinc-900 text-white shadow-sm' 
+                      : 'bg-white text-zinc-600 hover:bg-zinc-50 border border-transparent hover:border-zinc-200'
+                  }`}
+                >
+                  {pageNum}
+                </button>
+              ))}
+            </div>
 
             <button
               onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
               disabled={currentPage === totalPages || totalPages <= 1}
-              className="glass-card"
-              style={{
-                padding: '6px 12px',
-                fontSize: '0.8rem',
-                fontWeight: 600,
-                cursor: (currentPage === totalPages || totalPages <= 1) ? 'not-allowed' : 'pointer',
-                opacity: (currentPage === totalPages || totalPages <= 1) ? 0.4 : 1,
-                border: '1px solid var(--glass-border)'
-              }}
+              className="p-1.5 border border-zinc-200 rounded-md bg-white hover:bg-zinc-50 disabled:opacity-50 disabled:hover:bg-white text-zinc-600 transition-colors shadow-sm"
             >
-              Next
+              <ChevronRight size={16} />
             </button>
           </div>
         </div>

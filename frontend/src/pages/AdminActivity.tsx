@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Activity, MessageSquare, UserPlus, CreditCard, Zap, RefreshCw, Clock, AlertTriangle, CheckCircle2, Search } from 'lucide-react';
+import { Activity, UserPlus, CreditCard, Zap, RefreshCw, Clock, AlertTriangle, ListFilter } from 'lucide-react';
 import api from '../lib/axios';
 
 interface ActivityItem {
@@ -10,6 +10,8 @@ interface ActivityItem {
   timestamp: string;
   plan?: string;
   color: string;
+  bgLight: string;
+  borderLight: string;
   icon: React.ReactNode;
 }
 
@@ -30,7 +32,6 @@ const AdminActivity: React.FC = () => {
         const res = await api.get('/Company/Admin/All');
         const clients = res.data || [];
 
-        // Generate activity items from client data
         const items: ActivityItem[] = [];
 
         clients.forEach((client: any) => {
@@ -41,7 +42,9 @@ const AdminActivity: React.FC = () => {
             title: 'New Account Registered',
             description: `${client.name} (${client.email}) signed up on the platform.`,
             timestamp: client.created_on || new Date().toISOString(),
-            color: '#10b981',
+            color: 'text-emerald-600',
+            bgLight: 'bg-emerald-50',
+            borderLight: 'border-emerald-200',
             icon: <UserPlus size={16} />,
           });
 
@@ -54,7 +57,9 @@ const AdminActivity: React.FC = () => {
               description: `${client.name} upgraded their subscription to the ${client.plan} plan.`,
               timestamp: client.plan_expires_at ? new Date(new Date(client.plan_expires_at).getTime() - 30 * 24 * 60 * 60 * 1000).toISOString() : new Date().toISOString(),
               plan: client.plan,
-              color: '#a855f7',
+              color: 'text-violet-600',
+              bgLight: 'bg-violet-50',
+              borderLight: 'border-violet-200',
               icon: <CreditCard size={16} />,
             });
           }
@@ -66,14 +71,17 @@ const AdminActivity: React.FC = () => {
           if (client.plan === 'Business') limit = 75000;
           
           if (usage > limit * 0.8) {
+            const isCritical = usage >= limit;
             items.push({
               id: `usage-${client.id}`,
               type: 'high_usage',
-              title: usage >= limit ? 'AI Credit Limit Reached' : 'High AI Usage Alert',
+              title: isCritical ? 'AI Credit Limit Reached' : 'High AI Usage Alert',
               description: `${client.name} has consumed ${usage.toLocaleString()} / ${limit.toLocaleString()} AI credits (${Math.round((usage/limit)*100)}%).`,
               timestamp: new Date().toISOString(),
-              color: usage >= limit ? '#ef4444' : '#f59e0b',
-              icon: usage >= limit ? <AlertTriangle size={16} /> : <Zap size={16} />,
+              color: isCritical ? 'text-rose-600' : 'text-amber-600',
+              bgLight: isCritical ? 'bg-rose-50' : 'bg-amber-50',
+              borderLight: isCritical ? 'border-rose-200' : 'border-amber-200',
+              icon: isCritical ? <AlertTriangle size={16} /> : <Zap size={16} />,
             });
           }
         });
@@ -124,35 +132,35 @@ const AdminActivity: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div style={{ display: 'flex', height: '100%', alignItems: 'center', justifyContent: 'center', color: '#71717a' }}>
-        <RefreshCw size={20} className="animate-spin" style={{ marginRight: '8px' }} /> Loading Activity Feed...
+      <div className="flex h-64 items-center justify-center text-zinc-500 font-medium">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-8 h-8 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
+          <span className="text-sm">Fetching Audit Trail...</span>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="dashboard-page" style={{ minHeight: '100%', display: 'flex', flexDirection: 'column', gap: '32px' }}>
-      <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+    <div className="max-w-7xl mx-auto pb-12 font-sans animate-in fade-in duration-500" style={{ fontFamily: '"Inter", system-ui, sans-serif' }}>
+      
+      {/* Header */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8 border-b border-zinc-200/80 pb-6">
         <div>
-          <h1 style={{ margin: 0, fontSize: '1.8rem', color: '#18181b' }}>Platform Activity</h1>
-          <p style={{ margin: '8px 0 0', color: '#71717a' }}>Real-time audit trail of platform events and alerts.</p>
+          <h1 className="text-2xl font-bold text-zinc-900 tracking-tight mb-2">Platform Activity</h1>
+          <p className="text-sm text-zinc-500 font-medium">Real-time audit trail of SaaS signups, upgrades, and API warnings.</p>
         </div>
-        <div style={{ display: 'flex', gap: '8px' }}>
+        
+        <div className="flex items-center gap-2 bg-zinc-50 p-1.5 rounded-xl border border-zinc-200 shadow-sm shrink-0 overflow-x-auto">
           {filterButtons.map(btn => (
             <button
               key={btn.key}
               onClick={() => setFilter(btn.key)}
-              style={{
-                padding: '8px 16px',
-                borderRadius: '10px',
-                border: filter === btn.key ? '1px solid #a855f7' : '1px solid #e4e4e7',
-                background: filter === btn.key ? '#a855f715' : '#ffffff',
-                color: filter === btn.key ? '#a855f7' : '#71717a',
-                fontSize: '0.85rem',
-                fontWeight: 600,
-                cursor: 'pointer',
-                transition: 'all 0.2s',
-              }}
+              className={`px-4 py-2 rounded-lg text-xs font-bold transition-all whitespace-nowrap ${
+                filter === btn.key 
+                  ? 'bg-zinc-900 text-white shadow-sm' 
+                  : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100'
+              }`}
             >
               {btn.label}
             </button>
@@ -161,124 +169,92 @@ const AdminActivity: React.FC = () => {
       </div>
 
       {/* Summary Cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' }}>
-        <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '12px', padding: '20px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <UserPlus size={20} color="#10b981" />
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-6 flex items-center gap-4 shadow-sm hover:shadow-md transition-shadow">
+          <div className="w-12 h-12 rounded-xl bg-white flex items-center justify-center text-emerald-600 border border-emerald-100 shadow-sm">
+            <UserPlus size={20} />
+          </div>
           <div>
-            <div style={{ fontSize: '1.3rem', fontWeight: 700, color: '#166534' }}>{activities.filter(a => a.type === 'new_client').length}</div>
-            <div style={{ fontSize: '0.8rem', color: '#16a34a', fontWeight: 600 }}>Total Signups</div>
+            <div className="text-2xl font-extrabold text-emerald-900 tracking-tight">{activities.filter(a => a.type === 'new_client').length}</div>
+            <div className="text-[11px] font-bold text-emerald-700 uppercase tracking-widest mt-0.5">Total Signups</div>
           </div>
         </div>
-        <div style={{ background: '#faf5ff', border: '1px solid #e9d5ff', borderRadius: '12px', padding: '20px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <CreditCard size={20} color="#a855f7" />
+        <div className="bg-violet-50 border border-violet-200 rounded-2xl p-6 flex items-center gap-4 shadow-sm hover:shadow-md transition-shadow">
+          <div className="w-12 h-12 rounded-xl bg-white flex items-center justify-center text-violet-600 border border-violet-100 shadow-sm">
+            <CreditCard size={20} />
+          </div>
           <div>
-            <div style={{ fontSize: '1.3rem', fontWeight: 700, color: '#6b21a8' }}>{activities.filter(a => a.type === 'plan_upgrade').length}</div>
-            <div style={{ fontSize: '0.8rem', color: '#7c3aed', fontWeight: 600 }}>Plan Upgrades</div>
+            <div className="text-2xl font-extrabold text-violet-900 tracking-tight">{activities.filter(a => a.type === 'plan_upgrade').length}</div>
+            <div className="text-[11px] font-bold text-violet-700 uppercase tracking-widest mt-0.5">Plan Upgrades</div>
           </div>
         </div>
-        <div style={{ background: '#fffbeb', border: '1px solid #fde68a', borderRadius: '12px', padding: '20px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <AlertTriangle size={20} color="#f59e0b" />
+        <div className="bg-amber-50 border border-amber-200 rounded-2xl p-6 flex items-center gap-4 shadow-sm hover:shadow-md transition-shadow">
+          <div className="w-12 h-12 rounded-xl bg-white flex items-center justify-center text-amber-600 border border-amber-100 shadow-sm">
+            <AlertTriangle size={20} />
+          </div>
           <div>
-            <div style={{ fontSize: '1.3rem', fontWeight: 700, color: '#92400e' }}>{activities.filter(a => a.type === 'high_usage').length}</div>
-            <div style={{ fontSize: '0.8rem', color: '#b45309', fontWeight: 600 }}>Usage Alerts</div>
+            <div className="text-2xl font-extrabold text-amber-900 tracking-tight">{activities.filter(a => a.type === 'high_usage').length}</div>
+            <div className="text-[11px] font-bold text-amber-700 uppercase tracking-widest mt-0.5">Usage Alerts</div>
           </div>
         </div>
       </div>
 
       {/* Activity Timeline */}
-      <div style={{ background: '#ffffff', border: '1px solid #e4e4e7', borderRadius: '16px', boxShadow: '0 4px 20px rgba(0,0,0,0.03)', overflow: 'hidden' }}>
-        <div style={{ padding: '20px 24px', borderBottom: '1px solid #e4e4e7', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Activity size={18} color="#a855f7" />
-            <h3 style={{ margin: 0, fontSize: '1.05rem', color: '#18181b' }}>Event Timeline</h3>
+      <div className="bg-white border border-zinc-200/80 rounded-2xl shadow-sm overflow-hidden">
+        <div className="px-6 py-4 border-b border-zinc-100 bg-zinc-50 flex justify-between items-center">
+          <div className="flex items-center gap-2">
+            <Activity size={18} className="text-blue-600" />
+            <h3 className="text-sm font-bold text-zinc-900">Event Audit Trail</h3>
           </div>
-          <span style={{ fontSize: '0.8rem', color: '#71717a', fontWeight: 500 }}>{filteredActivities.length} events</span>
+          <span className="text-xs font-bold text-zinc-500 bg-zinc-200 px-2 py-0.5 rounded-full">{filteredActivities.length} events</span>
         </div>
         
-        <div>
+        <div className="divide-y divide-zinc-100">
           {filteredActivities.length === 0 ? (
-            <div style={{ padding: '60px', textAlign: 'center', color: '#71717a' }}>
-              <Activity size={32} style={{ marginBottom: '12px', opacity: 0.3 }} />
-              <p>No events found for this filter.</p>
+            <div className="py-24 text-center flex flex-col items-center justify-center">
+              <div className="w-16 h-16 bg-zinc-50 rounded-2xl flex items-center justify-center mb-4 border border-zinc-200 shadow-sm">
+                <ListFilter size={24} className="text-zinc-400" />
+              </div>
+              <h3 className="text-base font-bold text-zinc-900 mb-1">No events found</h3>
+              <p className="text-sm text-zinc-500 font-medium">Try changing the filter settings.</p>
             </div>
           ) : (
             <>
               {paginatedActivities.map((item, i) => (
-                <div
-                  key={item.id}
-                  style={{
-                    padding: '20px 24px',
-                    borderBottom: i < paginatedActivities.length - 1 ? '1px solid #f4f4f5' : 'none',
-                    display: 'flex',
-                    alignItems: 'flex-start',
-                    gap: '16px',
-                    transition: 'background 0.2s',
-                  }}
-                  className="table-row-hover"
-                >
-                  <div style={{
-                    width: '36px',
-                    height: '36px',
-                    borderRadius: '10px',
-                    background: `${item.color}15`,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: item.color,
-                    flexShrink: 0,
-                  }}>
+                <div key={item.id} className="p-5 sm:p-6 hover:bg-zinc-50 transition-colors flex items-start gap-4 sm:gap-6 group">
+                  <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl flex items-center justify-center shrink-0 border shadow-sm transition-transform group-hover:scale-105 ${item.bgLight} ${item.color} ${item.borderLight}`}>
                     {item.icon}
                   </div>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px' }}>
-                      <span style={{ fontWeight: 600, color: '#18181b', fontSize: '0.95rem' }}>{item.title}</span>
-                      <span style={{ fontSize: '0.8rem', color: '#a1a1aa', fontWeight: 500, display: 'flex', alignItems: 'center', gap: '4px', flexShrink: 0 }}>
+                  <div className="flex-grow min-w-0 pt-0.5">
+                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-1 sm:gap-4 mb-1">
+                      <span className="font-bold text-zinc-900 text-sm sm:text-base leading-tight">{item.title}</span>
+                      <span className="flex items-center gap-1.5 text-[11px] font-bold text-zinc-400 uppercase tracking-widest shrink-0">
                         <Clock size={12} /> {formatTime(item.timestamp)}
                       </span>
                     </div>
-                    <p style={{ margin: '4px 0 0', fontSize: '0.85rem', color: '#71717a', lineHeight: 1.5 }}>{item.description}</p>
+                    <p className="text-[13px] sm:text-sm text-zinc-500 font-medium leading-relaxed max-w-3xl">{item.description}</p>
                   </div>
                 </div>
               ))}
+              
+              {/* Pagination Footer */}
               {totalPages > 1 && (
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 24px', background: '#fafafa', borderTop: '1px solid #f4f4f5' }}>
-                  <span style={{ fontSize: '0.85rem', color: '#71717a', fontWeight: 500 }}>
-                    Showing {((currentPage - 1) * itemsPerPage) + 1} to {Math.min(currentPage * itemsPerPage, filteredActivities.length)} of {filteredActivities.length} events
+                <div className="px-6 py-4 bg-zinc-50 border-t border-zinc-200 flex justify-between items-center">
+                  <span className="text-xs font-medium text-zinc-500">
+                    Showing <strong className="text-zinc-900">{((currentPage - 1) * itemsPerPage) + 1}</strong> to <strong className="text-zinc-900">{Math.min(currentPage * itemsPerPage, filteredActivities.length)}</strong> of <strong className="text-zinc-900">{filteredActivities.length}</strong> events
                   </span>
-                  <div style={{ display: 'flex', gap: '8px' }}>
+                  <div className="flex gap-2">
                     <button
                       onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                       disabled={currentPage === 1}
-                      style={{
-                        padding: '8px 16px',
-                        background: currentPage === 1 ? '#fafafa' : '#ffffff',
-                        border: '1px solid #e4e4e7',
-                        borderRadius: '8px',
-                        fontSize: '0.85rem',
-                        color: currentPage === 1 ? '#a1a1aa' : '#18181b',
-                        cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
-                        fontWeight: 600,
-                        transition: 'all 0.2s'
-                      }}
-                      className={currentPage !== 1 ? 'table-row-hover' : ''}
+                      className="px-4 py-2 border border-zinc-200 rounded-lg text-xs font-bold text-zinc-600 bg-white hover:bg-zinc-50 disabled:opacity-50 disabled:hover:bg-white shadow-sm transition-colors"
                     >
                       Previous
                     </button>
                     <button
                       onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                       disabled={currentPage === totalPages}
-                      style={{
-                        padding: '8px 16px',
-                        background: currentPage === totalPages ? '#fafafa' : '#ffffff',
-                        border: '1px solid #e4e4e7',
-                        borderRadius: '8px',
-                        fontSize: '0.85rem',
-                        color: currentPage === totalPages ? '#a1a1aa' : '#18181b',
-                        cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
-                        fontWeight: 600,
-                        transition: 'all 0.2s'
-                      }}
-                      className={currentPage !== totalPages ? 'table-row-hover' : ''}
+                      className="px-4 py-2 border border-zinc-200 rounded-lg text-xs font-bold text-zinc-600 bg-white hover:bg-zinc-50 disabled:opacity-50 disabled:hover:bg-white shadow-sm transition-colors"
                     >
                       Next
                     </button>

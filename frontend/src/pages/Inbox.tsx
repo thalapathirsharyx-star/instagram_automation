@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { getLeads, getMessages, sendMessage } from '../api/crm.api';
 import type { Lead, Message } from '../models/crm.models';
-import { Send, MessageSquare } from 'lucide-react';
+import { Send, MessageSquare, Bot, Hand, CheckCircle2 } from 'lucide-react';
 import { io } from 'socket.io-client';
 
 const Inbox: React.FC = () => {
@@ -91,140 +91,164 @@ const Inbox: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col gap-8 h-full animate-in fade-in duration-700">
-      <div className="flex justify-between items-end">
+    <div className="flex flex-col h-[calc(100vh-100px)] animate-in fade-in duration-500 pb-6 max-w-7xl mx-auto" style={{ fontFamily: '"Inter", system-ui, sans-serif' }}>
+      <div className="flex justify-between items-end mb-6">
         <div>
-          <h1 className="text-3xl font-bold text-zinc-100 mb-2">Inbox</h1>
-          <p className="text-zinc-400 font-medium">Monitor and manage your AI-driven conversations.</p>
+          <h1 className="text-2xl font-bold text-zinc-900 tracking-tight mb-1">Inbox</h1>
+          <p className="text-sm text-zinc-500 font-medium">Monitor and manage your AI-driven conversations.</p>
         </div>
       </div>
 
-      <div className="flex gap-6 flex-grow min-h-0">
+      <div className="flex bg-white border border-zinc-200/80 rounded-2xl shadow-sm overflow-hidden flex-grow min-h-0">
         {/* Lead Sidebar */}
-      <div className="w-[340px] shrink-0 bg-zinc-900/80 backdrop-blur-xl rounded-3xl flex flex-col overflow-hidden border border-white/5 shadow-xl">
-        <div className="p-6 border-b border-white/5 bg-zinc-900/50">
-          <h2 className="text-lg font-bold text-zinc-100">Active Threads</h2>
-        </div>
-        <div className="flex-grow overflow-y-auto premium-scroll">
-          {leads.map((lead) => (
-            <div 
-              key={lead.id} 
-              className={`flex gap-4 p-4 mx-3 my-2 rounded-[1.25rem] cursor-pointer transition-all duration-300 relative group
-                ${selectedLead?.id === lead.id ? 'bg-purple-500/15 border border-purple-500/30 shadow-[0_0_15px_rgba(168,85,247,0.15)]' : 'border border-transparent hover:bg-zinc-800/50 hover:border-white/5'}`}
-              onClick={() => handleSelectLead(lead)}
-            >
-              <div className="w-12 h-12 rounded-2xl bg-purple-500/10 flex items-center justify-center text-purple-400 font-bold text-lg shadow-inner border border-purple-500/20">
-                {lead.customer_name[0]}
-              </div>
-              <div className="flex-grow overflow-hidden">
-                <div className="flex justify-between items-center mb-1">
-                  <span className={`font-bold truncate ${selectedLead?.id === lead.id ? 'text-purple-400' : 'text-zinc-200'}`}>
-                    {lead.customer_name}
-                  </span>
-                  <span className={`text-[10px] font-bold px-2 py-1 rounded-md uppercase tracking-tighter border
-                    ${lead.lead_status === 'Buyer' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 
-                      lead.lead_status === 'Needs_Human' ? 'bg-rose-500/10 text-rose-400 border-rose-500/20' : 
-                      'bg-zinc-800 text-zinc-400 border-white/5'}`}>
-                    {lead.lead_status}
-                  </span>
-                </div>
-                <div className="text-xs text-zinc-500 font-medium truncate">@{lead.instagram_handle}</div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Chat Area */}
-      <div className="flex-grow min-w-0 bg-zinc-900/80 backdrop-blur-xl rounded-3xl flex flex-col overflow-hidden border border-white/5 shadow-xl">
-        {selectedLead ? (
-          <>
-            <div className="p-6 border-b border-white/5 flex justify-between items-center bg-zinc-900/80 backdrop-blur-sm z-10">
-              <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-xl bg-zinc-800 flex items-center justify-center text-zinc-300 font-bold border border-white/5">
-                  {selectedLead.customer_name[0]}
-                </div>
-                <div>
-                  <h3 className="font-bold text-zinc-100 leading-tight">{selectedLead.customer_name}</h3>
-                  <p className="text-xs text-zinc-500 font-medium">@{selectedLead.instagram_handle}</p>
-                </div>
-              </div>
-              <button 
-                onClick={() => setIsManualMode(!isManualMode)}
-                className={`px-4 py-2 rounded-xl text-xs font-bold transition-colors border shadow-sm ${
-                  isManualMode 
-                    ? 'bg-rose-500/10 text-rose-400 border-rose-500/20 hover:bg-rose-500/20' 
-                    : 'bg-zinc-800 text-zinc-300 border-white/5 hover:bg-zinc-700 hover:text-white'
-                }`}
+        <div className="w-[320px] shrink-0 border-r border-zinc-200 flex flex-col bg-zinc-50/30">
+          <div className="p-5 border-b border-zinc-100 bg-white">
+            <h2 className="text-sm font-bold text-zinc-900 uppercase tracking-wider">Active Threads</h2>
+          </div>
+          <div className="flex-grow overflow-y-auto">
+            {leads.map((lead) => (
+              <div 
+                key={lead.id} 
+                className={`flex gap-3 p-4 cursor-pointer transition-all duration-200 relative group border-b border-zinc-100
+                  ${selectedLead?.id === lead.id ? 'bg-violet-50/50' : 'hover:bg-zinc-50'}`}
+                onClick={() => handleSelectLead(lead)}
               >
-                {isManualMode ? 'AI Paused' : 'Human Handoff'}
-              </button>
-            </div>
-
-            <div className="flex-grow p-8 overflow-y-auto premium-scroll flex flex-col gap-6 bg-zinc-950/50" ref={chatHistoryRef}>
-              {messages.map((msg) => (
-                <div key={msg.id} className={`max-w-[60%] flex flex-col ${msg.direction === 'Outbound' ? 'self-end items-end' : 'self-start items-start'}`}>
-                  <div className={`p-4 rounded-[1.5rem] shadow-sm border ${
-                    msg.direction === 'Outbound' 
-                      ? 'bg-purple-600 border-purple-500 text-white rounded-tr-md shadow-purple-500/20' 
-                      : 'bg-zinc-900 border-white/10 text-zinc-200 rounded-tl-md'
-                  }`}>
-                    {msg.message_text.startsWith('[IMAGE]') ? (
-                      <img src={msg.message_text.replace('[IMAGE] ', '')} alt="Shared image" className="rounded-2xl max-w-full h-auto border border-white/10" />
-                    ) : (
-                      <p className="text-sm leading-relaxed font-medium">{msg.message_text}</p>
-                    )}
-                    <span className={`text-[10px] mt-2 block ${msg.direction === 'Outbound' ? 'opacity-80' : 'text-zinc-500'} text-right font-bold`}>
-                      {(() => {
-                        const d = new Date(msg.created_on);
-                        return isNaN(d.getTime()) ? 'Just now' : d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                      })()}
+                {selectedLead?.id === lead.id && (
+                  <div className="absolute left-0 top-0 bottom-0 w-1 bg-violet-600 rounded-r-md"></div>
+                )}
+                <div className="w-10 h-10 rounded-full bg-violet-100 flex items-center justify-center text-violet-700 font-bold text-sm border border-violet-200 shadow-sm shrink-0">
+                  {lead.customer_name[0]}
+                </div>
+                <div className="flex-grow min-w-0">
+                  <div className="flex justify-between items-start mb-0.5">
+                    <span className={`font-bold text-sm truncate pr-2 ${selectedLead?.id === lead.id ? 'text-violet-900' : 'text-zinc-900'}`}>
+                      {lead.customer_name}
+                    </span>
+                    <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider border shrink-0
+                      ${lead.lead_status === 'Buyer' ? 'bg-blue-50 text-blue-700 border-blue-200' : 
+                        lead.lead_status === 'Needs_Human' ? 'bg-rose-50 text-rose-700 border-rose-200' : 
+                        'bg-zinc-100 text-zinc-600 border-zinc-200'}`}>
+                      {lead.lead_status}
                     </span>
                   </div>
-                  {msg.ai_notes && (
-                    <div className="mt-3 max-w-[90%] text-[11px] text-zinc-400 bg-purple-500/5 p-3 rounded-xl border border-purple-500/20 backdrop-blur-sm">
-                      <span className="text-purple-400 font-bold block mb-1 uppercase tracking-widest text-[9px]">AI Reasoning: {msg.action_taken}</span>
-                      <p className="font-medium leading-relaxed">{msg.ai_notes}</p>
-                    </div>
-                  )}
+                  <div className="text-xs text-zinc-500 font-medium truncate">@{lead.instagram_handle}</div>
                 </div>
-              ))}
-            </div>
-
-            <div className="p-6 bg-zinc-900/80 border-t border-white/5 backdrop-blur-sm">
-              <div className="flex gap-3 bg-zinc-950 p-2 rounded-[1.25rem] border border-white/5 focus-within:border-purple-500/50 transition-all duration-300 shadow-inner">
-                <input 
-                  type="text" 
-                  placeholder={isManualMode ? "Type a message..." : "AI is managing this conversation..."} 
-                  disabled={!isManualMode} 
-                  value={messageText}
-                  onChange={(e) => setMessageText(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-                  className={`flex-grow px-4 py-2 bg-transparent text-sm font-medium outline-none ${isManualMode ? 'text-zinc-100' : 'text-zinc-500'}`}
-                />
-                <button 
-                  onClick={handleSendMessage}
-                  disabled={!isManualMode || !messageText.trim()}
-                  className={`w-10 h-10 rounded-xl flex items-center justify-center border transition-all ${
-                    isManualMode && messageText.trim() 
-                      ? 'bg-purple-500 text-white border-purple-500 shadow-glow-purple hover:bg-purple-600' 
-                      : 'bg-zinc-800 text-zinc-500 border-white/5 cursor-not-allowed'
-                  }`}
-                >
-                  <Send size={18} />
-                </button>
               </div>
-            </div>
-          </>
-        ) : (
-          <div className="flex-grow flex flex-col items-center justify-center text-zinc-500 p-12 text-center bg-zinc-950/30">
-            <div className="w-20 h-20 rounded-full bg-zinc-900 flex items-center justify-center mb-6 border border-white/5 shadow-inner">
-              <MessageSquare size={40} className="opacity-20 text-zinc-400" />
-            </div>
-            <p className="text-lg font-bold text-zinc-400">Select a Thread</p>
-            <p className="text-sm font-medium mt-1">Review AI interactions and manage handoffs.</p>
+            ))}
           </div>
-        )}
+        </div>
+
+        {/* Chat Area */}
+        <div className="flex-grow min-w-0 flex flex-col bg-zinc-50/50 relative">
+          {selectedLead ? (
+            <>
+              {/* Chat Header */}
+              <div className="px-6 py-4 border-b border-zinc-200 bg-white flex justify-between items-center z-10 shadow-[0_4px_20px_-10px_rgba(0,0,0,0.05)]">
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 rounded-full bg-violet-100 flex items-center justify-center text-violet-700 font-bold text-sm border border-violet-200 shadow-sm">
+                    {selectedLead.customer_name[0]}
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-zinc-900 leading-tight">{selectedLead.customer_name}</h3>
+                    <p className="text-xs text-zinc-500 font-medium">@{selectedLead.instagram_handle}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest hidden sm:block">Agent Status:</span>
+                  <button 
+                    onClick={() => setIsManualMode(!isManualMode)}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all shadow-sm border ${
+                      isManualMode 
+                        ? 'bg-rose-50 text-rose-700 border-rose-200 hover:bg-rose-100' 
+                        : 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100'
+                    }`}
+                  >
+                    {isManualMode ? <Hand size={14} /> : <CheckCircle2 size={14} />}
+                    {isManualMode ? 'Manual Mode Active' : 'AI Mode Active'}
+                  </button>
+                </div>
+              </div>
+
+              {/* Chat History */}
+              <div className="flex-grow p-6 sm:p-8 overflow-y-auto flex flex-col gap-6" ref={chatHistoryRef}>
+                <div className="text-center py-4">
+                  <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest bg-zinc-200/50 px-3 py-1 rounded-full">Beginning of Conversation</span>
+                </div>
+                {messages.map((msg) => (
+                  <div key={msg.id} className={`max-w-[75%] lg:max-w-[65%] flex flex-col ${msg.direction === 'Outbound' ? 'self-end items-end' : 'self-start items-start'}`}>
+                    <div className={`px-5 py-3.5 rounded-2xl shadow-sm text-sm font-medium leading-relaxed ${
+                      msg.direction === 'Outbound' 
+                        ? 'bg-violet-600 text-white rounded-tr-sm' 
+                        : 'bg-white border border-zinc-200 text-zinc-800 rounded-tl-sm'
+                    }`}>
+                      {msg.message_text.startsWith('[IMAGE]') ? (
+                        <img src={msg.message_text.replace('[IMAGE] ', '')} alt="Shared image" className="rounded-xl max-w-full h-auto" />
+                      ) : (
+                        <p>{msg.message_text}</p>
+                      )}
+                    </div>
+                    
+                    <div className="flex items-center gap-2 mt-1.5 px-1">
+                      <span className="text-[10px] font-semibold text-zinc-400">
+                        {(() => {
+                          const d = new Date(msg.created_on);
+                          return isNaN(d.getTime()) ? 'Just now' : d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                        })()}
+                      </span>
+                      {msg.direction === 'Outbound' && !isManualMode && (
+                        <Bot size={12} className="text-violet-400" />
+                      )}
+                    </div>
+
+                    {msg.ai_notes && (
+                      <div className="mt-2 text-[11px] text-zinc-500 bg-white p-3 rounded-xl border border-zinc-200 shadow-sm self-start">
+                        <span className="text-violet-600 font-bold block mb-1 uppercase tracking-wider text-[9px] flex items-center gap-1">
+                          <Bot size={10}/> AI Action: {msg.action_taken}
+                        </span>
+                        <p className="font-medium leading-relaxed italic">{msg.ai_notes}</p>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+
+              {/* Chat Input */}
+              <div className="p-4 bg-white border-t border-zinc-200">
+                <div className={`flex gap-3 bg-zinc-50 p-2 rounded-xl border transition-all duration-200 shadow-inner ${
+                  isManualMode ? 'border-zinc-300 focus-within:border-violet-500 focus-within:bg-white focus-within:shadow-[0_0_0_4px_rgba(139,92,246,0.1)]' : 'border-zinc-200 opacity-80'
+                }`}>
+                  <input 
+                    type="text" 
+                    placeholder={isManualMode ? "Type a message to " + selectedLead.customer_name + "..." : "AI is actively managing this conversation..."} 
+                    disabled={!isManualMode} 
+                    value={messageText}
+                    onChange={(e) => setMessageText(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                    className={`flex-grow px-3 py-2 bg-transparent text-sm font-medium outline-none ${isManualMode ? 'text-zinc-900 placeholder-zinc-400' : 'text-zinc-400'}`}
+                  />
+                  <button 
+                    onClick={handleSendMessage}
+                    disabled={!isManualMode || !messageText.trim()}
+                    className={`w-10 h-10 rounded-lg flex items-center justify-center transition-all ${
+                      isManualMode && messageText.trim() 
+                        ? 'bg-violet-600 text-white shadow-sm hover:bg-violet-700' 
+                        : 'bg-zinc-200 text-zinc-400 cursor-not-allowed'
+                    }`}
+                  >
+                    <Send size={16} />
+                  </button>
+                </div>
+              </div>
+            </>
+          ) : (
+            <div className="flex-grow flex flex-col items-center justify-center text-center p-12 bg-zinc-50/50">
+              <div className="w-16 h-16 rounded-2xl bg-white flex items-center justify-center mb-4 border border-zinc-200 shadow-sm">
+                <MessageSquare size={24} className="text-zinc-300" />
+              </div>
+              <h3 className="text-lg font-bold text-zinc-900 mb-1">Select a Thread</h3>
+              <p className="text-sm font-medium text-zinc-500">Review AI interactions or jump in to manage the conversation manually.</p>
+            </div>
+          )}
         </div>
       </div>
     </div>
