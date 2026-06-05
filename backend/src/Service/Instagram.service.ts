@@ -259,7 +259,7 @@ export class InstagramService {
       lead.lead_status = 'New';
 
       try {
-        const profileRes = await axios.get(`https://graph.facebook.com/v21.0/${context.instagram_handle}?fields=name,profile_pic&access_token=${company?.instagram_access_token}`);
+        const profileRes = await axios.get(`https://graph.facebook.com/v21.0/${context.instagram_handle}?fields=name&access_token=${company?.instagram_access_token}`);
         if (profileRes.data.name) lead.customer_name = profileRes.data.name;
       } catch (e: any) {
         console.error('[IG PROFILE ERROR] Could not fetch profile details:', e.message);
@@ -899,10 +899,12 @@ export class InstagramService {
     const commentText = changeValue.text.toUpperCase();
 
     const matchedTrigger = triggers.find(t => {
-      const keyword = t.keyword.toUpperCase().trim();
-      // Safe regex matching to prevent false positives inside words
-      const regex = new RegExp(`\\b${keyword}\\b`, 'i');
-      return regex.test(commentText);
+      const keywords = t.keyword.split(',').map(k => k.trim().toUpperCase()).filter(k => k.length > 0);
+      return keywords.some(kw => {
+        // Safe regex matching to prevent false positives inside words
+        const regex = new RegExp(`\\b${kw}\\b`, 'i');
+        return regex.test(commentText);
+      });
     });
 
     if (!matchedTrigger) {

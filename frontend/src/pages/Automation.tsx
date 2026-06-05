@@ -26,7 +26,7 @@ interface CommentTrigger {
 }
 
 const Automation: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'playbook' | 'comment' | 'welcome' | 'advanced'>('playbook');
+  const [activeTab, setActiveTab] = useState<'playbook' | 'comment' | 'welcome' | 'advanced'>('comment');
   const [welcomeMessage, setWelcomeMessage] = useState('');
 
   const [autoFollowUp, setAutoFollowUp] = useState(false);
@@ -217,7 +217,7 @@ const Automation: React.FC = () => {
         </div>
 
         <div className="flex items-center bg-zinc-50 p-1.5 rounded-xl border border-zinc-200 shrink-0 shadow-sm">
-          <TabButton id="playbook" label="Playbook Builder" icon={GitBranch} />
+          {/* <TabButton id="playbook" label="Playbook Builder" icon={GitBranch} /> */}
           <TabButton id="comment" label="Comment-to-DM" icon={MessageSquare} />
           <TabButton id="welcome" label="Welcome Flow" icon={Bot} />
           <TabButton id="advanced" label="Advanced Logic" icon={Settings} />

@@ -184,7 +184,9 @@ const Inbox: React.FC = () => {
                       {msg.message_text.startsWith('[IMAGE]') ? (
                         <img src={msg.message_text.replace('[IMAGE] ', '')} alt="Shared image" className="rounded-xl max-w-full h-auto" />
                       ) : (
-                        <p>{msg.message_text}</p>
+                        <p className={msg.direction === 'Outbound' ? 'text-white' : 'text-zinc-800'}>
+                          {msg.message_text}
+                        </p>
                       )}
                     </div>
                     

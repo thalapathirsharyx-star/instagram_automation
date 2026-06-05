@@ -158,7 +158,7 @@ const Billing: React.FC = () => {
   const currentPlan = user?.company?.plan || 'Free';
   const planPrice = currentPlan === 'Business' ? '₹5,999' : currentPlan === 'Pro' ? '₹2,499' : '₹0';
   const planMaxRecords = currentPlan === 'Business' ? '75,000' : currentPlan === 'Pro' ? '25,000' : '250';
-  const planRecordsUsed = user?.company?.credits_used || 0;
+  const planRecordsUsed = user?.company?.monthly_ai_usage || 0;
   const planProgress = Math.min((Number(planRecordsUsed) / parseInt(planMaxRecords.replace(/,/g, ''))) * 100, 100);
 
   const planFeaturesList: Record<string, string[]> = {

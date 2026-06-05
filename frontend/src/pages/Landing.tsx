@@ -2909,49 +2909,53 @@ const Landing: React.FC = () => {
             <div className="grid md:grid-cols-3 gap-8 max-w-[1000px] mx-auto items-stretch text-left">
               {[
                 {
-                  name: "Basic",
-                  desc: "Perfect for new creators & personal brands",
-                  price: "$29",
-                  volume: "1,000",
-                  btn: "Start Free 14-Day Trial",
+                  name: "Free",
+                  desc: "Explore basic automation capabilities for testing.",
+                  price: "₹0",
+                  volume: "250",
+                  btn: "Get Started for Free",
                   popular: false,
                   features: [
-                    "Connect 1 Instagram Account",
-                    "Basic FAQ Automations",
-                    "Google Sheets Lead Sync",
-                    "Email Support (24h response)"
+                    "Connect 1 IG Account",
+                    "Basic automations (up to 4)",
+                    "1 team seat",
+                    "Unified inbox",
+                    "Flazly branding attached"
                   ]
                 },
                 {
-                  name: "Growth",
-                  desc: "Ideal for scaling e-commerce & active creators",
-                  price: "$79",
-                  volume: "3,000",
+                  name: "Pro",
+                  desc: "For scaling creators & digital businesses.",
+                  price: "₹2,499",
+                  volume: "25,000",
                   btn: "Start Free 14-Day Trial",
                   popular: true,
                   features: [
-                    "Connect 3 Instagram Accounts",
-                    "Advanced Flazly AI Agent Setup",
-                    "Instant Google Sheets & HubSpot Sync",
-                    "Unlimited Comment-to-DM triggers",
-                    "CRM integration & webhook nodes",
-                    "Priority Discord & Email Support"
+                    "Connect 3 IG Accounts",
+                    "Unlimited workflow automations",
+                    "Broadcast messaging",
+                    "3 team seats",
+                    "AI Persona customization",
+                    "Brain Base (Knowledge) access",
+                    "White-labeled (No branding)"
                   ]
                 },
                 {
-                  name: "Agency",
-                  desc: "For multi-client social brands & enterprise",
-                  price: "$199",
-                  volume: "10,000",
+                  name: "Business",
+                  desc: "For high-growth enterprise operations.",
+                  price: "₹5,999",
+                  volume: "75,000",
                   btn: "Start Free 14-Day Trial",
                   popular: false,
                   features: [
-                    "Connect 10 Instagram Accounts",
-                    "Dedicated High-Performance Sync Nodes",
-                    "Custom Webhooks & Developer API access",
-                    "White-labeled client dashboards",
-                    "Dedicated Account Success Manager",
-                    "24/7 VIP Zoom Support"
+                    "Unlimited IG Accounts",
+                    "Unlimited workflow automations",
+                    "Broadcast messaging",
+                    "5 team seats",
+                    "Advanced AI Persona customization",
+                    "Brain Base (Knowledge) access",
+                    "Lead scoring & qualification",
+                    "White-labeled (No branding)"
                   ]
                 }
               ].map((tier, idx) => (
