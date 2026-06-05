@@ -387,7 +387,7 @@ const Settings: React.FC = () => {
                         {user?.email?.[0] || 'A'}
                       </div>
                       <div>
-                        <div className="font-bold text-zinc-900 text-base">{user?.email || 'admin@flazly.in'}</div>
+                        <div className="font-bold text-zinc-900 text-base">{user?.email || 'app.flazly@gmail.com'}</div>
                         <div className="text-xs text-zinc-500 font-medium mt-0.5">{user?.role || 'Administrator Access'}</div>
                       </div>
                     </div>

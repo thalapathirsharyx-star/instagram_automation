@@ -120,7 +120,7 @@ const PrivacyContent: React.FC = () => (
         If you have any questions, concerns, or requests regarding this Privacy Policy, please contact our Data Protection Officer at:
       </p>
       <p className="font-bold">
-        Email: support@flazly.in
+        Email: app.flazly@gmail.com
       </p>
     </section>
   </>
@@ -244,7 +244,7 @@ const DeletionContent: React.FC = () => (
         If you are unable to access your dashboard or want to request a manual deletion of all personal data held by us, please submit a request to our data engineering team:
       </p>
       <ul>
-        <li><strong>Email:</strong> support@flazly.in</li>
+        <li><strong>Email:</strong> app.flazly@gmail.com</li>
         <li><strong>Subject Line:</strong> Data Deletion Request (Meta API)</li>
         <li><strong>Required Info:</strong> Please include your registered account email and your connected Instagram business handle.</li>
       </ul>
