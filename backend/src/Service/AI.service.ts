@@ -291,43 +291,123 @@ Respond ONLY in valid JSON format matching this structure exactly. Do NOT return
         throw new Error(`API Key for ${activeProvider} is missing in configuration.`);
       }
 
-      const response = await axios.post(
-        apiUrl,
-        {
-          model: apiModel,
-          messages: [
-            { role: 'system', content: prompt },
-            { role: 'user', content: messageText }
-          ],
-          response_format: { type: "json_object" }
-        },
-        {
-          headers: {
-            'Authorization': `Bearer ${apiKey}`,
-            'Content-Type': 'application/json'
+      // Retry logic with exponential backoff for transient errors (503, 429)
+      const MAX_RETRIES = 3;
+      let lastError: any = null;
+
+      for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+        try {
+          const response = await axios.post(
+            apiUrl,
+            {
+              model: apiModel,
+              messages: [
+                { role: 'system', content: prompt },
+                { role: 'user', content: messageText }
+              ],
+              response_format: { type: "json_object" }
+            },
+            {
+              headers: {
+                'Authorization': `Bearer ${apiKey}`,
+                'Content-Type': 'application/json'
+              },
+              timeout: 30000 // 30 second timeout
+            }
+          );
+
+          let rawContent = response.data.choices[0].message.content;
+          rawContent = rawContent.replace(/^```json\s*/i, '').replace(/\s*```$/i, '').trim();
+          
+          const aiData = JSON.parse(rawContent);
+          const isLead = aiData.lead === 'yes' || aiData.lead === true || aiData.is_qualified === true || aiData.lead_status === 'Hot';
+
+          return {
+            reply: aiData.reply || aiData.message || aiData.text || "I'll check on that for you!",
+            action: aiData.action || 'reply',
+            notes: aiData.notes || aiData.summary || '',
+            lead_status: isLead ? 'Hot' : 'New',
+            is_qualified: isLead,
+            tags: aiData.tags || [],
+            intent: aiData.intent || 'enquiry',
+            confidence: aiData.confidence || 0,
+            lead: isLead ? 'yes' : 'no',
+            summary: aiData.summary || aiData.notes || '',
+            confirmed_order: aiData.confirmed_order || null
+          };
+        } catch (retryError: any) {
+          lastError = retryError;
+          const status = retryError.response?.status;
+          
+          if ((status === 503 || status === 429) && attempt < MAX_RETRIES) {
+            const delay = attempt * 2000; // 2s, 4s backoff
+            console.warn(`[AI RETRY] Attempt ${attempt}/${MAX_RETRIES} failed (${status}). Retrying in ${delay}ms...`);
+            await new Promise(resolve => setTimeout(resolve, delay));
+            continue;
           }
+          
+          // Non-retryable error or final attempt — break to fallback
+          break;
         }
-      );
+      }
 
-      let rawContent = response.data.choices[0].message.content;
-      rawContent = rawContent.replace(/^```json\s*/i, '').replace(/\s*```$/i, '').trim();
-      
-      const aiData = JSON.parse(rawContent);
-      const isLead = aiData.lead === 'yes' || aiData.lead === true || aiData.is_qualified === true || aiData.lead_status === 'Hot';
+      // FALLBACK: If primary provider failed, try Groq as backup (if not already using it)
+      if (activeProvider !== 'groq' && (dbGroq || process.env.GROQ_API_KEY)) {
+        console.warn(`[AI FALLBACK] ${activeProvider} failed after ${MAX_RETRIES} retries. Falling back to Groq...`);
+        try {
+          const fallbackResponse = await axios.post(
+            'https://api.groq.com/openai/v1/chat/completions',
+            {
+              model: 'llama-3.3-70b-versatile',
+              messages: [
+                { role: 'system', content: prompt },
+                { role: 'user', content: messageText }
+              ],
+              response_format: { type: "json_object" }
+            },
+            {
+              headers: {
+                'Authorization': `Bearer ${await this.getDecryptedSetting('GROQ_API_KEY') || process.env.GROQ_API_KEY}`,
+                'Content-Type': 'application/json'
+              },
+              timeout: 30000
+            }
+          );
 
-      return {
-        reply: aiData.reply || aiData.message || aiData.text || "I'll check on that for you!",
-        action: aiData.action || 'reply',
-        notes: aiData.notes || aiData.summary || '',
-        lead_status: isLead ? 'Hot' : 'New',
-        is_qualified: isLead,
-        tags: aiData.tags || [],
-        intent: aiData.intent || 'enquiry',
-        confidence: aiData.confidence || 0,
-        lead: isLead ? 'yes' : 'no',
-        summary: aiData.summary || aiData.notes || '',
-        confirmed_order: aiData.confirmed_order || null
-      };
+          let rawContent = fallbackResponse.data.choices[0].message.content;
+          rawContent = rawContent.replace(/^```json\s*/i, '').replace(/\s*```$/i, '').trim();
+          
+          const aiData = JSON.parse(rawContent);
+          const isLead = aiData.lead === 'yes' || aiData.lead === true || aiData.is_qualified === true || aiData.lead_status === 'Hot';
+
+          console.log(`[AI FALLBACK] Groq responded successfully.`);
+          return {
+            reply: aiData.reply || aiData.message || aiData.text || "I'll check on that for you!",
+            action: aiData.action || 'reply',
+            notes: aiData.notes || aiData.summary || '',
+            lead_status: isLead ? 'Hot' : 'New',
+            is_qualified: isLead,
+            tags: aiData.tags || [],
+            intent: aiData.intent || 'enquiry',
+            confidence: aiData.confidence || 0,
+            lead: isLead ? 'yes' : 'no',
+            summary: aiData.summary || aiData.notes || '',
+            confirmed_order: aiData.confirmed_order || null
+          };
+        } catch (fallbackError: any) {
+          console.error(`[AI FALLBACK] Groq also failed:`, fallbackError.response?.data || fallbackError.message);
+        }
+      }
+
+      // All providers failed
+      console.error(`[AI ERROR] All providers failed.`);
+      if (lastError?.response) {
+        console.error('Last Response Data:', JSON.stringify(lastError.response.data, null, 2));
+        console.error('Last Status Code:', lastError.response.status);
+      } else if (lastError) {
+        console.error('Last Error Message:', lastError.message);
+      }
+      return { reply: "I'll check on that for you!", action: 'human_required' };
     } catch (error: any) {
       console.error(`[AI ERROR] Request to ${process.env.ACTIVE_LLM_PROVIDER || 'LLM API'} failed.`);
       if (error.response) {
