@@ -17,7 +17,13 @@ export class EmailService {
       subject: "Forgot password request",
       template: "ForgotPassword",
       html: true,
+      attachments: [{
+        filename: 'logo.png',
+        path: 'dist/Assets/Logo_small.png',
+        cid: 'logo'
+      }],
       context: {
+        logo: "cid:logo",
         domain_name: process.env.DOMAIN_NAME + "ResetPassword/" + EncryptedUserId,
         otp: ResetOTP
       },
@@ -31,11 +37,17 @@ export class EmailService {
       subject: "Activate Your Account - Flazly",
       template: "VerifyEmail",
       html: true,
+      attachments: [{
+        filename: 'logo.png',
+        path: 'dist/Assets/Logo_small.png',
+        cid: 'logo'
+      }],
       context: {
         first_name: firstName,
         verify_url: verifyUrl,
         email: emailId,
-        temp_password: tempPassword
+        temp_password: tempPassword,
+        logo: "cid:logo"
       },
     });
     return Res;
