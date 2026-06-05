@@ -182,32 +182,39 @@ const Inbox: React.FC = () => {
                   <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest bg-zinc-200/50 px-3 py-1 rounded-full">Beginning of Conversation</span>
                 </div>
                 {messages.map((msg) => (
-                  <div key={msg.id} className={`max-w-[75%] lg:max-w-[65%] flex flex-col ${msg.direction === 'Outbound' ? 'self-end items-end' : 'self-start items-start'}`}>
-                    <div className={`px-5 py-3.5 rounded-2xl shadow-sm text-sm font-medium leading-relaxed ${
-                      msg.direction === 'Outbound' 
-                        ? 'bg-violet-600 text-white rounded-tr-sm' 
-                        : 'bg-white border border-zinc-200 text-zinc-800 rounded-tl-sm'
-                    }`}>
-                      {msg.message_text.startsWith('[IMAGE]') ? (
-                        <img src={msg.message_text.replace('[IMAGE] ', '')} alt="Shared image" className="rounded-xl max-w-full h-auto" />
-                      ) : (
-                        <p className={msg.direction === 'Outbound' ? 'text-white' : 'text-zinc-800'} style={msg.direction === 'Outbound' ? { color: '#ffffff' } : {}}>
-                          {msg.message_text}
-                        </p>
-                      )}
-                    </div>
+                  <div key={msg.id} className={`max-w-[85%] lg:max-w-[75%] flex flex-col ${msg.direction === 'Outbound' ? 'self-end items-end' : 'self-start items-start'} mb-2`}>
                     
-                    <div className="flex items-center gap-2 mt-1.5 px-1">
-                      <span className="text-[10px] font-semibold text-zinc-400">
+                    {/* Name and Timestamp Above Bubble */}
+                    <div className={`flex items-center gap-2 mb-1.5 px-1 ${msg.direction === 'Outbound' ? 'flex-row-reverse' : 'flex-row'}`}>
+                      <span className="text-xs font-medium text-zinc-600">
+                        {msg.direction === 'Outbound' ? 'Flazly Assistant' : selectedLead?.name || selectedLead?.instagram_handle || 'Customer'}
+                      </span>
+                      <span className="text-[10px] font-medium text-zinc-400">
                         {(() => {
                           const d = new Date(msg.created_on);
                           return isNaN(d.getTime()) ? 'Just now' : d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                         })()}
                       </span>
                       {msg.direction === 'Outbound' && !isManualMode && (
-                        <Bot size={12} className="text-violet-400" />
+                        <Bot size={12} className="text-violet-400 ml-1" />
                       )}
                     </div>
+
+                    {/* Chat Bubble */}
+                    <div className={`px-5 py-3.5 rounded-2xl text-[15px] font-normal leading-relaxed ${
+                      msg.direction === 'Outbound' 
+                        ? 'bg-[#F3E8FF] border border-[#E9D5FF] text-zinc-800 rounded-tr-sm' 
+                        : 'bg-white border border-zinc-100 shadow-sm text-zinc-800 rounded-tl-sm'
+                    }`}>
+                      {msg.message_text.startsWith('[IMAGE]') ? (
+                        <img src={msg.message_text.replace('[IMAGE] ', '')} alt="Shared image" className="rounded-xl max-w-full h-auto" />
+                      ) : (
+                        <p className="text-zinc-800 whitespace-pre-wrap">
+                          {msg.message_text}
+                        </p>
+                      )}
+                    </div>
+
 
                     {msg.ai_notes && (
                       <div className="mt-2 text-[11px] text-zinc-500 bg-white p-3 rounded-xl border border-zinc-200 shadow-sm self-start">
