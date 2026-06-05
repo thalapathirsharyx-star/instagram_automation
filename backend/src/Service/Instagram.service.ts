@@ -699,13 +699,25 @@ export class InstagramService {
   }
 
   private async sendInstagramMessage(recipientId: string, text: string, token: string) {
-    try {
-      const url = `https://graph.facebook.com/v21.0/me/messages`;
-      await axios.post(url, { recipient: { id: recipientId }, message: { text } }, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-    } catch (error: any) {
-      console.error('[IG ERROR] Message failed to send:', error.response?.data || error.message);
+    const url = `https://graph.facebook.com/v25.0/me/messages`;
+    const payload = { recipient: { id: recipientId }, message: { text } };
+    const headers = { 'Authorization': `Bearer ${token}` };
+
+    for (let attempt = 1; attempt <= 2; attempt++) {
+      try {
+        await axios.post(url, payload, { headers, timeout: 15000 });
+        return; // Success
+      } catch (error: any) {
+        const errData = error.response?.data;
+        const errStatus = error.response?.status;
+        const errMsg = error.message;
+        console.error(`[IG ERROR] Message failed to send (attempt ${attempt}/2):`, JSON.stringify({ status: errStatus, data: errData, message: errMsg }));
+
+        if (attempt < 2 && (errStatus === 429 || errStatus >= 500)) {
+          await new Promise(resolve => setTimeout(resolve, 2000));
+          continue;
+        }
+      }
     }
   }
 
