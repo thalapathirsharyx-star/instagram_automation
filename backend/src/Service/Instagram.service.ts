@@ -1,4 +1,4 @@
-﻿import { Injectable, Inject } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { instagram_lead } from '@Database/Table/CRM/instagram_lead';
 import { instagram_message } from '@Database/Table/CRM/instagram_message';
 import { knowledge_base } from '@Database/Table/CRM/knowledge_base';
@@ -410,60 +410,45 @@ export class InstagramService {
     }
 
     // 1. Check for Direct FAQ Match (Fuzzy Word Match)
+    // NOTE: This only triggers for specific, substantial queries. Greetings and short messages
+    // are always routed to the LLM for a natural conversational response.
     const knowledgeItems = await knowledge_base.find({ where: { company_id: companyId } });
     console.log(`[FAQ DEBUG] Checking ${knowledgeItems.length} items in Brain Base for company ${companyId}`);
 
     const normalize = (str: string) => str.toLowerCase().replace(/[^a-z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim();
-    const queryWords = normalize(context.message_text).split(' ');
+    const queryWords = normalize(context.message_text).split(' ').filter(w => w.length >= 3); // Only consider words with 3+ chars
     console.log(`[FAQ DEBUG] Normalized Query Words: ${JSON.stringify(queryWords)}`);
 
-    for (const item of knowledgeItems) {
-      const titleWords = normalize(item.title).split(' ').filter(w => w !== 'pdf' && w !== 'docx' && w !== 'txt' && w !== 'faq');
-      if (titleWords.length === 0) continue;
+    // Skip FAQ shortcut for greetings and very short messages — let the LLM handle them naturally
+    const greetings = ['hi', 'hey', 'hello', 'hii', 'hiii', 'yo', 'yoo', 'sup', 'hai', 'helo', 'vanakkam', 'namaste', 'thanks', 'thank', 'ok', 'okay', 'cool', 'bye', 'good', 'morning', 'evening', 'night'];
+    const rawNormalized = normalize(context.message_text);
+    const isGreeting = greetings.includes(rawNormalized) || queryWords.length === 0;
 
-      // Check if words in the FAQ title exist in the user's message (fuzzy)
-      const matchCount = titleWords.filter(tw => queryWords.some(qw => qw.includes(tw) || tw.includes(qw))).length;
-      const matchPercentageTitle = matchCount / titleWords.length;
-      const matchPercentageQuery = matchCount / queryWords.length;
+    if (!isGreeting && queryWords.length >= 1) {
+      for (const item of knowledgeItems) {
+        const titleWords = normalize(item.title).split(' ').filter(w => w !== 'pdf' && w !== 'docx' && w !== 'txt' && w !== 'faq' && w.length >= 3);
+        if (titleWords.length === 0) continue;
 
-      console.log(`[FAQ DEBUG] Comparing with "${item.title}" | Title Match: ${Math.round(matchPercentageTitle * 100)}% | Query Match: ${Math.round(matchPercentageQuery * 100)}%`);
+        // Check if words in the FAQ title exist in the user's message (fuzzy)
+        // Require exact word match (not substring) to prevent false positives
+        const matchCount = titleWords.filter(tw => queryWords.some(qw => qw === tw || (qw.length >= 4 && tw.length >= 4 && (qw.includes(tw) || tw.includes(qw))))).length;
+        const matchPercentageTitle = matchCount / titleWords.length;
+        const matchPercentageQuery = matchCount / queryWords.length;
 
-      // Match if 65% of title words are used, OR if 80% of the query words match the title
-      if (matchPercentageTitle >= 0.65 || matchPercentageQuery >= 0.8) {
-        console.log(`[FAQ MATCH] Found fuzzy match: ${item.title}`);
-        
-        let replyText = item.content;
-        // Strip out the question part if the user saved the FAQ as "Q: ... A: ..."
-        const qIndex = replyText.toUpperCase().indexOf('Q:');
-        const aIndex = replyText.toUpperCase().indexOf('A:');
-        if (qIndex !== -1 && aIndex !== -1 && aIndex > qIndex) {
-          replyText = replyText.substring(aIndex + 2).trim();
+        console.log(`[FAQ DEBUG] Comparing with "${item.title}" | Title Match: ${Math.round(matchPercentageTitle * 100)}% | Query Match: ${Math.round(matchPercentageQuery * 100)}%`);
+
+        // Match only if BOTH title match is strong AND query match is strong
+        if (matchPercentageTitle >= 0.65 && matchPercentageQuery >= 0.5 && matchCount >= 1) {
+          console.log(`[FAQ MATCH] Found strong match: ${item.title}`);
+          
+          // FAQ matched — but DON'T send raw content. Let the LLM handle it naturally.
+          // The knowledge base context will be injected into the LLM prompt automatically.
+          console.log(`[FAQ] Routing matched FAQ "${item.title}" through LLM for natural response.`);
+          break; // Let it fall through to the LLM call below
         }
-
-        const directResponse: any = {
-          reply: replyText,
-          action: 'faq',
-          status_update: 'Qualified',
-          notes: `Matched FAQ: ${item.title}`
-        };
-
-        // Promote to lead if they match an FAQ
-        lead.is_qualified = true;
-        lead.lead_status = 'Hot'; // Ensure they are marked as Hot lead
-        lead.lead_score = 10;
-        await lead.save();
-
-        let textToSend = directResponse.reply;
-        const currentPlan = company?.plan || 'Free';
-        const limits = PLAN_LIMITS[currentPlan] || PLAN_LIMITS.Free;
-        if (limits.hasBranding) {
-          textToSend += "\n\n⚡ Powered by Flazly";
-        }
-        directResponse.reply = textToSend;
-        await this.logOutboundMessage(lead, directResponse as any);
-        await this.sendInstagramMessage(lead.instagram_handle, textToSend, company?.instagram_access_token);
-        return directResponse;
       }
+    } else {
+      console.log(`[FAQ SKIP] Greeting or short message detected ("${rawNormalized}"). Routing to LLM.`);
     }
 
     // 3. Preprocess Message
