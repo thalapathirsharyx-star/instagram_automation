@@ -52,7 +52,7 @@ const Inbox: React.FC = () => {
       const res = await getLeads();
       const data = res?.Data || [];
       setLeads(data);
-      if (data.length > 0 && !selectedLead) {
+      if (data.length > 0 && !selectedLeadRef.current) {
         handleSelectLead(data[0]);
       }
     } catch (error) {
