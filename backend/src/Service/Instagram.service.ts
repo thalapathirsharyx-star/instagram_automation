@@ -530,6 +530,9 @@ export class InstagramService {
       }
     }
 
+    // Trigger typing indicator immediately before the AI starts "thinking"
+    await this.sendSenderAction(lead.instagram_handle, 'typing_on', company?.instagram_access_token);
+
     // 5. Dynamic AI Classification
     const aiResponse = await this.aiService.generateAiReply(context.message_text, lead, companyId);
 
@@ -584,11 +587,8 @@ export class InstagramService {
       }
       aiResponse.reply = textToSend;
 
-      // Send typing indicator to Instagram
-      await this.sendSenderAction(lead.instagram_handle, 'typing_on', company?.instagram_access_token);
-      
-      // Simulate human typing latency (3 seconds)
-      await new Promise(resolve => setTimeout(resolve, 3000));
+      // Simulate additional human typing latency (2 seconds)
+      await new Promise(resolve => setTimeout(resolve, 2000));
 
       await this.logOutboundMessage(lead, aiResponse);
       await this.sendInstagramMessage(lead.instagram_handle, textToSend, company?.instagram_access_token);
