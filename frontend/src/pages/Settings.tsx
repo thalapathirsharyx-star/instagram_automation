@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { 
   Shield, 
@@ -275,9 +275,10 @@ const Settings: React.FC = () => {
             .finally(() => setIsConnecting(false));
         } else {
           console.log('User cancelled login or did not fully authorize.');
+          toast.error('Instagram connection cancelled.');
           setIsConnecting(false);
         }
-      }, { scope: 'instagram_manage_messages,instagram_manage_comments,pages_manage_metadata,pages_read_engagement,pages_show_list,instagram_basic,business_management' });
+      }, { scope: 'instagram_manage_messages,instagram_manage_comments,pages_manage_metadata,pages_read_engagement,pages_show_list,instagram_basic' });
     } catch (error) {
       console.error('FB Logic Error:', error);
       setIsConnecting(false);
@@ -551,6 +552,29 @@ const Settings: React.FC = () => {
                     </button>
                   </div>
                 )}
+              </SettingsCard>
+              
+              <SettingsCard 
+                icon={AlertCircle} 
+                title="Danger Zone" 
+                subtitle="Irreversible account and data management actions."
+              >
+                <div className="space-y-6">
+                  <div className="p-4 bg-rose-500/5 rounded-2xl border border-rose-500/20 text-rose-400">
+                    <h4 className="text-sm font-bold uppercase tracking-widest mb-1">Delete Account & Purge Data</h4>
+                    <p className="text-xs font-medium leading-relaxed">
+                      This action is permanent. All your access tokens, CRM logs, message metadata, and settings will be permanently and irreversibly deleted from our servers within 10 minutes. This cannot be undone.
+                    </p>
+                  </div>
+                  <div className="flex gap-2">
+                    <button 
+                      onClick={() => toast.error('Account deletion has been temporarily paused for Meta App Review verification.')}
+                      className="w-full py-3 bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-white border border-rose-500/20 rounded-xl font-bold uppercase tracking-widest transition-all text-xs shadow-sm"
+                    >
+                      Delete Account & Purge Data
+                    </button>
+                  </div>
+                </div>
               </SettingsCard>
             </div>
           )}

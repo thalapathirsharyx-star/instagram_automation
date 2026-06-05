@@ -5,45 +5,8 @@ import { ResponseEnum } from '@Helper/Enum/ResponseEnum';
 import { AdminSubRoleGuard, SuperAdminRoles } from '@Service/Auth/AdminSubRoleGuard.service';
 import { JwtAuthGuard } from '@Service/Auth/JwtAuthGuard.service';
 import { SecurityAlertService } from '@Service/Auth/SecurityAlert.service';
-import * as fs from 'fs';
-import * as path from 'path';
-
-const envPath = path.resolve(process.cwd(), '.env');
-
-function getKeysFromEnv() {
-  const content = fs.existsSync(envPath) ? fs.readFileSync(envPath, 'utf8') : '';
-  const openai = content.match(/^OPENAI_API_KEY=(.*)$/m)?.[1]?.trim() || process.env.OPENAI_API_KEY || '';
-  const gemini = content.match(/^GEMINI_API_KEY=(.*)$/m)?.[1]?.trim() || process.env.GEMINI_API_KEY || '';
-  const groq = content.match(/^GROQ_API_KEY=(.*)$/m)?.[1]?.trim() || process.env.GROQ_API_KEY || '';
-  return { openai, gemini, groq };
-}
-
-function saveKeysToEnv(openai: string, gemini: string, groq: string) {
-  let content = fs.existsSync(envPath) ? fs.readFileSync(envPath, 'utf8') : '';
-  
-  const updateOrAdd = (key: string, value: string) => {
-    const regex = new RegExp(`^${key}=.*$`, 'm');
-    if (regex.test(content)) {
-      content = content.replace(regex, `${key}=${value}`);
-    } else {
-      if (content.length > 0 && !content.endsWith('\n')) {
-        content += '\n';
-      }
-      content += `${key}=${value}\n`;
-    }
-  };
-
-  updateOrAdd('OPENAI_API_KEY', openai);
-  updateOrAdd('GEMINI_API_KEY', gemini);
-  updateOrAdd('GROQ_API_KEY', groq);
-
-  fs.writeFileSync(envPath, content, 'utf8');
-
-  // Update in-memory immediately for active services
-  process.env.OPENAI_API_KEY = openai;
-  process.env.GEMINI_API_KEY = gemini;
-  process.env.GROQ_API_KEY = groq;
-}
+import { EncryptionService } from '@Service/Encryption.service';
+import { system_setting } from '@Database/Table/Admin/system_setting';
 
 function maskKey(key?: string): string {
   if (!key) return '';
@@ -55,8 +18,36 @@ function maskKey(key?: string): string {
 @ApiTags("LLM Keys")
 export class LLMKeyController extends JWTAuthController {
 
-  constructor(private readonly _SecurityAlertService: SecurityAlertService) {
+  constructor(
+    private readonly _SecurityAlertService: SecurityAlertService,
+    private readonly _EncryptionService: EncryptionService
+  ) {
     super();
+  }
+
+  private async getSetting(key: string): Promise<string> {
+    const setting = await system_setting.findOne({ where: { setting_key: key } });
+    if (!setting || !setting.setting_value) return '';
+    try {
+      return this._EncryptionService.Decrypt(setting.setting_value);
+    } catch {
+      return '';
+    }
+  }
+
+  private async saveSetting(key: string, value: string, description: string) {
+    let setting = await system_setting.findOne({ where: { setting_key: key } });
+    if (!setting) {
+      setting = new system_setting();
+      setting.setting_key = key;
+      setting.description = description;
+    }
+    setting.setting_value = this._EncryptionService.Encrypt(value);
+    setting.updated_on = new Date();
+    await setting.save();
+    
+    // Also push to process.env so existing services can use it immediately
+    process.env[key] = value;
   }
 
   @Get()
@@ -73,13 +64,17 @@ export class LLMKeyController extends JWTAuthController {
       `Super Admin user ${req.user.email} (sub-role: ${req.user.super_admin_sub_role}) has viewed the platform LLM keys.`
     );
 
-    const keys = getKeysFromEnv();
+    // Fetch from database, fallback to .env for initial migration
+    const openai = await this.getSetting('OPENAI_API_KEY') || process.env.OPENAI_API_KEY || '';
+    const gemini = await this.getSetting('GEMINI_API_KEY') || process.env.GEMINI_API_KEY || '';
+    const groq = await this.getSetting('GROQ_API_KEY') || process.env.GROQ_API_KEY || '';
+
     return {
       Type: ResponseEnum.Success,
       Data: {
-        openai: maskKey(keys.openai),
-        gemini: maskKey(keys.gemini),
-        groq: maskKey(keys.groq)
+        openai: maskKey(openai),
+        gemini: maskKey(gemini),
+        groq: maskKey(groq)
       }
     };
   }
@@ -98,17 +93,21 @@ export class LLMKeyController extends JWTAuthController {
       `Super Admin user ${req.user.email} (sub-role: ${req.user.super_admin_sub_role}) has updated/rotated the platform LLM keys.`
     );
 
-    const currentKeys = getKeysFromEnv();
+    const currentOpenai = await this.getSetting('OPENAI_API_KEY') || process.env.OPENAI_API_KEY || '';
+    const currentGemini = await this.getSetting('GEMINI_API_KEY') || process.env.GEMINI_API_KEY || '';
+    const currentGroq = await this.getSetting('GROQ_API_KEY') || process.env.GROQ_API_KEY || '';
     
-    const newOpenai = (body.openai && body.openai.includes('...')) ? currentKeys.openai : body.openai;
-    const newGemini = (body.gemini && body.gemini.includes('...')) ? currentKeys.gemini : body.gemini;
-    const newGroq = (body.groq && body.groq.includes('...')) ? currentKeys.groq : body.groq;
+    const newOpenai = (body.openai && body.openai.includes('...')) ? currentOpenai : body.openai;
+    const newGemini = (body.gemini && body.gemini.includes('...')) ? currentGemini : body.gemini;
+    const newGroq = (body.groq && body.groq.includes('...')) ? currentGroq : body.groq;
 
-    saveKeysToEnv(newOpenai, newGemini, newGroq);
+    await this.saveSetting('OPENAI_API_KEY', newOpenai || '', 'Global OpenAI API Key');
+    await this.saveSetting('GEMINI_API_KEY', newGemini || '', 'Global Google Gemini API Key');
+    await this.saveSetting('GROQ_API_KEY', newGroq || '', 'Global Groq API Key');
 
     return {
       Type: ResponseEnum.Success,
-      Message: 'LLM provider keys updated successfully.'
+      Message: 'LLM provider keys updated successfully in the database.'
     };
   }
 }

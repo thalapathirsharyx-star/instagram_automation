@@ -31,7 +31,7 @@ const Sidebar: React.FC = () => {
       <nav className="nav-links premium-scroll">
         {user?.roleCode === 'SUPER_ADMIN' ? (
           <>
-            {/* Super Admin - Dashboard Group */}
+            {/* Super Admin Group */}
             {!isCollapsed && <div className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest px-4 mt-4 mb-1">Overview</div>}
             <NavLink to="/admin/dashboard" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
               <LayoutDashboard size={20} />
@@ -46,7 +46,6 @@ const Sidebar: React.FC = () => {
               <span>Activity Log</span>
             </NavLink>
 
-            {/* Super Admin - Management Group */}
             {!isCollapsed && <div className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest px-4 mt-4 mb-1">Management</div>}
             <NavLink to="/admin/clients" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
               <Users size={20} />
@@ -100,10 +99,10 @@ const Sidebar: React.FC = () => {
               <Zap size={20} />
               <span>Automation</span>
             </NavLink>
-            <NavLink to="/broadcasts" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+            {/* <NavLink to="/broadcasts" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
               <Radio size={20} />
               <span>Broadcasts {!hasProPlan && <Lock size={12} className="inline ml-1 text-zinc-400" />}</span>
-            </NavLink>
+            </NavLink> */}
             {user?.roleCode === 'CLIENT_ADMIN' && (
               <>
                 <NavLink to="/ai-settings" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>

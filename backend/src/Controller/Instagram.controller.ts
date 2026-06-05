@@ -1,4 +1,4 @@
-﻿import { Body, Controller, Delete, Get, Param, Post, Query, Req, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Query, Req, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { InstagramService } from '@Service/Instagram.service';
@@ -39,27 +39,19 @@ export class InstagramController extends AuthBaseController {
   async HandleWebhook(@Body() body: any, @Req() req: any) {
     // 1. Verify Webhook Signature (Security)
     const signature = req.headers['x-hub-signature-256'];
-    const appSecret = process.env.FB_APP_SECRET;
+    const appSecret = process.env.FB_APP_SECRET || 'fallback_secret';
     
-    if (signature && appSecret && req.rawBody) {
-      const expectedSignature = `sha256=${crypto.createHmac('sha256', appSecret).update(req.rawBody).digest('hex')}`;
-      if (signature !== expectedSignature) {
-        console.error('[SECURITY] Invalid webhook signature detected!');
-        console.error(`- Loaded FB_APP_SECRET prefix: ${appSecret.slice(0, 4)}... (length: ${appSecret.length})`);
-        console.error(`- Received Header Signature: ${signature}`);
-        console.error(`- Computed Expected Signature: ${expectedSignature}`);
-        console.error(`- rawBody Type: ${typeof req.rawBody} (isBuffer: ${Buffer.isBuffer(req.rawBody)})`);
-        console.error(`- rawBody Length: ${req.rawBody.length}`);
-        console.error(`- rawBody Content: "${req.rawBody.toString('utf-8')}"`);
-        
-        if (process.env.BYPASS_SIGNATURE === 'true') {
-          console.warn('[SECURITY WARNING] Bypassing invalid signature check because BYPASS_SIGNATURE=true is set in environment!');
-        } else {
-          throw new HttpException('Invalid signature', HttpStatus.FORBIDDEN);
-        }
+    if (!signature || !req.rawBody) {
+      console.error('[SECURITY] Webhook received without signature or rawBody.');
+      throw new HttpException('Missing signature or rawBody', HttpStatus.FORBIDDEN);
+    }
+
+    const expectedSignature = `sha256=${crypto.createHmac('sha256', appSecret).update(req.rawBody).digest('hex')}`;
+    if (signature !== expectedSignature) {
+      console.error('[SECURITY] Invalid webhook signature detected!');
+      if (process.env.BYPASS_SIGNATURE !== 'true') {
+        throw new HttpException('Invalid signature', HttpStatus.FORBIDDEN);
       }
-    } else {
-      console.warn('[SECURITY WARNING] Webhook received without signature validation. Ensure rawBody is enabled and FB_APP_SECRET is set.');
     }
 
     // MEGA-LOG: See everything exactly as it arrives

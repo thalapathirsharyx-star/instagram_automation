@@ -106,7 +106,7 @@ const Dashboard: React.FC = () => {
       }, {});
       
       const funnel = Object.entries(statusCounts).map(([name, value]) => ({ name, value }));
-      setFunnelData(funnel.length > 0 ? funnel : [{ name: 'No Data', value: 1 }]);
+      setFunnelData(funnel.length > 0 ? funnel : [{ name: 'Connect Instagram to capture leads', value: 1 }]);
 
       // Calculate playbook funnel metrics dynamically based on actual database leads
       const started = leads.length;

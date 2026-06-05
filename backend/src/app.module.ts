@@ -57,7 +57,8 @@ import { TokenMonitorService } from '@Service/TokenMonitor.service';
 import { OCRService } from '@Service/OCR.service';
 import { ProductCatalogController } from '@Controller/ProductCatalog.controller';
 import { ProductCatalogService } from '@Service/ProductCatalog.service';
-
+import { ScheduleModule } from '@nestjs/schedule';
+import { SubscriptionCronService } from '@Service/Admin/SubscriptionCron.service';
 @Module({
   imports: [
     /*
@@ -68,6 +69,7 @@ import { ProductCatalogService } from '@Service/ProductCatalog.service';
     */
     EventEmitterModule.forRoot({ maxListeners: 0 }),
     ConfigModule.forRoot({ isGlobal: true, load: [Configuration], envFilePath: '.env' }),
+    ScheduleModule.forRoot(),
     MulterModule.register(),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
@@ -160,6 +162,7 @@ import { ProductCatalogService } from '@Service/ProductCatalog.service';
     TokenMonitorService,
     OCRService,
     ProductCatalogService,
+    SubscriptionCronService,
     {
       provide: "REDIS_CLIENT",
       useFactory: () => {

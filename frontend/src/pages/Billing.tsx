@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useLocation } from 'react-router-dom';
 import { CreditCard, Check, Zap, Shield, Sparkles, Lock, X, FileText } from 'lucide-react';
@@ -14,6 +14,8 @@ const Billing: React.FC = () => {
   const [activeTab, setActiveTab] = useState('Billing');
   const { toast } = useToast();
 
+  const [invoices, setInvoices] = useState<any[]>([]);
+
   useEffect(() => {
     if (location.state?.alert) {
       setUpgradeAlert(location.state.alert);
@@ -24,6 +26,23 @@ const Billing: React.FC = () => {
       return () => clearTimeout(timer);
     }
   }, [location.state]);
+
+  useEffect(() => {
+    if (activeTab === 'Billing') {
+      fetchInvoices();
+    }
+  }, [activeTab]);
+
+  const fetchInvoices = async () => {
+    try {
+      const res = await api.get('/Company/Invoices');
+      if (res.data?.Data) {
+        setInvoices(res.data.Data);
+      }
+    } catch (err) {
+      console.error("Failed to fetch invoices");
+    }
+  };
 
   const loadRazorpayScript = () => {
     return new Promise((resolve) => {
@@ -263,13 +282,42 @@ const Billing: React.FC = () => {
             <h3 className="font-bold text-zinc-900 text-lg mb-1">Invoices</h3>
             <p className="text-sm text-zinc-500 mb-6">Access all your previous invoices.</p>
             
-            <div className="border border-zinc-200 rounded-2xl overflow-hidden bg-white shadow-sm flex flex-col items-center justify-center py-16 px-4 text-center">
-              <div className="w-16 h-16 bg-zinc-50 rounded-full flex items-center justify-center mb-4 border border-zinc-200">
-                <FileText className="text-zinc-400" size={24} />
+            {invoices.length > 0 ? (
+              <div className="bg-white rounded-2xl border border-zinc-200 overflow-hidden shadow-sm">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="bg-zinc-50/50 border-b border-zinc-200 text-sm font-bold text-zinc-500 uppercase tracking-wider">
+                      <th className="px-6 py-4 font-semibold">Invoice Number</th>
+                      <th className="px-6 py-4 font-semibold">Date</th>
+                      <th className="px-6 py-4 font-semibold">Amount</th>
+                      <th className="px-6 py-4 font-semibold text-right">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-zinc-100 text-sm font-medium text-zinc-900">
+                    {invoices.map((inv) => (
+                      <tr key={inv.id} className="hover:bg-zinc-50 transition-colors">
+                        <td className="px-6 py-4 font-bold text-zinc-700">{inv.invoice_number}</td>
+                        <td className="px-6 py-4 text-zinc-500">{new Date(inv.created_on).toLocaleDateString()}</td>
+                        <td className="px-6 py-4">₹{inv.amount_paid?.toLocaleString()}</td>
+                        <td className="px-6 py-4 text-right">
+                          <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-600 border border-emerald-100">
+                            {inv.invoice_status?.toUpperCase() || 'PAID'}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
-              <h4 className="font-bold text-zinc-900 text-lg mb-1">No invoices yet</h4>
-              <p className="text-sm text-zinc-500 max-w-sm">When you subscribe to a premium plan or make a payment, your invoices will appear here.</p>
-            </div>
+            ) : (
+              <div className="border border-zinc-200 rounded-2xl overflow-hidden bg-white shadow-sm flex flex-col items-center justify-center py-16 px-4 text-center">
+                <div className="w-16 h-16 bg-zinc-50 rounded-full flex items-center justify-center mb-4 border border-zinc-200">
+                  <FileText className="text-zinc-400" size={24} />
+                </div>
+                <h4 className="font-bold text-zinc-900 text-lg mb-1">No invoices yet</h4>
+                <p className="text-sm text-zinc-500 max-w-sm">When you subscribe to a premium plan or make a payment, your invoices will appear here.</p>
+              </div>
+            )}
           </div>
         </div>
       )}

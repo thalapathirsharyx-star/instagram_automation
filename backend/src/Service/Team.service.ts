@@ -64,6 +64,7 @@ export class TeamService {
     newUser.company_id = companyId;
     newUser.created_by_id = '0';
     newUser.created_on = new Date();
+    newUser.is_verified = true;
     await newUser.save();
 
     return { id: newUser.id, email: newUser.email };

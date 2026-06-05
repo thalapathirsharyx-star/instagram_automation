@@ -1,4 +1,4 @@
-﻿import { Injectable, Inject } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { company } from '@Database/Table/Admin/company';
 import { user } from '@Database/Table/Admin/user';
@@ -48,9 +48,9 @@ export class AuthService {
         UserData.is_verified = true;
         await UserData.save();
       } else {
-        // Auto-verify users created before June 1, 2026 to ensure backward compatibility
+        // Auto-verify users created before June 1, 2026 or team members (AGENT)
         const cutoffDate = new Date('2026-06-01T12:00:00Z');
-        if (UserData.created_on && UserData.created_on < cutoffDate) {
+        if ((UserData.created_on && UserData.created_on < cutoffDate) || UserData.user_role?.code === 'AGENT') {
           UserData.is_verified = true;
           await UserData.save();
         } else {

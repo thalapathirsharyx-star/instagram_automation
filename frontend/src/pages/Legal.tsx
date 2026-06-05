@@ -90,6 +90,7 @@ const PrivacyContent: React.FC = () => (
         <li><strong>Hosting Services:</strong> Core backend infrastructure and databases are hosted on secure cloud providers.</li>
         <li><strong>AI Providers:</strong> Message content is sent to secure Large Language Model APIs (such as OpenAI or Anthropic) for response generation. These providers do not use our customers' data to train their public models.</li>
         <li><strong>Payment Processors:</strong> Billing is processed through secure, PCI-compliant payment gateways.</li>
+        <li><strong>Support Access:</strong> Support staff may temporarily access customer workspaces for troubleshooting purposes. All access is strictly logged, audited, and automatically revoked when the session ends.</li>
       </ul>
     </section>
 

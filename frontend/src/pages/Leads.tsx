@@ -79,7 +79,7 @@ const Leads: React.FC = () => {
               ) : filteredLeads.length === 0 ? (
                 <tr>
                   <td colSpan={5} className="py-32 text-center text-zinc-500 font-medium">
-                    No leads found matching your criteria.
+                    Connect your Instagram account to start receiving leads.
                   </td>
                 </tr>
               ) : filteredLeads.map((lead) => (

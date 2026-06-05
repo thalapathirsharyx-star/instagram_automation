@@ -110,7 +110,10 @@ const Signup: React.FC = () => {
       if (response.data.Type === 'S') {
         const result = response.data.result;
         if (result && result.status === 'pending_verification') {
-          setMessage({ text: result.message || 'Please check your email to verify your account.', type: 'success' });
+          setMessage({ text: result.message || 'Registration successful! Please check your email to verify your account.', type: 'success' });
+          setTimeout(() => {
+            navigate('/login');
+          }, 3000);
         } else {
           const { api_token, user } = result;
           setMessage({ text: 'Account created! Fueling up your dashboard...', type: 'success' });

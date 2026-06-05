@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Sparkles, 
   MessageSquare, 
@@ -248,8 +248,8 @@ const Automation: React.FC = () => {
 
   // Comment Handlers
   const addCommentTrigger = async () => {
-    if (!newKeyword || !newReplyMessage) {
-      showToast('Please fill in all trigger details.', 'error');
+    if (!newKeyword.trim() || !newReplyMessage.trim()) {
+      showToast('Keyword and Reply Message cannot be empty.', 'error');
       return;
     }
     try {

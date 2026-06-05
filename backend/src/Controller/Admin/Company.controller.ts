@@ -10,6 +10,9 @@ import { AdminSubRoleGuard, SuperAdminRoles } from '@Service/Auth/AdminSubRoleGu
 import { JwtAuthGuard } from '@Service/Auth/JwtAuthGuard.service';
 import { ImpersonationBlockGuard } from '@Service/Auth/ImpersonationBlockGuard.service';
 import * as crypto from 'crypto';
+import { invoice } from '@Database/Table/Admin/invoice';
+import { payment_transaction } from '@Database/Table/Admin/payment_transaction';
+import { subscription } from '@Database/Table/Admin/subscription';
 const Razorpay = require('razorpay');
 
 @Controller({ path: "Company", version: '1' })
@@ -125,6 +128,70 @@ export class CompanyController extends JWTAuthController {
 
     if (expectedSignature === body.razorpay_signature) {
       await this._CompanyService.UpdatePlan(user.company_id, body.plan, user.user_id);
+      
+      // Determine amount for logging based on plan
+      let amount = 0;
+      if (body.plan === 'Pro') amount = 2499;
+      else if (body.plan === 'Business') amount = 5999;
+
+      try {
+        // Create Invoice
+        const invNumber = `INV-${Date.now()}-${user.company_id.substring(0, 4).toUpperCase()}`;
+        const newInvoice = new invoice();
+        newInvoice.company_id = user.company_id;
+        newInvoice.invoice_number = invNumber;
+        newInvoice.amount_due = amount;
+        newInvoice.amount_paid = amount;
+        newInvoice.currency = 'INR';
+        newInvoice.invoice_status = 'paid';
+        newInvoice.due_date = new Date();
+        newInvoice.created_by_id = user.user_id;
+        newInvoice.created_on = new Date();
+        const invResult = await invoice.insert(newInvoice);
+        newInvoice.id = invResult.identifiers[0].id;
+
+        // Create Transaction
+        const newTx = new payment_transaction();
+        newTx.company_id = user.company_id;
+        newTx.invoice_id = newInvoice.id;
+        newTx.amount = amount;
+        newTx.currency = 'INR';
+        newTx.payment_status = 'succeeded';
+        newTx.payment_method = 'razorpay';
+        newTx.provider_transaction_id = body.razorpay_payment_id;
+        newTx.provider_response = { order_id: body.razorpay_order_id, payment_id: body.razorpay_payment_id };
+        newTx.created_by_id = user.user_id;
+        newTx.created_on = new Date();
+        await payment_transaction.insert(newTx);
+
+        // Create or Update Subscription
+        let sub = await subscription.findOne({ where: { company_id: user.company_id } });
+        if (!sub) {
+          sub = new subscription();
+          sub.company_id = user.company_id;
+          sub.created_by_id = user.user_id;
+          sub.created_on = new Date();
+        }
+        sub.plan_id = body.plan;
+        sub.subscription_status = 'active';
+        sub.current_period_start = new Date();
+        
+        const periodEnd = new Date();
+        periodEnd.setDate(periodEnd.getDate() + 30);
+        sub.current_period_end = periodEnd;
+        sub.payment_provider_subscription_id = body.razorpay_order_id;
+        sub.updated_by_id = user.user_id;
+        sub.updated_on = new Date();
+        
+        if (sub.id) {
+          await subscription.update(sub.id, sub);
+        } else {
+          await subscription.insert(sub);
+        }
+      } catch (err) {
+        console.error("Failed to log billing tables:", err);
+      }
+
       return this.SendResponse(ResponseEnum.Success, `Subscription upgraded to ${body.plan} successfully!`);
     } else {
       return this.SendResponse(ResponseEnum.Error, "Payment verification failed. Invalid signature.");
@@ -146,5 +213,24 @@ export class CompanyController extends JWTAuthController {
   async Impersonate(@Param('companyId') companyId: string, @CurrentUser() UserId: string) {
     const result = await this._AuthService.Impersonate(UserId, companyId);
     return { Type: ResponseEnum.Success, Message: 'Impersonation session started', result };
+  }
+
+  @Get('Invoices')
+  @UseGuards(ImpersonationBlockGuard)
+  async GetInvoices(@Req() req: any) {
+    const user = req.user;
+    if (!user?.company_id) return this.SendResponse(ResponseEnum.Error, "No company associated.");
+
+    try {
+      const invoices = await invoice.createQueryBuilder('i')
+        .where('i.company_id = :companyId', { companyId: user.company_id })
+        .orderBy('i.created_on', 'DESC')
+        .addSelect('i.created_on')
+        .getMany();
+      return { Type: ResponseEnum.Success, Data: invoices };
+    } catch (err) {
+      console.error(err);
+      return this.SendResponse(ResponseEnum.Error, "Failed to fetch invoices");
+    }
   }
 }
