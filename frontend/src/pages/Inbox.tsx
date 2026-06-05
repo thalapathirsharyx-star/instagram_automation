@@ -10,6 +10,7 @@ const Inbox: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isManualMode, setIsManualMode] = useState(false);
   const [messageText, setMessageText] = useState('');
+  const [socketStatus, setSocketStatus] = useState<'Connecting...' | 'Connected 🟢' | 'Disconnected 🔴'>('Connecting...');
   const chatHistoryRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -28,10 +29,16 @@ const Inbox: React.FC = () => {
 
     socket.on('connect', () => {
       console.log('Connected to WebSocket server:', socket.id);
+      setSocketStatus('Connected 🟢');
     });
 
     socket.on('connect_error', (err) => {
       console.error('WebSocket connection error:', err.message);
+      setSocketStatus('Disconnected 🔴');
+    });
+
+    socket.on('disconnect', () => {
+      setSocketStatus('Disconnected 🔴');
     });
 
     socket.on('new_message', (data: any) => {
@@ -48,7 +55,9 @@ const Inbox: React.FC = () => {
           if (prev.find(m => m.id === data.id)) return prev;
           return [...prev, data];
         });
-        setTimeout(scrollToBottom, 300);
+        setTimeout(() => {
+          if (chatHistoryRef.current) chatHistoryRef.current.scrollTop = chatHistoryRef.current.scrollHeight;
+        }, 100);
       }
 
       // Always refresh leads list to show new leads or update existing ones
@@ -85,16 +94,12 @@ const Inbox: React.FC = () => {
     try {
       const res = await getMessages(lead.id);
       setMessages(res?.Data || []);
-      setTimeout(scrollToBottom, 100);
+      setTimeout(() => {
+        if (chatHistoryRef.current) chatHistoryRef.current.scrollTop = chatHistoryRef.current.scrollHeight;
+      }, 100);
     } catch (error) {
       console.error('Error fetching messages:', error);
       setMessages([]);
-    }
-  };
-
-  const scrollToBottom = () => {
-    if (chatHistoryRef.current) {
-      chatHistoryRef.current.scrollTop = chatHistoryRef.current.scrollHeight;
     }
   };
 
@@ -107,7 +112,9 @@ const Inbox: React.FC = () => {
       // Update the UI immediately with the newly sent message
       if (res?.Data) {
         setMessages(prev => [...prev, res.Data]);
-        setTimeout(scrollToBottom, 100);
+        setTimeout(() => {
+          if (chatHistoryRef.current) chatHistoryRef.current.scrollTop = chatHistoryRef.current.scrollHeight;
+        }, 100);
       }
     } catch (error) {
       console.error('Error sending message:', error);
