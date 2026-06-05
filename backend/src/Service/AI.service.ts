@@ -3,6 +3,7 @@ import { instagram_lead } from '@Database/Table/CRM/instagram_lead';
 import { instagram_message } from '@Database/Table/CRM/instagram_message';
 import { knowledge_base } from '@Database/Table/CRM/knowledge_base';
 import { company as CompanyTable } from '@Database/Table/Admin/company';
+import { system_setting } from '@Database/Table/Admin/system_setting';
 import { story_context } from '@Database/Table/CRM/story_context';
 import { ProductCatalogService } from './ProductCatalog.service';
 import axios from 'axios';
@@ -237,19 +238,27 @@ Include these fields:
       .replace(/\${rules.intent_types.join\(\'\/\'\)}/g, rules.intent_types ? rules.intent_types.join('/') : '');
 
     try {
-      const activeProvider = process.env.ACTIVE_LLM_PROVIDER || 'groq';
+      const dbProvider = await system_setting.findOne({ where: { setting_key: 'ACTIVE_LLM_PROVIDER' } });
+      const dbModel = await system_setting.findOne({ where: { setting_key: 'ACTIVE_LLM_MODEL' } });
+      const dbGroq = await system_setting.findOne({ where: { setting_key: 'GROQ_API_KEY' } });
+      const dbOpenAI = await system_setting.findOne({ where: { setting_key: 'OPENAI_API_KEY' } });
+      const dbGemini = await system_setting.findOne({ where: { setting_key: 'GEMINI_API_KEY' } });
+
+      const activeProvider = dbProvider?.setting_value || process.env.ACTIVE_LLM_PROVIDER || 'groq';
+      const customModel = dbModel?.setting_value || process.env.ACTIVE_LLM_MODEL;
+      
       let apiUrl = 'https://api.groq.com/openai/v1/chat/completions';
-      let apiModel = 'llama-3.3-70b-versatile';
-      let apiKey = process.env.GROQ_API_KEY;
+      let apiModel = customModel || 'llama-3.3-70b-versatile';
+      let apiKey = dbGroq?.setting_value || process.env.GROQ_API_KEY;
 
       if (activeProvider === 'openai') {
         apiUrl = 'https://api.openai.com/v1/chat/completions';
-        apiModel = 'gpt-4o-mini';
-        apiKey = process.env.OPENAI_API_KEY;
+        apiModel = customModel || 'gpt-4o-mini';
+        apiKey = dbOpenAI?.setting_value || process.env.OPENAI_API_KEY;
       } else if (activeProvider === 'gemini') {
         apiUrl = 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions';
-        apiModel = 'gemini-1.5-flash';
-        apiKey = process.env.GEMINI_API_KEY;
+        apiModel = customModel || 'gemini-1.5-flash';
+        apiKey = dbGemini?.setting_value || process.env.GEMINI_API_KEY;
       }
 
       if (!apiKey) {
@@ -414,19 +423,27 @@ Return ONLY valid JSON in this exact format. No extra text or markdown formattin
 `;
 
     try {
-      const activeProvider = process.env.ACTIVE_LLM_PROVIDER || 'groq';
+      const dbProvider = await system_setting.findOne({ where: { setting_key: 'ACTIVE_LLM_PROVIDER' } });
+      const dbModel = await system_setting.findOne({ where: { setting_key: 'ACTIVE_LLM_MODEL' } });
+      const dbGroq = await system_setting.findOne({ where: { setting_key: 'GROQ_API_KEY' } });
+      const dbOpenAI = await system_setting.findOne({ where: { setting_key: 'OPENAI_API_KEY' } });
+      const dbGemini = await system_setting.findOne({ where: { setting_key: 'GEMINI_API_KEY' } });
+
+      const activeProvider = dbProvider?.setting_value || process.env.ACTIVE_LLM_PROVIDER || 'groq';
+      const customModel = dbModel?.setting_value || process.env.ACTIVE_LLM_MODEL;
+
       let apiUrl = 'https://api.groq.com/openai/v1/chat/completions';
-      let apiModel = 'llama-3.3-70b-versatile';
-      let apiKey = process.env.GROQ_API_KEY;
+      let apiModel = customModel || 'llama-3.3-70b-versatile';
+      let apiKey = dbGroq?.setting_value || process.env.GROQ_API_KEY;
 
       if (activeProvider === 'openai') {
         apiUrl = 'https://api.openai.com/v1/chat/completions';
-        apiModel = 'gpt-4o-mini';
-        apiKey = process.env.OPENAI_API_KEY;
+        apiModel = customModel || 'gpt-4o-mini';
+        apiKey = dbOpenAI?.setting_value || process.env.OPENAI_API_KEY;
       } else if (activeProvider === 'gemini') {
         apiUrl = 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions';
-        apiModel = 'gemini-1.5-flash';
-        apiKey = process.env.GEMINI_API_KEY;
+        apiModel = customModel || 'gemini-1.5-flash';
+        apiKey = dbGemini?.setting_value || process.env.GEMINI_API_KEY;
       }
 
       if (!apiKey) {
