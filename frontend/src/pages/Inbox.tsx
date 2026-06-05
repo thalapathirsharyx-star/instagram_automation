@@ -28,9 +28,16 @@ const Inbox: React.FC = () => {
       
       // Update messages list if this lead is currently selected
       const currentLead = selectedLeadRef.current;
-      if (currentLead && (currentLead.id === data.lead_id || currentLead.instagram_handle === data.lead?.instagram_handle)) {
-        setMessages(prev => [...prev, data]);
-        setTimeout(scrollToBottom, 100);
+      const targetLeadId = data.lead_id || data.lead?.id;
+      const targetHandle = data.instagram_handle || data.lead?.instagram_handle;
+      
+      if (currentLead && (currentLead.id === targetLeadId || currentLead.instagram_handle === targetHandle)) {
+        setMessages(prev => {
+          // Prevent duplicates
+          if (prev.find(m => m.id === data.id)) return prev;
+          return [...prev, data];
+        });
+        setTimeout(scrollToBottom, 300);
       }
 
       // Always refresh leads list to show new leads or update existing ones
@@ -184,7 +191,7 @@ const Inbox: React.FC = () => {
                       {msg.message_text.startsWith('[IMAGE]') ? (
                         <img src={msg.message_text.replace('[IMAGE] ', '')} alt="Shared image" className="rounded-xl max-w-full h-auto" />
                       ) : (
-                        <p className={msg.direction === 'Outbound' ? 'text-white' : 'text-zinc-800'}>
+                        <p className={msg.direction === 'Outbound' ? 'text-white' : 'text-zinc-800'} style={msg.direction === 'Outbound' ? { color: '#ffffff' } : {}}>
                           {msg.message_text}
                         </p>
                       )}
