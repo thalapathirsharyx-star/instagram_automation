@@ -69,6 +69,7 @@ export class LLMKeyController extends JWTAuthController {
     const gemini = await this.getSetting('GEMINI_API_KEY') || process.env.GEMINI_API_KEY || '';
     const groq = await this.getSetting('GROQ_API_KEY') || process.env.GROQ_API_KEY || '';
     const activeProvider = await this.getSetting('ACTIVE_LLM_PROVIDER') || 'openai';
+    const activeModel = await this.getSetting('ACTIVE_LLM_MODEL') || '';
 
     return {
       Type: ResponseEnum.Success,
@@ -76,7 +77,8 @@ export class LLMKeyController extends JWTAuthController {
         openai: maskKey(openai),
         gemini: maskKey(gemini),
         groq: maskKey(groq),
-        active_provider: activeProvider
+        active_provider: activeProvider,
+        active_model: activeModel
       }
     };
   }
@@ -84,7 +86,7 @@ export class LLMKeyController extends JWTAuthController {
   @Patch('Update')
   @UseGuards(JwtAuthGuard, AdminSubRoleGuard)
   @SuperAdminRoles('Owner', 'Security')
-  async UpdateKeys(@Body() body: { openai: string; gemini: string; groq: string; active_provider?: string }, @Req() req: any) {
+  async UpdateKeys(@Body() body: { openai: string; gemini: string; groq: string; active_provider?: string; active_model?: string }, @Req() req: any) {
     if (req.user?.user_role_code !== 'SUPER_ADMIN') {
       throw new ForbiddenException('Only platform administrators can update LLM provider keys.');
     }
@@ -109,6 +111,9 @@ export class LLMKeyController extends JWTAuthController {
 
     if (body.active_provider) {
       await this.saveSetting('ACTIVE_LLM_PROVIDER', body.active_provider, 'Active global LLM provider');
+    }
+    if (body.active_model !== undefined) {
+      await this.saveSetting('ACTIVE_LLM_MODEL', body.active_model, 'Active global LLM Model');
     }
 
     return {

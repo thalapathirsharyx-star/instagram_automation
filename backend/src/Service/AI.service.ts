@@ -237,10 +237,29 @@ Include these fields:
       .replace(/\${rules.intent_types.join\(\'\/\'\)}/g, rules.intent_types ? rules.intent_types.join('/') : '');
 
     try {
+      const activeProvider = process.env.ACTIVE_LLM_PROVIDER || 'groq';
+      let apiUrl = 'https://api.groq.com/openai/v1/chat/completions';
+      let apiModel = 'llama-3.3-70b-versatile';
+      let apiKey = process.env.GROQ_API_KEY;
+
+      if (activeProvider === 'openai') {
+        apiUrl = 'https://api.openai.com/v1/chat/completions';
+        apiModel = 'gpt-4o-mini';
+        apiKey = process.env.OPENAI_API_KEY;
+      } else if (activeProvider === 'gemini') {
+        apiUrl = 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions';
+        apiModel = 'gemini-1.5-flash';
+        apiKey = process.env.GEMINI_API_KEY;
+      }
+
+      if (!apiKey) {
+        throw new Error(`API Key for ${activeProvider} is missing in configuration.`);
+      }
+
       const response = await axios.post(
-        'https://api.groq.com/openai/v1/chat/completions',
+        apiUrl,
         {
-          model: 'llama-3.3-70b-versatile',
+          model: apiModel,
           messages: [
             { role: 'system', content: prompt },
             { role: 'user', content: messageText }
@@ -249,7 +268,7 @@ Include these fields:
         },
         {
           headers: {
-            'Authorization': `Bearer ${GROQ_API_KEY}`,
+            'Authorization': `Bearer ${apiKey}`,
             'Content-Type': 'application/json'
           }
         }
@@ -395,10 +414,29 @@ Return ONLY valid JSON in this exact format. No extra text or markdown formattin
 `;
 
     try {
+      const activeProvider = process.env.ACTIVE_LLM_PROVIDER || 'groq';
+      let apiUrl = 'https://api.groq.com/openai/v1/chat/completions';
+      let apiModel = 'llama-3.3-70b-versatile';
+      let apiKey = process.env.GROQ_API_KEY;
+
+      if (activeProvider === 'openai') {
+        apiUrl = 'https://api.openai.com/v1/chat/completions';
+        apiModel = 'gpt-4o-mini';
+        apiKey = process.env.OPENAI_API_KEY;
+      } else if (activeProvider === 'gemini') {
+        apiUrl = 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions';
+        apiModel = 'gemini-1.5-flash';
+        apiKey = process.env.GEMINI_API_KEY;
+      }
+
+      if (!apiKey) {
+        throw new Error(`API Key for ${activeProvider} is missing in configuration.`);
+      }
+
       const response = await axios.post(
-        'https://api.groq.com/openai/v1/chat/completions',
+        apiUrl,
         {
-          model: 'llama-3.3-70b-versatile',
+          model: apiModel,
           messages: [
             { role: 'system', content: prompt }
           ],
@@ -406,7 +444,7 @@ Return ONLY valid JSON in this exact format. No extra text or markdown formattin
         },
         {
           headers: {
-            'Authorization': `Bearer ${GROQ_API_KEY}`,
+            'Authorization': `Bearer ${apiKey}`,
             'Content-Type': 'application/json'
           }
         }

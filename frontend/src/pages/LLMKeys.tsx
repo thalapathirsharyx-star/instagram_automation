@@ -3,7 +3,7 @@ import { Key, Eye, EyeOff, Loader2, Sparkles, ShieldCheck, CheckCircle2, AlertTr
 import { getLLMKeys, updateLLMKeys } from '../api/admin.api';
 
 const LLMKeys: React.FC = () => {
-  const [keys, setKeys] = useState({ openai: '', gemini: '', groq: '', active_provider: 'openai' });
+  const [keys, setKeys] = useState({ openai: '', gemini: '', groq: '', active_provider: 'openai', active_model: '' });
   const [visibleFields, setVisibleFields] = useState<Record<string, boolean>>({
     openai: false,
     gemini: false,
@@ -183,7 +183,6 @@ const LLMKeys: React.FC = () => {
                 value={keys.active_provider}
                 onChange={(e) => {
                   setKeys(prev => ({ ...prev, active_provider: e.target.value }));
-                  // Auto-save when switching provider to feel instant
                   setTimeout(() => handleSave(), 100);
                 }}
                 className="w-full appearance-none bg-white border border-zinc-300 rounded-lg py-3 pl-4 pr-10 text-sm font-semibold text-zinc-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500 transition-all cursor-pointer hover:border-zinc-400"
@@ -194,8 +193,21 @@ const LLMKeys: React.FC = () => {
               </select>
               <ArrowRightLeft size={16} className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none" />
             </div>
+            
+            <label className="block text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 mt-5">Model Override (Optional)</label>
+            <div className="relative mb-3">
+              <input
+                type="text"
+                value={keys.active_model || ''}
+                onChange={(e) => setKeys(prev => ({ ...prev, active_model: e.target.value }))}
+                onBlur={() => handleSave()}
+                className="w-full bg-white border border-zinc-300 rounded-lg py-2.5 px-4 text-sm font-mono text-zinc-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500 transition-all hover:border-zinc-400"
+                placeholder="e.g. gpt-4o, llama-3.3-70b-versatile"
+              />
+            </div>
+
             <p className="text-[11px] text-zinc-500 leading-relaxed font-medium">
-              Changes apply instantly to all production workflows without requiring a system restart.
+              Leave model blank to use defaults. Changes apply instantly to all production workflows.
             </p>
           </div>
         </div>
