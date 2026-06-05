@@ -18,19 +18,19 @@ const Inbox: React.FC = () => {
     // Set up WebSocket connection
     const socketUrl = import.meta.env.VITE_SOCKET_URL || (import.meta.env.DEV ? 'http://localhost:8001' : '/');
     const socket = io(socketUrl);
-    
+
     socket.on('connect', () => {
       console.log('Connected to WebSocket server');
     });
 
     socket.on('new_message', (data: any) => {
       console.log('New message received via WebSocket:', data);
-      
+
       // Update messages list if this lead is currently selected
       const currentLead = selectedLeadRef.current;
       const targetLeadId = data.lead_id || data.lead?.id;
       const targetHandle = data.instagram_handle || data.lead?.instagram_handle;
-      
+
       if (currentLead && (currentLead.id === targetLeadId || currentLead.instagram_handle === targetHandle)) {
         setMessages(prev => {
           // Prevent duplicates
@@ -114,8 +114,8 @@ const Inbox: React.FC = () => {
           </div>
           <div className="flex-grow overflow-y-auto">
             {leads.map((lead) => (
-              <div 
-                key={lead.id} 
+              <div
+                key={lead.id}
                 className={`flex gap-3 p-4 cursor-pointer transition-all duration-200 relative group border-b border-zinc-100
                   ${selectedLead?.id === lead.id ? 'bg-violet-50/50' : 'hover:bg-zinc-50'}`}
                 onClick={() => handleSelectLead(lead)}
@@ -132,9 +132,9 @@ const Inbox: React.FC = () => {
                       {lead.customer_name}
                     </span>
                     <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider border shrink-0
-                      ${lead.lead_status === 'Buyer' ? 'bg-blue-50 text-blue-700 border-blue-200' : 
-                        lead.lead_status === 'Needs_Human' ? 'bg-rose-50 text-rose-700 border-rose-200' : 
-                        'bg-zinc-100 text-zinc-600 border-zinc-200'}`}>
+                      ${lead.lead_status === 'Buyer' ? 'bg-blue-50 text-blue-700 border-blue-200' :
+                        lead.lead_status === 'Needs_Human' ? 'bg-rose-50 text-rose-700 border-rose-200' :
+                          'bg-zinc-100 text-zinc-600 border-zinc-200'}`}>
                       {lead.lead_status}
                     </span>
                   </div>
@@ -162,13 +162,12 @@ const Inbox: React.FC = () => {
                 </div>
                 <div className="flex items-center gap-3">
                   <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest hidden sm:block">Agent Status:</span>
-                  <button 
+                  <button
                     onClick={() => setIsManualMode(!isManualMode)}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all shadow-sm border ${
-                      isManualMode 
-                        ? 'bg-rose-50 text-rose-700 border-rose-200 hover:bg-rose-100' 
-                        : 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100'
-                    }`}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all shadow-sm border ${isManualMode
+                      ? 'bg-rose-50 text-rose-700 border-rose-200 hover:bg-rose-100'
+                      : 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100'
+                      }`}
                   >
                     {isManualMode ? <Hand size={14} /> : <CheckCircle2 size={14} />}
                     {isManualMode ? 'Manual Mode Active' : 'AI Mode Active'}
@@ -183,7 +182,7 @@ const Inbox: React.FC = () => {
                 </div>
                 {messages.map((msg) => (
                   <div key={msg.id} className={`max-w-[85%] lg:max-w-[75%] flex flex-col ${msg.direction === 'Outbound' ? 'self-end items-end' : 'self-start items-start'} mb-2`}>
-                    
+
                     {/* Name and Timestamp Above Bubble */}
                     <div className={`flex items-center gap-2 mb-1.5 px-1 ${msg.direction === 'Outbound' ? 'flex-row-reverse' : 'flex-row'}`}>
                       <span className="text-xs font-medium text-zinc-600">
@@ -201,15 +200,14 @@ const Inbox: React.FC = () => {
                     </div>
 
                     {/* Chat Bubble */}
-                    <div className={`px-5 py-3.5 rounded-2xl text-[15px] font-normal leading-relaxed ${
-                      msg.direction === 'Outbound' 
-                        ? 'bg-[#F3E8FF] border border-[#E9D5FF] text-zinc-800 rounded-tr-sm' 
-                        : 'bg-white border border-zinc-100 shadow-sm text-zinc-800 rounded-tl-sm'
-                    }`}>
+                    <div className={`px-5 py-3.5 rounded-2xl text-[15px] font-normal leading-relaxed ${msg.direction === 'Outbound'
+                      ? 'bg-[#F3E8FF] border border-[#E9D5FF] text-zinc-800 rounded-tr-sm'
+                      : 'bg-white border border-zinc-100 shadow-sm text-zinc-800 rounded-tl-sm'
+                      }`}>
                       {msg.message_text.startsWith('[IMAGE]') ? (
                         <img src={msg.message_text.replace('[IMAGE] ', '')} alt="Shared image" className="rounded-xl max-w-full h-auto" />
                       ) : (
-                        <p className="text-zinc-800 whitespace-pre-wrap">
+                        <p className="whitespace-pre-wrap">
                           {msg.message_text}
                         </p>
                       )}
@@ -219,7 +217,7 @@ const Inbox: React.FC = () => {
                     {msg.ai_notes && (
                       <div className="mt-2 text-[11px] text-zinc-500 bg-white p-3 rounded-xl border border-zinc-200 shadow-sm self-start">
                         <span className="text-violet-600 font-bold block mb-1 uppercase tracking-wider text-[9px] flex items-center gap-1">
-                          <Bot size={10}/> AI Action: {msg.action_taken}
+                          <Bot size={10} /> AI Action: {msg.action_taken}
                         </span>
                         <p className="font-medium leading-relaxed italic">{msg.ai_notes}</p>
                       </div>
@@ -230,26 +228,24 @@ const Inbox: React.FC = () => {
 
               {/* Chat Input */}
               <div className="p-4 bg-white border-t border-zinc-200">
-                <div className={`flex gap-3 bg-zinc-50 p-2 rounded-xl border transition-all duration-200 shadow-inner ${
-                  isManualMode ? 'border-zinc-300 focus-within:border-violet-500 focus-within:bg-white focus-within:shadow-[0_0_0_4px_rgba(139,92,246,0.1)]' : 'border-zinc-200 opacity-80'
-                }`}>
-                  <input 
-                    type="text" 
-                    placeholder={isManualMode ? "Type a message to " + selectedLead.customer_name + "..." : "AI is actively managing this conversation..."} 
-                    disabled={!isManualMode} 
+                <div className={`flex gap-3 bg-zinc-50 p-2 rounded-xl border transition-all duration-200 shadow-inner ${isManualMode ? 'border-zinc-300 focus-within:border-violet-500 focus-within:bg-white focus-within:shadow-[0_0_0_4px_rgba(139,92,246,0.1)]' : 'border-zinc-200 opacity-80'
+                  }`}>
+                  <input
+                    type="text"
+                    placeholder={isManualMode ? "Type a message to " + selectedLead.customer_name + "..." : "AI is actively managing this conversation..."}
+                    disabled={!isManualMode}
                     value={messageText}
                     onChange={(e) => setMessageText(e.target.value)}
                     onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
                     className={`flex-grow px-3 py-2 bg-transparent text-sm font-medium outline-none ${isManualMode ? 'text-zinc-900 placeholder-zinc-400' : 'text-zinc-400'}`}
                   />
-                  <button 
+                  <button
                     onClick={handleSendMessage}
                     disabled={!isManualMode || !messageText.trim()}
-                    className={`w-10 h-10 rounded-lg flex items-center justify-center transition-all ${
-                      isManualMode && messageText.trim() 
-                        ? 'bg-violet-600 text-white shadow-sm hover:bg-violet-700' 
-                        : 'bg-zinc-200 text-zinc-400 cursor-not-allowed'
-                    }`}
+                    className={`w-10 h-10 rounded-lg flex items-center justify-center transition-all ${isManualMode && messageText.trim()
+                      ? 'bg-violet-600 text-white shadow-sm hover:bg-violet-700'
+                      : 'bg-zinc-200 text-zinc-400 cursor-not-allowed'
+                      }`}
                   >
                     <Send size={16} />
                   </button>
