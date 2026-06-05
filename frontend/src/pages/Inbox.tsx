@@ -15,12 +15,23 @@ const Inbox: React.FC = () => {
   useEffect(() => {
     fetchLeads();
 
-    // Set up WebSocket connection
-    const socketUrl = import.meta.env.VITE_SOCKET_URL || (import.meta.env.DEV ? 'http://localhost:8001' : '/');
-    const socket = io(socketUrl);
+    // Set up WebSocket connection dynamically from API base URL
+    const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || (import.meta.env.DEV ? 'http://localhost:8001/api/v1' : '/api/v1');
+    const socketUrl = import.meta.env.VITE_SOCKET_URL || apiBaseUrl.replace('/api/v1', '');
+    
+    const socket = io(socketUrl, {
+      transports: ['websocket', 'polling'],
+      reconnectionAttempts: 5,
+      reconnectionDelay: 1000,
+      path: '/socket.io'
+    });
 
     socket.on('connect', () => {
-      console.log('Connected to WebSocket server');
+      console.log('Connected to WebSocket server:', socket.id);
+    });
+
+    socket.on('connect_error', (err) => {
+      console.error('WebSocket connection error:', err.message);
     });
 
     socket.on('new_message', (data: any) => {
@@ -90,8 +101,14 @@ const Inbox: React.FC = () => {
   const handleSendMessage = async () => {
     if (!selectedLead || !messageText.trim()) return;
     try {
-      await sendMessage(selectedLead.id, messageText);
+      const res = await sendMessage(selectedLead.id, messageText);
       setMessageText('');
+      
+      // Update the UI immediately with the newly sent message
+      if (res?.Data) {
+        setMessages(prev => [...prev, res.Data]);
+        setTimeout(scrollToBottom, 100);
+      }
     } catch (error) {
       console.error('Error sending message:', error);
     }
