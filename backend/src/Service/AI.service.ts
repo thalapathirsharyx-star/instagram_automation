@@ -203,10 +203,10 @@ LANGUAGE RULES (CRITICAL)
 ═══════════════════════════════
 OUTPUT FORMAT (JSON ONLY)
 ═══════════════════════════════
-Return ONLY valid JSON. No extra text outside it.
+Return ONLY valid JSON. No extra text outside it. Do not use Markdown formatting for the JSON block itself.
 
 {
-  "reply": "smart auto-reply based on intent (enquiry -> info from KB/Catalog, purchase -> how to buy, casual -> greeting)",
+  "reply": "A brief, natural, conversational response to the customer. For greetings, say hello warmly. NEVER dump raw Knowledge Base text.",
   "action": "reply",
   "lead": "yes/no",
   "intent": "\${rules.intent_types.join('/')}",
@@ -214,7 +214,7 @@ Return ONLY valid JSON. No extra text outside it.
   "confidence": 0.0 to 1.0,
   "detected_language": "english" | "tamil" | "tanglish",
   "tags": ["interested", "pricing", "size_query", "support"],
-  "confirmed_order": null | { "sku": "SKU_CODE_HERE", "quantity": number, "size": string | null, "color": string | null }
+  "confirmed_order": null
 }
 `;
 
@@ -305,7 +305,10 @@ Respond ONLY in valid JSON format matching this structure exactly. Do NOT return
         }
       );
 
-      const aiData = JSON.parse(response.data.choices[0].message.content);
+      let rawContent = response.data.choices[0].message.content;
+      rawContent = rawContent.replace(/^```json\s*/i, '').replace(/\s*```$/i, '').trim();
+      
+      const aiData = JSON.parse(rawContent);
       const isLead = aiData.lead === 'yes' || aiData.lead === true || aiData.is_qualified === true || aiData.lead_status === 'Hot';
 
       return {
