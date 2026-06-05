@@ -17,13 +17,11 @@ export class EmailService {
       subject: "Forgot password request",
       template: "ForgotPassword",
       html: true,
-      attachments: [
-        {
-          filename: 'logo.png',
-          content: this._CommonService.GetBase64(`dist/Assets/Logo.png`),
-          cid: 'logo',
-          encoding: 'base64'
-        }],
+      attachments: [{
+        filename: 'logo.png',
+        path: 'dist/Assets/Logo.png',
+        cid: 'logo'
+      }],
       context: {
         logo: "cid:logo",
         domain_name: process.env.DOMAIN_NAME + "ResetPassword/" + EncryptedUserId,
@@ -39,13 +37,11 @@ export class EmailService {
       subject: "Activate Your Account - Flazly",
       template: "VerifyEmail",
       html: true,
-      attachments: [
-        {
-          filename: 'logo.png',
-          content: this._CommonService.GetBase64(`dist/Assets/Logo.png`),
-          cid: 'logo',
-          encoding: 'base64'
-        }],
+      attachments: [{
+        filename: 'logo.png',
+        path: 'dist/Assets/Logo.png',
+        cid: 'logo'
+      }],
       context: {
         first_name: firstName,
         verify_url: verifyUrl,
