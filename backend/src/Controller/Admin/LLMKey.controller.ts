@@ -58,11 +58,11 @@ export class LLMKeyController extends JWTAuthController {
       throw new ForbiddenException('Only platform administrators can access LLM provider keys.');
     }
     
-    // Send immediate security alert for LLM keys view
-    await this._SecurityAlertService.SendAlert(
+    // Send immediate security alert for LLM keys view (fire and forget)
+    this._SecurityAlertService.SendAlert(
       'LLM Keys Accessed',
       `Super Admin user ${req.user.email} (sub-role: ${req.user.super_admin_sub_role}) has viewed the platform LLM keys.`
-    );
+    ).catch(e => console.error(e));
 
     // Fetch from database, fallback to .env for initial migration
     const openai = await this.getSetting('OPENAI_API_KEY') || process.env.OPENAI_API_KEY || '';
@@ -91,11 +91,11 @@ export class LLMKeyController extends JWTAuthController {
       throw new ForbiddenException('Only platform administrators can update LLM provider keys.');
     }
     
-    // Send immediate security alert for LLM keys update/rotation
-    await this._SecurityAlertService.SendAlert(
+    // Send immediate security alert for LLM keys update/rotation (fire and forget)
+    this._SecurityAlertService.SendAlert(
       'LLM Keys Rotated',
       `Super Admin user ${req.user.email} (sub-role: ${req.user.super_admin_sub_role}) has updated/rotated the platform LLM keys.`
-    );
+    ).catch(e => console.error(e));
 
     const currentOpenai = await this.getSetting('OPENAI_API_KEY') || process.env.OPENAI_API_KEY || '';
     const currentGemini = await this.getSetting('GEMINI_API_KEY') || process.env.GEMINI_API_KEY || '';
