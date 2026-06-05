@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 
 const Footer: React.FC = () => {
@@ -65,9 +65,9 @@ const Footer: React.FC = () => {
           <div>
             <h4 className="text-white text-xs font-bold uppercase tracking-wider mb-6">Legal</h4>
             <ul className="space-y-4 text-xs font-medium text-zinc-500">
-              <li><Link to="/privacy" className="hover:text-brand-purple transition-colors">Privacy Policy</Link></li>
-              <li><Link to="/terms" className="hover:text-brand-purple transition-colors">Terms of Service</Link></li>
-              <li><Link to="/data-deletion" className="hover:text-brand-purple transition-colors">Data Deletion</Link></li>
+              <li><Link to="/privacy" onClick={() => window.scrollTo(0, 0)} className="hover:text-brand-purple transition-colors">Privacy Policy</Link></li>
+              <li><Link to="/terms" onClick={() => window.scrollTo(0, 0)} className="hover:text-brand-purple transition-colors">Terms of Service</Link></li>
+              <li><Link to="/data-deletion" onClick={() => window.scrollTo(0, 0)} className="hover:text-brand-purple transition-colors">Data Deletion</Link></li>
             </ul>
           </div>
 
