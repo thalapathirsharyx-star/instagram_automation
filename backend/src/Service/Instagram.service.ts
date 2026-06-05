@@ -383,9 +383,15 @@ export class InstagramService {
         return;
       }
     }
-
-    this.instagramGateway.emitNewMessage({ ...inboundMsg, lead });
-
+    this.instagramGateway.emitNewMessage({
+      id: inboundMsg.id,
+      lead_id: inboundMsg.lead_id,
+      company_id: inboundMsg.company_id,
+      message_text: inboundMsg.message_text,
+      direction: inboundMsg.direction,
+      created_on: inboundMsg.created_on,
+      lead
+    });
     // Handle Image Messages (Simple Approach)
     if (context.message_text.startsWith('[IMAGE]')) {
       const currentPlan = company?.plan || 'Free';
@@ -577,6 +583,13 @@ export class InstagramService {
         textToSend += "\n\n⚡ Powered by Flazly";
       }
       aiResponse.reply = textToSend;
+
+      // Send typing indicator to Instagram
+      await this.sendSenderAction(lead.instagram_handle, 'typing_on', company?.instagram_access_token);
+      
+      // Simulate human typing latency (3 seconds)
+      await new Promise(resolve => setTimeout(resolve, 3000));
+
       await this.logOutboundMessage(lead, aiResponse);
       await this.sendInstagramMessage(lead.instagram_handle, textToSend, company?.instagram_access_token);
       
@@ -676,7 +689,15 @@ export class InstagramService {
     await outboundMsg.save();
 
     // Notify the UI via WebSocket
-    this.instagramGateway.emitNewMessage({ ...outboundMsg, lead });
+    this.instagramGateway.emitNewMessage({
+      id: outboundMsg.id,
+      lead_id: outboundMsg.lead_id,
+      company_id: outboundMsg.company_id,
+      message_text: outboundMsg.message_text,
+      direction: outboundMsg.direction,
+      created_on: outboundMsg.created_on,
+      lead
+    });
 
     lead.last_message_time = new Date();
     await lead.save();
@@ -699,6 +720,17 @@ export class InstagramService {
       where: { lead_id: leadId, company_id: companyId },
       order: { created_on: 'ASC' }
     });
+  }
+
+  private async sendSenderAction(recipientId: string, action: string, token: string) {
+    const url = `https://graph.facebook.com/v21.0/me/messages`;
+    const payload = { recipient: { id: recipientId }, sender_action: action };
+    const headers = { 'Authorization': `Bearer ${token}` };
+    try {
+      await axios.post(url, payload, { headers, timeout: 5000 });
+    } catch (e: any) {
+      console.error(`[IG ERROR] Failed to send sender_action '${action}':`, e.response?.data || e.message);
+    }
   }
 
   private async sendInstagramMessage(recipientId: string, text: string, token: string) {
