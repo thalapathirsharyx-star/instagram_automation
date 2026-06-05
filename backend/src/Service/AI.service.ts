@@ -218,12 +218,11 @@ CRITICAL RULE: You are an AI assistant. You must respond to the user's message a
 Respond ONLY in valid JSON format matching this structure exactly. Do NOT return anything outside the JSON.
 
 {
-  "reply": "your conversational response to the customer (e.g., a warm greeting, or answering their question)",
-  "action": "reply",
-  "lead": "yes",
-  "summary": "brief summary of conversation",
+  "reply": "Your brief, natural response to the customer",
+  "lead": "yes/no",
   "intent": "casual",
-  "tags": [],
+  "summary": "CUMULATIVE summary of the entire conversation. Do not forget earlier topics! Include all past context.",
+  "confidence": 0.9,
   "confirmed_order": null
 }`;
     }
