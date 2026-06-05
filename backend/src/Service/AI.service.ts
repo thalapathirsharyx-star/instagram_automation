@@ -6,13 +6,25 @@ import { company as CompanyTable } from '@Database/Table/Admin/company';
 import { system_setting } from '@Database/Table/Admin/system_setting';
 import { story_context } from '@Database/Table/CRM/story_context';
 import { ProductCatalogService } from './ProductCatalog.service';
+import { EncryptionService } from '@Service/Encryption.service';
 import axios from 'axios';
 
 @Injectable()
 export class AIService {
   constructor(
-    private _ProductCatalogService: ProductCatalogService
+    private _ProductCatalogService: ProductCatalogService,
+    private _EncryptionService: EncryptionService
   ) {}
+
+  private async getDecryptedSetting(key: string): Promise<string> {
+    const setting = await system_setting.findOne({ where: { setting_key: key } });
+    if (!setting || !setting.setting_value) return '';
+    try {
+      return this._EncryptionService.Decrypt(setting.setting_value);
+    } catch {
+      return '';
+    }
+  }
 
   /**
    * Generate an AI reply using Groq (Llama 3.3) based on message context,
@@ -238,27 +250,27 @@ Include these fields:
       .replace(/\${rules.intent_types.join\(\'\/\'\)}/g, rules.intent_types ? rules.intent_types.join('/') : '');
 
     try {
-      const dbProvider = await system_setting.findOne({ where: { setting_key: 'ACTIVE_LLM_PROVIDER' } });
-      const dbModel = await system_setting.findOne({ where: { setting_key: 'ACTIVE_LLM_MODEL' } });
-      const dbGroq = await system_setting.findOne({ where: { setting_key: 'GROQ_API_KEY' } });
-      const dbOpenAI = await system_setting.findOne({ where: { setting_key: 'OPENAI_API_KEY' } });
-      const dbGemini = await system_setting.findOne({ where: { setting_key: 'GEMINI_API_KEY' } });
+      const dbProvider = await this.getDecryptedSetting('ACTIVE_LLM_PROVIDER');
+      const dbModel = await this.getDecryptedSetting('ACTIVE_LLM_MODEL');
+      const dbGroq = await this.getDecryptedSetting('GROQ_API_KEY');
+      const dbOpenAI = await this.getDecryptedSetting('OPENAI_API_KEY');
+      const dbGemini = await this.getDecryptedSetting('GEMINI_API_KEY');
 
-      const activeProvider = dbProvider?.setting_value || process.env.ACTIVE_LLM_PROVIDER || 'groq';
-      const customModel = dbModel?.setting_value || process.env.ACTIVE_LLM_MODEL;
+      const activeProvider = dbProvider || process.env.ACTIVE_LLM_PROVIDER || 'groq';
+      const customModel = dbModel || process.env.ACTIVE_LLM_MODEL;
       
       let apiUrl = 'https://api.groq.com/openai/v1/chat/completions';
       let apiModel = customModel || 'llama-3.3-70b-versatile';
-      let apiKey = dbGroq?.setting_value || process.env.GROQ_API_KEY;
+      let apiKey = dbGroq || process.env.GROQ_API_KEY;
 
       if (activeProvider === 'openai') {
         apiUrl = 'https://api.openai.com/v1/chat/completions';
         apiModel = customModel || 'gpt-4o-mini';
-        apiKey = dbOpenAI?.setting_value || process.env.OPENAI_API_KEY;
+        apiKey = dbOpenAI || process.env.OPENAI_API_KEY;
       } else if (activeProvider === 'gemini') {
         apiUrl = 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions';
         apiModel = customModel || 'gemini-1.5-flash';
-        apiKey = dbGemini?.setting_value || process.env.GEMINI_API_KEY;
+        apiKey = dbGemini || process.env.GEMINI_API_KEY;
       }
 
       if (!apiKey) {
@@ -300,7 +312,13 @@ Include these fields:
         confirmed_order: aiData.confirmed_order || null
       };
     } catch (error: any) {
-      console.error('[AI ERROR] Groq failed:', error.response?.data || error.message);
+      console.error(`[AI ERROR] Request to ${process.env.ACTIVE_LLM_PROVIDER || 'LLM API'} failed.`);
+      if (error.response) {
+        console.error('Response Data:', JSON.stringify(error.response.data, null, 2));
+        console.error('Status Code:', error.response.status);
+      } else {
+        console.error('Error Message:', error.message);
+      }
       return { reply: "I'll check on that for you!", action: 'human_required' };
     }
   }
@@ -423,27 +441,27 @@ Return ONLY valid JSON in this exact format. No extra text or markdown formattin
 `;
 
     try {
-      const dbProvider = await system_setting.findOne({ where: { setting_key: 'ACTIVE_LLM_PROVIDER' } });
-      const dbModel = await system_setting.findOne({ where: { setting_key: 'ACTIVE_LLM_MODEL' } });
-      const dbGroq = await system_setting.findOne({ where: { setting_key: 'GROQ_API_KEY' } });
-      const dbOpenAI = await system_setting.findOne({ where: { setting_key: 'OPENAI_API_KEY' } });
-      const dbGemini = await system_setting.findOne({ where: { setting_key: 'GEMINI_API_KEY' } });
+      const dbProvider = await this.getDecryptedSetting('ACTIVE_LLM_PROVIDER');
+      const dbModel = await this.getDecryptedSetting('ACTIVE_LLM_MODEL');
+      const dbGroq = await this.getDecryptedSetting('GROQ_API_KEY');
+      const dbOpenAI = await this.getDecryptedSetting('OPENAI_API_KEY');
+      const dbGemini = await this.getDecryptedSetting('GEMINI_API_KEY');
 
-      const activeProvider = dbProvider?.setting_value || process.env.ACTIVE_LLM_PROVIDER || 'groq';
-      const customModel = dbModel?.setting_value || process.env.ACTIVE_LLM_MODEL;
+      const activeProvider = dbProvider || process.env.ACTIVE_LLM_PROVIDER || 'groq';
+      const customModel = dbModel || process.env.ACTIVE_LLM_MODEL;
 
       let apiUrl = 'https://api.groq.com/openai/v1/chat/completions';
       let apiModel = customModel || 'llama-3.3-70b-versatile';
-      let apiKey = dbGroq?.setting_value || process.env.GROQ_API_KEY;
+      let apiKey = dbGroq || process.env.GROQ_API_KEY;
 
       if (activeProvider === 'openai') {
         apiUrl = 'https://api.openai.com/v1/chat/completions';
         apiModel = customModel || 'gpt-4o-mini';
-        apiKey = dbOpenAI?.setting_value || process.env.OPENAI_API_KEY;
+        apiKey = dbOpenAI || process.env.OPENAI_API_KEY;
       } else if (activeProvider === 'gemini') {
         apiUrl = 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions';
         apiModel = customModel || 'gemini-1.5-flash';
-        apiKey = dbGemini?.setting_value || process.env.GEMINI_API_KEY;
+        apiKey = dbGemini || process.env.GEMINI_API_KEY;
       }
 
       if (!apiKey) {
