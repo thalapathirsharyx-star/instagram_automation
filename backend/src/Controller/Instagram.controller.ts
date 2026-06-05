@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Query, Req, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, Req, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { InstagramService } from '@Service/Instagram.service';
@@ -216,6 +216,13 @@ export class InstagramController extends AuthBaseController {
   @Delete('KnowledgeBase/:id')
   async DeleteKnowledge(@Param('id') id: string, @Req() req: any) {
     const result = await this._InstagramService.deleteKnowledgeItem(req.user?.company_id, id);
+    return this.SendResponseData(result);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Put('KnowledgeBase/:id')
+  async UpdateKnowledge(@Param('id') id: string, @Body() data: any, @Req() req: any) {
+    const result = await this._InstagramService.updateKnowledgeItem(req.user?.company_id, id, data);
     return this.SendResponseData(result);
   }
 

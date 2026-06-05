@@ -27,6 +27,17 @@ export class KnowledgeBaseService {
     return { Success: true };
   }
 
+  async updateKnowledgeItem(companyId: string, id: string, data: any) {
+    const item = await knowledge_base.findOne({ where: { id, company_id: companyId } });
+    if (!item) throw new Error('Knowledge item not found');
+    if (data.title) item.title = data.title;
+    if (data.content) item.content = data.content;
+    if (data.category) item.category = data.category;
+    item.updated_on = new Date();
+    await item.save();
+    return { Success: true, Data: item };
+  }
+
   async uploadKnowledgeFile(companyId: string, file: any) {
     let content = '';
     const fileName = file.originalname;

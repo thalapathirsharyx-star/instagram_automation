@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Book, Plus, Trash2, Sparkles, FileText, UploadCloud, Loader2, MessageSquareQuote, HelpCircle, File, BrainCircuit, X } from 'lucide-react';
+import { Book, Plus, Trash2, Sparkles, FileText, UploadCloud, Loader2, MessageSquareQuote, HelpCircle, File, BrainCircuit, X, Edit2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import api from '../lib/axios';
 import { useToast } from '../context/ToastContext';
@@ -16,6 +16,7 @@ const KnowledgeBase: React.FC = () => {
 
   // Modal States
   const [activeModal, setActiveModal] = useState<'none' | 'upload' | 'faq' | 'fact'>('none');
+  const [editingId, setEditingId] = useState<string | null>(null);
   
   // Fact State
   const [newTitle, setNewTitle] = useState('');
@@ -71,13 +72,13 @@ const KnowledgeBase: React.FC = () => {
     if (!newTitle || !newContent) return;
     try {
       setIsSaving(true);
-      const res = await api.post('/Instagram/KnowledgeBase', {
-        title: newTitle,
-        content: newContent,
-        category: category
-      });
+      const payload = { title: newTitle, content: newContent, category: category };
+      const res = editingId 
+        ? await api.put(`/Instagram/KnowledgeBase/${editingId}`, payload)
+        : await api.post('/Instagram/KnowledgeBase', payload);
+        
       if (res.data.Success) {
-        toast.success('Fact added successfully');
+        toast.success(editingId ? 'Fact updated successfully' : 'Fact added successfully');
         closeModal();
         fetchKnowledge();
       } else {
@@ -94,13 +95,17 @@ const KnowledgeBase: React.FC = () => {
     if (!newQuestion || !newAnswer) return;
     try {
       setIsSaving(true);
-      const res = await api.post('/Instagram/KnowledgeBase', {
+      const payload = {
         title: `FAQ: ${newQuestion}`,
         content: `Q: ${newQuestion}\nA: ${newAnswer}`,
         category: 'FAQ'
-      });
+      };
+      const res = editingId 
+        ? await api.put(`/Instagram/KnowledgeBase/${editingId}`, payload)
+        : await api.post('/Instagram/KnowledgeBase', payload);
+        
       if (res.data.Success) {
-        toast.success('FAQ added successfully');
+        toast.success(editingId ? 'FAQ updated successfully' : 'FAQ added successfully');
         closeModal();
         fetchKnowledge();
       } else {
@@ -110,6 +115,22 @@ const KnowledgeBase: React.FC = () => {
       toast.error('Error saving FAQ');
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const handleEditItem = (item: any) => {
+    setEditingId(item.id);
+    if (item.category === 'FAQ') {
+      const qMatch = item.content.match(/Q:\s*(.*?)\nA:/);
+      const aMatch = item.content.match(/A:\s*([\s\S]*)/);
+      setNewQuestion(qMatch ? qMatch[1].trim() : item.title.replace('FAQ: ', ''));
+      setNewAnswer(aMatch ? aMatch[1].trim() : item.content);
+      setActiveModal('faq');
+    } else {
+      setNewTitle(item.title);
+      setNewContent(item.content);
+      setCategory(item.category);
+      setActiveModal('fact');
     }
   };
 
@@ -141,6 +162,7 @@ const KnowledgeBase: React.FC = () => {
 
   const closeModal = () => {
     setActiveModal('none');
+    setEditingId(null);
     setNewTitle('');
     setNewContent('');
     setNewQuestion('');
@@ -300,12 +322,24 @@ const KnowledgeBase: React.FC = () => {
                       <div className="flex items-center gap-1.5 text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-100 px-2.5 py-1 rounded-md">
                         <Sparkles size={12} className="text-emerald-500" /> AI TRAINED
                       </div>
-                      <button 
-                        onClick={() => setConfirmDeleteId(item.id)}
-                        className="p-1.5 text-zinc-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer opacity-0 group-hover:opacity-100"
-                      >
-                        <Trash2 size={16} />
-                      </button>
+                      <div className="flex items-center gap-1">
+                        {item.category !== 'Document' && (
+                          <button 
+                            onClick={() => handleEditItem(item)}
+                            className="p-1.5 text-zinc-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors cursor-pointer opacity-0 group-hover:opacity-100"
+                            title="Edit"
+                          >
+                            <Edit2 size={16} />
+                          </button>
+                        )}
+                        <button 
+                          onClick={() => setConfirmDeleteId(item.id)}
+                          className="p-1.5 text-zinc-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer opacity-0 group-hover:opacity-100"
+                          title="Delete"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
                     </div>
                   </div>
                 );
@@ -328,7 +362,9 @@ const KnowledgeBase: React.FC = () => {
                 
                 <div>
                   <h2 className="text-lg font-bold text-zinc-900">
-                    {activeModal === 'upload' ? 'Upload Document' : activeModal === 'faq' ? 'Add FAQ' : 'Add Business Fact'}
+                    {activeModal === 'upload' ? 'Upload Document' : 
+                     activeModal === 'faq' ? (editingId ? 'Edit FAQ' : 'Add FAQ') : 
+                     (editingId ? 'Edit Business Fact' : 'Add Business Fact')}
                   </h2>
                 </div>
               </div>

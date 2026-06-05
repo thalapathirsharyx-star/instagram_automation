@@ -39,11 +39,12 @@ export class AIService {
       where: { lead_id: lead.id, company_id: lead.company_id },
       order: { created_on: 'ASC' }
     });
-    const historyText = history.slice(-25).map(m => `${m.direction}: ${m.message_text}`).join('\n');
+    const MAX_HISTORY_MESSAGES = parseInt(process.env.MAX_HISTORY_MESSAGES || '10', 10);
+    const historyText = history.slice(-MAX_HISTORY_MESSAGES).map(m => `${m.direction}: ${m.message_text}`).join('\n');
 
     const previousIntelligence = `
 Previous Summary: ${lead.conversation_summary || 'None'}
-Previous Tags: ${(lead.tags || []).join(', ')}
+Agent Notes: ${lead.notes || 'None'}
 `;
 
     const company = await CompanyTable.findOne({ where: { id: companyId } });
@@ -135,32 +136,29 @@ You MUST include this exact message in your reply to manage expectations:
     }
 
     const defaultPrompt = `
-You are Flazly, a warm, polite, and highly professional sales representative for a ${profile.type.toUpperCase()} business.
-You genuinely care about helping customers find the right product or service while maintaining a polished and respectful brand voice.
-
+You are Flazly, a highly professional AI assistant for a ${profile.type.toUpperCase()} business.
 Business goal: \${profile.goal}
 Lead definition: \${profile.lead_definition}
-Keywords: \${rules.keywords.join(', ')}
 
 ═══════════════════════════════
-KNOWLEDGE BASE (Product Info)
+KNOWLEDGE BASE
 ═══════════════════════════════
 \${context}
 
 ═══════════════════════════════
-PRODUCT CATALOG (Inventory & Live Stock)
+PRODUCT CATALOG
 ═══════════════════════════════
 \${catalogContext}
 
-${storyContextStr}
+\${storyContextStr}
 
 ═══════════════════════════════
-PREVIOUS INTELLIGENCE (Context Memory)
+PREVIOUS SUMMARY & NOTES
 ═══════════════════════════════
 \${previousIntelligence}
 
 ═══════════════════════════════
-CHAT HISTORY (Recent)
+RECENT HISTORY
 ═══════════════════════════════
 \${historyText}
 
@@ -169,51 +167,27 @@ CUSTOMER'S MESSAGE
 ═══════════════════════════════
 "\${messageText}"
 
-═══════════════════════════════
-LEAD QUALIFICATION RULES
-═══════════════════════════════
-- Mark "lead": "yes" if the customer shows clear interest in any product mentioned in the KNOWLEDGE BASE or PRODUCT CATALOG.
-- If they ask about price, sizing, fabric, material, or availability of an item, they ARE a lead.
-- If they express intent to visit the store, book an appointment, or ask "how to order", they ARE a lead.
-- If they are just saying "hi", "thanks", "ok", or "cool", they are NOT a lead yet.
-- When in doubt if it's a product inquiry, prefer marking "lead": "yes" to ensure follow-up.
-- SUMMARY RULE: Your summary must be CUMULATIVE. Don't forget earlier topics. If they asked about shirts 10 mins ago and now pants, the summary must mention BOTH.
-${playbookRules}
-${oooRule}
+\${playbookRules}
+\${oooRule}
 
 ═══════════════════════════════
-STRICT RESPONSE RULES (ANTI-HALLUCINATION & TONE)
+STRICT RESPONSE RULES
 ═══════════════════════════════
-1. NO SLANG: Never use casual slang like "bro", "dude", "machan", or "yaare" in your replies. Always maintain a respectful, professional retail voice.
-2. NO HALLUCINATIONS: Do NOT make up information. Do not invent shipping times (e.g. "2-3 days"), shipping rates (e.g. "free shipping"), prices, or stock status unless they are explicitly stated in the KNOWLEDGE BASE, the PRODUCT CATALOG, or the ACTIVE INSTAGRAM STORY CONTEXT above.
-3. HANDLING UNKNOWN INFO: If the customer asks about product availability, price, or delivery times and you do NOT have that info in the context, say:
-   "I will check the details and availability for you right away. A team member will get back to you shortly!"
-4. BRIEF AND NATURAL: Keep responses under 2-3 sentences. Sound like a polite human chat agent, not a long-winded AI.
-5. DO NOT DUMP RAW CONTEXT: Never copy-paste or regurgitate the raw Knowledge Base or Product Catalog text as your reply. If the user just says "Hi", reply with a warm, brief greeting and ask how you can help them today.
-
-═══════════════════════════════
-LANGUAGE RULES (CRITICAL)
-═══════════════════════════════
-- Detect the language of the customer's last message and reply in the SAME language.
-- Tamil script (e.g. "என்ன விலை?") → reply politely in Tamil script using respectful words (e.g. "வணக்கம், நான் சரிபார்த்து சொல்கிறேன்").
-- Tanglish (e.g. "anna price sollunga" or "irukka bro") → reply warmly in respectful Tanglish (e.g. "Kandippa check pannitu solren ng. Just a moment"). Do NOT use slang even if the customer uses "bro".
-- English → reply in polite, professional English.
-- Never switch language unless the customer does first.
+1. Maintain a respectful, professional retail voice. No slang.
+2. Answer in the same language as the customer.
+3. NO HALLUCINATIONS: Do not invent info not present in the Knowledge Base or Product Catalog.
+4. If unknown, say: "I will check the details and availability for you right away. A team member will get back to you shortly!"
+5. Keep responses brief (1-3 sentences) and natural.
 
 ═══════════════════════════════
 OUTPUT FORMAT (JSON ONLY)
 ═══════════════════════════════
-Return ONLY valid JSON. No extra text outside it. Do not use Markdown formatting for the JSON block itself.
-
 {
-  "reply": "A brief, natural, conversational response to the customer. For greetings, say hello warmly. NEVER dump raw Knowledge Base text.",
-  "action": "reply",
+  "reply": "Your brief, natural response to the customer",
   "lead": "yes/no",
   "intent": "\${rules.intent_types.join('/')}",
-  "summary": "2-3 sentence overview of what the customer wants and current status. Mandatory even for greetings.",
+  "summary": "Cumulative summary of customer needs",
   "confidence": 0.0 to 1.0,
-  "detected_language": "english" | "tamil" | "tanglish",
-  "tags": ["interested", "pricing", "size_query", "support"],
   "confirmed_order": null
 }
 `;
@@ -226,6 +200,17 @@ Return ONLY valid JSON. No extra text outside it. Do not use Markdown formatting
 
     // Always append strict perspective rule to prevent echoing bugs even if they use a custom prompt
     if (company?.system_prompt) {
+      // Ensure the AI actually gets the chat history and user message if the custom prompt forgot to include the placeholders
+      if (!customPrompt.includes('${previousIntelligence}')) {
+        customPrompt += `\n\n═══════════════════════════════\nPREVIOUS INTELLIGENCE (Context Memory)\n═══════════════════════════════\n\${previousIntelligence}`;
+      }
+      if (!customPrompt.includes('${historyText}')) {
+        customPrompt += `\n\n═══════════════════════════════\nCHAT HISTORY (Recent)\n═══════════════════════════════\n\${historyText}`;
+      }
+      if (!customPrompt.includes('${messageText}')) {
+        customPrompt += `\n\n═══════════════════════════════\nCUSTOMER'S MESSAGE\n═══════════════════════════════\n"\${messageText}"`;
+      }
+
       customPrompt += `\n\n═══════════════════════════════
 OUTPUT FORMAT (JSON ONLY)
 ═══════════════════════════════
@@ -468,25 +453,28 @@ Description: ${item.description || 'N/A'}
         // Priority 1: Title match
         if (query.includes(title) || title.includes(query)) score += 20;
 
-        // Priority 2: Keyword matches (supporting non-English characters)
-        const queryWords = query.split(/[\s,.;:!?]+/).filter(w => w.length >= 2);
-        for (const word of queryWords) {
-          if (content.includes(word)) score += 5;
-          if (title.includes(word)) score += 10;
-          // Bonus for price-related numbers if query contains them
-          if (/\d+/.test(word) && content.includes(word)) score += 15;
-        }
+        const stopWords = new Set(['i', 'me', 'my', 'we', 'our', 'you', 'your', 'he', 'him', 'his', 'she', 'her', 'it', 'its', 'they', 'them', 'their', 'what', 'which', 'who', 'this', 'that', 'these', 'those', 'am', 'is', 'are', 'was', 'were', 'be', 'have', 'has', 'had', 'do', 'does', 'did', 'a', 'an', 'the', 'and', 'but', 'if', 'or', 'because', 'as', 'of', 'at', 'by', 'for', 'with', 'about', 'to', 'from', 'in', 'out', 'on', 'off', 'over', 'under', 'then', 'once', 'here', 'there', 'when', 'where', 'why', 'how', 'all', 'any', 'both', 'each', 'few', 'more', 'most', 'other', 'some', 'such', 'no', 'nor', 'not', 'only', 'own', 'same', 'so', 'than', 'too', 'very', 'can', 'will', 'just', 'should', 'now', 'hello', 'hi', 'hey', 'please', 'thanks', 'thank', 'looking']);
+      
+      const queryWords = query.split(/[\s,.;:!?]+/).filter(w => w.length >= 3 && !stopWords.has(w));
+      for (const word of queryWords) {
+        if (content.includes(word)) score += 5;
+        if (title.includes(word)) score += 10;
+        // Bonus for price-related numbers if query contains them
+        if (/\d+/.test(word) && content.includes(word)) score += 15;
+      }
 
-        return { item, score };
-      });
+      return { item, score };
+    });
 
-      const relevant = scoredItems
-        .filter(si => si.score > 0)
-        .sort((a, b) => b.score - a.score)
-        .map(si => si.item);
+    const MAX_KB_RESULTS = parseInt(process.env.MAX_KB_RESULTS || '3', 10);
+    const relevant = scoredItems
+      .filter(si => si.score > 0)
+      .sort((a, b) => b.score - a.score)
+      .map(si => si.item)
+      .slice(0, MAX_KB_RESULTS);
 
-      if (relevant.length > 0) {
-        console.log(`[CONTEXT] Found ${relevant.length} relevant items for query: ${query}`);
+    if (relevant.length > 0) {
+      console.log(`[CONTEXT] Found ${relevant.length} relevant KB items for query.`);
         // Combine content but limit to avoid token bloat
         let combined = '';
         for (const item of relevant) {

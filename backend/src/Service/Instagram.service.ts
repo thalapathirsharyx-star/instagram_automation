@@ -556,7 +556,7 @@ export class InstagramService {
       }
       
       if (aiResponse.tags) lead.tags = aiResponse.tags;
-      if (aiResponse.notes) lead.notes = (lead.notes ? lead.notes + '\n' : '') + aiResponse.notes;
+      if (aiResponse.notes) lead.notes = aiResponse.notes;
       if (aiResponse.summary) lead.conversation_summary = aiResponse.summary;
       if (aiResponse.intent) lead.last_intent = aiResponse.intent;
       await lead.save();
@@ -582,6 +582,9 @@ export class InstagramService {
       
       // 10. Increment AI Usage
       if (company) {
+        const usage = aiResponse._usage || { prompt_tokens: 0, completion_tokens: 0, total_tokens: 0 };
+        console.log(`[TOKEN ANALYTICS] Company: ${companyId} | Prompt: ${usage.prompt_tokens} | Completion: ${usage.completion_tokens} | Total: ${usage.total_tokens}`);
+
         company.monthly_ai_usage = (company.monthly_ai_usage || 0) + 1;
         await CompanyTable.update(companyId, { monthly_ai_usage: company.monthly_ai_usage });
         
@@ -755,6 +758,10 @@ export class InstagramService {
 
   async deleteKnowledgeItem(companyId: string, id: string) {
     return await this.knowledgeBaseService.deleteKnowledgeItem(companyId, id);
+  }
+
+  async updateKnowledgeItem(companyId: string, id: string, data: any) {
+    return await this.knowledgeBaseService.updateKnowledgeItem(companyId, id, data);
   }
 
   async uploadKnowledgeFile(companyId: string, file: any) {

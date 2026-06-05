@@ -124,16 +124,37 @@ export class ProductCatalogService {
   }
 
   async queryCatalog(companyId: string, query: string) {
-    // Basic text search over SKU, Name, and Description
+    // Tokenized search over SKU, Name, and Description
     const lowerQuery = query.toLowerCase();
     const products = await ProductTable.find({
       where: { company_id: companyId }
     });
 
-    return products.filter(p => 
-      p.name.toLowerCase().includes(lowerQuery) || 
-      (p.sku && p.sku.toLowerCase().includes(lowerQuery)) || 
-      (p.description && p.description.toLowerCase().includes(lowerQuery))
-    );
+    const stopWords = new Set(['i', 'me', 'my', 'we', 'our', 'you', 'your', 'he', 'him', 'his', 'she', 'her', 'it', 'its', 'they', 'them', 'their', 'what', 'which', 'who', 'this', 'that', 'these', 'those', 'am', 'is', 'are', 'was', 'were', 'be', 'have', 'has', 'had', 'do', 'does', 'did', 'a', 'an', 'the', 'and', 'but', 'if', 'or', 'because', 'as', 'of', 'at', 'by', 'for', 'with', 'about', 'to', 'from', 'in', 'out', 'on', 'off', 'over', 'under', 'then', 'once', 'here', 'there', 'when', 'where', 'why', 'how', 'all', 'any', 'both', 'each', 'few', 'more', 'most', 'other', 'some', 'such', 'no', 'nor', 'not', 'only', 'own', 'same', 'so', 'than', 'too', 'very', 'can', 'will', 'just', 'should', 'now', 'hello', 'hi', 'hey', 'please', 'thanks', 'thank', 'looking']);
+    
+    const queryTokens = lowerQuery.split(/[\s,.;:!?]+/).filter(w => w.length >= 3 && !stopWords.has(w));
+    if (queryTokens.length === 0) return [];
+
+    const MAX_PRODUCT_RESULTS = parseInt(process.env.MAX_PRODUCT_RESULTS || '3', 10);
+
+    const scoredProducts = products.map(p => {
+      let score = 0;
+      const pName = p.name.toLowerCase();
+      const pDesc = p.description ? p.description.toLowerCase() : '';
+      const pSku = p.sku ? p.sku.toLowerCase() : '';
+
+      for (const token of queryTokens) {
+        if (pName.includes(token)) score += 10;
+        if (pSku.includes(token)) score += 15;
+        if (pDesc.includes(token)) score += 2;
+      }
+      return { product: p, score };
+    });
+
+    return scoredProducts
+      .filter(sp => sp.score > 0)
+      .sort((a, b) => b.score - a.score)
+      .map(sp => sp.product)
+      .slice(0, MAX_PRODUCT_RESULTS);
   }
 }
