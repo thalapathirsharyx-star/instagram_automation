@@ -181,10 +181,7 @@ const LLMKeys: React.FC = () => {
             <div className="relative mb-4">
               <select 
                 value={keys.active_provider}
-                onChange={(e) => {
-                  setKeys(prev => ({ ...prev, active_provider: e.target.value }));
-                  setTimeout(() => handleSave(), 100);
-                }}
+                onChange={(e) => setKeys(prev => ({ ...prev, active_provider: e.target.value }))}
                 className="w-full appearance-none bg-white border border-zinc-300 rounded-lg py-3 pl-4 pr-10 text-sm font-semibold text-zinc-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500 transition-all cursor-pointer hover:border-zinc-400"
               >
                 <option value="openai">OpenAI</option>
@@ -200,7 +197,6 @@ const LLMKeys: React.FC = () => {
                 type="text"
                 value={keys.active_model || ''}
                 onChange={(e) => setKeys(prev => ({ ...prev, active_model: e.target.value }))}
-                onBlur={() => handleSave()}
                 className="w-full bg-white border border-zinc-300 rounded-lg py-2.5 px-4 text-sm font-mono text-zinc-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500 transition-all hover:border-zinc-400"
                 placeholder="e.g. gpt-4o, llama-3.3-70b-versatile"
               />
