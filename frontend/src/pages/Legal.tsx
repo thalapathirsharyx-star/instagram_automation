@@ -24,7 +24,7 @@ const PrivacyContent: React.FC = () => (
     <section>
       <h2>2. Meta API Integration & Data Authority</h2>
       <p>
-        Flazly integrates with the official Meta Graph API (Instagram Messaging API) to provide unified CRM inboxes, lead routing, and automated reply flows. In compliance with the Meta Platform Terms and Developer Policies:
+        Flazly integrates with the Meta Graph API (Instagram Messaging API) to provide unified CRM inboxes, lead routing, and automated reply flows. In compliance with the Meta Platform Terms and Developer Policies:
       </p>
       <ul>
         <li><strong>Authorized Access Only:</strong> We access your Instagram messaging data solely after you explicitly authorize access using Meta OAuth.</li>

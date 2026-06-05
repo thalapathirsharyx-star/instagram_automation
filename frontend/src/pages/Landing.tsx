@@ -2834,8 +2834,8 @@ const Landing: React.FC = () => {
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 text-left">
               {[
                 {
-                  title: "Official Meta Graph API",
-                  desc: "Approved connection built directly on Meta's official API framework. Zero risk of account bans or shadowbans."
+                  title: "Built on Meta Graph API",
+                  desc: "Connects securely using the Instagram Messaging API. Built to strictly adhere to Meta's developer policies."
                 },
                 {
                   title: "Secure OAuth Authentication",
@@ -3037,7 +3037,7 @@ const Landing: React.FC = () => {
               {[
                 {
                   q: "Will Instagram ban my account?",
-                  a: "No. Flazly communicates via Meta's official Graph API and adheres strictly to Instagram's official developer policies and messaging guidelines. Your profile remains completely safe."
+                  a: "Flazly operates through the standard Meta Graph API and is built to comply with Instagram's Developer Policies to ensure secure automation."
                 },
                 {
                   q: "How does Flazly connect to Instagram?",

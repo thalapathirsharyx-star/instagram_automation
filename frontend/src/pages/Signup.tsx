@@ -222,7 +222,7 @@ const Signup: React.FC = () => {
 
           <div className="flex items-center gap-2">
             <Shield size={14} className="text-zinc-400" />
-            <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Powered by Meta Official APIs</span>
+            <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Powered by the Meta Graph API</span>
           </div>
 
         </div>
