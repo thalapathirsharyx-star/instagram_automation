@@ -269,9 +269,12 @@ Include these fields:
         apiKey = dbOpenAI || process.env.OPENAI_API_KEY;
       } else if (activeProvider === 'gemini') {
         apiUrl = 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions';
-        apiModel = customModel || 'gemini-1.5-flash';
+        apiModel = customModel || 'gemini-2.0-flash';
         apiKey = dbGemini || process.env.GEMINI_API_KEY;
       }
+
+      // Sanitize model string if user accidentally included provider prefixes (Google's OpenAI wrapper fails if models/ is prepended)
+      apiModel = apiModel.replace(/^models\//, '').replace(/^google\//, '');
 
       if (!apiKey) {
         throw new Error(`API Key for ${activeProvider} is missing in configuration.`);
@@ -460,9 +463,12 @@ Return ONLY valid JSON in this exact format. No extra text or markdown formattin
         apiKey = dbOpenAI || process.env.OPENAI_API_KEY;
       } else if (activeProvider === 'gemini') {
         apiUrl = 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions';
-        apiModel = customModel || 'gemini-1.5-flash';
+        apiModel = customModel || 'gemini-2.0-flash';
         apiKey = dbGemini || process.env.GEMINI_API_KEY;
       }
+
+      // Sanitize model string if user accidentally included provider prefixes
+      apiModel = apiModel.replace(/^models\//, '').replace(/^google\//, '');
 
       if (!apiKey) {
         throw new Error(`API Key for ${activeProvider} is missing in configuration.`);
