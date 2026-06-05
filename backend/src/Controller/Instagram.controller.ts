@@ -230,14 +230,7 @@ export class InstagramController extends AuthBaseController {
     const senderId = messaging.sender?.id;
 
     if (messaging.message_edit) {
-      const editMid = messaging.message_edit.mid;
-      const numEdit = messaging.message_edit.num_edit ?? 0;
-      if (numEdit === 0) {
-        console.log(`[NEW DM via message_edit] num_edit=0, MID: ${editMid}. Attempting content fetch...`);
-        await this._InstagramService.processIncomingMessage('FETCH_PENDING', undefined, editMid, igBusinessId);
-      } else {
-        console.log(`[SKIP] message_edit event (num_edit=${numEdit}, MID: ${editMid}). Actual edit — skipping.`);
-      }
+      console.log(`[SKIP] message_edit event (MID: ${messaging.message_edit.mid}). Skipping to prevent duplicate fetch errors.`);
     } else if (messaging.message && !messaging.message.is_echo && senderId && text) {
       console.log(`[NEW MESSAGE] "${text}" from sender: ${senderId}`);
       const storyInfo = messaging.message.reply_to?.story;
