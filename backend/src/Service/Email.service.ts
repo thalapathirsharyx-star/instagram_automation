@@ -1,4 +1,4 @@
-﻿import { Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { MailerService } from './Mailer.service';
 import { CommonService } from './Common.service';
 
@@ -39,11 +39,19 @@ export class EmailService {
       subject: "Activate Your Account - Flazly",
       template: "VerifyEmail",
       html: true,
+      attachments: [
+        {
+          filename: 'logo.png',
+          content: this._CommonService.GetBase64(`dist/Assets/Logo.png`),
+          cid: 'logo',
+          encoding: 'base64'
+        }],
       context: {
         first_name: firstName,
         verify_url: verifyUrl,
         email: emailId,
-        temp_password: tempPassword
+        temp_password: tempPassword,
+        logo: "cid:logo"
       },
     });
     return Res;

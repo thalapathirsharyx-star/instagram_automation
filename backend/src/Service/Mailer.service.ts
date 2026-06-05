@@ -1,4 +1,4 @@
-﻿import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { email_config } from '@Database/Table/Admin/email_config';
 import nodemailer from "nodemailer";
 import { EncryptionService } from './Encryption.service';
@@ -31,25 +31,34 @@ export class MailerService {
     let Email = await email_config.find();
     if (Email.length == 0) {
       const defaultMail = new email_config();
-      defaultMail.email_id = 'flazly@gmail.com';
-      defaultMail.password = this._EncryptionService.Encrypt('ainstrjtdtjjxcrp');
+      defaultMail.email_id = 'app.flazly@gmail.com';
+      defaultMail.password = this._EncryptionService.Encrypt('vurmpjilksigxjqs');
       defaultMail.mailer_name = 'Flazly';
       defaultMail.host = 'smtp.gmail.com';
       defaultMail.created_by_id = "0";
       defaultMail.created_on = new Date();
       await defaultMail.save();
       Email = [defaultMail];
-      this.logger.log("Created default email config on-the-fly for flazly@gmail.com");
+      this.logger.log("Created default email config on-the-fly for app.flazly@gmail.com");
     } else {
       try {
+        let updated = false;
         const decrypted = this._EncryptionService.Decrypt(Email[0].password);
-        if (decrypted === 'mockpassword') {
-          Email[0].password = this._EncryptionService.Encrypt('ainstrjtdtjjxcrp');
+        if (decrypted === 'mockpassword' || decrypted === 'ainstrjtdtjjxcrp') {
+          Email[0].password = this._EncryptionService.Encrypt('vurmpjilksigxjqs');
+          updated = true;
+          this.logger.log("Updated email config password to real app password");
+        }
+        if (Email[0].email_id === 'flazly@gmail.com') {
+          Email[0].email_id = 'app.flazly@gmail.com';
+          updated = true;
+          this.logger.log("Updated email_id from flazly@gmail.com to app.flazly@gmail.com");
+        }
+        if (updated) {
           await Email[0].save();
-          this.logger.log("Updated flazly@gmail.com password from mockpassword to real app password");
         }
       } catch (err) {
-        this.logger.error("Error checking/updating default email config password:", err);
+        this.logger.error("Error checking/updating default email config:", err);
       }
     }
     var smtpTransport = nodemailer.createTransport({
