@@ -5,6 +5,7 @@ export interface LLMKeysData {
   openai: string;
   gemini: string;
   groq: string;
+  active_provider: string;
 }
 
 export const getLLMKeys = async (): Promise<ApiResponse<LLMKeysData>> => {
