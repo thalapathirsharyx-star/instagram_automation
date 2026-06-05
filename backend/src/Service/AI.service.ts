@@ -189,6 +189,7 @@ STRICT RESPONSE RULES (ANTI-HALLUCINATION & TONE)
 3. HANDLING UNKNOWN INFO: If the customer asks about product availability, price, or delivery times and you do NOT have that info in the context, say:
    "I will check the details and availability for you right away. A team member will get back to you shortly!"
 4. BRIEF AND NATURAL: Keep responses under 2-3 sentences. Sound like a polite human chat agent, not a long-winded AI.
+5. DO NOT DUMP RAW CONTEXT: Never copy-paste or regurgitate the raw Knowledge Base or Product Catalog text as your reply. If the user just says "Hi", reply with a warm, brief greeting and ask how you can help them today.
 
 ═══════════════════════════════
 LANGUAGE RULES (CRITICAL)
@@ -225,15 +226,21 @@ Return ONLY valid JSON. No extra text outside it.
 
     // Always append strict perspective rule to prevent echoing bugs even if they use a custom prompt
     if (company?.system_prompt) {
-      customPrompt += `\n\nCRITICAL RULE: Respond ONLY in valid JSON format.
-Include these fields:
-- "reply": your response to the customer
-- "lead": "yes" or "no"
-- "intent": "purchase/enquiry/support/casual"
-- "confidence": 0.0 to 1.0
-- "summary": a 2-3 sentence summary of the discussion so far
-- "tags": array of interest tags
-- "confirmed_order": null or { "sku": "SKU_CODE", "quantity": number, "size": string | null, "color": string | null }`;
+      customPrompt += `\n\n═══════════════════════════════
+OUTPUT FORMAT (JSON ONLY)
+═══════════════════════════════
+CRITICAL RULE: You are an AI assistant. You must respond to the user's message appropriately based on your instructions.
+Respond ONLY in valid JSON format matching this structure exactly. Do NOT return anything outside the JSON.
+
+{
+  "reply": "your conversational response to the customer (e.g., a warm greeting, or answering their question)",
+  "action": "reply",
+  "lead": "yes",
+  "summary": "brief summary of conversation",
+  "intent": "casual",
+  "tags": [],
+  "confirmed_order": null
+}`;
     }
 
     // Replace placeholders in custom prompt
