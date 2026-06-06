@@ -1976,16 +1976,16 @@ const Landing: React.FC = () => {
   }, [autoRotate]);
 
   return (
-    <div className="landing-page bg-[#fafafa] dark:bg-[#09090b] text-zinc-900 dark:text-white font-inter selection:bg-[#38BDF8]/10 selection:text-[#38BDF8] min-h-screen relative overflow-x-hidden">
+    <div className="dark landing-page bg-[#0A0A0F] text-white font-inter selection:bg-[#38BDF8]/10 selection:text-[#38BDF8] min-h-screen relative overflow-x-hidden">
 
       {/* Animated Grid Background for Hero Section */}
       <div className="absolute top-0 inset-x-0 h-[1000px] hero-line-grid pointer-events-none select-none z-0" />
 
       {/* Premium Shifting Mesh Gradient Backdrop */}
       <div className="absolute top-0 inset-x-0 h-[1000px] overflow-hidden pointer-events-none select-none z-0">
-        <div className="absolute -top-[20%] left-[10%] w-[60%] h-[70%] rounded-full bg-[#818CF8]/5 dark:bg-[#818CF8]/10 blur-[120px] animate-mesh-glow-1" />
-        <div className="absolute -top-[30%] right-[10%] w-[50%] h-[60%] rounded-full bg-[#3B82F6]/6 dark:bg-[#3B82F6]/12 blur-[140px] animate-mesh-glow-2" />
-        <div className="absolute top-[10%] left-[30%] w-[40%] h-[50%] rounded-full bg-[#06B6D4]/4 dark:bg-[#06B6D4]/8 blur-[100px] animate-mesh-glow-3" />
+        <div className="absolute -top-[20%] left-[10%] w-[60%] h-[70%] rounded-full bg-[#833AB4]/10 dark:bg-[#833AB4]/15 blur-[120px] animate-mesh-glow-1" />
+        <div className="absolute -top-[30%] right-[10%] w-[50%] h-[60%] rounded-full bg-[#E1306C]/10 dark:bg-[#E1306C]/15 blur-[140px] animate-mesh-glow-2" />
+        <div className="absolute top-[10%] left-[30%] w-[40%] h-[50%] rounded-full bg-[#FCAF45]/10 dark:bg-[#FCAF45]/15 blur-[100px] animate-mesh-glow-3" />
       </div>
 
       {/* Left side automation connection lines */}
@@ -1993,14 +1993,14 @@ const Landing: React.FC = () => {
         <svg className="w-full h-full" viewBox="0 0 200 600" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M-50 50 C 150 150, 100 300, 50 450 C 0 550, 100 600, -50 650" stroke="url(#leftLineGrad)" strokeWidth="1.5" strokeDasharray="6 6" />
           <path d="M-50 50 C 150 150, 100 300, 50 450 C 0 550, 100 600, -50 650" stroke="url(#leftLineGrad)" strokeWidth="1.5" className="animate-flow-dash" />
-          <circle r="3" fill="#3B82F6">
+          <circle r="3" fill="#E1306C">
             <animateMotion dur="10s" repeatCount="indefinite" path="M-50 50 C 150 150, 100 300, 50 450 C 0 550, 100 600, -50 650" />
           </circle>
           <defs>
             <linearGradient id="leftLineGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#3B82F6" stopOpacity="0.1" />
-              <stop offset="50%" stopColor="#38BDF8" stopOpacity="0.5" />
-              <stop offset="100%" stopColor="#818CF8" stopOpacity="0.1" />
+              <stop offset="0%" stopColor="#833AB4" stopOpacity="0.1" />
+              <stop offset="50%" stopColor="#E1306C" stopOpacity="0.5" />
+              <stop offset="100%" stopColor="#FCAF45" stopOpacity="0.1" />
             </linearGradient>
           </defs>
         </svg>
@@ -2011,14 +2011,14 @@ const Landing: React.FC = () => {
         <svg className="w-full h-full" viewBox="0 0 200 600" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M250 80 C 50 180, 100 320, 150 420 C 200 520, 80 580, 250 630" stroke="url(#rightLineGrad)" strokeWidth="1.5" strokeDasharray="6 6" />
           <path d="M250 80 C 50 180, 100 320, 150 420 C 200 520, 80 580, 250 630" stroke="url(#rightLineGrad)" strokeWidth="1.5" className="animate-flow-dash" />
-          <circle r="3" fill="#06B6D4">
+          <circle r="3" fill="#E1306C">
             <animateMotion dur="12s" repeatCount="indefinite" path="M250 80 C 50 180, 100 320, 150 420 C 200 520, 80 580, 250 630" />
           </circle>
           <defs>
             <linearGradient id="rightLineGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#818CF8" stopOpacity="0.1" />
-              <stop offset="50%" stopColor="#06B6D4" stopOpacity="0.5" />
-              <stop offset="100%" stopColor="#3B82F6" stopOpacity="0.1" />
+              <stop offset="0%" stopColor="#FCAF45" stopOpacity="0.1" />
+              <stop offset="50%" stopColor="#E1306C" stopOpacity="0.5" />
+              <stop offset="100%" stopColor="#833AB4" stopOpacity="0.1" />
             </linearGradient>
           </defs>
         </svg>
@@ -2085,17 +2085,17 @@ const Landing: React.FC = () => {
         {/* ==========================================
             SECTION 2 — TRUST STRIP
             ========================================== */}
-        <section className="py-8 border-y border-zinc-200/80 dark:border-white/5 bg-zinc-100/30 dark:bg-[#121826]/10 backdrop-blur-xl relative z-10">
+        <section className="py-8 border-y border-zinc-200/80 dark:border-white/5 bg-zinc-100/30 dark:bg-[#E1306C]/5 backdrop-blur-xl relative z-10">
           <div className="max-w-6xl mx-auto px-6">
             <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-6 text-zinc-550 dark:text-zinc-400 text-xs font-bold tracking-wider uppercase">
               <span className="flex items-center gap-2">
-                <CheckCircle2 size={16} className="text-emerald-500" /> Meta Graph API Integration
+                <CheckCircle2 size={16} className="text-[#00C26F]" /> Meta Graph API Integration
               </span>
               <span className="flex items-center gap-2">
-                <Lock size={16} className="text-[#38BDF8]" /> Secure OAuth Auth
+                <Lock size={16} className="text-[#E1306C]" /> Secure OAuth Auth
               </span>
               <span className="flex items-center gap-2">
-                <Bot size={16} className="text-[#3B82F6]" /> AI-Powered Conversations
+                <Bot size={16} className="text-[#833AB4]" /> AI-Powered Conversations
               </span>
               <span className="flex items-center gap-2">
                 <Users size={16} className="text-purple-400" /> Human Takeover Available
@@ -2114,7 +2114,7 @@ const Landing: React.FC = () => {
         {/* ==========================================
             SECTION 3 — PROBLEM SECTION
             ========================================== */}
-        <section className="py-28 relative bg-[#fafafa] dark:bg-[#09090b] border-t border-zinc-200/80 dark:border-white/5">
+        <section className="py-28 relative bg-[#0A0A0F] dark:bg-[#0A0A0F] border-t border-zinc-200/80 dark:border-white/5">
           <div className="max-w-6xl mx-auto px-6 text-center">
             <div className="max-w-2xl mx-auto mb-16">
               <span className="text-xs font-bold uppercase tracking-widest text-[#4F39F6] dark:text-[#818CF8]">THE COST OF MANUAL DM MANAGEMENT</span>
@@ -2234,7 +2234,7 @@ const Landing: React.FC = () => {
         {/* ==========================================
             SECTION 5 — BENEFITS
             ========================================== */}
-        <section className="py-28 relative bg-[#fafafa] dark:bg-[#09090b]">
+        <section className="py-28 relative bg-[#0A0A0F] dark:bg-[#0A0A0F]">
           <div className="max-w-6xl mx-auto px-6">
             <div className="text-center max-w-2xl mx-auto mb-16">
               <span className="text-xs font-bold uppercase tracking-widest text-[#4F39F6] dark:text-[#818CF8]">Business Outcomes</span>
@@ -2369,7 +2369,7 @@ const Landing: React.FC = () => {
                 >
                   <div className="bg-white dark:bg-[#121826]/40 border border-zinc-200/80 dark:border-white/5 rounded-[24px] p-6 text-left hover:border-[#38BDF8]/20 dark:hover:border-[#38BDF8]/40 transition-all shadow-sm hover:shadow-md flex flex-col justify-between h-full">
                     <div>
-                      <div className="w-10 h-10 rounded-xl bg-sky-500/10 text-[#38BDF8] border border-sky-500/20 flex items-center justify-center mb-4 shrink-0 font-semibold">
+                      <div className="w-10 h-10 rounded-xl bg-[#E1306C]/10 text-[#E1306C] border border-[#E1306C]/20 flex items-center justify-center mb-4 shrink-0 font-semibold">
                         {benefit.icon}
                       </div>
                       <h3 className="text-base font-bold mb-2 text-zinc-900 dark:text-white font-inter">{benefit.title}</h3>
@@ -2426,7 +2426,7 @@ const Landing: React.FC = () => {
                   }
                 ].map((benefit, idx) => (
                   <div key={idx} className="bg-white dark:bg-[#121826]/40 border border-zinc-200/80 dark:border-white/5 rounded-3xl p-6 text-left shadow-sm">
-                    <div className="w-10 h-10 rounded-xl bg-sky-500/10 text-[#38BDF8] border border-sky-500/20 flex items-center justify-center mb-4 shrink-0 font-semibold">
+                    <div className="w-10 h-10 rounded-xl bg-[#E1306C]/10 text-[#E1306C] border border-[#E1306C]/20 flex items-center justify-center mb-4 shrink-0 font-semibold">
                       {benefit.icon}
                     </div>
                     <h3 className="text-base font-bold mb-2 text-zinc-900 dark:text-white font-inter">{benefit.title}</h3>
@@ -2686,7 +2686,7 @@ const Landing: React.FC = () => {
         {/* ==========================================
             SECTION 7 — USE CASES
             ========================================== */}
-        <section className="py-28 relative bg-[#fafafa] dark:bg-[#09090b]">
+        <section className="py-28 relative bg-[#0A0A0F] dark:bg-[#0A0A0F]">
           <div className="max-w-6xl mx-auto px-6">
             <div className="text-center max-w-2xl mx-auto mb-16">
               <span className="text-xs font-bold uppercase tracking-widest text-[#4F39F6] dark:text-[#818CF8]">Tailored Solutions</span>
@@ -2786,7 +2786,7 @@ const Landing: React.FC = () => {
                     <div>
                       <div className="flex gap-1 mb-6">
                         {[...Array(5)].map((_, idx) => (
-                          <Star key={idx} size={14} className="fill-[#38BDF8] text-[#38BDF8]" />
+                          <Star key={idx} size={14} className="fill-[#FCAF45] text-[#FCAF45]" />
                         ))}
                       </div>
                       <p className="text-sm md:text-base text-zinc-200 leading-relaxed font-medium italic mb-8 font-inter">
@@ -2796,7 +2796,7 @@ const Landing: React.FC = () => {
 
                     <div className="flex items-center justify-between border-t border-white/5 pt-6">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-[#3B82F6] flex items-center justify-center text-xs font-bold text-white shadow-lg">
+                        <div className="w-10 h-10 rounded-full bg-[#833AB4] flex items-center justify-center text-xs font-bold text-white shadow-lg">
                           {t.avatar}
                         </div>
                         <div className="flex flex-col">
@@ -2804,7 +2804,7 @@ const Landing: React.FC = () => {
                           <span className="text-xs text-zinc-500 mt-0.5">{t.role}</span>
                         </div>
                       </div>
-                      <div className="bg-[#38BDF8]/10 border border-[#38BDF8]/20 px-3.5 py-1.5 rounded-full text-xs font-bold text-[#38BDF8]">
+                      <div className="bg-[#E1306C]/10 border border-[#E1306C]/20 px-3.5 py-1.5 rounded-full text-xs font-bold text-[#E1306C]">
                         {t.stats}
                       </div>
                     </div>
@@ -2819,7 +2819,7 @@ const Landing: React.FC = () => {
         {/* ==========================================
             SECTION 9 — SECURITY & TRUST
             ========================================== */}
-        <section className="py-28 relative bg-[#fafafa] dark:bg-[#09090b] border-t border-zinc-200/80 dark:border-white/5">
+        <section className="py-28 relative bg-[#0A0A0F] dark:bg-[#0A0A0F] border-t border-zinc-200/80 dark:border-white/5">
           <div className="max-w-6xl mx-auto px-6">
             <div className="text-center max-w-2xl mx-auto mb-16">
               <span className="text-xs font-bold uppercase tracking-widest text-[#4F39F6] dark:text-[#818CF8]">Enterprise Security</span>
@@ -2967,10 +2967,10 @@ const Landing: React.FC = () => {
                   key={idx}
                   className="flex"
                 >
-                  <div className={`premium-gradient-border flex-1 flex ${tier.popular ? 'border-[#38BDF8] md:-translate-y-4 shadow-xl shadow-[#38BDF8]/10' : 'mt-4'}`}>
+                  <div className={`premium-gradient-border flex-1 flex ${tier.popular ? 'border-[#E1306C] md:-translate-y-4 shadow-xl shadow-[#E1306C]/10' : 'mt-4'}`}>
                     <div className="premium-card-content p-8 flex flex-col justify-between flex-grow relative">
                       {tier.popular && (
-                        <span className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-[#38BDF8] to-[#6366F1] text-white text-[9px] font-extrabold px-4 py-1.5 rounded-full uppercase tracking-widest shadow-lg shadow-[#38BDF8]/20">
+                        <span className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-[#833AB4] via-[#E1306C] to-[#FCAF45] text-white text-[9px] font-extrabold px-4 py-1.5 rounded-full uppercase tracking-widest shadow-lg shadow-[#E1306C]/20">
                           Most Popular
                         </span>
                       )}
@@ -3024,7 +3024,7 @@ const Landing: React.FC = () => {
         {/* ==========================================
             SECTION 12 — FAQ
             ========================================== */}
-        <section id="faq" className="py-28 border-t border-zinc-200/80 dark:border-white/5 bg-[#fafafa] dark:bg-[#09090b] relative">
+        <section id="faq" className="py-28 border-t border-zinc-200/80 dark:border-white/5 bg-[#0A0A0F] dark:bg-[#0A0A0F] relative">
           <div className="max-w-3xl mx-auto px-6">
             <div className="text-center mb-16">
               <span className="text-xs font-bold uppercase tracking-widest text-[#4F39F6] dark:text-[#818CF8]">Have Questions?</span>

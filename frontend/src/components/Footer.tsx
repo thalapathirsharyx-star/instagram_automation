@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 const Footer: React.FC = () => {
   return (
-    <footer className="site-footer dark border-t border-white/5 bg-[#07080C] pt-20 pb-12 px-6 relative z-10">
+    <footer className="site-footer dark border-t border-[#E1306C]/20 bg-[#0A0A0F] pt-20 pb-12 px-6 relative z-10">
       <div className="max-w-6xl mx-auto">
         <div className="grid grid-cols-2 md:grid-cols-5 gap-10 mb-16">
           <div className="col-span-2">
@@ -17,7 +17,7 @@ const Footer: React.FC = () => {
                 Flaz<span className="text-logo-gradient">ly</span>
               </span>
             </Link>
-            <p className="text-zinc-500 text-xs leading-relaxed max-w-sm mb-6">
+            <p className="text-[#B4B4C7] text-sm leading-relaxed max-w-sm mb-6">
               The modern Instagram DM API and CRM for digital creators, scaling agencies, and high-growth e-commerce brands. Automatically route inquiries and scale your conversions.
             </p>
             <div className="flex items-center gap-3">
@@ -42,38 +42,38 @@ const Footer: React.FC = () => {
           {/* Product Column */}
           <div>
             <h4 className="text-white text-xs font-bold uppercase tracking-wider mb-6">Product</h4>
-            <ul className="space-y-4 text-xs font-medium text-zinc-500">
-              <li><a href="/#features" className="hover:text-brand-purple transition-colors">Features</a></li>
-              <li><a href="/#setup" className="hover:text-brand-purple transition-colors">Integration Setup</a></li>
-              <li><a href="/#pricing" className="hover:text-brand-purple transition-colors">Pricing Plans</a></li>
-              <li><a href="/#noise-filter" className="hover:text-brand-purple transition-colors">Noise Filter</a></li>
+            <ul className="space-y-4 text-sm font-medium text-[#B4B4C7]">
+              <li><a href="/#features" className="hover:text-[#E1306C] transition-colors">Features</a></li>
+              <li><a href="/#setup" className="hover:text-[#E1306C] transition-colors">Integration Setup</a></li>
+              <li><a href="/#pricing" className="hover:text-[#E1306C] transition-colors">Pricing Plans</a></li>
+              <li><a href="/#noise-filter" className="hover:text-[#E1306C] transition-colors">Noise Filter</a></li>
             </ul>
           </div>
 
           {/* Developers Column */}
           <div>
             <h4 className="text-white text-xs font-bold uppercase tracking-wider mb-6">Developer API</h4>
-            <ul className="space-y-4 text-xs font-medium text-zinc-500">
-              <li><a href="#" className="hover:text-brand-purple transition-colors">Webhooks</a></li>
-              <li><a href="#" className="hover:text-brand-purple transition-colors">API Docs</a></li>
-              <li><a href="#" className="hover:text-brand-purple transition-colors">Integrations</a></li>
-              <li><a href="#" className="hover:text-brand-purple transition-colors">System Status</a></li>
+            <ul className="space-y-4 text-sm font-medium text-[#B4B4C7]">
+              <li><a href="#" className="hover:text-[#E1306C] transition-colors">Webhooks</a></li>
+              <li><a href="#" className="hover:text-[#E1306C] transition-colors">API Docs</a></li>
+              <li><a href="#" className="hover:text-[#E1306C] transition-colors">Integrations</a></li>
+              <li><a href="#" className="hover:text-[#E1306C] transition-colors">System Status</a></li>
             </ul>
           </div>
 
           {/* Legal Column */}
           <div>
             <h4 className="text-white text-xs font-bold uppercase tracking-wider mb-6">Legal</h4>
-            <ul className="space-y-4 text-xs font-medium text-zinc-500">
-              <li><Link to="/privacy" onClick={() => window.scrollTo(0, 0)} className="hover:text-brand-purple transition-colors">Privacy Policy</Link></li>
-              <li><Link to="/terms" onClick={() => window.scrollTo(0, 0)} className="hover:text-brand-purple transition-colors">Terms of Service</Link></li>
-              <li><Link to="/data-deletion" onClick={() => window.scrollTo(0, 0)} className="hover:text-brand-purple transition-colors">Data Deletion</Link></li>
+            <ul className="space-y-4 text-sm font-medium text-[#B4B4C7]">
+              <li><Link to="/privacy" onClick={() => window.scrollTo(0, 0)} className="hover:text-[#E1306C] transition-colors">Privacy Policy</Link></li>
+              <li><Link to="/terms" onClick={() => window.scrollTo(0, 0)} className="hover:text-[#E1306C] transition-colors">Terms of Service</Link></li>
+              <li><Link to="/data-deletion" onClick={() => window.scrollTo(0, 0)} className="hover:text-[#E1306C] transition-colors">Data Deletion</Link></li>
             </ul>
           </div>
 
         </div>
 
-        <div className="pt-8 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4 text-zinc-600 text-[10px] font-bold">
+        <div className="pt-8 border-t border-[#E1306C]/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-zinc-400 text-xs font-bold">
           <span>© 2026 Flazly Inc. All rights reserved.</span>
           <span>Built with ❤ for professional Instagram automation.</span>
         </div>
