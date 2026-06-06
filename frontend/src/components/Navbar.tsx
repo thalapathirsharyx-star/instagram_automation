@@ -8,11 +8,10 @@ const Navbar: React.FC = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const navLinks = [
-    { label: 'How It Works', href: '/#how-it-works' },
-    { label: 'Setup', href: '/#setup' },
-    { label: 'Features', href: '/#features' },
-    { label: 'Spam Shield', href: '/#noise-filter' },
-    { label: 'Pricing', href: '/#pricing' },
+    { label: 'How It Works', href: '/how-it-works' },
+    { label: 'Features', href: '/features' },
+    { label: 'Spam Shield', href: '/spam-shield' },
+    { label: 'Pricing', href: '/pricing' },
     { label: 'FAQ', href: '/#faq' },
   ];
 
@@ -30,9 +29,9 @@ const Navbar: React.FC = () => {
 
         <div className="hidden md:flex items-center gap-8">
           {navLinks.map((link) => (
-            <a key={link.label} href={link.href} className="text-sm font-medium text-zinc-400 hover:text-white transition-colors">
+            <Link key={link.label} to={link.href} className="text-sm font-medium text-zinc-400 hover:text-white transition-colors">
               {link.label}
-            </a>
+            </Link>
           ))}
 
           <div className="flex items-center gap-4 ml-4">
@@ -66,14 +65,14 @@ const Navbar: React.FC = () => {
           >
             <div className="px-6 py-8 flex flex-col gap-6">
               {navLinks.map((link) => (
-                <a
+                <Link
                   key={link.label}
-                  href={link.href}
+                  to={link.href}
                   className="text-base font-semibold text-zinc-300 hover:text-white transition-colors"
                   onClick={() => setMobileOpen(false)}
                 >
                   {link.label}
-                </a>
+                </Link>
               ))}
               <div className="h-px bg-white/5 my-2" />
               <button

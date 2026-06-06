@@ -16,6 +16,10 @@ import Signup from './pages/Signup';
 import Landing from './pages/Landing';
 import VerifyEmail from './pages/VerifyEmail';
 import { PrivacyPolicy, TermsOfService, DataDeletion } from './pages/Legal';
+import Features from './pages/Features';
+import SpamShield from './pages/SpamShield';
+import PricingPage from './pages/PricingPage';
+import HowItWorks from './pages/HowItWorks';
 import SuperAdminDashboard from './pages/SuperAdminDashboard';
 import ClientManagement from './pages/ClientManagement';
 import AdminUsage from './pages/AdminUsage';
@@ -80,13 +84,17 @@ function AppContent() {
       return null;
     }
 
-    const landingPublicRoutes = ['/', '/privacy', '/terms', '/data-deletion'];
+    const landingPublicRoutes = ['/', '/privacy', '/terms', '/data-deletion', '/features', '/spam-shield', '/pricing', '/how-it-works'];
     const isLandingRoute = landingPublicRoutes.includes(location.pathname);
 
     if (isLandingRoute) {
       return (
         <Routes>
           <Route path="/" element={<Landing />} />
+          <Route path="/features" element={<Features />} />
+          <Route path="/spam-shield" element={<SpamShield />} />
+          <Route path="/pricing" element={<PricingPage />} />
+          <Route path="/how-it-works" element={<HowItWorks />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
           <Route path="/terms" element={<TermsOfService />} />
           <Route path="/data-deletion" element={<DataDeletion />} />
@@ -99,21 +107,24 @@ function AppContent() {
   }
 
   // Routing for main app domain (app.flazly.com)
-  if (location.pathname === '/privacy') {
-    window.location.href = 'https://flazly.com/privacy';
+  const redirectRoutes = ['/privacy', '/terms', '/data-deletion', '/features', '/spam-shield', '/pricing', '/how-it-works'];
+  
+  const isLocalhost = hostname === 'localhost' || hostname === '127.0.0.1';
+  
+  if (redirectRoutes.includes(location.pathname) && !isLocalhost) {
+    window.location.href = `https://flazly.com${location.pathname}`;
     return null;
   }
-  if (location.pathname === '/terms') {
-    window.location.href = 'https://flazly.com/terms';
-    return null;
-  }
-  if (location.pathname === '/data-deletion') {
-    window.location.href = 'https://flazly.com/data-deletion';
-    return null;
-  }
-  if (location.pathname === '/landing') {
-    return <Landing />;
-  }
+
+  // Allow local testing of landing pages
+  if (location.pathname === '/landing') return <Landing />;
+  if (location.pathname === '/features') return <Features />;
+  if (location.pathname === '/spam-shield') return <SpamShield />;
+  if (location.pathname === '/pricing') return <PricingPage />;
+  if (location.pathname === '/how-it-works') return <HowItWorks />;
+  if (location.pathname === '/privacy') return <PrivacyPolicy />;
+  if (location.pathname === '/terms') return <TermsOfService />;
+  if (location.pathname === '/data-deletion') return <DataDeletion />;
 
   const appPublicRoutes = ['/login', '/signup', '/verify-email'];
   const isAppPublicPage = appPublicRoutes.includes(location.pathname);

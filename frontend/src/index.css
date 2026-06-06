@@ -1913,6 +1913,7 @@
   border-radius: 23px;
   height: 100%;
   width: 100%;
+}
 :root.light-disabled .landing-page .bg-white\/\[0\.02\]:not(.mockup-dark *) {
   background-color: rgba(0, 0, 0, 0.02) !important;
   border-color: rgba(0, 0, 0, 0.06) !important;
