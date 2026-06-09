@@ -64,14 +64,9 @@ function AppContent() {
   };
   
   useEffect(() => {
-    if (theme === 'dark') {
-      document.documentElement.classList.add('dark');
-      document.documentElement.classList.remove('light');
-    } else {
-      document.documentElement.classList.add('light');
-      document.documentElement.classList.remove('dark');
-    }
-  }, [theme]);
+    document.documentElement.classList.add('light');
+    document.documentElement.classList.remove('dark');
+  }, []);
 
   // Routing for landing page domain (flazly.com)
   if (isLandingDomain) {
@@ -157,7 +152,7 @@ function AppContent() {
           </div>
           <button 
             onClick={handleStopImpersonation}
-            className="bg-white/10 hover:bg-white/20 text-white px-4 py-1.5 rounded-lg border border-white/20 transition-all cursor-pointer font-extrabold text-[10px]"
+            className="bg-white/10 hover:bg-white/20 text-white px-4 py-1.5 rounded-lg border border-zinc-200 transition-all cursor-pointer font-extrabold text-[10px]"
           >
             Stop Impersonation
           </button>
@@ -171,21 +166,19 @@ function AppContent() {
           <div className="flex-grow"></div>
           <div className="flex items-center gap-6">
             <button 
-              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-              className="p-2.5 bg-white/5 rounded-xl text-zinc-400 hover:text-purple-400 hover:bg-purple-500/10 transition-all duration-300 border border-white/5 hover:border-purple-500/20 cursor-pointer"
-              aria-label="Toggle Theme"
+              className="p-2.5 bg-zinc-100 rounded-xl text-zinc-600 hover:text-purple-600 hover:bg-purple-50 transition-all duration-300 border border-zinc-200 hover:border-purple-200 cursor-pointer"
             >
-              {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+              <Sun size={20} />
             </button>
             <div className="relative cursor-pointer group">
-              <div className="p-2.5 bg-white/5 rounded-xl text-zinc-400 group-hover:text-purple-400 group-hover:bg-purple-500/10 transition-all duration-300 border border-white/5 group-hover:border-purple-500/20">
+              <div className="p-2.5 bg-zinc-100 rounded-xl text-zinc-600 group-hover:text-purple-600 group-hover:bg-purple-50 transition-all duration-300 border border-zinc-200 group-hover:border-purple-200">
                 <Bell size={20} />
               </div>
-              <span className={`absolute -top-1 -right-1 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full ${theme === 'light' ? 'border-0' : 'border-2 border-[#0f0f14]'} shadow-lg group-hover:scale-110 transition-transform shadow-purple-500/30`}>3</span>
+              <span className={`absolute -top-1 -right-1 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-0 shadow-lg group-hover:scale-110 transition-transform shadow-purple-500/30`}>3</span>
             </div>
             <div className="relative" onMouseLeave={() => setShowProfileDropdown(false)}>
               <div 
-                className="flex items-center gap-3 pl-6 border-l border-white/5 cursor-pointer"
+                className="flex items-center gap-3 pl-6 border-l border-zinc-200 cursor-pointer"
                 onMouseEnter={() => setShowProfileDropdown(true)}
               >
                 <div className="text-right hidden sm:block">
@@ -193,22 +186,22 @@ function AppContent() {
                     <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-widest ${user?.roleCode === 'SUPER_ADMIN' ? 'bg-amber-500/10 text-amber-500 border border-amber-500/20' : (!user?.company?.plan || user?.company?.plan?.toUpperCase() === 'FREE' ? 'bg-rose-500/10 text-rose-500 border border-rose-500/20' : 'bg-purple-500/10 text-purple-500 border border-purple-500/20')}`}>
                       {user?.roleCode === 'SUPER_ADMIN' ? 'SUPER ADMIN' : (!user?.company?.plan || user?.company?.plan?.toUpperCase() === 'FREE' ? '14 DAYS TRIAL' : `${user?.company?.plan} PLAN`)}
                     </span>
-                    <div className="text-sm font-bold text-zinc-100">{user?.email ? user.email.split('@')[0] : 'Guest'}</div>
+                    <div className="text-sm font-bold text-zinc-900">{user?.email ? user.email.split('@')[0] : 'Guest'}</div>
                   </div>
                   <div className="text-[10px] font-bold text-emerald-500 uppercase tracking-wider flex items-center justify-end gap-1.5 mt-0.5">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Active Now
                   </div>
                 </div>
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center text-white font-bold shadow-lg shadow-purple-500/20 uppercase transition-transform hover:scale-105 border border-white/10">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center text-white font-bold shadow-lg shadow-purple-500/20 uppercase transition-transform hover:scale-105 border border-zinc-200">
                   {user?.email ? user.email[0] : 'G'}
                 </div>
               </div>
 
               {showProfileDropdown && (
                 <div className="absolute right-0 top-full pt-2 w-48 z-50">
-                  <div className="bg-zinc-900 border border-white/10 rounded-xl shadow-xl overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
-                    <div className="p-3 border-b border-white/10">
-                      <div className="text-sm font-bold text-white truncate">{user?.email}</div>
+                  <div className="bg-white border border-zinc-200 rounded-xl shadow-xl overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+                    <div className="p-3 border-b border-zinc-200">
+                      <div className="text-sm font-bold text-zinc-900 truncate">{user?.email}</div>
                       <div className="text-xs text-zinc-500">{user?.role || 'Member'}</div>
                     </div>
                     <div className="p-1">
