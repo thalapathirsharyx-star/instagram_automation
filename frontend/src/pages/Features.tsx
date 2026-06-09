@@ -12,7 +12,7 @@ const Features: React.FC = () => {
   }, []);
 
   return (
-    <div className="dark min-h-screen bg-[#0A0A0F] text-white font-inter selection:bg-purple-500/30 selection:text-white">
+    <div className="dark min-h-screen bg-[#0A0A0F] text-primary-foreground font-inter selection:bg-purple-500/30 selection:text-primary-foreground">
       <Navbar />
 
       <main className="pt-32 pb-24 px-6 max-w-6xl mx-auto">
@@ -30,7 +30,7 @@ const Features: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-xl text-zinc-400 mb-10 leading-relaxed max-w-2xl mx-auto"
+            className="text-xl text-muted-foreground mb-10 leading-relaxed max-w-2xl mx-auto"
           >
             From instant replies to AI-driven lead qualification—discover the tools that help you capture every opportunity without lifting a finger.
           </motion.p>
@@ -49,7 +49,7 @@ const Features: React.FC = () => {
         <section className="mb-32">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-extrabold mb-4">Engage users exactly where they are</h2>
-            <p className="text-zinc-400 text-lg max-w-2xl mx-auto">Don't let warm leads go cold. Trigger automated conversational flows the moment someone interacts with your brand.</p>
+            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">Don't let warm leads go cold. Trigger automated conversational flows the moment someone interacts with your brand.</p>
           </div>
           
           <div className="grid md:grid-cols-3 gap-8">
@@ -69,7 +69,7 @@ const Features: React.FC = () => {
                   {feature.icon}
                 </div>
                 <h3 className="text-xl font-bold mb-3">{feature.title}</h3>
-                <p className="text-zinc-400 leading-relaxed">{feature.desc}</p>
+                <p className="text-muted-foreground leading-relaxed">{feature.desc}</p>
               </motion.div>
             ))}
           </div>
@@ -81,12 +81,12 @@ const Features: React.FC = () => {
             <div className="grid md:grid-cols-2 gap-16 items-center">
               <div>
                 <h2 className="text-4xl font-extrabold mb-6">Identify Serious Buyers Automatically</h2>
-                <p className="text-zinc-400 text-lg leading-relaxed mb-8">
+                <p className="text-muted-foreground text-lg leading-relaxed mb-8">
                   Stop guessing who is ready to buy. Our AI engine engages users natively within Instagram, asks predefined qualifying questions, and uses intelligent Natural Language Processing (NLP) to extract their intent.
                   <br/><br/>
                   By the time you look at the chat, the prospect is already vetted, scored, and ready for a closing conversation.
                 </p>
-                <a href="https://app.flazly.com/signup" className="text-white font-bold flex items-center gap-2 hover:gap-3 transition-all text-lg">
+                <a href="https://app.flazly.com/signup" className="text-primary-foreground font-bold flex items-center gap-2 hover:gap-3 transition-all text-lg">
                   See AI in Action <span className="text-pink-500">→</span>
                 </a>
               </div>
@@ -96,7 +96,7 @@ const Features: React.FC = () => {
                  <div className="self-end bg-white/10 px-4 py-3 rounded-2xl rounded-tr-sm text-sm max-w-[80%]">Agency. We have 10 clients.</div>
                  <div className="self-start bg-gradient-to-r from-purple-600 to-pink-600 px-4 py-3 rounded-2xl rounded-tl-sm text-sm max-w-[80%]">Perfect. What's the best email to send the agency curriculum to?</div>
                  <div className="absolute -right-6 top-1/2 bg-[#0A0A0F] border border-white/10 p-4 rounded-xl shadow-xl animate-bounce">
-                    <div className="text-xs text-zinc-500 uppercase font-bold mb-1">Lead Extracted</div>
+                    <div className="text-xs text-muted-foreground uppercase font-bold mb-1">Lead Extracted</div>
                     <div className="font-bold flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-green-500"/> Agency Owner</div>
                  </div>
               </div>
@@ -114,8 +114,8 @@ const Features: React.FC = () => {
               <h3 className="text-2xl font-bold text-rose-400 mb-6">Manual Workflow</h3>
               <ul className="space-y-4">
                 {["Hours wasted typing repetitive answers", "Leads lost in hidden request folders", "Zero scalable data extraction", "Delayed response times killing conversions"].map((item, i) => (
-                  <li key={i} className="flex items-start gap-3 text-zinc-400">
-                    <X className="text-rose-500 shrink-0 mt-1" size={18} />
+                  <li key={i} className="flex items-start gap-3 text-muted-foreground">
+                    <X className="text-destructive shrink-0 mt-1" size={18} />
                     <span>{item}</span>
                   </li>
                 ))}

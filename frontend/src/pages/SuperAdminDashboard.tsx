@@ -139,7 +139,7 @@ const SuperAdminDashboard: React.FC = () => {
                 <div>
                   <div style={{ fontWeight: 600 }}>{client.name}</div>
                   <div style={{ fontSize: '0.75rem', color: 'var(--text-dim)', marginTop: '2px' }}>
-                    <span className={`px-1.5 py-0.5 rounded text-[8px] uppercase font-bold mr-2 ${client.plan !== 'Free' ? 'bg-purple-500/10 text-purple-400 border border-purple-500/20' : 'bg-zinc-800 text-zinc-400'}`}>
+                    <span className={`px-1.5 py-0.5 rounded text-[8px] uppercase font-bold mr-2 ${client.plan !== 'Free' ? 'bg-purple-500/10 text-purple-400 border border-purple-500/20' : 'bg-primary/90 text-muted-foreground'}`}>
                       {client.plan || 'Free'}
                     </span>
                     {client.email}

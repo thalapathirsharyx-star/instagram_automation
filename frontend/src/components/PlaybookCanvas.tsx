@@ -22,7 +22,7 @@ const OutputHandle = ({ colorClass = 'bg-purple-500' }: { colorClass?: string })
 );
 
 const TriggerNode = ({ data, isConnectable }: any) => (
-  <div className="bg-white dark:bg-zinc-900 border-2 border-sky-400/50 rounded-xl shadow-lg w-72">
+  <div className="bg-white dark:bg-primary border-2 border-sky-400/50 rounded-xl shadow-lg w-72">
     <div className="bg-sky-500/10 px-4 py-2 rounded-t-lg border-b border-sky-500/20 flex items-center gap-2">
       <Play size={14} className="text-sky-500" />
       <span className="text-xs font-bold text-sky-600 dark:text-sky-400 uppercase tracking-wider">Trigger</span>
@@ -46,7 +46,7 @@ const TriggerNode = ({ data, isConnectable }: any) => (
 );
 
 const ActionNode = ({ data, isConnectable }: any) => (
-  <div className="bg-white dark:bg-zinc-900 border-2 border-purple-400/50 rounded-xl shadow-lg w-72">
+  <div className="bg-white dark:bg-primary border-2 border-purple-400/50 rounded-xl shadow-lg w-72">
     <InputHandle />
     <div className="bg-purple-500/10 px-4 py-2 rounded-t-lg border-b border-purple-500/20 flex items-center gap-2">
       <Zap size={14} className="text-purple-500" />
@@ -71,11 +71,11 @@ const ActionNode = ({ data, isConnectable }: any) => (
 );
 
 const ConditionNode = ({ data, isConnectable }: any) => (
-  <div className="bg-white dark:bg-zinc-900 border-2 border-amber-400/50 rounded-xl shadow-lg w-72">
+  <div className="bg-white dark:bg-primary border-2 border-amber-400/50 rounded-xl shadow-lg w-72">
     <InputHandle />
     <div className="bg-amber-500/10 px-4 py-2 rounded-t-lg border-b border-amber-500/20 flex items-center gap-2">
       <HelpCircle size={14} className="text-amber-500" />
-      <span className="text-xs font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider">Condition</span>
+      <span className="text-xs font-bold text-amber-400 dark:text-amber-400 uppercase tracking-wider">Condition</span>
     </div>
     <div className="p-4 flex flex-col gap-3">
       <input 
@@ -96,7 +96,7 @@ const ConditionNode = ({ data, isConnectable }: any) => (
 );
 
 const DelayNode = ({ data, isConnectable }: any) => (
-  <div className="bg-white dark:bg-zinc-900 border-2 border-slate-400/50 rounded-xl shadow-lg w-72">
+  <div className="bg-white dark:bg-primary border-2 border-slate-400/50 rounded-xl shadow-lg w-72">
     <InputHandle />
     <div className="bg-slate-500/10 px-4 py-2 rounded-t-lg border-b border-slate-500/20 flex items-center gap-2">
       <Clock size={14} className="text-slate-500" />
@@ -231,16 +231,16 @@ export default function PlaybookCanvas({ initialSteps, onClose, onSave }: Playbo
 
   const content = (
     <div className="fixed inset-0 z-[9999] flex flex-col bg-slate-100 dark:bg-[#0c0a10]">
-      <div className="h-16 bg-white dark:bg-zinc-900 border-b border-slate-200 dark:border-white/5 flex items-center justify-between px-6 shrink-0 shadow-sm relative z-10 w-full">
+      <div className="h-16 bg-white dark:bg-primary border-b border-slate-200 dark:border-white/5 flex items-center justify-between px-6 shrink-0 shadow-sm relative z-10 w-full">
         <div className="flex items-center gap-4">
           <button onClick={onClose} className="p-2 hover:bg-slate-100 dark:hover:bg-white/5 rounded-full transition-colors cursor-pointer">
-            <X size={20} className="text-slate-500 dark:text-zinc-400" />
+            <X size={20} className="text-slate-500 dark:text-muted-foreground" />
           </button>
           <div>
             <h2 className="text-lg font-bold text-slate-800 dark:text-zinc-100 flex items-center gap-2">
               <Activity size={18} className="text-purple-500" /> Visual Playbook Builder
             </h2>
-            <p className="text-xs text-slate-500 dark:text-zinc-400">Drag & drop nodes to map your automation</p>
+            <p className="text-xs text-slate-500 dark:text-muted-foreground">Drag & drop nodes to map your automation</p>
           </div>
         </div>
         
@@ -249,7 +249,7 @@ export default function PlaybookCanvas({ initialSteps, onClose, onSave }: Playbo
             <button onClick={() => addNode('trigger')} className="px-3 py-1.5 text-xs font-semibold text-sky-600 dark:text-sky-400 hover:bg-white dark:hover:bg-white/5 rounded-lg transition-colors flex items-center gap-1">
               <Plus size={14} /> Trigger
             </button>
-            <button onClick={() => addNode('condition')} className="px-3 py-1.5 text-xs font-semibold text-amber-600 dark:text-amber-400 hover:bg-white dark:hover:bg-white/5 rounded-lg transition-colors flex items-center gap-1">
+            <button onClick={() => addNode('condition')} className="px-3 py-1.5 text-xs font-semibold text-amber-400 dark:text-amber-400 hover:bg-white dark:hover:bg-white/5 rounded-lg transition-colors flex items-center gap-1">
               <Plus size={14} /> Condition
             </button>
             <button onClick={() => addNode('action')} className="px-3 py-1.5 text-xs font-semibold text-purple-600 dark:text-purple-400 hover:bg-white dark:hover:bg-white/5 rounded-lg transition-colors flex items-center gap-1">
@@ -279,8 +279,8 @@ export default function PlaybookCanvas({ initialSteps, onClose, onSave }: Playbo
           className="bg-slate-50 dark:bg-[#0c0a10]"
         >
           <Background color="#a1a1aa" gap={16} size={1} />
-          <Controls className="bg-white dark:bg-zinc-900 border-none shadow-lg fill-slate-700 dark:fill-zinc-300" />
-          <MiniMap className="bg-white dark:bg-zinc-900 border border-slate-200 dark:border-white/10 shadow-lg" maskColor="rgba(0,0,0,0.1)" />
+          <Controls className="bg-white dark:bg-primary border-none shadow-lg fill-slate-700 dark:fill-zinc-300" />
+          <MiniMap className="bg-white dark:bg-primary border border-slate-200 dark:border-white/10 shadow-lg" maskColor="rgba(0,0,0,0.1)" />
         </ReactFlow>
       </div>
     </div>

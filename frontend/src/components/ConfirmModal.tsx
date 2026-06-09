@@ -57,7 +57,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
             {!isLoading && (
               <button
                 onClick={onCancel}
-                className="absolute top-4 right-4 text-slate-400 hover:text-slate-650 dark:text-zinc-500 dark:hover:text-zinc-350 transition-colors p-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-zinc-900"
+                className="absolute top-4 right-4 text-slate-400 hover:text-slate-650 dark:text-muted-foreground dark:hover:text-zinc-350 transition-colors p-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-primary"
               >
                 <X size={16} />
               </button>
@@ -66,7 +66,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
             {/* Content */}
             <div className="flex items-start gap-4 mb-6 mt-2">
               <div className={`p-3 rounded-2xl shrink-0 border ${
-                type === 'danger' ? 'bg-rose-500/10 text-rose-500 border-rose-500/20' :
+                type === 'danger' ? 'bg-rose-500/10 text-destructive border-rose-500/20' :
                 type === 'warning' ? 'bg-amber-500/10 text-amber-500 border-amber-500/20' :
                 'bg-purple-500/10 text-purple-500 border-purple-500/20'
               }`}>
@@ -78,7 +78,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
                 <h3 className="text-lg font-bold text-slate-900 dark:text-zinc-100 leading-snug">
                   {title}
                 </h3>
-                <p className="text-sm text-slate-500 dark:text-zinc-400 font-medium leading-relaxed">
+                <p className="text-sm text-slate-500 dark:text-muted-foreground font-medium leading-relaxed">
                   {message}
                 </p>
               </div>
@@ -90,7 +90,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
                 type="button"
                 onClick={onCancel}
                 disabled={isLoading}
-                className="px-5 py-2.5 bg-slate-50 hover:bg-slate-100 dark:bg-zinc-900 dark:hover:bg-zinc-800 border border-slate-200/60 dark:border-white/5 rounded-xl text-sm font-bold text-slate-600 dark:text-zinc-350 transition-all disabled:opacity-50 cursor-pointer"
+                className="px-5 py-2.5 bg-slate-50 hover:bg-slate-100 dark:bg-primary dark:hover:bg-primary/90 border border-slate-200/60 dark:border-white/5 rounded-xl text-sm font-bold text-slate-600 dark:text-zinc-350 transition-all disabled:opacity-50 cursor-pointer"
               >
                 {cancelText}
               </button>
@@ -98,8 +98,8 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
                 type="button"
                 onClick={onConfirm}
                 disabled={isLoading}
-                className={`px-6 py-2.5 text-white font-bold text-sm rounded-xl transition-all flex items-center gap-2 disabled:opacity-50 cursor-pointer ${
-                  type === 'danger' ? 'bg-rose-600 hover:bg-rose-700 shadow-lg shadow-rose-600/10 dark:shadow-rose-600/5' :
+                className={`px-6 py-2.5 text-primary-foreground font-bold text-sm rounded-xl transition-all flex items-center gap-2 disabled:opacity-50 cursor-pointer ${
+                  type === 'danger' ? 'bg-rose-600 hover:bg-destructive/90 shadow-lg shadow-rose-600/10 dark:shadow-rose-600/5' :
                   type === 'warning' ? 'bg-amber-600 hover:bg-amber-700 shadow-lg shadow-amber-600/10 dark:shadow-amber-600/5' :
                   'bg-purple-650 hover:bg-purple-700 shadow-lg shadow-purple-650/10 dark:shadow-purple-650/5'
                 }`}

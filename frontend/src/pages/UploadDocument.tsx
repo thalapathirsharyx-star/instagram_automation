@@ -45,16 +45,16 @@ const UploadDocument: React.FC = () => {
         <div>
           <button 
             onClick={() => navigate('/knowledge')}
-            className="flex items-center gap-2 text-zinc-400 hover:text-white mb-4 transition-colors font-medium"
+            className="flex items-center gap-2 text-muted-foreground hover:text-primary-foreground mb-4 transition-colors font-medium"
           >
             <ArrowLeft size={18} /> Back to Brain Base
           </button>
           <h1 className="text-3xl font-bold text-zinc-100 mb-2">Upload Document</h1>
-          <p className="text-zinc-400 font-medium">Upload a PDF or TXT file to extract knowledge facts.</p>
+          <p className="text-muted-foreground font-medium">Upload a PDF or TXT file to extract knowledge facts.</p>
         </div>
       </div>
 
-      <div className="w3-card p-10 border-purple-500/20 bg-zinc-900 animate-in slide-in-from-bottom-4 duration-500 shadow-xl max-w-3xl">
+      <div className="w3-card p-10 border-purple-500/20 bg-primary animate-in slide-in-from-bottom-4 duration-500 shadow-xl max-w-3xl">
         <div 
           onClick={() => !isSaving && fileInputRef.current?.click()}
           className={`border-2 border-dashed border-white/10 rounded-3xl p-16 text-center ${!isSaving ? 'cursor-pointer hover:border-purple-500/50 hover:bg-purple-500/5' : ''} transition-all duration-300 group`}
@@ -78,7 +78,7 @@ const UploadDocument: React.FC = () => {
                 <UploadCloud size={40} className="text-purple-400" />
               </div>
               <h4 className="text-xl font-bold text-zinc-100 mb-2">Drop your file here</h4>
-              <p className="text-zinc-400 font-medium max-w-sm mx-auto">Supports PDF and TXT. AI will process the text into searchable knowledge.</p>
+              <p className="text-muted-foreground font-medium max-w-sm mx-auto">Supports PDF and TXT. AI will process the text into searchable knowledge.</p>
             </>
           )}
         </div>

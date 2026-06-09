@@ -95,7 +95,7 @@ const PricingPage: React.FC = () => {
   ];
 
   return (
-    <div className="dark min-h-screen bg-[#0A0A0F] text-white font-inter selection:bg-purple-500/30 selection:text-white">
+    <div className="dark min-h-screen bg-[#0A0A0F] text-primary-foreground font-inter selection:bg-purple-500/30 selection:text-primary-foreground">
       <Navbar />
 
       <main className="pt-32 pb-24 px-6 max-w-7xl mx-auto">
@@ -113,7 +113,7 @@ const PricingPage: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-xl text-zinc-400 mb-10"
+            className="text-xl text-muted-foreground mb-10"
           >
             Start for free. Upgrade when the AI starts making you money. Transparent limits, no hidden fees.
           </motion.p>
@@ -135,33 +135,33 @@ const PricingPage: React.FC = () => {
                 }`}
               >
                 {plan.popular && (
-                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs font-bold uppercase tracking-wider py-1 px-4 rounded-full">
+                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-purple-500 to-pink-500 text-primary-foreground text-xs font-bold uppercase tracking-wider py-1 px-4 rounded-full">
                     Most Popular
                   </div>
                 )}
                 <div className="mb-8">
                   <h3 className="text-2xl font-bold mb-2">{plan.name}</h3>
-                  <p className="text-zinc-400 text-sm h-10">{plan.desc}</p>
+                  <p className="text-muted-foreground text-sm h-10">{plan.desc}</p>
                 </div>
                 <div className="mb-8 flex items-end gap-1">
                   <span className="text-4xl font-extrabold">₹{plan.price}</span>
-                  <span className="text-zinc-500 font-medium mb-1">/mo</span>
+                  <span className="text-muted-foreground font-medium mb-1">/mo</span>
                 </div>
                 <a 
                   href="https://app.flazly.com/signup" 
                   className={`block w-full text-center py-3.5 rounded-xl font-bold transition-all mb-8 ${
                     plan.popular 
-                      ? 'btn-premium-cta text-white' 
-                      : 'bg-white/5 hover:bg-white/10 text-white border border-white/5'
+                      ? 'btn-premium-cta text-primary-foreground' 
+                      : 'bg-white/5 hover:bg-white/10 text-primary-foreground border border-white/5'
                   }`}
                 >
                   {plan.cta}
                 </a>
                 <div className="space-y-4">
-                  <p className="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-4">What's included</p>
+                  <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-4">What's included</p>
                   {plan.features.map((feature, idx) => (
                     <div key={idx} className="flex items-start gap-3">
-                      <Check size={18} className={plan.popular ? "text-pink-500" : "text-zinc-500"} />
+                      <Check size={18} className={plan.popular ? "text-pink-500" : "text-muted-foreground"} />
                       <span className="text-sm text-zinc-300">{feature}</span>
                     </div>
                   ))}
@@ -180,7 +180,7 @@ const PricingPage: React.FC = () => {
                 <h3 className="text-xl font-bold mb-3 flex items-center gap-2">
                   <HelpCircle size={20} className="text-purple-400" /> What counts as an Active Contact?
                 </h3>
-                <p className="text-zinc-400 leading-relaxed">
+                <p className="text-muted-foreground leading-relaxed">
                   An active contact is a unique Instagram user who interacts with your bot during the current billing cycle. If the same user messages you multiple times in a month, they only count as one active contact.
                 </p>
               </div>
@@ -188,7 +188,7 @@ const PricingPage: React.FC = () => {
                 <h3 className="text-xl font-bold mb-3 flex items-center gap-2">
                   <HelpCircle size={20} className="text-pink-400" /> What counts as an AI Message?
                 </h3>
-                <p className="text-zinc-400 leading-relaxed">
+                <p className="text-muted-foreground leading-relaxed">
                   Any automated response generated and sent by Flazly on your behalf counts toward your AI message limit.
                 </p>
               </div>
@@ -202,8 +202,8 @@ const PricingPage: React.FC = () => {
           <div className="space-y-6">
             {faqs.map((faq, i) => (
               <div key={i} className="bg-white/[0.02] border border-white/5 p-6 rounded-2xl">
-                <h3 className="text-lg font-bold mb-2 text-white">{faq.q}</h3>
-                <p className="text-zinc-400">{faq.a}</p>
+                <h3 className="text-lg font-bold mb-2 text-primary-foreground">{faq.q}</h3>
+                <p className="text-muted-foreground">{faq.a}</p>
               </div>
             ))}
           </div>

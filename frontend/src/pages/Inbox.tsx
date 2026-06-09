@@ -125,44 +125,44 @@ const Inbox: React.FC = () => {
     <div className="flex flex-col h-[calc(100vh-100px)] animate-in fade-in duration-500 pb-6 max-w-7xl mx-auto" style={{ fontFamily: '"Inter", system-ui, sans-serif' }}>
       <div className="flex justify-between items-end mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-zinc-900 tracking-tight mb-1">Inbox</h1>
-          <p className="text-sm text-zinc-500 font-medium">Monitor and manage your AI-driven conversations.</p>
+          <h2 className="text-3xl font-bold tracking-tight">Inbox</h2>
+          <p className="text-muted-foreground text-sm">Monitor and manage your AI-driven conversations.</p>
         </div>
       </div>
 
-      <div className="flex bg-white border border-zinc-200/80 rounded-2xl shadow-sm overflow-hidden flex-grow min-h-0">
+      <div className="flex border bg-card text-card-foreground shadow-sm rounded-xl overflow-hidden flex-grow min-h-0">
         {/* Lead Sidebar */}
-        <div className="w-[320px] shrink-0 border-r border-zinc-200 flex flex-col bg-zinc-50/30">
-          <div className="p-5 border-b border-zinc-100 bg-white">
-            <h2 className="text-sm font-bold text-zinc-900 uppercase tracking-wider">Active Threads</h2>
+        <div className="w-[320px] shrink-0 border-r border-border flex flex-col bg-muted/30">
+          <div className="p-5 border-b border-border bg-card">
+            <h2 className="text-sm font-bold text-foreground uppercase tracking-wider">Active Threads</h2>
           </div>
           <div className="flex-grow overflow-y-auto">
             {leads.map((lead) => (
               <div
                 key={lead.id}
-                className={`flex gap-3 p-4 cursor-pointer transition-all duration-200 relative group border-b border-zinc-100
-                  ${selectedLead?.id === lead.id ? 'bg-violet-50/50' : 'hover:bg-zinc-50'}`}
+                className={`flex gap-3 p-4 cursor-pointer transition-all duration-200 relative group border-b border-border
+                  ${selectedLead?.id === lead.id ? 'bg-primary/10/50' : 'hover:bg-muted'}`}
                 onClick={() => handleSelectLead(lead)}
               >
                 {selectedLead?.id === lead.id && (
-                  <div className="absolute left-0 top-0 bottom-0 w-1 bg-violet-600 rounded-r-md"></div>
+                  <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary rounded-r-md"></div>
                 )}
-                <div className="w-10 h-10 rounded-full bg-violet-100 flex items-center justify-center text-violet-700 font-bold text-sm border border-violet-200 shadow-sm shrink-0">
+                <div className="w-10 h-10 rounded-full bg-violet-100 flex items-center justify-center text-foreground font-bold text-sm border border-primary/20 shadow-sm shrink-0">
                   {lead.customer_name[0]}
                 </div>
                 <div className="flex-grow min-w-0">
                   <div className="flex justify-between items-start mb-0.5">
-                    <span className={`font-bold text-sm truncate pr-2 ${selectedLead?.id === lead.id ? 'text-violet-900' : 'text-zinc-900'}`}>
+                    <span className={`font-bold text-sm truncate pr-2 ${selectedLead?.id === lead.id ? 'text-foreground' : 'text-foreground'}`}>
                       {lead.customer_name}
                     </span>
                     <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider border shrink-0
-                      ${lead.lead_status === 'Buyer' ? 'bg-blue-50 text-blue-700 border-blue-200' :
-                        lead.lead_status === 'Needs_Human' ? 'bg-rose-50 text-rose-700 border-rose-200' :
-                          'bg-zinc-100 text-zinc-600 border-zinc-200'}`}>
+                      ${lead.lead_status === 'Buyer' ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' :
+                        lead.lead_status === 'Needs_Human' ? 'bg-destructive/10 text-destructive border-destructive/20' :
+                          'bg-secondary text-muted-foreground border-border'}`}>
                       {lead.lead_status}
                     </span>
                   </div>
-                  <div className="text-xs text-zinc-500 font-medium truncate">@{lead.instagram_handle}</div>
+                  <div className="text-xs text-muted-foreground font-medium truncate">@{lead.instagram_handle}</div>
                 </div>
               </div>
             ))}
@@ -170,27 +170,27 @@ const Inbox: React.FC = () => {
         </div>
 
         {/* Chat Area */}
-        <div className="flex-grow min-w-0 flex flex-col bg-zinc-50/50 relative">
+        <div className="flex-grow min-w-0 flex flex-col bg-muted/50 relative">
           {selectedLead ? (
             <>
               {/* Chat Header */}
-              <div className="px-6 py-4 border-b border-zinc-200 bg-white flex justify-between items-center z-10 shadow-[0_4px_20px_-10px_rgba(0,0,0,0.05)]">
+              <div className="px-6 py-4 border-b border-border bg-card flex justify-between items-center z-10 shadow-[0_4px_20px_-10px_rgba(0,0,0,0.05)]">
                 <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-full bg-violet-100 flex items-center justify-center text-violet-700 font-bold text-sm border border-violet-200 shadow-sm">
+                  <div className="w-10 h-10 rounded-full bg-violet-100 flex items-center justify-center text-foreground font-bold text-sm border border-primary/20 shadow-sm">
                     {selectedLead.customer_name[0]}
                   </div>
                   <div>
-                    <h3 className="font-bold text-zinc-900 leading-tight">{selectedLead.customer_name}</h3>
-                    <p className="text-xs text-zinc-500 font-medium">@{selectedLead.instagram_handle}</p>
+                    <h3 className="font-bold text-foreground leading-tight">{selectedLead.customer_name}</h3>
+                    <p className="text-xs text-muted-foreground font-medium">@{selectedLead.instagram_handle}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest hidden sm:block">Agent Status:</span>
+                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest hidden sm:block">Agent Status:</span>
                   <button
                     onClick={() => setIsManualMode(!isManualMode)}
                     className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all shadow-sm border ${isManualMode
-                      ? 'bg-rose-50 text-rose-700 border-rose-200 hover:bg-rose-100'
-                      : 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100'
+                      ? 'bg-destructive/10 text-destructive border-destructive/20 hover:bg-destructive/10'
+                      : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20 hover:bg-emerald-500/10'
                       }`}
                   >
                     {isManualMode ? <Hand size={14} /> : <CheckCircle2 size={14} />}
@@ -202,31 +202,31 @@ const Inbox: React.FC = () => {
               {/* Chat History */}
               <div className="flex-grow p-6 sm:p-8 overflow-y-auto flex flex-col gap-6" ref={chatHistoryRef}>
                 <div className="text-center py-4">
-                  <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest bg-zinc-200/50 px-3 py-1 rounded-full">Beginning of Conversation</span>
+                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest bg-secondary px-3 py-1 rounded-full">Beginning of Conversation</span>
                 </div>
                 {messages.map((msg) => (
                   <div key={msg.id} className={`max-w-[85%] lg:max-w-[75%] flex flex-col ${msg.direction === 'Outbound' ? 'self-end items-end' : 'self-start items-start'} mb-2`}>
 
                     {/* Name and Timestamp Above Bubble */}
                     <div className={`flex items-center gap-2 mb-1.5 px-1 ${msg.direction === 'Outbound' ? 'flex-row-reverse' : 'flex-row'}`}>
-                      <span className="text-xs font-medium text-zinc-600">
+                      <span className="text-xs font-medium text-muted-foreground">
                         {msg.direction === 'Outbound' ? 'Flazly Assistant' : selectedLead?.customer_name || selectedLead?.instagram_handle || 'Customer'}
                       </span>
-                      <span className="text-[10px] font-medium text-zinc-400">
+                      <span className="text-[10px] font-medium text-muted-foreground">
                         {(() => {
                           const d = new Date(msg.created_on);
                           return isNaN(d.getTime()) ? 'Just now' : d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                         })()}
                       </span>
                       {msg.direction === 'Outbound' && !isManualMode && (
-                        <Bot size={12} className="text-violet-400 ml-1" />
+                        <Bot size={12} className="text-foreground ml-1" />
                       )}
                     </div>
 
                     {/* Chat Bubble */}
                     <div className={`px-5 py-3.5 rounded-2xl text-[15px] font-normal leading-relaxed ${msg.direction === 'Outbound'
-                      ? 'bg-[#F3E8FF] border border-[#E9D5FF] text-zinc-800 rounded-tr-sm'
-                      : 'bg-white border border-zinc-100 shadow-sm text-zinc-800 rounded-tl-sm'
+                      ? 'bg-[#F3E8FF] border border-[#E9D5FF] text-foreground rounded-tr-sm'
+                      : 'bg-card border border-border shadow-sm text-foreground rounded-tl-sm'
                       }`}>
                       {msg.message_text.startsWith('[IMAGE]') ? (
                         <img src={msg.message_text.replace('[IMAGE] ', '')} alt="Shared image" className="rounded-xl max-w-full h-auto" />
@@ -239,8 +239,8 @@ const Inbox: React.FC = () => {
 
 
                     {msg.ai_notes && (
-                      <div className="mt-2 text-[11px] text-zinc-500 bg-white p-3 rounded-xl border border-zinc-200 shadow-sm self-start">
-                        <span className="text-violet-600 font-bold block mb-1 uppercase tracking-wider text-[9px] flex items-center gap-1">
+                      <div className="mt-2 text-[11px] text-muted-foreground bg-card p-3 rounded-xl border border-border shadow-sm self-start">
+                        <span className="text-foreground font-bold block mb-1 uppercase tracking-wider text-[9px] flex items-center gap-1">
                           <Bot size={10} /> AI Action: {msg.action_taken}
                         </span>
                         <p className="font-medium leading-relaxed italic">{msg.ai_notes}</p>
@@ -251,8 +251,8 @@ const Inbox: React.FC = () => {
               </div>
 
               {/* Chat Input */}
-              <div className="p-4 bg-white border-t border-zinc-200">
-                <div className={`flex gap-3 bg-zinc-50 p-2 rounded-xl border transition-all duration-200 shadow-inner ${isManualMode ? 'border-zinc-300 focus-within:border-violet-500 focus-within:bg-white focus-within:shadow-[0_0_0_4px_rgba(139,92,246,0.1)]' : 'border-zinc-200 opacity-80'
+              <div className="p-4 bg-card border-t border-border">
+                <div className={`flex gap-3 bg-muted p-2 rounded-xl border transition-all duration-200 shadow-inner ${isManualMode ? 'border-border focus-within:border-border focus-within:bg-card focus-within:shadow-[0_0_0_4px_rgba(139,92,246,0.1)]' : 'border-border opacity-80'
                   }`}>
                   <input
                     type="text"
@@ -261,14 +261,14 @@ const Inbox: React.FC = () => {
                     value={messageText}
                     onChange={(e) => setMessageText(e.target.value)}
                     onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-                    className={`flex-grow px-3 py-2 bg-transparent text-sm font-medium outline-none ${isManualMode ? 'text-zinc-900 placeholder-zinc-400' : 'text-zinc-400'}`}
+                    className={`flex-grow px-3 py-2 bg-transparent text-sm font-medium outline-none ${isManualMode ? 'text-foreground placeholder-zinc-400' : 'text-muted-foreground'}`}
                   />
                   <button
                     onClick={handleSendMessage}
                     disabled={!isManualMode || !messageText.trim()}
                     className={`w-10 h-10 rounded-lg flex items-center justify-center transition-all ${isManualMode && messageText.trim()
-                      ? 'bg-violet-600 text-white shadow-sm hover:bg-violet-700'
-                      : 'bg-zinc-200 text-zinc-400 cursor-not-allowed'
+                      ? 'bg-primary text-primary-foreground shadow-sm hover:bg-primary/90'
+                      : 'bg-secondary text-muted-foreground cursor-not-allowed'
                       }`}
                   >
                     <Send size={16} />
@@ -277,12 +277,12 @@ const Inbox: React.FC = () => {
               </div>
             </>
           ) : (
-            <div className="flex-grow flex flex-col items-center justify-center text-center p-12 bg-zinc-50/50">
-              <div className="w-16 h-16 rounded-2xl bg-white flex items-center justify-center mb-4 border border-zinc-200 shadow-sm">
-                <MessageSquare size={24} className="text-zinc-300" />
+            <div className="flex-grow flex flex-col items-center justify-center text-center p-12 bg-muted/50">
+              <div className="w-16 h-16 rounded-2xl bg-card flex items-center justify-center mb-4 border border-border shadow-sm">
+                <MessageSquare size={24} className="text-muted-foreground" />
               </div>
-              <h3 className="text-lg font-bold text-zinc-900 mb-1">Select a Thread</h3>
-              <p className="text-sm font-medium text-zinc-500">Review AI interactions or jump in to manage the conversation manually.</p>
+              <h3 className="text-lg font-bold text-foreground mb-1">Select a Thread</h3>
+              <p className="text-sm font-medium text-muted-foreground">Review AI interactions or jump in to manage the conversation manually.</p>
             </div>
           )}
         </div>

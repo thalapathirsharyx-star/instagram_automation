@@ -42,16 +42,16 @@ const AddFaq: React.FC = () => {
         <div>
           <button 
             onClick={() => navigate('/knowledge')}
-            className="flex items-center gap-2 text-zinc-400 hover:text-white mb-4 transition-colors font-medium"
+            className="flex items-center gap-2 text-muted-foreground hover:text-primary-foreground mb-4 transition-colors font-medium"
           >
             <ArrowLeft size={18} /> Back to Brain Base
           </button>
           <h1 className="text-3xl font-bold text-zinc-100 mb-2">Add FAQ</h1>
-          <p className="text-zinc-400 font-medium">Add a frequently asked question to train your AI.</p>
+          <p className="text-muted-foreground font-medium">Add a frequently asked question to train your AI.</p>
         </div>
       </div>
 
-      <div className="w3-card p-10 border-purple-500/20 bg-zinc-900 animate-in slide-in-from-bottom-4 duration-500 shadow-xl max-w-2xl">
+      <div className="w3-card p-10 border-purple-500/20 bg-primary animate-in slide-in-from-bottom-4 duration-500 shadow-xl max-w-2xl">
         <h3 className="text-xl font-bold text-zinc-100 flex items-center gap-3 mb-8">
           <div className="p-2 bg-purple-500/10 rounded-lg text-purple-400 border border-purple-500/20">
             <HelpCircle size={20} />
@@ -61,7 +61,7 @@ const AddFaq: React.FC = () => {
         
         <div className="space-y-6">
           <div className="space-y-2">
-            <label className="text-xs font-bold text-zinc-500 uppercase tracking-widest ml-1">Question</label>
+            <label className="text-xs font-bold text-muted-foreground uppercase tracking-widest ml-1">Question</label>
             <input 
               type="text" 
               placeholder="e.g. Do you ship internationally?" 
@@ -71,7 +71,7 @@ const AddFaq: React.FC = () => {
             />
           </div>
           <div className="space-y-2">
-            <label className="text-xs font-bold text-zinc-500 uppercase tracking-widest ml-1">Answer</label>
+            <label className="text-xs font-bold text-muted-foreground uppercase tracking-widest ml-1">Answer</label>
             <textarea 
               placeholder="Yes, we ship to over 50 countries..." 
               value={newAnswer}
@@ -81,7 +81,7 @@ const AddFaq: React.FC = () => {
             />
           </div>
           <div className="flex justify-end gap-4 pt-4 border-t border-white/5 mt-8">
-            <button onClick={() => navigate('/knowledge')} className="px-6 py-3 text-zinc-500 font-bold hover:text-zinc-300">Cancel</button>
+            <button onClick={() => navigate('/knowledge')} className="px-6 py-3 text-muted-foreground font-bold hover:text-muted-foreground">Cancel</button>
             <button onClick={handleAdd} disabled={isSaving || !newQuestion || !newAnswer} className="w3-button-primary px-10">
               {isSaving ? <Loader2 size={20} className="animate-spin" /> : 'Save FAQ'}
             </button>

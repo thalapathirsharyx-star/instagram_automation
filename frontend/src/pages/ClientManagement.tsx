@@ -36,8 +36,8 @@ interface CompanyAdminData {
 const StatusBadge: React.FC<{ status: boolean }> = ({ status }) => (
   <div className={`px-2.5 py-1 rounded-full text-[0.7rem] font-bold tracking-wider uppercase flex items-center gap-1.5 ${
     status 
-      ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20' 
-      : 'bg-rose-500/10 text-rose-500 border border-rose-500/20'
+      ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' 
+      : 'bg-rose-500/10 text-destructive border border-rose-500/20'
   }`}>
     {status ? <ShieldCheck size={12} /> : <ShieldAlert size={12} />}
     {status ? 'Active' : 'Suspended'}
@@ -206,7 +206,7 @@ const ClientManagement: React.FC = () => {
                   <td style={{ padding: '12px 20px' }}>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${client.plan !== 'Free' ? 'bg-purple-500/10 text-purple-400 border border-purple-500/20' : 'bg-zinc-800 text-zinc-400 border border-zinc-700'}`}>
+                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${client.plan !== 'Free' ? 'bg-purple-500/10 text-purple-400 border border-purple-500/20' : 'bg-primary/90 text-muted-foreground border border-zinc-700'}`}>
                           {client.plan || 'Free'}
                         </span>
                         {client.plan_expires_at && (

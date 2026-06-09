@@ -31,31 +31,31 @@ const Leads: React.FC = () => {
   );
 
   return (
-    <div className="max-w-7xl mx-auto pb-12 font-sans animate-in fade-in duration-500" style={{ fontFamily: '"Inter", system-ui, sans-serif' }}>
+    <div className="flex-1 space-y-4 p-4 pt-6 md:p-8 animate-in fade-in duration-500">
       
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8 border-b border-zinc-200/80 pb-6">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8 border-b border-border pb-6">
         <div>
-          <h1 className="text-2xl font-bold text-zinc-900 tracking-tight mb-2">Lead Intelligence</h1>
-          <p className="text-sm text-zinc-500 font-medium">Manage and track your AI-discovered Instagram pipeline.</p>
+          <h2 className="text-3xl font-bold tracking-tight">Lead Intelligence</h2>
+          <p className="text-muted-foreground text-sm">Manage and track your AI-discovered Instagram pipeline.</p>
         </div>
         
         <div className="flex flex-col sm:flex-row gap-3">
           <div className="relative group">
-            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 group-focus-within:text-violet-500 transition-colors" />
+            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-foreground transition-colors" />
             <input 
               type="text" 
               placeholder="Search leads..." 
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full sm:w-64 bg-white border border-zinc-200 rounded-lg pl-9 pr-4 py-2.5 text-sm font-medium text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 transition-all shadow-sm"
+              className="w-full sm:w-64 bg-card border border-border rounded-lg pl-9 pr-4 py-2.5 text-sm font-medium text-foreground placeholder-zinc-400 focus:outline-none focus:border-border focus:ring-1 focus:ring-violet-500 transition-all shadow-sm"
             />
           </div>
-          <button onClick={fetchLeads} className="flex items-center justify-center gap-2 px-4 py-2.5 bg-white border border-zinc-200 rounded-lg text-zinc-700 font-semibold hover:bg-zinc-50 hover:border-zinc-300 transition-all shadow-sm">
+          <button onClick={fetchLeads} className="flex items-center justify-center gap-2 px-4 py-2.5 bg-card border border-border rounded-lg text-muted-foreground font-semibold hover:bg-muted hover:border-border transition-all shadow-sm">
             <Filter size={16} />
             <span>Filter</span>
           </button>
-          <button className="flex items-center justify-center gap-2 px-4 py-2.5 bg-zinc-900 text-white rounded-lg font-semibold hover:bg-zinc-800 transition-all shadow-sm">
+          <button className="flex items-center justify-center gap-2 px-4 py-2.5 inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow hover:bg-primary/90">
             <Download size={16} />
             <span className="hidden sm:inline">Export</span>
           </button>
@@ -63,24 +63,24 @@ const Leads: React.FC = () => {
       </div>
 
       {/* Main Table Card */}
-      <div className="bg-white border border-zinc-200/80 rounded-2xl shadow-sm overflow-hidden flex flex-col relative">
+      <div className="border bg-card text-card-foreground shadow-sm rounded-xl overflow-hidden flex flex-col relative">
         <div className="overflow-x-auto flex-grow">
           <table className="w-full text-left border-collapse whitespace-nowrap">
             <thead>
-              <tr className="bg-zinc-50/50 border-b border-zinc-200/80">
-                <th className="px-6 py-4 text-[11px] font-bold text-zinc-500 uppercase tracking-wider">Customer Profile</th>
-                <th className="px-6 py-4 text-[11px] font-bold text-zinc-500 uppercase tracking-wider">Pipeline Status</th>
-                <th className="px-6 py-4 text-[11px] font-bold text-zinc-500 uppercase tracking-wider">AI Score</th>
-                <th className="px-6 py-4 text-[11px] font-bold text-zinc-500 uppercase tracking-wider">Detected Intent</th>
-                <th className="px-6 py-4 text-[11px] font-bold text-zinc-500 uppercase tracking-wider text-right">Actions</th>
+              <tr className="bg-muted/50 border-b border-border">
+                <th className="h-10 px-4 text-left align-middle font-medium text-muted-foreground">Customer Profile</th>
+                <th className="h-10 px-4 text-left align-middle font-medium text-muted-foreground">Pipeline Status</th>
+                <th className="h-10 px-4 text-left align-middle font-medium text-muted-foreground">AI Score</th>
+                <th className="h-10 px-4 text-left align-middle font-medium text-muted-foreground">Detected Intent</th>
+                <th className="h-10 px-4 text-left align-middle font-medium text-muted-foreground text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-zinc-100">
               {isLoading ? (
                 <tr>
                   <td colSpan={5} className="py-24">
-                    <div className="flex flex-col items-center justify-center gap-4 text-zinc-500">
-                      <div className="w-8 h-8 border-4 border-violet-200 border-t-violet-600 rounded-full animate-spin"></div>
+                    <div className="flex flex-col items-center justify-center gap-4 text-muted-foreground">
+                      <div className="w-8 h-8 border-4 border-primary/20 border-t-violet-600 rounded-full animate-spin"></div>
                       <span className="text-sm font-medium">Syncing CRM Data...</span>
                     </div>
                   </td>
@@ -89,50 +89,50 @@ const Leads: React.FC = () => {
                 <tr>
                   <td colSpan={5} className="py-24 text-center">
                     <div className="flex flex-col items-center justify-center">
-                      <div className="w-16 h-16 bg-zinc-50 rounded-2xl flex items-center justify-center mb-4 border border-zinc-100">
-                        <Search size={24} className="text-zinc-400" />
+                      <div className="w-16 h-16 bg-muted rounded-2xl flex items-center justify-center mb-4 border border-border">
+                        <Search size={24} className="text-muted-foreground" />
                       </div>
-                      <h3 className="text-base font-bold text-zinc-900 mb-1">No leads found</h3>
-                      <p className="text-sm text-zinc-500 font-medium">Connect your Instagram account or adjust search filters.</p>
+                      <h3 className="text-base font-bold text-foreground mb-1">No leads found</h3>
+                      <p className="text-muted-foreground text-sm">Connect your Instagram account or adjust search filters.</p>
                     </div>
                   </td>
                 </tr>
               ) : filteredLeads.map((lead) => (
-                <tr key={lead.id} className="hover:bg-zinc-50 transition-colors duration-200 group cursor-pointer" onClick={() => setSelectedLead(lead)}>
+                <tr key={lead.id} className="hover:bg-muted transition-colors duration-200 group cursor-pointer" onClick={() => setSelectedLead(lead)}>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 rounded-full bg-violet-100 flex items-center justify-center text-violet-700 font-bold text-sm border border-violet-200 shadow-sm shrink-0">
+                      <div className="w-10 h-10 rounded-full bg-violet-100 flex items-center justify-center text-foreground font-bold text-sm border border-primary/20 shadow-sm shrink-0">
                         {lead.customer_name[0]}
                       </div>
                       <div className="flex flex-col">
-                        <span className="font-bold text-zinc-900 group-hover:text-violet-600 transition-colors">{lead.customer_name}</span>
-                        <span className="text-xs text-zinc-500 font-medium mt-0.5">@{lead.instagram_handle}</span>
+                        <span className="font-bold text-foreground group-hover:text-foreground transition-colors">{lead.customer_name}</span>
+                        <span className="text-xs text-muted-foreground font-medium mt-0.5">@{lead.instagram_handle}</span>
                       </div>
                     </div>
                   </td>
                   <td className="px-6 py-4">
                     <span className={`px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider border
-                      ${lead.lead_status === 'Hot' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 
-                        lead.lead_status === 'Buyer' ? 'bg-blue-50 text-blue-700 border-blue-200' :
-                        lead.lead_status === 'Lost' ? 'bg-rose-50 text-rose-700 border-rose-200' :
-                        'bg-zinc-100 text-zinc-600 border-zinc-200'}`}>
+                      ${lead.lead_status === 'Hot' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 
+                        lead.lead_status === 'Buyer' ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' :
+                        lead.lead_status === 'Lost' ? 'bg-destructive/10 text-destructive border-destructive/20' :
+                        'bg-secondary text-muted-foreground border-border'}`}>
                       {lead.lead_status}
                     </span>
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3 w-32">
-                      <div className="h-2 w-full bg-zinc-100 rounded-full overflow-hidden">
+                      <div className="h-2 w-full bg-secondary rounded-full overflow-hidden">
                         <div 
                           className="h-full bg-violet-500 rounded-full transition-all duration-1000" 
                           style={{ width: `${Math.min(Number(lead.lead_score || 0) * 10, 100)}%` }}
                         />
                       </div>
-                      <span className="text-xs font-bold text-zinc-700">{Number(lead.lead_score || 0).toFixed(0)}</span>
+                      <span className="text-xs font-bold text-muted-foreground">{Number(lead.lead_score || 0).toFixed(0)}</span>
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <div className="flex items-center gap-2 text-zinc-600 font-medium text-sm">
-                      <MessageCircle size={14} className="text-zinc-400" />
+                    <div className="flex items-center gap-2 text-muted-foreground font-medium text-sm">
+                      <MessageCircle size={14} className="text-muted-foreground" />
                       <span className="truncate max-w-[150px]">{lead.last_intent || 'General Inquiry'}</span>
                     </div>
                   </td>
@@ -140,13 +140,13 @@ const Leads: React.FC = () => {
                     <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                       <button 
                         onClick={(e) => { e.stopPropagation(); setSelectedLead(lead); }}
-                        className="p-2 bg-white border border-zinc-200 rounded-lg text-zinc-500 hover:text-violet-600 hover:border-violet-200 hover:bg-violet-50 transition-all shadow-sm" title="View Intelligence"
+                        className="p-2 bg-card border border-border rounded-lg text-muted-foreground hover:text-foreground hover:border-primary/20 hover:bg-primary/10 transition-all shadow-sm" title="View Intelligence"
                       >
                         <ExternalLink size={16} />
                       </button>
                       <button 
                         onClick={(e) => e.stopPropagation()}
-                        className="p-2 bg-white border border-zinc-200 rounded-lg text-zinc-500 hover:text-zinc-900 hover:bg-zinc-50 transition-all shadow-sm"
+                        className="p-2 bg-card border border-border rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-all shadow-sm"
                       >
                         <MoreHorizontal size={16} />
                       </button>
@@ -160,11 +160,11 @@ const Leads: React.FC = () => {
         
         {/* Pagination/Footer (Mocked for structure) */}
         {!isLoading && filteredLeads.length > 0 && (
-          <div className="px-6 py-4 border-t border-zinc-100 bg-zinc-50/50 flex justify-between items-center text-xs font-medium text-zinc-500">
+          <div className="px-6 py-4 border-t border-border bg-muted/50 flex justify-between items-center text-xs font-medium text-muted-foreground">
             <span>Showing {filteredLeads.length} leads</span>
             <div className="flex gap-2">
-              <button className="px-3 py-1.5 border border-zinc-200 rounded-md bg-white hover:bg-zinc-50 disabled:opacity-50">Previous</button>
-              <button className="px-3 py-1.5 border border-zinc-200 rounded-md bg-white hover:bg-zinc-50 disabled:opacity-50">Next</button>
+              <button className="px-3 py-1.5 border border-border rounded-md bg-card hover:bg-muted disabled:opacity-50">Previous</button>
+              <button className="px-3 py-1.5 border border-border rounded-md bg-card hover:bg-muted disabled:opacity-50">Next</button>
             </div>
           </div>
         )}
@@ -172,23 +172,23 @@ const Leads: React.FC = () => {
 
       {/* Slide-over or Modal for Lead Intelligence */}
       {selectedLead && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-zinc-900/40 backdrop-blur-sm animate-in fade-in duration-200" onClick={() => setSelectedLead(null)}>
-          <div className="w-full max-w-2xl bg-white border border-zinc-200 rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300" onClick={e => e.stopPropagation()}>
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-primary/40 backdrop-blur-sm animate-in fade-in duration-200" onClick={() => setSelectedLead(null)}>
+          <div className="w-full max-w-2xl bg-card border border-border rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300" onClick={e => e.stopPropagation()}>
             
             {/* Modal Header */}
-            <div className="px-6 py-5 border-b border-zinc-100 flex justify-between items-center bg-zinc-50/50">
+            <div className="px-6 py-5 border-b border-border flex justify-between items-center bg-muted/50">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-violet-100 flex items-center justify-center text-violet-700 font-bold text-xl border border-violet-200 shadow-sm shrink-0">
+                <div className="w-12 h-12 rounded-full bg-violet-100 flex items-center justify-center text-foreground font-bold text-xl border border-primary/20 shadow-sm shrink-0">
                   {selectedLead.customer_name[0]}
                 </div>
                 <div>
-                  <h2 className="text-lg font-bold text-zinc-900">{selectedLead.customer_name}</h2>
-                  <p className="text-xs text-zinc-500 font-medium">@{selectedLead.instagram_handle}</p>
+                  <h2 className="text-lg font-bold text-foreground">{selectedLead.customer_name}</h2>
+                  <p className="text-xs text-muted-foreground font-medium">@{selectedLead.instagram_handle}</p>
                 </div>
               </div>
               <button 
                 onClick={() => setSelectedLead(null)}
-                className="p-2 text-zinc-400 hover:text-zinc-600 hover:bg-zinc-100 rounded-full transition-colors"
+                className="p-2 text-muted-foreground hover:text-muted-foreground hover:bg-secondary rounded-full transition-colors"
               >
                 <X size={20} />
               </button>
@@ -198,20 +198,20 @@ const Leads: React.FC = () => {
               
               {/* Stats Row */}
               <div className="grid grid-cols-2 gap-4">
-                <div className="p-5 rounded-2xl bg-zinc-50 border border-zinc-100 flex flex-col justify-center">
-                  <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-1 flex items-center gap-1.5"><BrainCircuit size={12}/> AI Health Score</p>
-                  <p className="text-3xl font-extrabold text-zinc-900 tracking-tight">{Number(selectedLead.lead_score || 0).toFixed(0)}<span className="text-sm text-zinc-400 font-medium ml-1">/ 10</span></p>
+                <div className="p-5 rounded-2xl bg-muted rounded-lg border flex flex-col justify-center">
+                  <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1 flex items-center gap-1.5"><BrainCircuit size={12}/> AI Health Score</p>
+                  <p className="text-3xl font-extrabold text-foreground tracking-tight">{Number(selectedLead.lead_score || 0).toFixed(0)}<span className="text-sm text-muted-foreground font-medium ml-1">/ 10</span></p>
                 </div>
-                <div className="p-5 rounded-2xl bg-violet-50 border border-violet-100 flex flex-col justify-center">
-                  <p className="text-[10px] font-bold text-violet-600 uppercase tracking-widest mb-1 flex items-center gap-1.5"><Sparkles size={12}/> Detected Intent</p>
-                  <p className="text-xl font-bold text-violet-900 capitalize truncate">{selectedLead.last_intent || 'General Enquiry'}</p>
+                <div className="p-5 rounded-2xl bg-primary/10 border border-primary/20 flex flex-col justify-center">
+                  <p className="text-[10px] font-bold text-foreground uppercase tracking-widest mb-1 flex items-center gap-1.5"><Sparkles size={12}/> Detected Intent</p>
+                  <p className="text-xl font-bold text-foreground capitalize truncate">{selectedLead.last_intent || 'General Enquiry'}</p>
                 </div>
               </div>
 
               {/* Summary Section */}
               <div className="space-y-3">
-                <h3 className="text-xs font-bold text-zinc-900 uppercase tracking-wider">Conversation Summary</h3>
-                <div className="p-5 rounded-xl bg-white border border-zinc-200 text-zinc-700 leading-relaxed font-medium text-sm shadow-sm">
+                <h3 className="text-xs font-bold text-foreground uppercase tracking-wider">Conversation Summary</h3>
+                <div className="p-5 rounded-xl bg-card border border-border text-muted-foreground leading-relaxed font-medium text-sm shadow-sm">
                   {selectedLead.conversation_summary || "The AI is currently analyzing this conversation. A detailed semantic summary will appear after more interactions are recorded."}
                 </div>
               </div>
@@ -219,10 +219,10 @@ const Leads: React.FC = () => {
               {/* Tags */}
               {selectedLead.tags && selectedLead.tags.length > 0 && (
                 <div className="space-y-3">
-                  <h3 className="text-xs font-bold text-zinc-900 uppercase tracking-wider flex items-center gap-1.5"><Tag size={14} className="text-zinc-400"/> CRM Tags</h3>
+                  <h3 className="text-xs font-bold text-foreground uppercase tracking-wider flex items-center gap-1.5"><Tag size={14} className="text-muted-foreground"/> CRM Tags</h3>
                   <div className="flex flex-wrap gap-2">
                     {selectedLead.tags.map((tag, idx) => (
-                      <span key={idx} className="px-2.5 py-1 bg-zinc-100 text-zinc-700 text-[11px] font-bold uppercase tracking-wider rounded border border-zinc-200">
+                      <span key={idx} className="px-2.5 py-1 bg-secondary text-muted-foreground text-[11px] font-bold uppercase tracking-wider rounded border border-border">
                         {tag}
                       </span>
                     ))}
@@ -232,21 +232,21 @@ const Leads: React.FC = () => {
             </div>
 
             {/* Modal Footer */}
-            <div className="px-6 py-4 bg-zinc-50 border-t border-zinc-200 flex flex-col sm:flex-row justify-between items-center gap-4">
-              <div className="flex items-center gap-2 text-zinc-500 text-xs font-medium">
+            <div className="px-6 py-4 bg-muted border-t border-border flex flex-col sm:flex-row justify-between items-center gap-4">
+              <div className="flex items-center gap-2 text-muted-foreground text-xs font-medium">
                 <Calendar size={14} />
                 <span>Last engaged: {new Date(selectedLead.last_message_time || Date.now()).toLocaleDateString()}</span>
               </div>
               <div className="flex gap-3 w-full sm:w-auto">
                 <button 
                   onClick={() => setSelectedLead(null)}
-                  className="flex-1 sm:flex-none px-4 py-2 bg-white border border-zinc-300 rounded-lg text-zinc-700 font-bold hover:bg-zinc-50 transition-all shadow-sm text-sm"
+                  className="flex-1 sm:flex-none px-4 py-2 bg-card border border-border rounded-lg text-muted-foreground font-bold hover:bg-muted transition-all shadow-sm text-sm"
                 >
                   Close
                 </button>
                 <button 
                   onClick={() => window.open(`https://instagram.com/direct/t/${selectedLead.instagram_handle}`, '_blank')}
-                  className="flex-1 sm:flex-none px-4 py-2 bg-zinc-900 rounded-lg text-white font-bold hover:bg-zinc-800 transition-all flex items-center justify-center gap-2 shadow-sm text-sm"
+                  className="flex-1 sm:flex-none px-4 py-2 bg-primary rounded-lg text-primary-foreground font-bold hover:bg-primary/90 transition-all flex items-center justify-center gap-2 shadow-sm text-sm"
                 >
                   <ExternalLink size={16} />
                   Open in Instagram

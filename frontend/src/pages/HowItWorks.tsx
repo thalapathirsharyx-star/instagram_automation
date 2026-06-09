@@ -39,7 +39,7 @@ const HowItWorks: React.FC = () => {
   ];
 
   return (
-    <div className="dark min-h-screen bg-[#0A0A0F] text-white font-inter selection:bg-purple-500/30 selection:text-white">
+    <div className="dark min-h-screen bg-[#0A0A0F] text-primary-foreground font-inter selection:bg-purple-500/30 selection:text-primary-foreground">
       <Navbar />
 
       <main className="pt-32 pb-24 px-6 max-w-4xl mx-auto">
@@ -57,7 +57,7 @@ const HowItWorks: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-xl text-zinc-400 mb-10 max-w-2xl mx-auto"
+            className="text-xl text-muted-foreground mb-10 max-w-2xl mx-auto"
           >
             No coding required. Connect your account, configure your triggers, and let our AI handle the rest.
           </motion.p>
@@ -94,9 +94,9 @@ const HowItWorks: React.FC = () => {
                 {/* Content */}
                 <div className="w-full md:w-1/2 pl-20 md:pl-0 md:px-16">
                   <div className={`bg-[#111118] border border-white/5 p-8 rounded-3xl ${index % 2 === 0 ? 'md:text-left' : 'md:text-right'}`}>
-                    <div className="text-sm font-bold text-zinc-500 uppercase tracking-widest mb-2">Step {index + 1}</div>
+                    <div className="text-sm font-bold text-muted-foreground uppercase tracking-widest mb-2">Step {index + 1}</div>
                     <h3 className="text-2xl font-bold mb-4">{step.title}</h3>
-                    <p className="text-zinc-400 leading-relaxed">{step.desc}</p>
+                    <p className="text-muted-foreground leading-relaxed">{step.desc}</p>
                   </div>
                 </div>
                 
