@@ -18,18 +18,18 @@ const Navbar: React.FC = () => {
   return (
     <>
       {/* Premium Navbar with forced dark mode */}
-      <nav className="dark fixed top-0 left-0 right-0 z-50 bg-[#0A0A0F]/80 backdrop-blur-xl border-b border-white/5">
+      <nav className="dark fixed top-0 left-0 right-0 z-50 bg-zinc-50/80 backdrop-blur-xl border-b border-zinc-200">
       <div className="max-w-6xl mx-auto px-6 h-[72px] flex items-center justify-between">
         <Link to="/" className="flex items-center group gap-1">
           <img src="/Dark theme.png" alt="Flazly Logo" className="w-11 h-11 object-contain transition-transform duration-300 group-hover:scale-105" />
-          <span className="text-xl font-bold tracking-tight text-white uppercase font-inter">
+          <span className="text-xl font-bold tracking-tight text-zinc-900 uppercase font-inter">
             Flaz<span className="text-logo-gradient">ly</span>
           </span>
         </Link>
 
         <div className="hidden md:flex items-center gap-8">
           {navLinks.map((link) => (
-            <Link key={link.label} to={link.href} className="text-sm font-medium text-zinc-400 hover:text-white transition-colors">
+            <Link key={link.label} to={link.href} className="text-sm font-medium text-zinc-600 hover:text-zinc-900 transition-colors">
               {link.label}
             </Link>
           ))}
@@ -37,7 +37,7 @@ const Navbar: React.FC = () => {
           <div className="flex items-center gap-4 ml-4">
             <button
               onClick={() => window.location.href = 'https://app.flazly.com/login'}
-              className="text-sm font-semibold text-zinc-400 hover:text-white transition-colors"
+              className="text-sm font-semibold text-zinc-600 hover:text-zinc-900 transition-colors"
             >
               Log in
             </button>
@@ -50,7 +50,7 @@ const Navbar: React.FC = () => {
           </div>
         </div>
 
-        <button className="md:hidden text-zinc-400 p-2 hover:text-white transition-colors" onClick={() => setMobileOpen(!mobileOpen)}>
+        <button className="md:hidden text-zinc-600 p-2 hover:text-zinc-900 transition-colors" onClick={() => setMobileOpen(!mobileOpen)}>
           {mobileOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
       </div>
@@ -61,23 +61,23 @@ const Navbar: React.FC = () => {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-[#111118] border-t border-white/5 shadow-xl"
+            className="md:hidden bg-[#111118] border-t border-zinc-200 shadow-xl"
           >
             <div className="px-6 py-8 flex flex-col gap-6">
               {navLinks.map((link) => (
                 <Link
                   key={link.label}
                   to={link.href}
-                  className="text-base font-semibold text-zinc-300 hover:text-white transition-colors"
+                  className="text-base font-semibold text-zinc-700 hover:text-zinc-900 transition-colors"
                   onClick={() => setMobileOpen(false)}
                 >
                   {link.label}
                 </Link>
               ))}
-              <div className="h-px bg-white/5 my-2" />
+              <div className="h-px bg-zinc-100 my-2" />
               <button
                 onClick={() => { window.location.href = 'https://app.flazly.com/login'; setMobileOpen(false); }}
-                className="w-full text-center py-3 border border-white/10 rounded-xl text-zinc-300 hover:text-white hover:bg-white/5 transition-all font-semibold"
+                className="w-full text-center py-3 border border-zinc-300 rounded-xl text-zinc-700 hover:text-zinc-900 hover:bg-zinc-100 transition-all font-semibold"
               >
                 Log in
               </button>

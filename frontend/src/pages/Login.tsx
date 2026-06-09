@@ -207,7 +207,7 @@ const Login: React.FC = () => {
           </div>
 
           <div className="mb-8 text-left">
-            <h1 className="text-3xl font-extrabold tracking-tight text-zinc-900 mb-2">Welcome back</h1>
+            <h1 className="text-3xl font-extrabold tracking-tight text-zinc-900 mb-2">Welcome back to Flazly</h1>
             <p className="text-sm text-zinc-500 font-medium">Log in to your account to continue.</p>
           </div>
 
@@ -359,8 +359,8 @@ const Login: React.FC = () => {
         <div className="absolute bottom-10 right-[60%] w-64 h-64 bg-black/5 rounded-full blur-3xl"></div>
 
         {/* Floating Icons */}
-        <div className="absolute top-[20%] left-[25%] w-14 h-14 bg-white rounded-full flex items-center justify-center shadow-2xl z-20">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4F39F6" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 8V4H8"></path><rect width="16" height="12" x="4" y="8" rx="2"></rect><path d="M2 14h2"></path><path d="M20 14h2"></path><path d="M15 13v2"></path><path d="M9 13v2"></path></svg>
+        <div className="absolute top-[20%] left-[25%] w-14 h-14 bg-white rounded-full flex items-center justify-center shadow-2xl z-20 overflow-hidden">
+          <img src="/Dark theme.png" alt="Flazly Logo" className="w-8 h-8 object-contain" />
         </div>
         <div className="absolute top-[15%] right-[30%] w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-2xl z-20">
           <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" alt="IG" className="w-5 h-5 object-cover" />

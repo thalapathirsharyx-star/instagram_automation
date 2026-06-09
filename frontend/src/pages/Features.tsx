@@ -12,7 +12,7 @@ const Features: React.FC = () => {
   }, []);
 
   return (
-    <div className="dark min-h-screen bg-[#0A0A0F] text-primary-foreground font-inter selection:bg-purple-500/30 selection:text-primary-foreground">
+    <div className="dark min-h-screen bg-zinc-50 text-primary-foreground font-inter selection:bg-purple-500/30 selection:text-primary-foreground">
       <Navbar />
 
       <main className="pt-32 pb-24 px-6 max-w-6xl mx-auto">
@@ -24,7 +24,7 @@ const Features: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             className="text-5xl md:text-7xl font-extrabold tracking-tight mb-8"
           >
-            Put Your Instagram Inbox on <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#833AB4] via-[#E1306C] to-[#FCAF45]">Autopilot</span>
+            Put Your Instagram Inbox on <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#4F39F6] via-[#8B5CF6] to-[#38BDF8]">Autopilot</span>
           </motion.h1>
           <motion.p 
             initial={{ opacity: 0, y: 20 }}
@@ -63,9 +63,9 @@ const Features: React.FC = () => {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                className="bg-white/[0.02] border border-white/5 p-8 rounded-3xl hover:bg-white/[0.04] transition-colors"
+                className="bg-zinc-50 border border-zinc-200 p-8 rounded-3xl hover:bg-zinc-100 transition-colors"
               >
-                <div className="w-14 h-14 rounded-2xl bg-white/5 flex items-center justify-center mb-6">
+                <div className="w-14 h-14 rounded-2xl bg-zinc-100 flex items-center justify-center mb-6">
                   {feature.icon}
                 </div>
                 <h3 className="text-xl font-bold mb-3">{feature.title}</h3>
@@ -77,7 +77,7 @@ const Features: React.FC = () => {
 
         {/* AI QUALIFICATION */}
         <section className="mb-32">
-          <div className="bg-[#111118] border border-white/5 rounded-[40px] p-8 md:p-16 overflow-hidden relative">
+          <div className="bg-[#111118] border border-zinc-200 rounded-[40px] p-8 md:p-16 overflow-hidden relative">
             <div className="grid md:grid-cols-2 gap-16 items-center">
               <div>
                 <h2 className="text-4xl font-extrabold mb-6">Identify Serious Buyers Automatically</h2>
@@ -90,12 +90,12 @@ const Features: React.FC = () => {
                   See AI in Action <span className="text-pink-500">→</span>
                 </a>
               </div>
-              <div className="relative h-[400px] rounded-2xl bg-gradient-to-br from-[#1E293B] to-[#0F172A] border border-white/10 p-6 flex flex-col gap-4 shadow-2xl">
-                 <div className="self-end bg-white/10 px-4 py-3 rounded-2xl rounded-tr-sm text-sm max-w-[80%]">How much is your marketing automation course?</div>
+              <div className="relative h-[400px] rounded-2xl bg-gradient-to-br from-[#1E293B] to-[#0F172A] border border-zinc-300 p-6 flex flex-col gap-4 shadow-2xl">
+                 <div className="self-end bg-zinc-100 px-4 py-3 rounded-2xl rounded-tr-sm text-sm max-w-[80%]">How much is your marketing automation course?</div>
                  <div className="self-start bg-gradient-to-r from-purple-600 to-pink-600 px-4 py-3 rounded-2xl rounded-tl-sm text-sm max-w-[80%]">It's $499! Are you looking to automate your agency or an e-commerce brand?</div>
-                 <div className="self-end bg-white/10 px-4 py-3 rounded-2xl rounded-tr-sm text-sm max-w-[80%]">Agency. We have 10 clients.</div>
+                 <div className="self-end bg-zinc-100 px-4 py-3 rounded-2xl rounded-tr-sm text-sm max-w-[80%]">Agency. We have 10 clients.</div>
                  <div className="self-start bg-gradient-to-r from-purple-600 to-pink-600 px-4 py-3 rounded-2xl rounded-tl-sm text-sm max-w-[80%]">Perfect. What's the best email to send the agency curriculum to?</div>
-                 <div className="absolute -right-6 top-1/2 bg-[#0A0A0F] border border-white/10 p-4 rounded-xl shadow-xl animate-bounce">
+                 <div className="absolute -right-6 top-1/2 bg-zinc-50 border border-zinc-300 p-4 rounded-xl shadow-xl animate-bounce">
                     <div className="text-xs text-muted-foreground uppercase font-bold mb-1">Lead Extracted</div>
                     <div className="font-bold flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-green-500"/> Agency Owner</div>
                  </div>
@@ -126,7 +126,7 @@ const Features: React.FC = () => {
               <h3 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400 mb-6">Flazly Workflow</h3>
               <ul className="space-y-4">
                 {["Instant, contextual replies 24/7", "AI automatically extracts emails and phones", "Leads synced directly to a searchable CRM", "Zero manual effort until lead is qualified"].map((item, i) => (
-                  <li key={i} className="flex items-start gap-3 text-zinc-300">
+                  <li key={i} className="flex items-start gap-3 text-zinc-700">
                     <ShieldCheck className="text-pink-400 shrink-0 mt-1" size={18} />
                     <span>{item}</span>
                   </li>
@@ -147,4 +147,4 @@ const X = ({ className, size }: { className?: string, size?: number }) => (
   <svg xmlns="http://www.w3.org/2000/svg" width={size || 24} height={size || 24} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
 );
 
-export default Features;
+export default Features; // forced update

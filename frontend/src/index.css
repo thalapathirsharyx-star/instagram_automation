@@ -28,44 +28,35 @@
 
 @layer base {
   :root {
-    --background: 0 0% 0%;         /* #000000 */
-    --foreground: 0 0% 98%;        /* #FAFAFA */
-
-    --card: 0 0% 7%;               /* #111111 */
-    --card-foreground: 0 0% 98%;
-
-    --popover: 0 0% 7%;
-    --popover-foreground: 0 0% 98%;
-
-    --primary: 0 0% 100%;          /* #FFFFFF */
-    --primary-foreground: 0 0% 0%; /* #000000 */
-
-    --secondary: 0 0% 4%;          /* #0A0A0A Surface */
-    --secondary-foreground: 240 5% 84%; /* #D4D4D8 */
-
-    --muted: 0 0% 2%;              /* #050505 Section Background */
-    --muted-foreground: 240 5% 65%; /* #A1A1AA Body Text */
-
-    --accent: 0 0% 7%;             /* Use Card color for hover */
-    --accent-foreground: 0 0% 98%;
-
-    --destructive: 0 98% 55%; 
+    --background: 0 0% 100%;
+    --foreground: 0 0% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 3.9%;
+    --primary: 0 0% 9%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 0 0% 96.1%;
+    --secondary-foreground: 0 0% 9%;
+    --muted: 0 0% 96.1%;
+    --muted-foreground: 0 0% 45.1%;
+    --accent: 0 0% 96.1%;
+    --accent-foreground: 0 0% 9%;
+    --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-
-    --border: 0 0% 15%;            /* #262626 */
-    --input: 0 0% 15%;
-    --ring: 0 0% 20%;              /* Suble ring */
-
+    --border: 0 0% 89.8%;
+    --input: 0 0% 89.8%;
+    --ring: 0 0% 3.9%;
     --radius: 12px;
     
     /* Dynamic Brand Variables */
-    --brand-purple: #833AB4;
-    --brand-indigo: #E1306C;
+    --brand-purple: #4F39F6;
+    --brand-indigo: #8B5CF6;
 
     /* Premium AI Theme specifics */
-    --ai-gradient-start: #833AB4;
-    --ai-gradient-end: #FCAF45;
-    --ai-glow: rgba(225, 48, 108, 0.25);
+    --ai-gradient-start: #4F39F6;
+    --ai-gradient-end: #38BDF8;
+    --ai-glow: rgba(79, 57, 246, 0.25);
   }
 
   * {
@@ -192,12 +183,37 @@
 }
 
 /* Premium AI SaaS Backdrop Animations & Classes */
-:root {
-  --grid-line-color: rgba(59, 130, 246, 0.035);
-}
-.dark {
-  --grid-line-color: rgba(59, 130, 246, 0.06);
-}
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 3.9%;
+    --primary: 0 0% 9%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 0 0% 96.1%;
+    --secondary-foreground: 0 0% 9%;
+    --muted: 0 0% 96.1%;
+    --muted-foreground: 0 0% 45.1%;
+    --accent: 0 0% 96.1%;
+    --accent-foreground: 0 0% 9%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 89.8%;
+    --input: 0 0% 89.8%;
+    --ring: 0 0% 3.9%;
+    --radius: 12px;
+    
+    /* Dynamic Brand Variables */
+    --brand-purple: #4F39F6;
+    --brand-indigo: #8B5CF6;
+
+    /* Premium AI Theme specifics */
+    --ai-gradient-start: #4F39F6;
+    --ai-gradient-end: #38BDF8;
+    --ai-glow: rgba(79, 57, 246, 0.25);
+  }
 
 .hero-line-grid {
   background-size: 40px 40px;
@@ -257,7 +273,7 @@
   }
 
   .gradient-text-ai {
-    @apply bg-gradient-to-r from-[#833AB4] via-[#E1306C] to-[#FCAF45] bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-[#4F39F6] via-[#8B5CF6] to-[#38BDF8] bg-clip-text text-transparent;
   }
 
   .glow-indigo {
@@ -605,10 +621,10 @@
   --muted: 240 3.7% 15.9%;
   --muted-foreground: 240 5% 64.9%;
 
-  --accent: 339 76% 54%; /* #E1306C Primary Accent */
+  --accent: 339 76% 54%; /* #8B5CF6 Primary Accent */
   --accent-foreground: 0 0% 100%;
 
-  --destructive: 0 98% 55%; /* #FD1D1D Danger */
+  --destructive: 0 98% 55%; /* #6366F1 Danger */
   --destructive-foreground: 0 0% 98%;
 
   --border: 240 5.9% 15%;      /* Clean border */
@@ -618,13 +634,13 @@
   --radius: 20px;
   
   /* Dynamic Brand Variables */
-  --brand-purple: #833AB4;
-  --brand-indigo: #E1306C;
+  --brand-purple: #4F39F6;
+  --brand-indigo: #8B5CF6;
 
   /* Premium AI Theme specifics */
-  --ai-gradient-start: #833AB4;
-  --ai-gradient-end: #FCAF45;
-  --ai-glow: rgba(225, 48, 108, 0.25);
+  --ai-gradient-start: #4F39F6;
+  --ai-gradient-end: #38BDF8;
+  --ai-glow: rgba(79, 57, 246, 0.25);
 }
 
 :root.light-disabled .sidebar {
@@ -1346,7 +1362,7 @@
 :root.light-disabled footer.site-footer,
 :root.light-disabled .site-footer,
 .site-footer {
-  background-color: #07080C !important;
+  background-color: #ffffff !important;
   color: #a1a1aa !important;
   border-top: 1px solid rgba(255, 255, 255, 0.05) !important;
 }
@@ -1494,7 +1510,7 @@
 }
 
 .table-row-hover:hover td {
-  background-color: #202024 !important;
+  background-color: #f4f4f5 !important;
 }
 
 :root.light-disabled .table-row-hover:hover td {
@@ -1729,7 +1745,7 @@
 
 /* Sticky row hover coloring alignment for table views */
 .crm-layout .table-row-hover:hover td {
-  background-color: #202024 !important;
+  background-color: #f4f4f5 !important;
 }
 
 :root.light-disabled .crm-layout .table-row-hover:hover td {
@@ -1793,7 +1809,7 @@
 
 /* Premium Enterprise SaaS Visual System */
 .text-headline-gradient {
-  background-image: linear-gradient(to right, #833AB4 0%, #E1306C 50%, #FCAF45 100%);
+  background-image: linear-gradient(to right, #4F39F6 0%, #8B5CF6 50%, #38BDF8 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -1801,8 +1817,8 @@
 }
 
 .btn-premium-cta {
-  background-color: #E1306C;
-  background: linear-gradient(135deg, #833AB4 0%, #E1306C 50%, #FCAF45 100%);
+  background-color: #8B5CF6;
+  background: linear-gradient(135deg, #4F39F6 0%, #8B5CF6 50%, #38BDF8 100%);
   border-radius: 14px;
   font-weight: 700;
   transition: all 250ms ease-out;
@@ -1830,7 +1846,7 @@
 }
 
 .text-logo-gradient {
-  background-image: linear-gradient(135deg, #833AB4 0%, #E1306C 50%, #FCAF45 100%);
+  background-image: linear-gradient(135deg, #4F39F6 0%, #8B5CF6 50%, #38BDF8 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -1860,7 +1876,7 @@
 }
 
 .premium-card-content {
-  background: #121826;
+  background: #ffffff;
   border-radius: 23px;
   height: 100%;
   width: 100%;
@@ -1926,7 +1942,7 @@
 }
 
 .roi-recovered-revenue {
-  background: linear-gradient(to right, #833AB4, #E1306C, #FCAF45);
+  background: linear-gradient(to right, #4F39F6, #8B5CF6, #38BDF8);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -1934,7 +1950,7 @@
 }
 
 :root.dark .roi-recovered-revenue {
-  background: linear-gradient(to right, #833AB4, #E1306C, #FCAF45);
+  background: linear-gradient(to right, #4F39F6, #8B5CF6, #38BDF8);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
