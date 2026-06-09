@@ -11,7 +11,7 @@ const SpamShield: React.FC = () => {
   }, []);
 
   return (
-    <div className="dark min-h-screen bg-[#0A0A0F] text-primary-foreground font-inter selection:bg-purple-500/30 selection:text-primary-foreground">
+    <div className="min-h-screen bg-zinc-50 text-zinc-900 font-inter relative overflow-hidden">
       <Navbar />
 
       <main className="pt-32 pb-24 px-6 max-w-6xl mx-auto">
@@ -19,7 +19,7 @@ const SpamShield: React.FC = () => {
         <section className="text-center max-w-4xl mx-auto mb-32 relative">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-gradient-to-r from-amber-500/20 to-orange-600/20 rounded-full blur-[120px] pointer-events-none" />
           <div className="w-20 h-20 mx-auto bg-gradient-to-br from-amber-400 to-orange-500 rounded-2xl flex items-center justify-center mb-8 shadow-[0_0_50px_rgba(245,158,11,0.3)]">
-            <ShieldAlert size={40} className="text-primary-foreground" />
+            <ShieldAlert size={40} className="text-zinc-900" />
           </div>
           <motion.h1 
             initial={{ opacity: 0, y: 20 }}
@@ -49,7 +49,7 @@ const SpamShield: React.FC = () => {
 
         {/* PROBLEM SECTION */}
         <section className="mb-32">
-          <div className="bg-[#111118] border border-amber-500/20 rounded-[40px] p-8 md:p-16 text-center">
+          <div className="bg-white border border-amber-500/20 rounded-[40px] p-8 md:p-16 text-center">
             <h2 className="text-3xl md:text-5xl font-extrabold mb-8">High Volume Shouldn't Mean High Stress</h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
               When a post goes viral, your inbox gets flooded. Without an intelligent filter, you waste valuable AI message credits on users sending single emojis, bot spam, or irrelevant messages.
@@ -75,8 +75,8 @@ const SpamShield: React.FC = () => {
               { title: "2. Analyze", desc: "The AI compares the intent against known buying heuristics.", icon: <TrendingUp size={24} className="text-amber-500" /> },
               { title: "3. Filter", desc: "Low-intent messages are silently muted. Real buyers proceed.", icon: <CheckCircle size={24} className="text-amber-400" /> }
             ].map((step, i) => (
-              <div key={i} className="bg-[#0A0A0F] border border-white/10 p-8 rounded-3xl relative z-10 text-center">
-                <div className="w-16 h-16 mx-auto rounded-full bg-[#111118] border border-amber-500/30 flex items-center justify-center mb-6 shadow-lg shadow-amber-500/10">
+              <div key={i} className="bg-zinc-50 border border-zinc-200 p-8 rounded-3xl relative z-10 text-center">
+                <div className="w-16 h-16 mx-auto rounded-full bg-white border border-amber-500/30 flex items-center justify-center mb-6 shadow-lg shadow-amber-500/10">
                   {step.icon}
                 </div>
                 <h3 className="text-xl font-bold mb-3">{step.title}</h3>
@@ -101,11 +101,11 @@ const SpamShield: React.FC = () => {
               </a>
             </div>
             <div className="grid grid-cols-2 gap-6">
-              <div className="bg-[#111118] border border-white/5 p-8 rounded-3xl text-center">
+              <div className="bg-white border border-zinc-200 p-8 rounded-3xl text-center">
                 <div className="text-5xl font-extrabold text-amber-500 mb-2">40%</div>
                 <div className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Spam Blocked</div>
               </div>
-              <div className="bg-[#111118] border border-white/5 p-8 rounded-3xl text-center">
+              <div className="bg-white border border-zinc-200 p-8 rounded-3xl text-center">
                 <div className="text-5xl font-extrabold text-amber-500 mb-2">15h</div>
                 <div className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Saved Weekly</div>
               </div>

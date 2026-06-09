@@ -21,7 +21,7 @@ const Navbar: React.FC = () => {
       <nav className="dark fixed top-0 left-0 right-0 z-50 bg-zinc-50/80 backdrop-blur-xl border-b border-zinc-200">
       <div className="max-w-6xl mx-auto px-6 h-[72px] flex items-center justify-between">
         <Link to="/" className="flex items-center group gap-1">
-          <img src="/Dark theme.png" alt="Flazly Logo" className="w-11 h-11 object-contain transition-transform duration-300 group-hover:scale-105" />
+          <img src="/Light Theme.png" alt="Flazly Logo" className="w-11 h-11 object-contain transition-transform duration-300 group-hover:scale-105" />
           <span className="text-xl font-bold tracking-tight text-zinc-900 uppercase font-inter">
             Flaz<span className="text-logo-gradient">ly</span>
           </span>

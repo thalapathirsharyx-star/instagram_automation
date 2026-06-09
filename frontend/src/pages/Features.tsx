@@ -12,7 +12,7 @@ const Features: React.FC = () => {
   }, []);
 
   return (
-    <div className="dark min-h-screen bg-zinc-50 text-primary-foreground font-inter selection:bg-purple-500/30 selection:text-primary-foreground">
+    <div className="min-h-screen bg-zinc-50 text-zinc-900 font-inter relative overflow-hidden">
       <Navbar />
 
       <main className="pt-32 pb-24 px-6 max-w-6xl mx-auto">
@@ -77,7 +77,7 @@ const Features: React.FC = () => {
 
         {/* AI QUALIFICATION */}
         <section className="mb-32">
-          <div className="bg-[#111118] border border-zinc-200 rounded-[40px] p-8 md:p-16 overflow-hidden relative">
+          <div className="bg-white border border-zinc-200 rounded-[40px] p-8 md:p-16 overflow-hidden relative">
             <div className="grid md:grid-cols-2 gap-16 items-center">
               <div>
                 <h2 className="text-4xl font-extrabold mb-6">Identify Serious Buyers Automatically</h2>
@@ -86,16 +86,16 @@ const Features: React.FC = () => {
                   <br/><br/>
                   By the time you look at the chat, the prospect is already vetted, scored, and ready for a closing conversation.
                 </p>
-                <a href="https://app.flazly.com/signup" className="text-primary-foreground font-bold flex items-center gap-2 hover:gap-3 transition-all text-lg">
+                <a href="https://app.flazly.com/signup" className="text-zinc-900 font-bold flex items-center gap-2 hover:gap-3 transition-all text-lg">
                   See AI in Action <span className="text-pink-500">→</span>
                 </a>
               </div>
-              <div className="relative h-[400px] rounded-2xl bg-gradient-to-br from-[#1E293B] to-[#0F172A] border border-zinc-300 p-6 flex flex-col gap-4 shadow-2xl">
+              <div className="relative h-[400px] rounded-2xl bg-gradient-to-br from-[#1E293B] to-[#0F172A] border border-zinc-200 p-6 flex flex-col gap-4 shadow-2xl">
                  <div className="self-end bg-zinc-100 px-4 py-3 rounded-2xl rounded-tr-sm text-sm max-w-[80%]">How much is your marketing automation course?</div>
                  <div className="self-start bg-gradient-to-r from-purple-600 to-pink-600 px-4 py-3 rounded-2xl rounded-tl-sm text-sm max-w-[80%]">It's $499! Are you looking to automate your agency or an e-commerce brand?</div>
                  <div className="self-end bg-zinc-100 px-4 py-3 rounded-2xl rounded-tr-sm text-sm max-w-[80%]">Agency. We have 10 clients.</div>
                  <div className="self-start bg-gradient-to-r from-purple-600 to-pink-600 px-4 py-3 rounded-2xl rounded-tl-sm text-sm max-w-[80%]">Perfect. What's the best email to send the agency curriculum to?</div>
-                 <div className="absolute -right-6 top-1/2 bg-zinc-50 border border-zinc-300 p-4 rounded-xl shadow-xl animate-bounce">
+                 <div className="absolute -right-6 top-1/2 bg-zinc-50 border border-zinc-200 p-4 rounded-xl shadow-xl animate-bounce">
                     <div className="text-xs text-muted-foreground uppercase font-bold mb-1">Lead Extracted</div>
                     <div className="font-bold flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-green-500"/> Agency Owner</div>
                  </div>

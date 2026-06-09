@@ -95,7 +95,7 @@ const PricingPage: React.FC = () => {
   ];
 
   return (
-    <div className="dark min-h-screen bg-[#0A0A0F] text-primary-foreground font-inter selection:bg-purple-500/30 selection:text-primary-foreground">
+    <div className="min-h-screen bg-zinc-50 text-zinc-900 font-inter relative overflow-hidden">
       <Navbar />
 
       <main className="pt-32 pb-24 px-6 max-w-7xl mx-auto">
@@ -128,14 +128,14 @@ const PricingPage: React.FC = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 * i }}
-                className={`relative bg-[#111118] border rounded-[32px] p-8 ${
+                className={`relative bg-white border rounded-[32px] p-8 ${
                   plan.popular 
                     ? 'border-purple-500 shadow-[0_0_40px_rgba(168,85,247,0.15)] lg:-translate-y-4' 
-                    : 'border-white/5 hover:border-white/10'
+                    : 'border-zinc-200 hover:border-zinc-200'
                 }`}
               >
                 {plan.popular && (
-                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-purple-500 to-pink-500 text-primary-foreground text-xs font-bold uppercase tracking-wider py-1 px-4 rounded-full">
+                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-purple-500 to-pink-500 text-zinc-900 text-xs font-bold uppercase tracking-wider py-1 px-4 rounded-full">
                     Most Popular
                   </div>
                 )}
@@ -151,8 +151,8 @@ const PricingPage: React.FC = () => {
                   href="https://app.flazly.com/signup" 
                   className={`block w-full text-center py-3.5 rounded-xl font-bold transition-all mb-8 ${
                     plan.popular 
-                      ? 'btn-premium-cta text-primary-foreground' 
-                      : 'bg-white/5 hover:bg-white/10 text-primary-foreground border border-white/5'
+                      ? 'btn-premium-cta text-zinc-900' 
+                      : 'bg-zinc-50 hover:bg-white/10 text-zinc-900 border border-zinc-200'
                   }`}
                 >
                   {plan.cta}
@@ -162,7 +162,7 @@ const PricingPage: React.FC = () => {
                   {plan.features.map((feature, idx) => (
                     <div key={idx} className="flex items-start gap-3">
                       <Check size={18} className={plan.popular ? "text-pink-500" : "text-muted-foreground"} />
-                      <span className="text-sm text-zinc-300">{feature}</span>
+                      <span className="text-sm text-zinc-600">{feature}</span>
                     </div>
                   ))}
                 </div>
@@ -173,7 +173,7 @@ const PricingPage: React.FC = () => {
 
         {/* LIMITS EXPLANATION */}
         <section className="mb-32 max-w-4xl mx-auto">
-          <div className="bg-[#111118] border border-white/5 p-10 rounded-[32px]">
+          <div className="bg-white border border-zinc-200 p-10 rounded-[32px]">
             <h2 className="text-3xl font-extrabold mb-8 text-center">Understanding Your Limits</h2>
             <div className="grid md:grid-cols-2 gap-10">
               <div>
@@ -201,8 +201,8 @@ const PricingPage: React.FC = () => {
           <h2 className="text-3xl font-extrabold mb-10 text-center">Pricing FAQ</h2>
           <div className="space-y-6">
             {faqs.map((faq, i) => (
-              <div key={i} className="bg-white/[0.02] border border-white/5 p-6 rounded-2xl">
-                <h3 className="text-lg font-bold mb-2 text-primary-foreground">{faq.q}</h3>
+              <div key={i} className="bg-white border border-zinc-200 p-6 rounded-2xl">
+                <h3 className="text-lg font-bold mb-2 text-zinc-900">{faq.q}</h3>
                 <p className="text-muted-foreground">{faq.a}</p>
               </div>
             ))}

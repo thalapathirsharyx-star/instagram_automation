@@ -2152,17 +2152,17 @@ const Landing: React.FC = () => {
             </p>
 
             {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full max-w-md mb-16">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full max-w-2xl mb-16">
               <button
                 onClick={() => navigate('/signup')}
-                className="btn-premium-cta w-full sm:w-auto px-10 py-5 text-sm font-bold flex items-center justify-center gap-2 group"
+                className="btn-premium-cta w-full sm:w-auto px-10 py-5 text-sm font-bold flex items-center justify-center gap-2 group whitespace-nowrap"
               >
                 Start Free 14-Day Trial
                 <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
               </button>
               <a
                 href="#demo"
-                className="w-full sm:w-auto px-10 py-5 rounded-xl text-sm font-bold bg-white border border-zinc-200 text-zinc-650 hover:bg-zinc-50 hover:border-zinc-300 transition-all flex items-center justify-center gap-2 shadow-sm"
+                className="w-full sm:w-auto px-10 py-5 rounded-xl text-sm font-bold bg-white border border-zinc-200 text-zinc-650 hover:bg-zinc-50 hover:border-zinc-300 transition-all flex items-center justify-center gap-2 shadow-sm whitespace-nowrap"
               >
                 <Play size={14} fill="currentColor" />
                 Watch Demo
@@ -3175,17 +3175,17 @@ const Landing: React.FC = () => {
             <p className="text-base md:text-lg text-zinc-600 max-w-2xl mx-auto mb-10 font-medium leading-relaxed">
               Let Flazly AI respond instantly, qualify prospects, capture customer details, and help your business convert more conversations into revenue.
             </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full max-w-md mx-auto">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full max-w-2xl mx-auto">
               <button
                 onClick={() => navigate('/signup')}
-                className="btn-premium-cta w-full sm:w-auto px-10 py-5 text-sm font-bold flex items-center justify-center gap-2 group"
+                className="btn-premium-cta w-full sm:w-auto px-10 py-5 text-sm font-bold flex items-center justify-center gap-2 group whitespace-nowrap"
               >
                 Start Free 14-Day Trial
                 <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
               </button>
               <button
                 onClick={() => navigate('/signup')}
-                className="w-full sm:w-auto px-10 py-5 rounded-xl text-sm font-bold bg-white border border-zinc-200 text-zinc-650 hover:bg-zinc-50 hover:border-zinc-300 transition-all flex items-center justify-center gap-2 shadow-sm cursor-pointer"
+                className="w-full sm:w-auto px-10 py-5 rounded-xl text-sm font-bold bg-white border border-zinc-200 text-zinc-650 hover:bg-zinc-50 hover:border-zinc-300 transition-all flex items-center justify-center gap-2 shadow-sm cursor-pointer whitespace-nowrap"
               >
                 Book A Demo
               </button>
