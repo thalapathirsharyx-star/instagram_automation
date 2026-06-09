@@ -140,6 +140,21 @@
   transition: all 0.15s ease;
 }
 
+/* Premium Marketing Buttons */
+.btn-premium-cta {
+  background: linear-gradient(to right, #833ab4, #fd1d1d, #fcb045);
+  color: white;
+  border-radius: 9999px;
+  border: none;
+  box-shadow: 0 4px 14px 0 rgba(253, 29, 29, 0.39);
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-premium-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(253, 29, 29, 0.5);
+}
+
 .w3-input:focus {
   border-color: var(--ring);
   box-shadow: 0 0 0 1px var(--ring);
@@ -1346,7 +1361,7 @@
 :root.light-disabled footer.site-footer,
 :root.light-disabled .site-footer,
 .site-footer {
-  background-color: #ffffff !important;
+  background-color: #09090b !important;
   color: #a1a1aa !important;
   border-top: 1px solid rgba(255, 255, 255, 0.05) !important;
 }
@@ -1372,12 +1387,12 @@
 
 :root.light-disabled .site-footer a:hover,
 .site-footer a:hover {
-  color: #ff4fd8 !important;
+  color: #8b5cf6 !important;
 }
 
 :root.light-disabled .site-footer span:not(.logo-text):not(.logo-text *),
 .site-footer span:not(.logo-text):not(.logo-text *) {
-  color: #52525b !important;
+  color: #71717a !important;
 }
 
 :root.light-disabled .site-footer .border-t,
@@ -1415,25 +1430,25 @@
 }
 
 .site-footer .social-icon-link:hover {
-  background: rgba(129, 140, 248, 0.08) !important;
-  border-color: rgba(129, 140, 248, 0.3) !important;
-  color: #818CF8 !important;
+  background: rgba(139, 92, 246, 0.1) !important;
+  border-color: rgba(139, 92, 246, 0.3) !important;
+  color: #8b5cf6 !important;
   transform: translateY(-3px) !important;
-  box-shadow: 0 8px 20px rgba(79, 57, 246, 0.15) !important;
+  box-shadow: 0 8px 20px rgba(139, 92, 246, 0.15) !important;
 }
 
 :root.light-disabled .site-footer .social-icon-link {
-  background: rgba(0, 0, 0, 0.03) !important;
-  border: 1px solid rgba(0, 0, 0, 0.08) !important;
-  color: #4b5563 !important;
+  background: rgba(255, 255, 255, 0.03) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: #a1a1aa !important;
 }
 
 :root.light-disabled .site-footer .social-icon-link:hover {
-  background: rgba(79, 57, 246, 0.08) !important;
-  border-color: rgba(79, 57, 246, 0.3) !important;
-  color: #4F39F6 !important;
+  background: rgba(139, 92, 246, 0.1) !important;
+  border-color: rgba(139, 92, 246, 0.3) !important;
+  color: #8b5cf6 !important;
   transform: translateY(-3px) !important;
-  box-shadow: 0 8px 20px rgba(79, 57, 246, 0.12) !important;
+  box-shadow: 0 8px 20px rgba(139, 92, 246, 0.15) !important;
 }
 
 :root.light-disabled .site-footer .social-icon-link svg,

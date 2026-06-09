@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 const Footer: React.FC = () => {
   return (
-    <footer className="site-footer dark border-t border-[#8B5CF6]/20 bg-zinc-50 pt-20 pb-12 px-6 relative z-10">
+    <footer className="site-footer border-t border-white/10 bg-zinc-950 pt-20 pb-12 px-6 relative z-10">
       <div className="max-w-6xl mx-auto">
         <div className="grid grid-cols-2 md:grid-cols-5 gap-10 mb-16">
           <div className="col-span-2">
@@ -13,11 +13,11 @@ const Footer: React.FC = () => {
                 alt="Flazly Logo"
                 className="w-9 h-9 object-contain transition-transform duration-300 group-hover:scale-105"
               />
-              <span className="text-lg font-bold tracking-tight text-zinc-900 uppercase font-inter logo-text">
+              <span className="text-lg font-bold tracking-tight text-white uppercase font-inter logo-text">
                 Flaz<span className="text-logo-gradient">ly</span>
               </span>
             </Link>
-            <p className="text-[#B4B4C7] text-sm leading-relaxed max-w-sm mb-6">
+            <p className="text-zinc-400 text-sm leading-relaxed max-w-sm mb-6">
               The modern Instagram DM API and CRM for digital creators, scaling agencies, and high-growth e-commerce brands. Automatically route inquiries and scale your conversions.
             </p>
             <div className="flex items-center gap-3">
@@ -41,8 +41,8 @@ const Footer: React.FC = () => {
 
           {/* Product Column */}
           <div>
-            <h4 className="text-zinc-900 text-xs font-bold uppercase tracking-wider mb-6">Product</h4>
-            <ul className="space-y-4 text-sm font-medium text-[#B4B4C7]">
+            <h4 className="text-white text-xs font-bold uppercase tracking-wider mb-6">Product</h4>
+            <ul className="space-y-4 text-sm font-medium text-zinc-400">
               <li><a href="/#features" className="hover:text-[#8B5CF6] transition-colors">Features</a></li>
               <li><a href="/#setup" className="hover:text-[#8B5CF6] transition-colors">Integration Setup</a></li>
               <li><a href="/#pricing" className="hover:text-[#8B5CF6] transition-colors">Pricing Plans</a></li>
@@ -52,8 +52,8 @@ const Footer: React.FC = () => {
 
           {/* Developers Column */}
           <div>
-            <h4 className="text-zinc-900 text-xs font-bold uppercase tracking-wider mb-6">Developer API</h4>
-            <ul className="space-y-4 text-sm font-medium text-[#B4B4C7]">
+            <h4 className="text-white text-xs font-bold uppercase tracking-wider mb-6">Developer API</h4>
+            <ul className="space-y-4 text-sm font-medium text-zinc-400">
               <li><a href="#" className="hover:text-[#8B5CF6] transition-colors">Webhooks</a></li>
               <li><a href="#" className="hover:text-[#8B5CF6] transition-colors">API Docs</a></li>
               <li><a href="#" className="hover:text-[#8B5CF6] transition-colors">Integrations</a></li>
@@ -63,8 +63,8 @@ const Footer: React.FC = () => {
 
           {/* Legal Column */}
           <div>
-            <h4 className="text-zinc-900 text-xs font-bold uppercase tracking-wider mb-6">Legal</h4>
-            <ul className="space-y-4 text-sm font-medium text-[#B4B4C7]">
+            <h4 className="text-white text-xs font-bold uppercase tracking-wider mb-6">Legal</h4>
+            <ul className="space-y-4 text-sm font-medium text-zinc-400">
               <li><Link to="/privacy" onClick={() => window.scrollTo(0, 0)} className="hover:text-[#8B5CF6] transition-colors">Privacy Policy</Link></li>
               <li><Link to="/terms" onClick={() => window.scrollTo(0, 0)} className="hover:text-[#8B5CF6] transition-colors">Terms of Service</Link></li>
               <li><Link to="/data-deletion" onClick={() => window.scrollTo(0, 0)} className="hover:text-[#8B5CF6] transition-colors">Data Deletion</Link></li>
@@ -73,7 +73,7 @@ const Footer: React.FC = () => {
 
         </div>
 
-        <div className="pt-8 border-t border-[#8B5CF6]/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-zinc-600 text-xs font-bold">
+        <div className="pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-zinc-500 text-xs font-bold">
           <span>© 2026 Flazly Inc. All rights reserved.</span>
           <span>Built with ❤ for professional Instagram automation.</span>
         </div>
