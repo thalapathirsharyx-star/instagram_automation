@@ -78,7 +78,7 @@ const AdminActivity: React.FC = () => {
               title: isCritical ? 'AI Credit Limit Reached' : 'High AI Usage Alert',
               description: `${client.name} has consumed ${usage.toLocaleString()} / ${limit.toLocaleString()} AI credits (${Math.round((usage/limit)*100)}%).`,
               timestamp: new Date().toISOString(),
-              color: isCritical ? 'text-destructive' : 'text-amber-400',
+              color: isCritical ? 'text-destructive' : 'text-warning',
               bgLight: isCritical ? 'bg-destructive/10' : 'bg-amber-50',
               borderLight: isCritical ? 'border-destructive/20' : 'border-amber-200',
               icon: isCritical ? <AlertTriangle size={16} /> : <Zap size={16} />,
@@ -132,7 +132,7 @@ const AdminActivity: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="flex h-64 items-center justify-center text-muted-foreground font-medium">
+      <div className="flex h-64 items-center justify-center text-zinc-500 font-medium">
         <div className="flex flex-col items-center gap-4">
           <div className="w-8 h-8 border-4 border-blue-500/20 border-t-blue-600 rounded-full animate-spin"></div>
           <span className="text-sm">Fetching Audit Trail...</span>
@@ -148,7 +148,7 @@ const AdminActivity: React.FC = () => {
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8 border-b border-border pb-6">
         <div>
           <h2 className="text-3xl font-bold tracking-tight">Platform Activity</h2>
-          <p className="text-muted-foreground text-sm">Real-time audit trail of SaaS signups, upgrades, and API warnings.</p>
+          <p className="text-zinc-500 text-sm">Real-time audit trail of SaaS signups, upgrades, and API warnings.</p>
         </div>
         
         <div className="flex items-center gap-2 bg-muted p-1.5 rounded-xl border border-border shadow-sm shrink-0 overflow-x-auto">
@@ -158,8 +158,8 @@ const AdminActivity: React.FC = () => {
               onClick={() => setFilter(btn.key)}
               className={`px-4 py-2 rounded-lg text-xs font-bold transition-all whitespace-nowrap ${
                 filter === btn.key 
-                  ? 'bg-primary text-primary-foreground shadow-sm' 
-                  : 'text-muted-foreground hover:text-foreground hover:bg-secondary'
+                  ? 'bg-primary text-zinc-900 shadow-sm' 
+                  : 'text-zinc-500 hover:text-foreground hover:bg-secondary'
               }`}
             >
               {btn.label}
@@ -189,12 +189,12 @@ const AdminActivity: React.FC = () => {
           </div>
         </div>
         <div className="bg-amber-50 border border-amber-200 rounded-2xl p-6 flex items-center gap-4 shadow-sm hover:shadow-md transition-shadow">
-          <div className="w-12 h-12 rounded-xl bg-card flex items-center justify-center text-amber-400 border border-amber-100 shadow-sm">
+          <div className="w-12 h-12 rounded-xl bg-card flex items-center justify-center text-warning border border-amber-100 shadow-sm">
             <AlertTriangle size={20} />
           </div>
           <div>
-            <div className="text-2xl font-extrabold text-amber-400 tracking-tight">{activities.filter(a => a.type === 'high_usage').length}</div>
-            <div className="text-[11px] font-bold text-amber-700 uppercase tracking-widest mt-0.5">Usage Alerts</div>
+            <div className="text-2xl font-extrabold text-warning tracking-tight">{activities.filter(a => a.type === 'high_usage').length}</div>
+            <div className="text-[11px] font-bold text-warning uppercase tracking-widest mt-0.5">Usage Alerts</div>
           </div>
         </div>
       </div>
@@ -206,17 +206,17 @@ const AdminActivity: React.FC = () => {
             <Activity size={18} className="text-blue-400" />
             <h3 className="text-sm font-bold text-foreground">Event Audit Trail</h3>
           </div>
-          <span className="text-xs font-bold text-muted-foreground bg-secondary px-2 py-0.5 rounded-full">{filteredActivities.length} events</span>
+          <span className="text-xs font-bold text-zinc-500 bg-secondary px-2 py-0.5 rounded-full">{filteredActivities.length} events</span>
         </div>
         
         <div className="divide-y divide-zinc-100">
           {filteredActivities.length === 0 ? (
             <div className="py-24 text-center flex flex-col items-center justify-center">
               <div className="w-16 h-16 bg-muted rounded-2xl flex items-center justify-center mb-4 border border-border shadow-sm">
-                <ListFilter size={24} className="text-muted-foreground" />
+                <ListFilter size={24} className="text-zinc-500" />
               </div>
               <h3 className="text-base font-bold text-foreground mb-1">No events found</h3>
-              <p className="text-muted-foreground text-sm">Try changing the filter settings.</p>
+              <p className="text-zinc-500 text-sm">Try changing the filter settings.</p>
             </div>
           ) : (
             <>
@@ -228,11 +228,11 @@ const AdminActivity: React.FC = () => {
                   <div className="flex-grow min-w-0 pt-0.5">
                     <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-1 sm:gap-4 mb-1">
                       <span className="font-bold text-foreground text-sm sm:text-base leading-tight">{item.title}</span>
-                      <span className="flex items-center gap-1.5 text-[11px] font-bold text-muted-foreground uppercase tracking-widest shrink-0">
+                      <span className="flex items-center gap-1.5 text-[11px] font-bold text-zinc-500 uppercase tracking-widest shrink-0">
                         <Clock size={12} /> {formatTime(item.timestamp)}
                       </span>
                     </div>
-                    <p className="text-[13px] sm:text-sm text-muted-foreground font-medium leading-relaxed max-w-3xl">{item.description}</p>
+                    <p className="text-[13px] sm:text-sm text-zinc-500 font-medium leading-relaxed max-w-3xl">{item.description}</p>
                   </div>
                 </div>
               ))}
@@ -240,21 +240,21 @@ const AdminActivity: React.FC = () => {
               {/* Pagination Footer */}
               {totalPages > 1 && (
                 <div className="px-6 py-4 bg-muted border-t border-border flex justify-between items-center">
-                  <span className="text-xs font-medium text-muted-foreground">
+                  <span className="text-xs font-medium text-zinc-500">
                     Showing <strong className="text-foreground">{((currentPage - 1) * itemsPerPage) + 1}</strong> to <strong className="text-foreground">{Math.min(currentPage * itemsPerPage, filteredActivities.length)}</strong> of <strong className="text-foreground">{filteredActivities.length}</strong> events
                   </span>
                   <div className="flex gap-2">
                     <button
                       onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                       disabled={currentPage === 1}
-                      className="px-4 py-2 border border-border rounded-lg text-xs font-bold text-muted-foreground bg-card hover:bg-muted disabled:opacity-50 disabled:hover:bg-card shadow-sm transition-colors"
+                      className="px-4 py-2 border border-border rounded-lg text-xs font-bold text-zinc-500 bg-card hover:bg-muted disabled:opacity-50 disabled:hover:bg-card shadow-sm transition-colors"
                     >
                       Previous
                     </button>
                     <button
                       onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                       disabled={currentPage === totalPages}
-                      className="px-4 py-2 border border-border rounded-lg text-xs font-bold text-muted-foreground bg-card hover:bg-muted disabled:opacity-50 disabled:hover:bg-card shadow-sm transition-colors"
+                      className="px-4 py-2 border border-border rounded-lg text-xs font-bold text-zinc-500 bg-card hover:bg-muted disabled:opacity-50 disabled:hover:bg-card shadow-sm transition-colors"
                     >
                       Next
                     </button>

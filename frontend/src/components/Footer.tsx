@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 const Footer: React.FC = () => {
   return (
-    <footer className="site-footer border-t border-white/10 bg-zinc-950 pt-20 pb-12 px-6 relative z-10">
+    <footer className="site-footer border-t border-zinc-200 bg-[#09090B] pt-20 pb-12 px-6 relative z-10">
       <div className="max-w-6xl mx-auto">
         <div className="grid grid-cols-2 md:grid-cols-5 gap-10 mb-16">
           <div className="col-span-2">
@@ -73,7 +73,7 @@ const Footer: React.FC = () => {
 
         </div>
 
-        <div className="pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-zinc-500 text-xs font-bold">
+        <div className="pt-8 border-t border-zinc-200 flex flex-col sm:flex-row items-center justify-between gap-4 text-zinc-500 text-xs font-bold">
           <span>© 2026 Flazly Inc. All rights reserved.</span>
           <span>Built with ❤ for professional Instagram automation.</span>
         </div>

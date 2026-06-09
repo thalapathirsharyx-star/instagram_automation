@@ -126,7 +126,7 @@ const Inbox: React.FC = () => {
       <div className="flex justify-between items-end mb-6">
         <div>
           <h2 className="text-3xl font-bold tracking-tight">Inbox</h2>
-          <p className="text-muted-foreground text-sm">Monitor and manage your AI-driven conversations.</p>
+          <p className="text-zinc-500 text-sm">Monitor and manage your AI-driven conversations.</p>
         </div>
       </div>
 
@@ -147,7 +147,7 @@ const Inbox: React.FC = () => {
                 {selectedLead?.id === lead.id && (
                   <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary rounded-r-md"></div>
                 )}
-                <div className="w-10 h-10 rounded-full bg-violet-100 flex items-center justify-center text-foreground font-bold text-sm border border-primary/20 shadow-sm shrink-0">
+                <div className="w-10 h-10 rounded-full bg-brand flex items-center justify-center text-foreground font-bold text-sm border border-primary/20 shadow-sm shrink-0">
                   {lead.customer_name[0]}
                 </div>
                 <div className="flex-grow min-w-0">
@@ -158,11 +158,11 @@ const Inbox: React.FC = () => {
                     <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider border shrink-0
                       ${lead.lead_status === 'Buyer' ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' :
                         lead.lead_status === 'Needs_Human' ? 'bg-destructive/10 text-destructive border-destructive/20' :
-                          'bg-secondary text-muted-foreground border-border'}`}>
+                          'bg-secondary text-zinc-500 border-border'}`}>
                       {lead.lead_status}
                     </span>
                   </div>
-                  <div className="text-xs text-muted-foreground font-medium truncate">@{lead.instagram_handle}</div>
+                  <div className="text-xs text-zinc-500 font-medium truncate">@{lead.instagram_handle}</div>
                 </div>
               </div>
             ))}
@@ -176,16 +176,16 @@ const Inbox: React.FC = () => {
               {/* Chat Header */}
               <div className="px-6 py-4 border-b border-border bg-card flex justify-between items-center z-10 shadow-[0_4px_20px_-10px_rgba(0,0,0,0.05)]">
                 <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-full bg-violet-100 flex items-center justify-center text-foreground font-bold text-sm border border-primary/20 shadow-sm">
+                  <div className="w-10 h-10 rounded-full bg-brand flex items-center justify-center text-foreground font-bold text-sm border border-primary/20 shadow-sm">
                     {selectedLead.customer_name[0]}
                   </div>
                   <div>
                     <h3 className="font-bold text-foreground leading-tight">{selectedLead.customer_name}</h3>
-                    <p className="text-xs text-muted-foreground font-medium">@{selectedLead.instagram_handle}</p>
+                    <p className="text-xs text-zinc-500 font-medium">@{selectedLead.instagram_handle}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest hidden sm:block">Agent Status:</span>
+                  <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest hidden sm:block">Agent Status:</span>
                   <button
                     onClick={() => setIsManualMode(!isManualMode)}
                     className={`btn-base ${isManualMode ? 'btn-danger' : 'btn-success'}`}
@@ -199,17 +199,17 @@ const Inbox: React.FC = () => {
               {/* Chat History */}
               <div className="flex-grow p-6 sm:p-8 overflow-y-auto flex flex-col gap-6" ref={chatHistoryRef}>
                 <div className="text-center py-4">
-                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest bg-secondary px-3 py-1 rounded-full">Beginning of Conversation</span>
+                  <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest bg-secondary px-3 py-1 rounded-full">Beginning of Conversation</span>
                 </div>
                 {messages.map((msg) => (
                   <div key={msg.id} className={`max-w-[85%] lg:max-w-[75%] flex flex-col ${msg.direction === 'Outbound' ? 'self-end items-end' : 'self-start items-start'} mb-2`}>
 
                     {/* Name and Timestamp Above Bubble */}
                     <div className={`flex items-center gap-2 mb-1.5 px-1 ${msg.direction === 'Outbound' ? 'flex-row-reverse' : 'flex-row'}`}>
-                      <span className="text-xs font-medium text-muted-foreground">
+                      <span className="text-xs font-medium text-zinc-500">
                         {msg.direction === 'Outbound' ? 'Flazly Assistant' : selectedLead?.customer_name || selectedLead?.instagram_handle || 'Customer'}
                       </span>
-                      <span className="text-[10px] font-medium text-muted-foreground">
+                      <span className="text-[10px] font-medium text-zinc-500">
                         {(() => {
                           const d = new Date(msg.created_on);
                           return isNaN(d.getTime()) ? 'Just now' : d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -236,7 +236,7 @@ const Inbox: React.FC = () => {
 
 
                     {msg.ai_notes && (
-                      <div className="mt-2 text-[11px] text-muted-foreground bg-card p-3 rounded-xl border border-border shadow-sm self-start">
+                      <div className="mt-2 text-[11px] text-zinc-500 bg-card p-3 rounded-xl border border-border shadow-sm self-start">
                         <span className="text-foreground font-bold block mb-1 uppercase tracking-wider text-[9px] flex items-center gap-1">
                           <Bot size={10} /> AI Action: {msg.action_taken}
                         </span>
@@ -258,7 +258,7 @@ const Inbox: React.FC = () => {
                     value={messageText}
                     onChange={(e) => setMessageText(e.target.value)}
                     onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-                    className={`flex-grow px-3 py-2 bg-transparent text-sm font-medium outline-none ${isManualMode ? 'text-foreground placeholder-zinc-400' : 'text-muted-foreground'}`}
+                    className={`flex-grow px-3 py-2 bg-transparent text-sm font-medium outline-none ${isManualMode ? 'text-foreground placeholder-zinc-400' : 'text-zinc-500'}`}
                   />
                   <button
                     onClick={handleSendMessage}
@@ -273,10 +273,10 @@ const Inbox: React.FC = () => {
           ) : (
             <div className="flex-grow flex flex-col items-center justify-center text-center p-12 bg-muted/50">
               <div className="w-16 h-16 rounded-2xl bg-card flex items-center justify-center mb-4 border border-border shadow-sm">
-                <MessageSquare size={24} className="text-muted-foreground" />
+                <MessageSquare size={24} className="text-zinc-500" />
               </div>
               <h3 className="text-lg font-bold text-foreground mb-1">Select a Thread</h3>
-              <p className="text-sm font-medium text-muted-foreground">Review AI interactions or jump in to manage the conversation manually.</p>
+              <p className="text-sm font-medium text-zinc-500">Review AI interactions or jump in to manage the conversation manually.</p>
             </div>
           )}
         </div>

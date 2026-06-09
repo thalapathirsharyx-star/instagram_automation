@@ -35,7 +35,7 @@ const DashboardCard: React.FC<{ title: string; value: string | number; icon: any
     bgDefault = 'bg-emerald-500/10';
     borderDefault = 'border-emerald-500/20';
   } else if (title.toLowerCase().includes('funnel') || title.toLowerCase().includes('engagement')) {
-    iconColor = 'text-indigo-600';
+    iconColor = 'text-brand';
     bgDefault = 'bg-indigo-50';
     borderDefault = 'border-indigo-100';
   }
@@ -51,7 +51,7 @@ const DashboardCard: React.FC<{ title: string; value: string | number; icon: any
         </div>
       </div>
       <div>
-        <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest mb-1">{title}</p>
+        <p className="text-[11px] font-bold text-zinc-500 uppercase tracking-widest mb-1">{title}</p>
         <h3 className="text-2xl font-extrabold text-foreground tracking-tight">{value}</h3>
       </div>
       {/* Subtle bottom gradient line */}
@@ -140,7 +140,7 @@ const Dashboard: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="flex h-[80vh] items-center justify-center text-muted-foreground font-medium">
+      <div className="flex h-[80vh] items-center justify-center text-zinc-500 font-medium">
         <div className="flex flex-col items-center gap-4">
           <div className="w-8 h-8 border-4 border-primary/20 border-t-violet-600 rounded-full animate-spin"></div>
           <span className="text-sm">Loading Workspace Data...</span>
@@ -158,7 +158,7 @@ const Dashboard: React.FC = () => {
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
         <div>
           <h2 className="text-3xl font-bold tracking-tight">Platform Overview</h2>
-          <p className="text-muted-foreground text-sm">Monitor your AI automation performance and lead pipeline.</p>
+          <p className="text-zinc-500 text-sm">Monitor your AI automation performance and lead pipeline.</p>
         </div>
         <button 
           onClick={handleGenerateReport} 
@@ -185,13 +185,13 @@ const Dashboard: React.FC = () => {
           <div className="p-6 pb-2 flex justify-between items-center">
             <div>
               <h3 className="text-base font-bold text-foreground">Engagement Volume</h3>
-              <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider mt-1">Last 7 Days</p>
+              <p className="text-[11px] font-medium text-zinc-500 uppercase tracking-wider mt-1">Last 7 Days</p>
             </div>
             <div className="flex gap-4">
-              <div className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground">
-                <div className="w-2 h-2 rounded-full bg-violet-500"></div> AI Messages
+              <div className="flex items-center gap-1.5 text-xs font-semibold text-zinc-500">
+                <div className="w-2 h-2 rounded-full bg-brand"></div> AI Messages
               </div>
-              <div className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground">
+              <div className="flex items-center gap-1.5 text-xs font-semibold text-zinc-500">
                 <div className="w-2 h-2 rounded-full bg-blue-500"></div> Leads Captured
               </div>
             </div>
@@ -227,7 +227,7 @@ const Dashboard: React.FC = () => {
         {/* Pie Chart */}
         <div className="border bg-card text-card-foreground shadow-sm rounded-xl flex flex-col h-[400px] p-6">
           <h3 className="text-base font-bold text-foreground mb-1">Lead Distribution</h3>
-          <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider mb-6">Current Status Breakdown</p>
+          <p className="text-[11px] font-medium text-zinc-500 uppercase tracking-wider mb-6">Current Status Breakdown</p>
           
           <div className="flex-grow flex items-center justify-center -mt-4">
             <ResponsiveContainer width="100%" height={200}>
@@ -259,7 +259,7 @@ const Dashboard: React.FC = () => {
               <div key={entry.name} className="flex items-center gap-2">
                 <div className="w-2.5 h-2.5 rounded-full" style={{ background: ['#8b5cf6', '#3b82f6', '#10b981', '#f43f5e', '#f59e0b'][index % 5] }}></div>
                 <div className="flex flex-col">
-                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider truncate w-24">{entry.name}</span>
+                  <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider truncate w-24">{entry.name}</span>
                   <span className="text-sm font-bold text-foreground leading-none mt-0.5">{entry.value}</span>
                 </div>
               </div>
@@ -276,7 +276,7 @@ const Dashboard: React.FC = () => {
           <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-8">
             <div>
               <h3 className="text-lg font-bold text-foreground">Automation Funnel Pipeline</h3>
-              <p className="text-xs text-muted-foreground font-medium mt-1">Drop-off rates across your AI conversational sequences</p>
+              <p className="text-xs text-zinc-500 font-medium mt-1">Drop-off rates across your AI conversational sequences</p>
             </div>
             <div className="flex items-center gap-2 text-xs font-bold text-emerald-400 bg-emerald-500/10 px-3 py-1.5 rounded-lg border border-emerald-500/20 shadow-sm">
               <Activity size={14} className="text-emerald-400" />
@@ -288,7 +288,7 @@ const Dashboard: React.FC = () => {
             {[
               { step: 1, label: 'Conversation Started', value: playbookFunnel.started, color: 'bg-primary/90' },
               { step: 2, label: 'Lead Responded', value: playbookFunnel.replied, color: 'bg-blue-500' },
-              { step: 3, label: 'Data Captured', value: playbookFunnel.captured, color: 'bg-violet-500' },
+              { step: 3, label: 'Data Captured', value: playbookFunnel.captured, color: 'bg-brand' },
               { step: 4, label: 'Closed / Converted', value: playbookFunnel.converted, color: 'bg-emerald-500' }
             ].map((item, index, arr) => {
               const prevValue = index === 0 ? item.value : arr[index - 1].value;
@@ -309,7 +309,7 @@ const Dashboard: React.FC = () => {
                   <div className="relative z-10 flex flex-col sm:flex-row sm:items-center gap-4 bg-card">
                     <div className="flex items-center justify-between w-full sm:w-48 shrink-0">
                       <div className="flex items-center gap-3">
-                        <div className={`w-8 h-8 rounded-full ${index === 0 ? 'bg-secondary text-muted-foreground' : item.color + ' text-primary-foreground'} flex items-center justify-center text-xs font-bold shadow-sm`}>
+                        <div className={`w-8 h-8 rounded-full ${index === 0 ? 'bg-secondary text-zinc-500' : item.color + ' text-zinc-900'} flex items-center justify-center text-xs font-bold shadow-sm`}>
                           {item.step}
                         </div>
                         <span className="text-sm font-bold text-foreground">{item.label}</span>
@@ -325,7 +325,7 @@ const Dashboard: React.FC = () => {
                       </div>
                       <div className="flex items-center justify-end w-24 shrink-0 text-right">
                         <span className="text-sm font-extrabold text-foreground mr-2">{item.value}</span>
-                        <span className="text-[10px] font-bold text-muted-foreground bg-muted px-1.5 py-0.5 rounded border border-border">
+                        <span className="text-[10px] font-bold text-zinc-500 bg-muted px-1.5 py-0.5 rounded border border-border">
                           {percentOfTotal.toFixed(0)}%
                         </span>
                       </div>
@@ -353,7 +353,7 @@ const Dashboard: React.FC = () => {
             <div className="space-y-4">
               <div>
                 <div className="flex justify-between items-center mb-1">
-                  <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest">API Latency</span>
+                  <span className="text-[11px] font-bold text-zinc-500 uppercase tracking-widest">API Latency</span>
                   <span className="text-xs font-bold text-foreground">45ms</span>
                 </div>
                 <div className="h-1.5 bg-secondary rounded-full overflow-hidden">
@@ -362,7 +362,7 @@ const Dashboard: React.FC = () => {
               </div>
               <div>
                 <div className="flex justify-between items-center mb-1">
-                  <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest">Webhook Success</span>
+                  <span className="text-[11px] font-bold text-zinc-500 uppercase tracking-widest">Webhook Success</span>
                   <span className="text-xs font-bold text-foreground">99.9%</span>
                 </div>
                 <div className="h-1.5 bg-secondary rounded-full overflow-hidden">
@@ -373,7 +373,7 @@ const Dashboard: React.FC = () => {
           </div>
 
           {/* AI Insight Card */}
-          <div className="bg-gradient-to-br from-violet-600 to-indigo-700 rounded-2xl shadow-md p-6 text-primary-foreground relative overflow-hidden flex-grow">
+          <div className="bg-gradient-to-br from-violet-600 to-indigo-700 rounded-2xl shadow-md p-6 text-zinc-900 relative overflow-hidden flex-grow">
             {/* Subtle glow effect */}
             <div className="absolute top-0 right-0 w-32 h-32 bg-card/10 blur-2xl rounded-full -mr-10 -mt-10"></div>
             
@@ -385,11 +385,11 @@ const Dashboard: React.FC = () => {
                 </div>
                 <h4 className="text-lg font-bold mb-2">Refine Agent Personality</h4>
                 <p className="text-sm font-medium text-violet-100/90 leading-relaxed">
-                  Based on recent drop-offs at Step 2, shifting your agent's tone from "Professional" to "Friendly & Casual" is projected to increase reply rates by <strong className="text-primary-foreground">+18%</strong>.
+                  Based on recent drop-offs at Step 2, shifting your agent's tone from "Professional" to "Friendly & Casual" is projected to increase reply rates by <strong className="text-zinc-900">+18%</strong>.
                 </p>
               </div>
               
-              <button className="btn-base w-full bg-white text-indigo-700 hover:bg-zinc-100 border-none mt-5 shadow-sm py-2.5 font-bold flex justify-center items-center gap-2">
+              <button className="btn-base w-full bg-white text-brand hover:bg-zinc-100 border-none mt-5 shadow-sm py-2.5 font-bold flex justify-center items-center gap-2">
                 Apply Recommended Tone <ArrowRight size={14} />
               </button>
             </div>

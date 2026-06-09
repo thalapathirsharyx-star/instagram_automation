@@ -61,7 +61,7 @@ const HeroWorkflow = () => {
       badge: "Inbound",
       detail: "Alex DMs: 'Hey, do you ship to UK?'",
       glow: "from-[#38BDF8] to-[#3B82F6]",
-      color: "text-[#38BDF8] bg-[#38BDF8]/10 border-[#38BDF8]/20]"
+      color: "text-info bg-info/10 border-[#38BDF8]/20]"
     },
     {
       title: "AI Agent",
@@ -85,7 +85,7 @@ const HeroWorkflow = () => {
       badge: "Integration",
       detail: "Synced to Google Sheets & HubSpot",
       glow: "from-[#38BDF8] to-[#3B82F6]",
-      color: "text-[#38BDF8] bg-[#38BDF8]/10 border-[#38BDF8]/20"
+      color: "text-info bg-info/10 border-[#38BDF8]/20"
     },
     {
       title: "Lead Handoff",
@@ -93,7 +93,7 @@ const HeroWorkflow = () => {
       badge: "CRM Sync",
       detail: "Qualified lead synced to your database",
       glow: "from-[#3B82F6] to-[#6366F1]",
-      color: "text-[#3B82F6] bg-[#38BDF8]/10 border-[#38BDF8]/20]"
+      color: "text-[#3B82F6] bg-info/10 border-[#38BDF8]/20]"
     },
     {
       title: "Revenue",
@@ -126,8 +126,8 @@ const HeroWorkflow = () => {
           <div className="w-2.5 h-2.5 rounded-full bg-zinc-200" />
           <span className="text-[10px] text-zinc-550 uppercase tracking-wider font-semibold ml-2 font-mono">live_workflow_simulation.sh</span>
         </div>
-        <div className="text-[10px] text-[#38BDF8] bg-[#38BDF8]/10 px-2.5 py-1 rounded border border-[#38BDF8]/20 flex items-center gap-1 select-none font-bold">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#38BDF8] animate-pulse" /> Autopilot Active
+        <div className="text-[10px] text-info bg-info/10 px-2.5 py-1 rounded border border-[#38BDF8]/20 flex items-center gap-1 select-none font-bold">
+          <span className="w-1.5 h-1.5 rounded-full bg-info animate-pulse" /> Autopilot Active
         </div>
       </div>
 
@@ -155,11 +155,11 @@ const HeroWorkflow = () => {
 
               {/* Step number / Badge */}
               <div className="flex items-center justify-between mb-3">
-                <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider ${isSelected ? "bg-[#38BDF8] text-zinc-900" : "bg-zinc-100 text-zinc-600"
+                <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider ${isSelected ? "bg-info text-zinc-900" : "bg-zinc-100 text-zinc-600"
                   }`}>
                   Step {idx + 1}
                 </span>
-                <span className={`text-[8px] font-bold ${isSelected ? "text-[#38BDF8]" : "text-zinc-500"}`}>
+                <span className={`text-[8px] font-bold ${isSelected ? "text-info" : "text-zinc-500"}`}>
                   {step.badge}
                 </span>
               </div>
@@ -170,7 +170,7 @@ const HeroWorkflow = () => {
               </div>
 
               {/* Step Title */}
-              <h4 className="text-xs font-bold text-zinc-900 mb-1 group-hover:text-[#38BDF8] transition-colors">
+              <h4 className="text-xs font-bold text-zinc-900 mb-1 group-hover:text-info transition-colors">
                 {step.title}
               </h4>
 
@@ -187,7 +187,7 @@ const HeroWorkflow = () => {
       <div className="mt-8 bg-zinc-100 border border-zinc-200 p-4 rounded-xl text-left font-mono relative">
         <div className="text-[9px] text-zinc-500 uppercase tracking-widest mb-2 flex items-center justify-between">
           <span>Simulation Logs</span>
-          <span className="text-[#38BDF8] font-bold">Step {activeStep + 1} / 6</span>
+          <span className="text-info font-bold">Step {activeStep + 1} / 6</span>
         </div>
         <div className="text-xs space-y-1 text-zinc-700">
           <p className="text-zinc-900 font-semibold">
@@ -196,7 +196,7 @@ const HeroWorkflow = () => {
           <p className="text-zinc-600">
             [STATUS] Node connected. Status: SUCCESS. Latency: {(Math.random() * 0.15 + 0.05).toFixed(3)}s
           </p>
-          <p className="text-[#38BDF8] font-medium">
+          <p className="text-info font-medium">
             [DATA] {steps[activeStep].detail}
           </p>
         </div>
@@ -301,10 +301,10 @@ const InboxMockup = () => {
         <div className="p-2 rounded-xl bg-zinc-100 border border-zinc-300 flex flex-col gap-1 cursor-pointer">
           <div className="flex justify-between items-center">
             <span className="text-xs font-bold text-zinc-900">@daniel_k</span>
-            <span className="text-[7px] font-bold text-[#38BDF8] bg-[#38BDF8]/10 px-1.5 py-0.5 rounded">Autopilot</span>
+            <span className="text-[7px] font-bold text-info bg-info/10 px-1.5 py-0.5 rounded">Autopilot</span>
           </div>
           <span className="text-[9px] text-zinc-600 truncate font-medium">Wants custom sizes info</span>
-          <span className="text-[7.5px] text-[#38BDF8] font-extrabold mt-1">🔥 High Intent</span>
+          <span className="text-[7.5px] text-info font-extrabold mt-1">🔥 High Intent</span>
         </div>
 
         {/* Chat Item 2 */}
@@ -343,7 +343,7 @@ const InboxMockup = () => {
               </span>
             </div>
           </div>
-          <div className="flex items-center gap-1.5 bg-[#38BDF8]/10 border border-[#38BDF8]/20 px-2 py-1 rounded-full text-[8.5px] font-bold text-[#38BDF8]">
+          <div className="flex items-center gap-1.5 bg-info/10 border border-[#38BDF8]/20 px-2 py-1 rounded-full text-[8.5px] font-bold text-info">
             <Sparkles size={8} className="animate-spin" /> Autopilot Running
           </div>
         </div>
@@ -370,7 +370,7 @@ const InboxMockup = () => {
                 ✦ Automated by Flazly
               </span>
             </div>
-            <div className="w-5 h-5 rounded-full bg-[#38BDF8] flex items-center justify-center text-[7px] font-bold shrink-0 text-zinc-900 font-mono">AI</div>
+            <div className="w-5 h-5 rounded-full bg-info flex items-center justify-center text-[7px] font-bold shrink-0 text-zinc-900 font-mono">AI</div>
           </div>
 
           {/* User Message 2 */}
@@ -389,11 +389,11 @@ const InboxMockup = () => {
               <p className="text-[10px] text-zinc-900">
                 Awesome! I've saved daniel@gmail.com. Here is your checkout link: flazly.com/chk/shoes-10
               </p>
-              <span className="text-[6.5px] font-bold text-[#38BDF8] uppercase tracking-wide mt-1 block font-extrabold">
+              <span className="text-[6.5px] font-bold text-info uppercase tracking-wide mt-1 block font-extrabold">
                 ✦ Automated by Flazly
               </span>
             </div>
-            <div className="w-5 h-5 rounded-full bg-[#38BDF8] flex items-center justify-center text-[7px] font-bold shrink-0 text-zinc-900 font-mono">AI</div>
+            <div className="w-5 h-5 rounded-full bg-info flex items-center justify-center text-[7px] font-bold shrink-0 text-zinc-900 font-mono">AI</div>
           </div>
         </div>
 
@@ -417,7 +417,7 @@ const InboxMockup = () => {
             DK
           </div>
           <span className="text-xs font-bold text-zinc-900">@daniel_k</span>
-          <span className="text-[8px] bg-[#38BDF8]/10 text-[#38BDF8] border border-[#38BDF8]/20 px-2 py-0.5 rounded-full font-bold select-none">
+          <span className="text-[8px] bg-info/10 text-info border border-[#38BDF8]/20 px-2 py-0.5 rounded-full font-bold select-none">
             High-Intent Lead 🔥
           </span>
         </div>
@@ -478,14 +478,14 @@ const AgentMockup = () => {
             <div className="bg-zinc-100 border border-zinc-300 rounded-xl p-3 flex items-center justify-between">
               <span className="text-[10px] font-mono text-zinc-800 font-semibold">92% Match</span>
               <div className="w-24 h-1.5 bg-zinc-100 rounded-full overflow-hidden">
-                <div className="h-full bg-[#38BDF8]" style={{ width: "92%" }} />
+                <div className="h-full bg-info" style={{ width: "92%" }} />
               </div>
             </div>
           </div>
           <div className="flex flex-col gap-1.5">
             <label className="text-xs font-bold text-zinc-700">Tone Type</label>
             <div className="bg-zinc-100 border border-zinc-300 rounded-xl p-2.5 flex gap-1">
-              <span className="text-[9px] font-bold bg-[#38BDF8]/10 border border-[#38BDF8]/20 text-[#38BDF8] px-2 py-0.5 rounded">
+              <span className="text-[9px] font-bold bg-info/10 border border-[#38BDF8]/20 text-info px-2 py-0.5 rounded">
                 Warm & Sales
               </span>
               <span className="text-[9px] font-bold text-zinc-500 px-2 py-0.5 rounded">
@@ -499,7 +499,7 @@ const AgentMockup = () => {
           <label className="text-xs font-bold text-zinc-700">Default Integration Action</label>
           <div className="bg-zinc-50 border border-[#38BDF8]/20 p-3 rounded-xl flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Database size={14} className="text-[#38BDF8]" />
+              <Database size={14} className="text-info" />
               <span className="text-[10px] font-bold text-zinc-900">Sync Lead to CRM</span>
             </div>
             <span className="text-[8px] text-zinc-500 font-mono">hubspot.crm/leads/flazly</span>
@@ -516,7 +516,7 @@ const AgentMockup = () => {
 
         {/* Upload box */}
         <div className="border border-dashed border-zinc-300 rounded-xl p-4 text-center bg-zinc-100 hover:border-[#38BDF8] transition-colors cursor-pointer group flex flex-col items-center justify-center gap-2">
-          <Upload size={18} className="text-zinc-600 group-hover:text-[#38BDF8] transition-colors" />
+          <Upload size={18} className="text-zinc-600 group-hover:text-info transition-colors" />
           <span className="text-[10px] font-bold text-zinc-700">Drop PDF or txt files here</span>
           <span className="text-[8px] text-zinc-500">Maximum size limit 20MB per file</span>
         </div>
@@ -526,7 +526,7 @@ const AgentMockup = () => {
           {/* File 1 */}
           <div className="bg-zinc-50 border border-zinc-200 p-2 rounded-xl flex items-center justify-between">
             <div className="flex items-center gap-2 min-w-0">
-              <FileText size={14} className="text-[#38BDF8] shrink-0" />
+              <FileText size={14} className="text-info shrink-0" />
               <span className="text-[9.5px] font-bold text-zinc-700 truncate">summer_pricing_catalog.pdf</span>
             </div>
             <span className="text-[8px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.5 rounded">
@@ -537,7 +537,7 @@ const AgentMockup = () => {
           {/* File 2 */}
           <div className="bg-zinc-50 border border-zinc-200 p-2 rounded-xl flex items-center justify-between">
             <div className="flex items-center gap-2 min-w-0">
-              <FileText size={14} className="text-[#38BDF8] shrink-0" />
+              <FileText size={14} className="text-info shrink-0" />
               <span className="text-[9.5px] font-bold text-zinc-700 truncate">return_and_shipping_rules.txt</span>
             </div>
             <span className="text-[8px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.5 rounded">
@@ -559,7 +559,7 @@ const BuilderMockup = () => {
           <h5 className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Automation Editor</h5>
           <h6 className="text-xs font-bold text-zinc-900 mt-0.5">Recipe: Comment &quot;SCALE&quot; to Lead</h6>
         </div>
-        <button className="btn-premium-cta px-3 py-1.5 text-[9px] font-bold flex items-center gap-1">
+        <button className="btn-primary px-3 py-1.5 text-[9px] font-bold flex items-center gap-1">
           <Plus size={10} /> Add Node
         </button>
       </div>
@@ -581,23 +581,23 @@ const BuilderMockup = () => {
 
         {/* Connector Line 1 */}
         <div className="w-0.5 h-6 bg-gradient-to-b from-[#38BDF8] to-[#3B82F6] relative">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1.5 h-1.5 bg-[#38BDF8] rounded-full animate-ping" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1.5 h-1.5 bg-info rounded-full animate-ping" />
         </div>
 
         {/* Node 2: Action */}
         <div className="bg-white border border-[#38BDF8]/55 p-3 rounded-xl w-64 shadow-md relative z-10 flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-[#38BDF8]/10 border border-[#38BDF8]/20 flex items-center justify-center text-[#38BDF8] shrink-0">
+          <div className="w-8 h-8 rounded-lg bg-info/10 border border-[#38BDF8]/20 flex items-center justify-center text-info shrink-0">
             <Send size={16} />
           </div>
           <div>
-            <span className="text-[8px] font-bold text-[#38BDF8] uppercase tracking-wider block">2. Action</span>
+            <span className="text-[8px] font-bold text-info uppercase tracking-wider block">2. Action</span>
             <span className="text-[10.5px] font-bold text-zinc-900">Send DM with checkout link</span>
           </div>
         </div>
 
         {/* Connector Line 2 */}
         <div className="w-0.5 h-6 bg-gradient-to-b from-[#3B82F6] to-[#6366F1] relative">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1.5 h-1.5 bg-[#38BDF8] rounded-full animate-ping" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1.5 h-1.5 bg-info rounded-full animate-ping" />
         </div>
 
         {/* Node 3: Condition Branch */}
@@ -652,7 +652,7 @@ const AnalyticsMockup = () => {
               transition={{ duration: 2, ease: "easeInOut" }}
             />
           </svg>
-          <div className="absolute top-4 left-4 bg-[#3B82F6]/10 border border-[#3B82F6]/20 px-2 py-0.5 rounded text-[8px] font-bold text-[#38BDF8]">
+          <div className="absolute top-4 left-4 bg-[#3B82F6]/10 border border-[#3B82F6]/20 px-2 py-0.5 rounded text-[8px] font-bold text-info">
             Revenue Trend: +34%
           </div>
           {/* Axis markers */}
@@ -667,7 +667,7 @@ const AnalyticsMockup = () => {
           </div>
           <div>
             <span className="text-[9px] text-zinc-500 block">Lead Conversion Rate</span>
-            <span className="text-base font-extrabold text-[#38BDF8]">8.42%</span>
+            <span className="text-base font-extrabold text-info">8.42%</span>
           </div>
         </div>
       </div>
@@ -723,7 +723,7 @@ const AnalyticsMockup = () => {
         {/* Conversion Rate Card */}
         <div className="bg-white border border-[#38BDF8]/20 p-3 rounded-xl text-center">
           <span className="text-[9px] text-zinc-500 uppercase tracking-widest block mb-1">Time Saved This Month</span>
-          <span className="text-xl font-black text-[#38BDF8] font-mono">48.5 Hours</span>
+          <span className="text-xl font-black text-info font-mono">48.5 Hours</span>
           <p className="text-[8px] text-zinc-500 mt-1">Based on 3,820 auto-responses generated 24/7</p>
         </div>
       </div>
@@ -783,7 +783,7 @@ const SettingsMockup = () => {
               <span className="text-[10.5px] font-bold block text-zinc-900 font-inter">Slack Notifications</span>
               <span className="text-[7.5px] text-zinc-500 mt-0.5">Not configured</span>
             </div>
-            <Plus size={14} className="text-[#38BDF8] shrink-0 cursor-pointer" />
+            <Plus size={14} className="text-info shrink-0 cursor-pointer" />
           </div>
         </div>
 
@@ -792,7 +792,7 @@ const SettingsMockup = () => {
           <span className="font-sans font-bold text-zinc-700">API Access Token</span>
           <div className="flex items-center justify-between bg-zinc-100 p-2 rounded border border-zinc-200 text-zinc-600 mt-1">
             <span>sk_live_2026_zen_ab8201...</span>
-            <span className="text-[#38BDF8] font-sans font-bold uppercase cursor-pointer hover:underline">Copy</span>
+            <span className="text-info font-sans font-bold uppercase cursor-pointer hover:underline">Copy</span>
           </div>
         </div>
       </div>
@@ -809,16 +809,16 @@ const SettingsMockup = () => {
           <span className="text-[10px] font-mono text-zinc-800 mt-1 block truncate">https://api.yourdomain.com/webhook</span>
 
           <div className="flex gap-1.5 mt-3">
-            <span className="text-[7px] font-bold text-[#38BDF8] bg-[#38BDF8]/10 border border-[#38BDF8]/20 px-2 py-0.5 rounded">
+            <span className="text-[7px] font-bold text-info bg-info/10 border border-[#38BDF8]/20 px-2 py-0.5 rounded">
               on_lead_qualify
             </span>
-            <span className="text-[7px] font-bold text-[#38BDF8] bg-[#38BDF8]/10 border border-[#38BDF8]/20 px-2 py-0.5 rounded">
+            <span className="text-[7px] font-bold text-info bg-info/10 border border-[#38BDF8]/20 px-2 py-0.5 rounded">
               on_lead_capture
             </span>
           </div>
         </div>
 
-        <button className="w-full mt-auto py-2 bg-zinc-100 hover:bg-zinc-200 border border-zinc-300 rounded-xl text-xs font-bold text-[#38BDF8] transition-all cursor-pointer">
+        <button className="w-full mt-auto py-2 bg-zinc-100 hover:bg-zinc-200 border border-zinc-300 rounded-xl text-xs font-bold text-info transition-all cursor-pointer">
           Test Endpoint
         </button>
       </div>
@@ -858,7 +858,7 @@ const ROICalculator = () => {
             <div className="flex flex-col gap-3">
               <div className="flex justify-between items-center text-sm font-semibold">
                 <span className="text-zinc-700">Monthly Instagram DMs</span>
-                <span className="text-[#4F39F6] font-mono font-bold text-base">{dms.toLocaleString()}</span>
+                <span className="text-brand font-mono font-bold text-base">{dms.toLocaleString()}</span>
               </div>
               <input
                 type="range"
@@ -879,7 +879,7 @@ const ROICalculator = () => {
             <div className="flex flex-col gap-3">
               <div className="flex justify-between items-center text-sm font-semibold">
                 <span className="text-zinc-700">Current Conversion Rate</span>
-                <span className="text-[#4F39F6] font-mono font-bold text-base">{conversionRate}%</span>
+                <span className="text-brand font-mono font-bold text-base">{conversionRate}%</span>
               </div>
               <input
                 type="range"
@@ -900,7 +900,7 @@ const ROICalculator = () => {
             <div className="flex flex-col gap-3">
               <div className="flex justify-between items-center text-sm font-semibold">
                 <span className="text-zinc-700">Average Customer Value (LTV)</span>
-                <span className="text-[#4F39F6] font-mono font-bold text-base">${dealValue}</span>
+                <span className="text-brand font-mono font-bold text-base">${dealValue}</span>
               </div>
               <input
                 type="range"
@@ -923,7 +923,7 @@ const ROICalculator = () => {
       {/* Calculations / Output Panel */}
       <div className="premium-gradient-border shadow-2xl">
         <div className="premium-card-content p-8 md:p-10 flex flex-col justify-between h-full relative overflow-hidden text-center">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-[#38BDF8]/5 blur-[80px] rounded-full -z-10" />
+          <div className="absolute top-0 right-0 w-64 h-64 bg-info/5 blur-[80px] rounded-full -z-10" />
 
           <div>
             <span className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest">Recovered Lost Conversions</span>
@@ -942,7 +942,7 @@ const ROICalculator = () => {
             </div>
             <div className="bg-zinc-50 p-4 rounded-2xl border border-zinc-200">
               <span className="text-[9px] text-zinc-500 uppercase tracking-wider block mb-1">Estimated Annual Growth</span>
-              <span className="text-lg font-bold text-[#4F39F6] font-mono">${Math.round(annualRevenue).toLocaleString()} /yr</span>
+              <span className="text-lg font-bold text-brand font-mono">${Math.round(annualRevenue).toLocaleString()} /yr</span>
             </div>
           </div>
 
@@ -952,7 +952,7 @@ const ROICalculator = () => {
 
           <Link
             to="/signup"
-            className="btn-premium-cta mt-8 w-full py-4 text-sm font-extrabold flex items-center justify-center gap-2 group"
+            className="btn-primary mt-8 w-full py-4 text-sm font-extrabold flex items-center justify-center gap-2 group"
           >
             Stop Leaving Money On The Table
             <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
@@ -980,11 +980,11 @@ const FAQItemComponent = ({ question, answer }: { question: string; answer: stri
         onClick={() => setIsOpen(!isOpen)}
         className="w-full flex items-center justify-between text-left group outline-none"
       >
-        <span className="text-base font-bold text-zinc-900 group-hover:text-[#38BDF8] transition-colors font-inter">
+        <span className="text-base font-bold text-zinc-900 group-hover:text-info transition-colors font-inter">
           {question}
         </span>
         <div className={`w-8 h-8 rounded-full flex items-center justify-center border transition-all shrink-0 ${isOpen
-            ? 'border-[#38BDF8] bg-[#38BDF8]/10 text-[#38BDF8]'
+            ? 'border-[#38BDF8] bg-info/10 text-info'
             : 'border-zinc-300 text-zinc-500 group-hover:border-zinc-300'
           }`}>
           <ChevronDown size={14} className={`transform transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
@@ -1031,10 +1031,10 @@ const InstagramMobileMockup = () => {
     <div className="relative mx-auto w-[310px] sm:w-[320px] h-[640px] rounded-[52px] border-[12px] border-zinc-200 bg-white shadow-[0_30px_60px_rgba(0,0,0,0.12)] flex flex-col overflow-hidden select-none mockup-light ring-1 ring-black/5">
       {/* Notch / Dynamic Island */}
       <div className="absolute top-2.5 left-1/2 -translate-x-1/2 w-[110px] h-7 bg-black rounded-[20px] z-50 flex items-center justify-between px-2.5 shadow-inner">
-        <div className="w-2.5 h-2.5 rounded-full bg-[#0a0a0c] border border-white/5 relative overflow-hidden">
+        <div className="w-2.5 h-2.5 rounded-full bg-[#0a0a0c] border border-zinc-200 relative overflow-hidden">
           <div className="absolute inset-0 bg-blue-500/10 rounded-full blur-[1px]"></div>
         </div>
-        <div className="w-2.5 h-2.5 rounded-full bg-[#0a0a0c] border border-white/5 relative overflow-hidden">
+        <div className="w-2.5 h-2.5 rounded-full bg-[#0a0a0c] border border-zinc-200 relative overflow-hidden">
           <div className="absolute inset-0 bg-blue-500/10 rounded-full blur-[1px]"></div>
         </div>
       </div>
@@ -1078,7 +1078,7 @@ const InstagramMobileMockup = () => {
           <div className="flex flex-col text-left">
             <div className="flex items-center gap-1">
               <span className="text-xs font-bold text-zinc-900 tracking-tight">jordan.design</span>
-              <svg className="w-3.5 h-3.5 text-[#38BDF8]" viewBox="0 0 24 24" fill="currentColor">
+              <svg className="w-3.5 h-3.5 text-info" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
               </svg>
             </div>
@@ -1319,10 +1319,10 @@ const ProblemStorytelling = () => {
         <div className="mockup-light w-full max-w-[320px] h-[640px] rounded-[52px] border-[12px] border-zinc-200 bg-white shadow-[0_30px_60px_rgba(0,0,0,0.12)] text-zinc-900 flex flex-col relative overflow-hidden mx-auto ring-1 ring-black/5">
           {/* Notch / Dynamic Island */}
           <div className="absolute top-2.5 left-1/2 -translate-x-1/2 w-[110px] h-7 bg-black rounded-[20px] z-50 flex items-center justify-between px-2.5 shadow-inner">
-            <div className="w-2.5 h-2.5 rounded-full bg-[#0a0a0c] border border-white/5 relative overflow-hidden">
+            <div className="w-2.5 h-2.5 rounded-full bg-[#0a0a0c] border border-zinc-200 relative overflow-hidden">
               <div className="absolute inset-0 bg-blue-500/10 rounded-full blur-[1px]"></div>
             </div>
-            <div className="w-2.5 h-2.5 rounded-full bg-[#0a0a0c] border border-white/5 relative overflow-hidden">
+            <div className="w-2.5 h-2.5 rounded-full bg-[#0a0a0c] border border-zinc-200 relative overflow-hidden">
               <div className="absolute inset-0 bg-blue-500/10 rounded-full blur-[1px]"></div>
             </div>
           </div>
@@ -1361,7 +1361,7 @@ const ProblemStorytelling = () => {
                 </div>
                 {scene !== 3 && scene !== 4 && (
                   <div className={`absolute bottom-0 right-0 w-2 h-2 rounded-full border border-[#0c0c0d] ${
-                    scene === 1 || scene >= 5 ? 'bg-emerald-500' : 'bg-amber-500'
+                    scene === 1 || scene >= 5 ? 'bg-emerald-500' : 'bg-warning'
                   }`} />
                 )}
               </div>
@@ -1370,13 +1370,13 @@ const ProblemStorytelling = () => {
                 <span className={`text-[7.5px] font-extrabold tracking-wide uppercase ${
                   scene === 1 ? 'text-emerald-400' :
                   scene === 2 && timer === "00:00" ? 'text-emerald-400' :
-                  scene === 2 && timer === "00:30" ? 'text-amber-400' :
-                  scene === 2 && timer === "01:00" ? 'text-amber-400' :
+                  scene === 2 && timer === "00:30" ? 'text-warning' :
+                  scene === 2 && timer === "01:00" ? 'text-warning' :
                   scene === 2 && timer === "03:00" ? 'text-orange-400' :
-                  scene === 2 && timer === "05:00" ? 'text-rose-500' :
-                  scene === 3 ? 'text-rose-500' :
-                  scene === 4 ? 'text-indigo-400' :
-                  'text-purple-400'
+                  scene === 2 && timer === "05:00" ? 'text-danger' :
+                  scene === 3 ? 'text-danger' :
+                  scene === 4 ? 'text-brand' :
+                  'text-brand'
                 }`}>
                   {scene === 1 && "● Active now"}
                   {scene === 2 && `● Active ${timer} ago`}
@@ -1435,7 +1435,7 @@ const ProblemStorytelling = () => {
                   exit={{ opacity: 0, y: -10 }}
                   className="self-end max-w-[80%] flex flex-col items-end"
                 >
-                  <div className="bg-gradient-to-r from-[#818CF8]/25 to-[#4F39F6]/25 border border-[#4F39F6]/30 text-zinc-900 p-3 rounded-2xl rounded-tr-sm flex items-center gap-1">
+                  <div className="bg-gradient-to-r from-[#818CF8]/25 to-[#4F39F6]/25 border border-brand/30 text-zinc-900 p-3 rounded-2xl rounded-tr-sm flex items-center gap-1">
                     <span className="w-1.5 h-1.5 bg-[#818CF8] rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
                     <span className="w-1.5 h-1.5 bg-[#818CF8] rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
                     <span className="w-1.5 h-1.5 bg-[#818CF8] rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
@@ -1557,19 +1557,19 @@ const ProblemStorytelling = () => {
             </span>
             <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${
               scene === 1 ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20' :
-              scene === 2 && (timer === "00:00" || timer === "00:30" || timer === "01:00") ? 'bg-amber-500/10 text-amber-500 border border-amber-500/20' :
+              scene === 2 && (timer === "00:00" || timer === "00:30" || timer === "01:00") ? 'bg-warning/10 text-warning border border-amber-500/20' :
               scene === 2 && timer === "03:00" ? 'bg-orange-500/10 text-orange-500 border border-orange-500/20' :
-              scene === 2 && timer === "05:00" ? 'bg-rose-500/10 text-rose-500 border border-rose-500/20' :
-              scene === 3 ? 'bg-rose-500/10 text-rose-500 border border-rose-500/20' :
-              scene === 4 ? 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 animate-pulse' :
-              'bg-[#4F39F6]/10 text-[#818CF8] border border-[#4F39F6]/20'
+              scene === 2 && timer === "05:00" ? 'bg-rose-500/10 text-danger border border-rose-500/20' :
+              scene === 3 ? 'bg-rose-500/10 text-danger border border-rose-500/20' :
+              scene === 4 ? 'bg-brand/10 text-brand border border-indigo-500/20 animate-pulse' :
+              'bg-brand/10 text-[#818CF8] border border-brand/20'
             }`}>
               <span className={`w-1.5 h-1.5 rounded-full ${
                 scene === 1 || (scene === 2 && (timer === "00:00" || timer === "00:30")) ? 'bg-emerald-500' :
-                scene === 2 && (timer === "01:00" || timer === "03:00") ? 'bg-amber-500' :
+                scene === 2 && (timer === "01:00" || timer === "03:00") ? 'bg-warning' :
                 scene === 2 && timer === "05:00" ? 'bg-rose-500' :
                 scene === 3 ? 'bg-rose-500' :
-                scene === 4 ? 'bg-indigo-400 animate-ping' :
+                scene === 4 ? 'bg-brand animate-ping' :
                 'bg-[#818CF8] animate-pulse'
               }`} />
               {scene === 1 && "Interested"}
@@ -1590,8 +1590,8 @@ const ProblemStorytelling = () => {
             <div className="flex items-center gap-4">
               <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shadow-inner ${
                 scene >= 5 ? 'bg-emerald-500/10 text-emerald-500' :
-                scene === 3 ? 'bg-rose-500/10 text-rose-500' :
-                scene === 4 ? 'bg-indigo-500/10 text-indigo-400' :
+                scene === 3 ? 'bg-rose-500/10 text-danger' :
+                scene === 4 ? 'bg-brand/10 text-brand' :
                 'bg-zinc-100 text-zinc-600'
               }`}>
                 {scene >= 5 ? <Bot size={24} /> : scene === 4 ? <RefreshCw size={24} className="animate-spin" /> : <Clock size={24} />}
@@ -1599,8 +1599,8 @@ const ProblemStorytelling = () => {
               <div className="flex flex-col">
                 <span className={`text-4xl font-extrabold tracking-tight tabular-nums ${
                   scene >= 5 ? 'text-emerald-500' :
-                  scene === 3 ? 'text-rose-500' :
-                  scene === 4 ? 'text-indigo-400' :
+                  scene === 3 ? 'text-danger' :
+                  scene === 4 ? 'text-brand' :
                   'text-zinc-900'
                 }`}>
                   {timer}
@@ -1642,7 +1642,7 @@ const ProblemStorytelling = () => {
                   exit={{ opacity: 0, y: -10 }}
                   className="space-y-3"
                 >
-                  <h4 className="text-sm font-extrabold text-rose-500 flex items-center gap-1.5">
+                  <h4 className="text-sm font-extrabold text-danger flex items-center gap-1.5">
                     <AlertCircle size={16} /> Leakage: Lost Opportunity
                   </h4>
                   <div className="grid grid-cols-2 gap-2.5">
@@ -1657,7 +1657,7 @@ const ProblemStorytelling = () => {
                         initial={{ opacity: 0, x: -10 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: index * 0.1 }}
-                        className="flex items-center gap-2 p-2.5 rounded-xl bg-rose-500/5 border border-rose-500/10 text-rose-500 text-xs font-bold"
+                        className="flex items-center gap-2 p-2.5 rounded-xl bg-rose-500/5 border border-rose-500/10 text-danger text-xs font-bold"
                       >
                         <X size={12} className="stroke-[3]" />
                         {item}
@@ -1676,7 +1676,7 @@ const ProblemStorytelling = () => {
                   exit={{ opacity: 0, y: -10 }}
                   className="space-y-2"
                 >
-                  <h4 className="text-sm font-bold text-indigo-400">
+                  <h4 className="text-sm font-bold text-brand">
                     Deploying Flazly AI
                   </h4>
                   <p className="text-xs text-zinc-500 leading-relaxed font-medium animate-pulse">
@@ -1846,7 +1846,7 @@ const IntegrationsFlowCanvas = ({ activeStep }: { activeStep: number }) => {
                 </div>
 
                 {/* Middle connector status */}
-                <div className="bg-[#4F39F6]/10 border border-[#4F39F6]/30 text-[#818CF8] text-[9px] px-2.5 py-1 rounded-full font-bold z-10 backdrop-blur-sm">
+                <div className="bg-brand/10 border border-brand/30 text-[#818CF8] text-[9px] px-2.5 py-1 rounded-full font-bold z-10 backdrop-blur-sm">
                   OAuth Handshake
                 </div>
 
@@ -1892,7 +1892,7 @@ const IntegrationsFlowCanvas = ({ activeStep }: { activeStep: number }) => {
                 {/* Processing node */}
                 <div className="flex items-center justify-center gap-3 py-1">
                   <div className="h-[1px] bg-zinc-200 flex-1" />
-                  <div className="bg-[#4F39F6]/10 border border-[#4F39F6]/20 px-3 py-1 rounded-full text-[9px] font-mono text-[#818CF8] flex items-center gap-1.5">
+                  <div className="bg-brand/10 border border-brand/20 px-3 py-1 rounded-full text-[9px] font-mono text-[#818CF8] flex items-center gap-1.5">
                     <span className="w-1.5 h-1.5 rounded-full bg-[#818CF8] animate-ping" />
                     Flazly NLP Processing
                   </div>
@@ -2000,16 +2000,16 @@ const Landing: React.FC = () => {
   }, [autoRotate]);
 
   return (
-    <div className="dark landing-page bg-zinc-50 text-zinc-900 font-inter selection:bg-[#38BDF8]/10 selection:text-[#38BDF8] min-h-screen relative overflow-x-hidden">
+    <div className="dark landing-page bg-zinc-50 text-zinc-900 font-inter selection:bg-info/10 selection:text-info min-h-screen relative overflow-x-hidden">
 
       {/* Animated Grid Background for Hero Section */}
       <div className="absolute top-0 inset-x-0 h-[1000px] hero-line-grid pointer-events-none select-none z-0" />
 
       {/* Premium Shifting Mesh Gradient Backdrop */}
       <div className="absolute top-0 inset-x-0 h-[1000px] overflow-hidden pointer-events-none select-none z-0">
-        <div className="absolute -top-[20%] left-[10%] w-[60%] h-[70%] rounded-full bg-[#4F39F6]/10 blur-[120px] animate-mesh-glow-1" />
+        <div className="absolute -top-[20%] left-[10%] w-[60%] h-[70%] rounded-full bg-brand/10 blur-[120px] animate-mesh-glow-1" />
         <div className="absolute -top-[30%] right-[10%] w-[50%] h-[60%] rounded-full bg-[#8B5CF6]/10 blur-[140px] animate-mesh-glow-2" />
-        <div className="absolute top-[10%] left-[30%] w-[40%] h-[50%] rounded-full bg-[#38BDF8]/10 blur-[100px] animate-mesh-glow-3" />
+        <div className="absolute top-[10%] left-[30%] w-[40%] h-[50%] rounded-full bg-info/10 blur-[100px] animate-mesh-glow-3" />
       </div>
 
       {/* Left side automation connection lines */}
@@ -2113,16 +2113,16 @@ const Landing: React.FC = () => {
             initial={{ opacity: 0, x: 30, y: 10 }}
             animate={{ opacity: 1, x: 0, y: 0 }}
             transition={{ delay: 1.1, duration: 0.8, type: "spring" }}
-            className="hidden xl:flex absolute top-24 -right-24 2xl:-right-40 bg-white rounded-2xl p-4 shadow-[0_20px_50px_-10px_rgba(79,57,246,0.15)] border border-[#4F39F6]/10 flex-col gap-3 w-56 z-0 pointer-events-none"
+            className="hidden xl:flex absolute top-24 -right-24 2xl:-right-40 bg-white rounded-2xl p-4 shadow-[0_20px_50px_-10px_rgba(79,57,246,0.15)] border border-brand/10 flex-col gap-3 w-56 z-0 pointer-events-none"
           >
             <div className="flex items-center justify-between w-full">
               <div className="flex items-center gap-2">
-                <div className="w-6 h-6 rounded-full bg-[#4F39F6]/10 flex items-center justify-center text-[#4F39F6]">
+                <div className="w-6 h-6 rounded-full bg-brand/10 flex items-center justify-center text-brand">
                   <CheckCircle size={12} />
                 </div>
                 <span className="text-[11px] font-bold text-zinc-900">Lead Captured</span>
               </div>
-              <span className="text-[8px] font-black text-[#4F39F6] bg-[#4F39F6]/10 px-1.5 py-0.5 rounded-full uppercase tracking-widest border border-[#4F39F6]/20">
+              <span className="text-[8px] font-black text-brand bg-brand/10 px-1.5 py-0.5 rounded-full uppercase tracking-widest border border-brand/20">
                 CRM SYNC
               </span>
             </div>
@@ -2134,9 +2134,9 @@ const Landing: React.FC = () => {
           </motion.div>
           {/* --- END FLOATING POPUPS --- */}
             {/* Tag / Badge */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#4F39F6]/10 border border-[#4F39F6]/20 mb-6 select-none">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#4F39F6] animate-pulse" />
-              <span className="text-[10px] font-bold uppercase tracking-widest text-[#4F39F6]]">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand/10 border border-brand/20 mb-6 select-none">
+              <span className="w-1.5 h-1.5 rounded-full bg-brand animate-pulse" />
+              <span className="text-[10px] font-bold uppercase tracking-widest text-brand]">
                 AI Instagram Sales Agent
               </span>
             </div>
@@ -2155,7 +2155,7 @@ const Landing: React.FC = () => {
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full max-w-2xl mb-16">
               <button
                 onClick={() => navigate('/signup')}
-                className="btn-premium-cta w-full sm:w-auto px-10 py-5 text-sm font-bold flex items-center justify-center gap-2 group whitespace-nowrap"
+                className="btn-primary w-full sm:w-auto px-10 py-5 text-sm font-bold flex items-center justify-center gap-2 group whitespace-nowrap"
               >
                 Start Free 14-Day Trial
                 <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
@@ -2190,16 +2190,16 @@ const Landing: React.FC = () => {
                 <Lock size={16} className="text-[#8B5CF6]" /> Secure OAuth Auth
               </span>
               <span className="flex items-center gap-2">
-                <Bot size={16} className="text-[#4F39F6]" /> AI-Powered Conversations
+                <Bot size={16} className="text-brand" /> AI-Powered Conversations
               </span>
               <span className="flex items-center gap-2">
-                <Users size={16} className="text-purple-400" /> Human Takeover Available
+                <Users size={16} className="text-brand" /> Human Takeover Available
               </span>
               <span className="flex items-center gap-2">
                 <Database size={16} className="text-blue-400" /> Sheets & CRM Sync
               </span>
               <span className="flex items-center gap-2">
-                <Workflow size={16} className="text-pink-400" /> Webhook Support
+                <Workflow size={16} className="text-brand" /> Webhook Support
               </span>
             </div>
           </div>
@@ -2212,7 +2212,7 @@ const Landing: React.FC = () => {
         <section className="py-28 relative bg-zinc-50 border-t border-zinc-200/80">
           <div className="max-w-6xl mx-auto px-6 text-center">
             <div className="max-w-2xl mx-auto mb-16">
-              <span className="text-xs font-bold uppercase tracking-widest text-[#4F39F6]]">THE COST OF MANUAL DM MANAGEMENT</span>
+              <span className="text-xs font-bold uppercase tracking-widest text-brand]">THE COST OF MANUAL DM MANAGEMENT</span>
               <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-4 text-zinc-900 leading-tight mt-3">
                 Every Unanswered DM Is Lost Revenue
               </h2>
@@ -2234,7 +2234,7 @@ const Landing: React.FC = () => {
             <div className="grid lg:grid-cols-2 gap-16 items-center">
               {/* Left Column: 3 Steps */}
               <div className="flex flex-col text-left">
-                <span className="text-xs font-bold uppercase tracking-widest text-[#4F39F6]]">How It Works</span>
+                <span className="text-xs font-bold uppercase tracking-widest text-brand]">How It Works</span>
                 <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-zinc-900 mt-3 mb-6">
                   3 Steps to Automated Lead Capture
                 </h2>
@@ -2274,14 +2274,14 @@ const Landing: React.FC = () => {
                     >
                       <div className={`w-12 h-12 rounded-2xl flex items-center justify-center font-bold font-mono shrink-0 transition-all duration-300 ${
                         activeStep === idx
-                          ? "bg-[#4F39F6] text-zinc-900 shadow-md shadow-[#4F39F6]/20"
-                          : "bg-[#3B82F6]/10 text-[#38BDF8]"
+                          ? "bg-brand text-zinc-900 shadow-md shadow-[#4F39F6]/20"
+                          : "bg-[#3B82F6]/10 text-info"
                       }`}>
                         {step.step}
                       </div>
                       <div>
                         <h3 className={`text-base font-bold mb-1 transition-colors duration-300 ${
-                          activeStep === idx ? "text-[#4F39F6]]" : "text-zinc-900"
+                          activeStep === idx ? "text-brand]" : "text-zinc-900"
                         }`}>{step.title}</h3>
                         <p className="text-xs text-zinc-500 leading-relaxed font-medium">{step.desc}</p>
                       </div>
@@ -2313,7 +2313,7 @@ const Landing: React.FC = () => {
                   { label: "Purchase Intent", detail: "Ready to order", badge: "Intent" }
                 ].map((item, idx) => (
                   <div key={idx} className="bg-white border border-zinc-200/80 p-4 rounded-2xl text-left shadow-sm">
-                    <span className="text-[8px] font-bold text-[#38BDF8] bg-[#38BDF8]/10 px-2 py-0.5 rounded-full uppercase tracking-wider">
+                    <span className="text-[8px] font-bold text-info bg-info/10 px-2 py-0.5 rounded-full uppercase tracking-wider">
                       {item.badge}
                     </span>
                     <span className="text-xs font-bold text-zinc-800 block mt-3 mb-1">{item.label}</span>
@@ -2332,7 +2332,7 @@ const Landing: React.FC = () => {
         <section className="py-28 relative bg-zinc-50">
           <div className="max-w-6xl mx-auto px-6">
             <div className="text-center max-w-2xl mx-auto mb-16">
-              <span className="text-xs font-bold uppercase tracking-widest text-[#4F39F6]]">Business Outcomes</span>
+              <span className="text-xs font-bold uppercase tracking-widest text-brand]">Business Outcomes</span>
               <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-zinc-900 mt-3 mb-4 leading-tight">
                 Capture Leads On Autopilot, 24/7
               </h2>
@@ -2389,7 +2389,7 @@ const Landing: React.FC = () => {
               {/* Central AI Engine Dial */}
               <div className="absolute top-[340px] left-[500px] -translate-x-1/2 -translate-y-1/2 z-20">
                 <div className="relative w-52 h-52 flex items-center justify-center">
-                  <div className="absolute w-40 h-40 rounded-full bg-[#4F39F6]/15 blur-2xl animate-pulse"></div>
+                  <div className="absolute w-40 h-40 rounded-full bg-brand/15 blur-2xl animate-pulse"></div>
                   <div className="absolute w-48 h-48 rounded-full border border-dashed border-[#818CF8]/30 animate-spin" style={{ animationDuration: '40s' }}></div>
                   <div className="absolute w-40 h-40 rounded-full border border-zinc-200/50 animate-spin" style={{ animationDuration: '25s', animationDirection: 'reverse' }}></div>
 
@@ -2480,7 +2480,7 @@ const Landing: React.FC = () => {
               {/* Centered dial header */}
               <div className="flex items-center justify-center mb-4">
                 <div className="relative w-44 h-44 flex items-center justify-center">
-                  <div className="absolute w-36 h-36 rounded-full bg-[#4F39F6]/10 blur-xl animate-pulse"></div>
+                  <div className="absolute w-36 h-36 rounded-full bg-brand/10 blur-xl animate-pulse"></div>
                   <div className="absolute w-40 h-40 rounded-full border border-dashed border-[#818CF8]/25 animate-spin" style={{ animationDuration: '50s' }}></div>
                   <div className="absolute w-24 h-24 rounded-full bg-gradient-to-b from-white to-zinc-50]] border border-zinc-200/50 shadow-sm flex flex-col items-center justify-center z-10">
                     <div className="w-18 h-18 rounded-full bg-zinc-50 border border-zinc-200/80 flex items-center justify-center shadow-md p-3.5">
@@ -2540,7 +2540,7 @@ const Landing: React.FC = () => {
         <section className="py-28 border-t border-zinc-200/80 bg-zinc-100/10 relative overflow-hidden">
           <div className="max-w-6xl mx-auto px-6">
             <div className="text-center max-w-2xl mx-auto mb-20">
-              <span className="text-xs font-bold uppercase tracking-widest text-[#4F39F6]]">Core Capabilities</span>
+              <span className="text-xs font-bold uppercase tracking-widest text-brand]">Core Capabilities</span>
               <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-zinc-900 mt-3 mb-4">
                 Designed to Generate More Business Leads
               </h2>
@@ -2560,17 +2560,17 @@ const Landing: React.FC = () => {
                     <div className="w-full bg-zinc-50/50 border border-zinc-200/50 p-4 rounded-2xl flex flex-col gap-2.5 mb-5 shadow-[inset_0_1px_2px_rgba(0,0,0,0.01)]">
                       <div className="flex justify-between items-center text-[9px] font-bold text-zinc-600 uppercase tracking-wider">
                         <span>Inbox Stream</span>
-                        <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse"></span>Live</span>
+                        <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-brand animate-pulse"></span>Live</span>
                       </div>
                       <div className="flex items-center justify-between bg-white p-2.5 rounded-xl border border-zinc-150 shadow-sm">
                         <div className="flex items-center gap-2 min-w-0">
-                          <div className="w-7 h-7 rounded-full bg-indigo-500/10 text-indigo-500 border border-indigo-500/20 flex items-center justify-center text-[10px] font-extrabold shrink-0">JD</div>
+                          <div className="w-7 h-7 rounded-full bg-brand/10 text-brand border border-indigo-500/20 flex items-center justify-center text-[10px] font-extrabold shrink-0">JD</div>
                           <div className="flex flex-col min-w-0">
                             <span className="text-[10px] font-bold text-zinc-900 truncate">John Doe</span>
                             <span className="text-[8px] text-zinc-500 truncate">"Price list please?"</span>
                           </div>
                         </div>
-                        <span className="px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-600 text-[8px] font-bold uppercase tracking-wide border border-purple-500/20 shrink-0">Autopilot</span>
+                        <span className="px-2 py-0.5 rounded-full bg-brand/10 text-brand text-[8px] font-bold uppercase tracking-wide border border-brand/20 shrink-0">Autopilot</span>
                       </div>
                     </div>
                   )
@@ -2585,7 +2585,7 @@ const Landing: React.FC = () => {
                     <div className="bg-zinc-50/50 border border-zinc-200/50 p-5 rounded-2xl flex flex-col gap-3 min-w-[280px] w-full lg:w-auto shrink-0 shadow-[inset_0_1px_2px_rgba(0,0,0,0.01)]">
                       <div className="flex items-center justify-between border-b border-zinc-150 pb-2.5">
                         <div className="flex items-center gap-2">
-                          <div className="w-8 h-8 rounded-full bg-[#4F39F6]/10 text-[#4F39F6] border border-[#4F39F6]/20 flex items-center justify-center relative shrink-0">
+                          <div className="w-8 h-8 rounded-full bg-brand/10 text-brand border border-brand/20 flex items-center justify-center relative shrink-0">
                             <Bot size={16} />
                             <span className="absolute bottom-0 right-0 w-2 h-2 bg-emerald-500 border-2 border-white] rounded-full"></span>
                           </div>
@@ -2600,11 +2600,11 @@ const Landing: React.FC = () => {
                         <div className="bg-white p-2.5 rounded-2xl rounded-tr-none text-[10px] text-zinc-650 self-end max-w-[85%] border border-zinc-100 shadow-sm">
                           "Do you ship to Germany? mark@web.de"
                         </div>
-                        <div className="bg-indigo-500/10 p-2.5 rounded-2xl rounded-tl-none text-[10px] text-indigo-600 self-start max-w-[85%] border border-indigo-500/10">
+                        <div className="bg-brand/10 p-2.5 rounded-2xl rounded-tl-none text-[10px] text-brand self-start max-w-[85%] border border-indigo-500/10">
                           "Yes! Worldwide shipping is available. 📦 I've locked in your email."
                         </div>
                         <div className="flex gap-1.5 mt-1 justify-start">
-                          <span className="px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-600 border border-purple-500/20 text-[8px] font-bold">Email Captured</span>
+                          <span className="px-2 py-0.5 rounded-full bg-brand/10 text-brand border border-brand/20 text-[8px] font-bold">Email Captured</span>
                           <span className="px-2 py-0.5 rounded-full bg-sky-500/10 text-sky-600 border border-sky-500/20 text-[8px] font-bold">Germany</span>
                         </div>
                       </div>
@@ -2623,13 +2623,13 @@ const Landing: React.FC = () => {
                         <span className="text-emerald-500 font-bold">Trained</span>
                       </div>
                       <div className="flex items-center gap-3 bg-white p-2.5 rounded-xl border border-zinc-150 shadow-sm">
-                        <div className="w-8 h-8 rounded-lg bg-indigo-500/10 text-indigo-500 border border-indigo-500/20 flex items-center justify-center shrink-0">
+                        <div className="w-8 h-8 rounded-lg bg-brand/10 text-brand border border-indigo-500/20 flex items-center justify-center shrink-0">
                           <FileText size={16} />
                         </div>
                         <div className="flex-grow min-w-0">
                           <div className="text-[10px] font-bold text-zinc-900 truncate">product_catalog_2026.pdf</div>
                           <div className="w-full bg-zinc-100 h-1.5 rounded-full mt-1.5 overflow-hidden">
-                            <div className="bg-indigo-500 h-full w-full rounded-full"></div>
+                            <div className="bg-brand h-full w-full rounded-full"></div>
                           </div>
                         </div>
                       </div>
@@ -2647,9 +2647,9 @@ const Landing: React.FC = () => {
                         Trigger "Price"
                       </div>
                       <div className="flex-grow border-t border-dashed border-zinc-300 relative">
-                        <span className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-indigo-500 flex items-center justify-center text-[7px] text-zinc-900 shadow-sm">⚡</span>
+                        <span className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-brand flex items-center justify-center text-[7px] text-zinc-900 shadow-sm">⚡</span>
                       </div>
-                      <div className="bg-indigo-500 text-zinc-900 px-2.5 py-1.5 rounded-xl text-[9px] font-bold shadow-sm">
+                      <div className="bg-brand text-zinc-900 px-2.5 py-1.5 rounded-xl text-[9px] font-bold shadow-sm">
                         Send DM
                       </div>
                     </div>
@@ -2710,14 +2710,14 @@ const Landing: React.FC = () => {
                     <div className="w-full bg-zinc-50/50 border border-zinc-200/50 p-4 rounded-2xl flex flex-col gap-2.5 mb-5 shadow-[inset_0_1px_2px_rgba(0,0,0,0.01)]">
                       <div className="flex justify-between items-center text-[9px] font-bold text-zinc-600 uppercase tracking-wider">
                         <span>Campaign Delivery</span>
-                        <span className="text-indigo-500 font-bold">Sending</span>
+                        <span className="text-brand font-bold">Sending</span>
                       </div>
                       <div className="bg-white p-2.5 rounded-xl border border-zinc-150 shadow-sm flex items-center justify-between">
                         <div className="flex flex-col min-w-0 pr-2">
                           <span className="text-[10px] font-bold text-zinc-900 truncate">Summer Launch</span>
                           <span className="text-[8px] text-zinc-500">1,240 recipients</span>
                         </div>
-                        <div className="text-[11px] font-extrabold text-indigo-500 shrink-0">92%</div>
+                        <div className="text-[11px] font-extrabold text-brand shrink-0">92%</div>
                       </div>
                     </div>
                   )
@@ -2741,7 +2741,7 @@ const Landing: React.FC = () => {
                       <ul className="space-y-2.5 border-t border-zinc-100 pt-5">
                         {mod.feats.map((f, i) => (
                           <li key={i} className="flex items-center gap-2.5 text-xs text-zinc-700 font-medium font-sans">
-                            <Check size={12} className="text-[#38BDF8] shrink-0" />
+                            <Check size={12} className="text-info shrink-0" />
                             {f}
                           </li>
                         ))}
@@ -2784,7 +2784,7 @@ const Landing: React.FC = () => {
         <section className="py-28 relative bg-zinc-50">
           <div className="max-w-6xl mx-auto px-6">
             <div className="text-center max-w-2xl mx-auto mb-16">
-              <span className="text-xs font-bold uppercase tracking-widest text-[#4F39F6]]">Tailored Solutions</span>
+              <span className="text-xs font-bold uppercase tracking-widest text-brand]">Tailored Solutions</span>
               <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-zinc-900 mt-3 mb-4">
                 Who Uses Flazly?
               </h2>
@@ -2834,7 +2834,7 @@ const Landing: React.FC = () => {
         <section className="py-28 border-t border-zinc-200/80 bg-zinc-100/20 relative overflow-hidden">
           <div className="max-w-6xl mx-auto px-6">
             <div className="text-center max-w-2xl mx-auto mb-20">
-              <span className="text-xs font-bold uppercase tracking-widest text-[#4F39F6]]">Success Stories</span>
+              <span className="text-xs font-bold uppercase tracking-widest text-brand]">Success Stories</span>
               <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-zinc-900 mt-3 mb-4 leading-tight">
                 Trusted by High-Growth Brands
               </h2>
@@ -2849,7 +2849,7 @@ const Landing: React.FC = () => {
                 { label: "Businesses Connected", value: "5,000+", icon: <Sparkles size={20} /> },
               ].map((metric, i) => (
                 <div key={i} className="bg-white/40 border border-zinc-200 p-6 rounded-2xl flex flex-col items-center text-center">
-                  <div className="w-10 h-10 rounded-xl bg-zinc-50 border border-zinc-200 flex items-center justify-center mb-4 text-[#38BDF8]">
+                  <div className="w-10 h-10 rounded-xl bg-zinc-50 border border-zinc-200 flex items-center justify-center mb-4 text-info">
                     {metric.icon}
                   </div>
                   <div className="text-3xl md:text-4xl font-extrabold text-zinc-900 mb-2 tracking-tight">{metric.value}</div>
@@ -2881,7 +2881,7 @@ const Landing: React.FC = () => {
                     <div>
                       <div className="flex gap-1 mb-6">
                         {[...Array(5)].map((_, idx) => (
-                          <Star key={idx} size={14} className="fill-[#38BDF8] text-[#38BDF8]" />
+                          <Star key={idx} size={14} className="fill-[#38BDF8] text-info" />
                         ))}
                       </div>
                       <p className="text-sm md:text-base text-zinc-800 leading-relaxed font-medium italic mb-8 font-inter">
@@ -2891,7 +2891,7 @@ const Landing: React.FC = () => {
 
                     <div className="flex items-center justify-between border-t border-zinc-200 pt-6">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-[#4F39F6] flex items-center justify-center text-xs font-bold text-zinc-900 shadow-lg">
+                        <div className="w-10 h-10 rounded-full bg-brand flex items-center justify-center text-xs font-bold text-zinc-900 shadow-lg">
                           {t.avatar}
                         </div>
                         <div className="flex flex-col">
@@ -2917,7 +2917,7 @@ const Landing: React.FC = () => {
         <section className="py-28 relative bg-zinc-50 border-t border-zinc-200/80">
           <div className="max-w-6xl mx-auto px-6">
             <div className="text-center max-w-2xl mx-auto mb-16">
-              <span className="text-xs font-bold uppercase tracking-widest text-[#4F39F6]]">Enterprise Security</span>
+              <span className="text-xs font-bold uppercase tracking-widest text-brand]">Enterprise Security</span>
               <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-zinc-900 mt-3 mb-4 leading-tight">
                 Secure Connections, Complete Control
               </h2>
@@ -2971,7 +2971,7 @@ const Landing: React.FC = () => {
         <section className="py-28 relative border-t border-zinc-200/80 bg-zinc-100/10">
           <div className="max-w-6xl mx-auto px-6">
             <div className="text-center max-w-2xl mx-auto mb-16">
-              <span className="text-xs font-bold uppercase tracking-widest text-[#4F39F6]]">ROI Calculator</span>
+              <span className="text-xs font-bold uppercase tracking-widest text-brand]">ROI Calculator</span>
               <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-4 text-zinc-900 mt-3">
                 Calculate Your Recovered Revenue
               </h2>
@@ -2991,7 +2991,7 @@ const Landing: React.FC = () => {
         <section id="pricing" className="py-28 border-t border-zinc-200/80 bg-zinc-100/10 relative">
           <div className="max-w-6xl mx-auto px-6">
             <div className="text-center max-w-2xl mx-auto mb-16">
-              <span className="text-xs font-bold uppercase tracking-widest text-[#4F39F6]]">Pricing Plans</span>
+              <span className="text-xs font-bold uppercase tracking-widest text-brand]">Pricing Plans</span>
               <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-zinc-900 mt-3 mb-4 leading-tight">
                 Simple, Transparent Pricing
               </h2>
@@ -3082,7 +3082,7 @@ const Landing: React.FC = () => {
                         </div>
 
                         <div className="mb-8 border-b border-zinc-200 pb-6">
-                          <span className="text-lg font-bold text-[#38BDF8] font-mono">{tier.volume}</span>
+                          <span className="text-lg font-bold text-info font-mono">{tier.volume}</span>
                           <span className="text-[10px] text-zinc-500 uppercase font-bold tracking-wider block mt-1">
                             Automated DMs / Month
                           </span>
@@ -3091,7 +3091,7 @@ const Landing: React.FC = () => {
                         <ul className="space-y-4 mb-8">
                           {tier.features.map((feat, j) => (
                             <li key={j} className="flex items-center gap-3">
-                              <Check size={14} className="text-[#38BDF8]" />
+                              <Check size={14} className="text-info" />
                               <span className="text-xs text-zinc-700 font-medium leading-relaxed font-inter">{feat}</span>
                             </li>
                           ))}
@@ -3101,7 +3101,7 @@ const Landing: React.FC = () => {
                       <button
                         onClick={() => navigate('/signup')}
                         className={`w-full py-4 rounded-xl text-xs font-bold transition-all cursor-pointer ${tier.popular
-                            ? 'btn-premium-cta font-bold'
+                            ? 'btn-primary font-bold'
                             : 'bg-zinc-100 border border-zinc-200 text-zinc-700 hover:bg-zinc-200/50'
                           }`}
                       >
@@ -3122,7 +3122,7 @@ const Landing: React.FC = () => {
         <section id="faq" className="py-28 border-t border-zinc-200/80 bg-zinc-50 relative">
           <div className="max-w-3xl mx-auto px-6">
             <div className="text-center mb-16">
-              <span className="text-xs font-bold uppercase tracking-widest text-[#4F39F6]]">Have Questions?</span>
+              <span className="text-xs font-bold uppercase tracking-widest text-brand]">Have Questions?</span>
               <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-zinc-900 mt-3 leading-tight">
                 Frequently Asked Questions
               </h2>
@@ -3178,7 +3178,7 @@ const Landing: React.FC = () => {
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full max-w-2xl mx-auto">
               <button
                 onClick={() => navigate('/signup')}
-                className="btn-premium-cta w-full sm:w-auto px-10 py-5 text-sm font-bold flex items-center justify-center gap-2 group whitespace-nowrap"
+                className="btn-primary w-full sm:w-auto px-10 py-5 text-sm font-bold flex items-center justify-center gap-2 group whitespace-nowrap"
               >
                 Start Free 14-Day Trial
                 <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />

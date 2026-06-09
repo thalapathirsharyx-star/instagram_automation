@@ -147,7 +147,7 @@ function AppContent() {
       {isImpersonating && (
         <div className="bg-gradient-to-r from-amber-600 via-purple-700 to-amber-600 text-white px-6 py-2 flex items-center justify-between text-xs font-bold uppercase tracking-wider shadow-lg border-b border-amber-500/20 animate-in slide-in-from-top duration-300" style={{ flexShrink: 0, zIndex: 9999 }}>
           <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping shrink-0" />
+            <span className="w-2 h-2 rounded-full bg-warning animate-ping shrink-0" />
             <span>Impersonating: <strong className="text-white underline">{user?.company?.name || 'Client Account'}</strong> (Read-Only Actions Restricted)</span>
           </div>
           <button 
@@ -166,12 +166,12 @@ function AppContent() {
           <div className="flex-grow"></div>
           <div className="flex items-center gap-6">
             <button 
-              className="p-2.5 bg-zinc-100 rounded-xl text-zinc-600 hover:text-purple-600 hover:bg-purple-50 transition-all duration-300 border border-zinc-200 hover:border-purple-200 cursor-pointer"
+              className="p-2.5 bg-zinc-100 rounded-xl text-zinc-600 hover:text-brand hover:bg-purple-50 transition-all duration-300 border border-zinc-200 hover:border-brand cursor-pointer"
             >
               <Sun size={20} />
             </button>
             <div className="relative cursor-pointer group">
-              <div className="p-2.5 bg-zinc-100 rounded-xl text-zinc-600 group-hover:text-purple-600 group-hover:bg-purple-50 transition-all duration-300 border border-zinc-200 group-hover:border-purple-200">
+              <div className="p-2.5 bg-zinc-100 rounded-xl text-zinc-600 group-hover:text-brand group-hover:bg-purple-50 transition-all duration-300 border border-zinc-200 group-hover:border-brand">
                 <Bell size={20} />
               </div>
               <span className={`absolute -top-1 -right-1 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-0 shadow-lg group-hover:scale-110 transition-transform shadow-purple-500/30`}>3</span>
@@ -183,7 +183,7 @@ function AppContent() {
               >
                 <div className="text-right hidden sm:block">
                   <div className="flex items-center justify-end gap-2 mb-0.5">
-                    <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-widest ${user?.roleCode === 'SUPER_ADMIN' ? 'bg-amber-500/10 text-amber-500 border border-amber-500/20' : (!user?.company?.plan || user?.company?.plan?.toUpperCase() === 'FREE' ? 'bg-rose-500/10 text-rose-500 border border-rose-500/20' : 'bg-purple-500/10 text-purple-500 border border-purple-500/20')}`}>
+                    <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-widest ${user?.roleCode === 'SUPER_ADMIN' ? 'bg-warning/10 text-warning border border-amber-500/20' : (!user?.company?.plan || user?.company?.plan?.toUpperCase() === 'FREE' ? 'bg-rose-500/10 text-danger border border-rose-500/20' : 'bg-brand/10 text-brand border border-brand/20')}`}>
                       {user?.roleCode === 'SUPER_ADMIN' ? 'SUPER ADMIN' : (!user?.company?.plan || user?.company?.plan?.toUpperCase() === 'FREE' ? '14 DAYS TRIAL' : `${user?.company?.plan} PLAN`)}
                     </span>
                     <div className="text-sm font-bold text-zinc-900">{user?.email ? user.email.split('@')[0] : 'Guest'}</div>

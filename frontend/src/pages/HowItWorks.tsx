@@ -14,17 +14,17 @@ const HowItWorks: React.FC = () => {
     {
       title: "Connect Instagram",
       desc: "Securely link your professional Instagram account to Flazly using the official, secure Meta API login. No passwords required.",
-      icon: <AtSign size={32} className="text-pink-500" />
+      icon: <AtSign size={32} className="text-brand" />
     },
     {
       title: "Configure Triggers",
       desc: "Tell Flazly when to respond. Set up keyword triggers for comments, or enable auto-replies for all incoming direct messages and story replies.",
-      icon: <Settings size={32} className="text-purple-500" />
+      icon: <Settings size={32} className="text-brand" />
     },
     {
       title: "AI Engages Leads",
       desc: "The moment a trigger is fired, our AI instantly replies, answering user questions and asking predefined qualifying questions to gauge intent.",
-      icon: <MessageSquare size={32} className="text-amber-500" />
+      icon: <MessageSquare size={32} className="text-warning" />
     },
     {
       title: "Lead Qualification",
@@ -34,12 +34,12 @@ const HowItWorks: React.FC = () => {
     {
       title: "Close More Deals",
       desc: "View all extracted data neatly organized in your Flazly CRM. Jump into the Unified Inbox to take over the hottest conversations and close the deal.",
-      icon: <CheckCircle2 size={32} className="text-green-500" />
+      icon: <CheckCircle2 size={32} className="text-success" />
     }
   ];
 
   return (
-    <div className="dark min-h-screen bg-[#0A0A0F] text-primary-foreground font-inter selection:bg-purple-500/30 selection:text-primary-foreground">
+    <div className="dark min-h-screen bg-background text-zinc-900 font-inter selection:bg-brand/30 selection:text-zinc-900">
       <Navbar />
 
       <main className="pt-32 pb-24 px-6 max-w-4xl mx-auto">
@@ -57,7 +57,7 @@ const HowItWorks: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-xl text-muted-foreground mb-10 max-w-2xl mx-auto"
+            className="text-xl text-zinc-500 mb-10 max-w-2xl mx-auto"
           >
             No coding required. Connect your account, configure your triggers, and let our AI handle the rest.
           </motion.p>
@@ -66,7 +66,7 @@ const HowItWorks: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
           >
-            <a href="https://app.flazly.com/signup" className="btn-premium-cta px-8 py-4 text-base font-bold rounded-xl">
+            <a href="https://app.flazly.com/signup" className="btn-primary px-8 py-4 text-base font-bold rounded-xl">
               Get Started
             </a>
           </motion.div>
@@ -87,16 +87,16 @@ const HowItWorks: React.FC = () => {
                 className={`relative flex flex-col md:flex-row gap-8 items-start md:items-center ${index % 2 === 0 ? 'md:flex-row-reverse' : ''}`}
               >
                 {/* Center Node */}
-                <div className="absolute left-8 md:left-1/2 w-16 h-16 bg-[#0A0A0F] border border-white/10 rounded-2xl flex items-center justify-center -translate-x-1/2 shadow-xl z-10">
+                <div className="absolute left-8 md:left-1/2 w-16 h-16 bg-background border border-zinc-200 rounded-2xl flex items-center justify-center -translate-x-1/2 shadow-xl z-10">
                   {step.icon}
                 </div>
 
                 {/* Content */}
                 <div className="w-full md:w-1/2 pl-20 md:pl-0 md:px-16">
-                  <div className={`bg-[#111118] border border-white/5 p-8 rounded-3xl ${index % 2 === 0 ? 'md:text-left' : 'md:text-right'}`}>
-                    <div className="text-sm font-bold text-muted-foreground uppercase tracking-widest mb-2">Step {index + 1}</div>
+                  <div className={`bg-surface border border-zinc-200 p-8 rounded-3xl ${index % 2 === 0 ? 'md:text-left' : 'md:text-right'}`}>
+                    <div className="text-sm font-bold text-zinc-500 uppercase tracking-widest mb-2">Step {index + 1}</div>
                     <h3 className="text-2xl font-bold mb-4">{step.title}</h3>
-                    <p className="text-muted-foreground leading-relaxed">{step.desc}</p>
+                    <p className="text-zinc-500 leading-relaxed">{step.desc}</p>
                   </div>
                 </div>
                 
@@ -108,7 +108,7 @@ const HowItWorks: React.FC = () => {
         </section>
         
         {/* CTA */}
-        <section className="mt-32 text-center bg-gradient-to-br from-purple-900/40 to-pink-900/40 border border-pink-500/20 p-12 rounded-[40px]">
+        <section className="mt-32 text-center bg-gradient-to-br from-purple-900/40 to-pink-900/40 border border-brand/20 p-12 rounded-[40px]">
           <h2 className="text-3xl font-extrabold mb-6">Ready to automate your inbox?</h2>
           <a href="https://app.flazly.com/signup" className="inline-block bg-white text-black px-8 py-4 text-base font-bold rounded-xl hover:scale-105 transition-transform">
             Create Your Account

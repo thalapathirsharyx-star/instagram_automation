@@ -10,8 +10,8 @@ const SplashScreen: React.FC<SplashScreenProps> = () => {
     <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-white">
       {/* Background Glow */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-[20%] left-[30%] w-[400px] h-[400px] bg-indigo-600/5 blur-[100px] rounded-full animate-pulse" />
-        <div className="absolute bottom-[20%] right-[30%] w-[500px] h-[500px] bg-purple-600/5 blur-[120px] rounded-full animate-pulse" style={{ animationDelay: '1s' }} />
+        <div className="absolute top-[20%] left-[30%] w-[400px] h-[400px] bg-brand/5 blur-[100px] rounded-full animate-pulse" />
+        <div className="absolute bottom-[20%] right-[30%] w-[500px] h-[500px] bg-brand/5 blur-[120px] rounded-full animate-pulse" style={{ animationDelay: '1s' }} />
       </div>
 
       <div className="relative w-72 h-72 md:w-96 md:h-96 flex flex-col items-center">
@@ -28,9 +28,9 @@ const SplashScreen: React.FC<SplashScreenProps> = () => {
             Flaz<span className="gradient-text-premium">ly</span>
           </span>
           <div className="flex gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-bounce" style={{ animationDelay: '0s' }} />
-            <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-bounce" style={{ animationDelay: '0.2s' }} />
-            <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-bounce" style={{ animationDelay: '0.4s' }} />
+            <span className="w-1.5 h-1.5 rounded-full bg-brand animate-bounce" style={{ animationDelay: '0s' }} />
+            <span className="w-1.5 h-1.5 rounded-full bg-brand animate-bounce" style={{ animationDelay: '0.2s' }} />
+            <span className="w-1.5 h-1.5 rounded-full bg-brand animate-bounce" style={{ animationDelay: '0.4s' }} />
           </div>
         </div>
       </div>

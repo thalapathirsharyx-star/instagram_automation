@@ -230,7 +230,7 @@ const Login: React.FC = () => {
                 <input
                   type="text"
                   id="totpCode"
-                  className="w-full px-3 py-2 bg-white border border-zinc-200 rounded-full text-zinc-900 text-center font-mono tracking-widest focus:ring-2 focus:ring-[#4F39F6] focus:border-[#4F39F6] outline-none shadow-sm text-sm transition-all"
+                  className="w-full px-3 py-2 bg-white border border-zinc-200 rounded-full text-zinc-900 text-center font-mono tracking-widest focus:ring-2 focus:ring-[#4F39F6] focus:border-brand outline-none shadow-sm text-sm transition-all"
                   placeholder="000000"
                   value={totpCode}
                   onChange={(e) => setTotpCode(e.target.value)}
@@ -239,7 +239,7 @@ const Login: React.FC = () => {
                   autoFocus
                 />
               </div>
-              <button type="submit" className="w-full bg-[#4F39F6] hover:bg-purple-700 rounded-full py-2 font-bold text-xs text-white shadow-lg transition-all" disabled={isLoading}>
+              <button type="submit" className="w-full bg-brand hover:bg-brand rounded-full py-2 font-bold text-xs text-white shadow-lg transition-all" disabled={isLoading}>
                 {isLoading ? 'Verifying...' : 'Verify Code'}
               </button>
               <button type="button" onClick={() => { setIsPending2Fa(false); setMessage(null); }} className="w-full bg-zinc-100 hover:bg-zinc-200 text-zinc-700 rounded-full py-2 font-bold text-xs transition-all">
@@ -282,7 +282,7 @@ const Login: React.FC = () => {
                   <input
                     type="email"
                     id="email"
-                    className="w-full px-4 py-2 bg-white border border-zinc-200 rounded-full text-zinc-900 text-xs focus:ring-2 focus:ring-[#4F39F6] focus:border-[#4F39F6] outline-none transition-all duration-200 placeholder:text-zinc-400 shadow-sm"
+                    className="w-full px-4 py-2 bg-white border border-zinc-200 rounded-full text-zinc-900 text-xs focus:ring-2 focus:ring-[#4F39F6] focus:border-brand outline-none transition-all duration-200 placeholder:text-zinc-400 shadow-sm"
                     placeholder="mail@website.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
@@ -296,7 +296,7 @@ const Login: React.FC = () => {
                     <input
                       type={showPassword ? "text" : "password"}
                       id="password"
-                      className="w-full px-4 py-2 pr-10 bg-white border border-zinc-200 rounded-full text-zinc-900 text-xs focus:ring-2 focus:ring-[#4F39F6] focus:border-[#4F39F6] outline-none transition-all duration-200 placeholder:text-zinc-400 shadow-sm"
+                      className="w-full px-4 py-2 pr-10 bg-white border border-zinc-200 rounded-full text-zinc-900 text-xs focus:ring-2 focus:ring-[#4F39F6] focus:border-brand outline-none transition-all duration-200 placeholder:text-zinc-400 shadow-sm"
                       placeholder="Min. 8 character"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
@@ -304,7 +304,7 @@ const Login: React.FC = () => {
                     />
                     <button
                       type="button"
-                      className="absolute right-3.5 top-1/2 -translate-y-1/2 p-1 text-zinc-400 hover:text-purple-600 transition-colors"
+                      className="absolute right-3.5 top-1/2 -translate-y-1/2 p-1 text-zinc-400 hover:text-brand transition-colors"
                       onClick={() => setShowPassword(!showPassword)}
                     >
                       {showPassword ? <EyeOff size={14} /> : <Eye size={14} />}
@@ -315,14 +315,14 @@ const Login: React.FC = () => {
                 
                 <div className="flex items-center justify-between ml-1 mt-2 mb-1">
                   <div className="flex items-center gap-1.5">
-                    <input type="checkbox" id="remember" className="w-3.5 h-3.5 rounded text-[#4F39F6] border-zinc-300 focus:ring-[#4F39F6] accent-[#4F39F6] cursor-pointer" />
+                    <input type="checkbox" id="remember" className="w-3.5 h-3.5 rounded text-brand border-zinc-300 focus:ring-[#4F39F6] accent-[#4F39F6] cursor-pointer" />
                     <label htmlFor="remember" className="text-[10px] font-bold text-zinc-900 cursor-pointer">Remember me</label>
                   </div>
-                  <a href="#" className="text-[10px] font-bold text-[#4F39F6] hover:text-purple-700 transition-colors">Forget password?</a>
+                  <a href="#" className="text-[10px] font-bold text-brand hover:text-brand transition-colors">Forget password?</a>
                 </div>
                 
 
-                <button type="submit" className="w-full bg-[#4F39F6] hover:bg-purple-700 rounded-full py-2.5 font-bold text-xs text-white shadow-lg shadow-[#4F39F6]/20 transition-all duration-200" disabled={isLoading}>
+                <button type="submit" className="w-full bg-brand hover:bg-brand rounded-full py-2.5 font-bold text-xs text-white shadow-lg shadow-[#4F39F6]/20 transition-all duration-200" disabled={isLoading}>
                   {isLoading ? "Signing in..." : "Login"}
                 </button>
               </form>
@@ -331,7 +331,7 @@ const Login: React.FC = () => {
 
           <div className="mt-4 text-left">
             <p className="text-[11px] font-bold text-zinc-900">
-              Not registered yet? <Link to="/signup" className="text-[#4F39F6] hover:text-purple-700">Create an Account</Link>
+              Not registered yet? <Link to="/signup" className="text-brand hover:text-brand">Create an Account</Link>
             </p>
           </div>
 
@@ -342,7 +342,7 @@ const Login: React.FC = () => {
       </div>
 
       {/* RIGHT SIDE: GRAPHIC */}
-      <div className="hidden lg:flex w-[55%] h-full bg-[#4F39F6] relative overflow-hidden items-center justify-center flex-col shadow-2xl">
+      <div className="hidden lg:flex w-[55%] h-full bg-brand relative overflow-hidden items-center justify-center flex-col shadow-2xl">
         {/* Animation Keyframes */}
         <style dangerouslySetInnerHTML={{__html: `
           @keyframes floatY { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-12px); } }
@@ -403,7 +403,7 @@ const Login: React.FC = () => {
         </div>
 
         <div className="absolute top-[25%] right-[15%] bg-white rounded-xl p-3 shadow-2xl z-20 flex items-center gap-3 float-card-2">
-          <div className="w-8 h-8 rounded-full bg-indigo-50 flex items-center justify-center text-[#4F39F6]">
+          <div className="w-8 h-8 rounded-full bg-indigo-50 flex items-center justify-center text-brand">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
           </div>
           <div>
@@ -416,7 +416,7 @@ const Login: React.FC = () => {
         <div className="relative z-10 flex items-center justify-center gap-5 transform -translate-y-12">
           
           {/* Revenue Chart Widget */}
-          <div className="bg-white rounded-xl p-5 shadow-2xl w-[280px] border border-white/50 bg-clip-padding backdrop-filter relative float-card-1 slide-up-1">
+          <div className="bg-white rounded-xl p-5 shadow-2xl w-[280px] border border-zinc-2000 bg-clip-padding backdrop-filter relative float-card-1 slide-up-1">
             <h2 className="text-2xl font-extrabold text-zinc-900 tracking-tight count-pulse">14,208</h2>
             <p className="text-[9px] font-bold text-zinc-400 uppercase tracking-widest mb-4">Leads This Month</p>
             <div className="relative h-20 w-full flex items-end justify-between border-b border-zinc-100 pb-2">
@@ -429,7 +429,7 @@ const Login: React.FC = () => {
               </div>
             </div>
             <div className="flex justify-between text-[7px] font-bold text-zinc-400 uppercase mt-2 px-1">
-              <span>APR</span><span>MAY</span><span>JUN</span><span className="text-[#4F39F6]">JUL</span><span>AUG</span>
+              <span>APR</span><span>MAY</span><span>JUN</span><span className="text-brand">JUL</span><span>AUG</span>
             </div>
           </div>
 
@@ -439,9 +439,9 @@ const Login: React.FC = () => {
             <div className="flex flex-col items-center justify-center pb-1">
               <div className="relative w-14 h-14 mb-2.5">
                 {/* Radar ping effect */}
-                <div className="absolute inset-0 rounded-full border-[2px] border-[#4F39F6] ring-anim z-0"></div>
+                <div className="absolute inset-0 rounded-full border-[2px] border-brand ring-anim z-0"></div>
                 {/* Main circle */}
-                <div className="absolute inset-0 rounded-full border-[3px] border-[#4F39F6]/20 p-1 flex items-center justify-center bg-white z-10">
+                <div className="absolute inset-0 rounded-full border-[3px] border-brand/20 p-1 flex items-center justify-center bg-white z-10">
                   <div className="w-full h-full rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center text-white icon-bounce">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
                   </div>

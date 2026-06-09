@@ -30,7 +30,7 @@ const Features: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-xl text-muted-foreground mb-10 leading-relaxed max-w-2xl mx-auto"
+            className="text-xl text-zinc-500 mb-10 leading-relaxed max-w-2xl mx-auto"
           >
             From instant replies to AI-driven lead qualification—discover the tools that help you capture every opportunity without lifting a finger.
           </motion.p>
@@ -39,7 +39,7 @@ const Features: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
           >
-            <a href="https://app.flazly.com/signup" className="btn-premium-cta px-8 py-4 text-base font-bold rounded-xl shadow-[0_0_40px_rgba(225,48,108,0.4)]">
+            <a href="https://app.flazly.com/signup" className="btn-primary px-8 py-4 text-base font-bold rounded-xl shadow-[0_0_40px_rgba(225,48,108,0.4)]">
               Start Free Trial
             </a>
           </motion.div>
@@ -49,14 +49,14 @@ const Features: React.FC = () => {
         <section className="mb-32">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-extrabold mb-4">Engage users exactly where they are</h2>
-            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">Don't let warm leads go cold. Trigger automated conversational flows the moment someone interacts with your brand.</p>
+            <p className="text-zinc-500 text-lg max-w-2xl mx-auto">Don't let warm leads go cold. Trigger automated conversational flows the moment someone interacts with your brand.</p>
           </div>
           
           <div className="grid md:grid-cols-3 gap-8">
             {[
-              { title: "DM Automation", desc: "Reply instantly to any direct message with context-aware AI. Never leave a prospect waiting.", icon: <MessageCircle size={24} className="text-purple-400" /> },
-              { title: "Comment-to-DM", desc: "Automatically message users who comment specific keywords on your posts or Reels. Turn public engagement into private sales.", icon: <MessageCircle size={24} className="text-pink-400" /> },
-              { title: "Story Reply Triggers", desc: "Turn casual story reactions into qualified sales conversations the second they happen.", icon: <Zap size={24} className="text-amber-400" /> }
+              { title: "DM Automation", desc: "Reply instantly to any direct message with context-aware AI. Never leave a prospect waiting.", icon: <MessageCircle size={24} className="text-brand" /> },
+              { title: "Comment-to-DM", desc: "Automatically message users who comment specific keywords on your posts or Reels. Turn public engagement into private sales.", icon: <MessageCircle size={24} className="text-brand" /> },
+              { title: "Story Reply Triggers", desc: "Turn casual story reactions into qualified sales conversations the second they happen.", icon: <Zap size={24} className="text-warning" /> }
             ].map((feature, i) => (
               <motion.div 
                 key={i}
@@ -69,7 +69,7 @@ const Features: React.FC = () => {
                   {feature.icon}
                 </div>
                 <h3 className="text-xl font-bold mb-3">{feature.title}</h3>
-                <p className="text-muted-foreground leading-relaxed">{feature.desc}</p>
+                <p className="text-zinc-500 leading-relaxed">{feature.desc}</p>
               </motion.div>
             ))}
           </div>
@@ -81,13 +81,13 @@ const Features: React.FC = () => {
             <div className="grid md:grid-cols-2 gap-16 items-center">
               <div>
                 <h2 className="text-4xl font-extrabold mb-6">Identify Serious Buyers Automatically</h2>
-                <p className="text-muted-foreground text-lg leading-relaxed mb-8">
+                <p className="text-zinc-500 text-lg leading-relaxed mb-8">
                   Stop guessing who is ready to buy. Our AI engine engages users natively within Instagram, asks predefined qualifying questions, and uses intelligent Natural Language Processing (NLP) to extract their intent.
                   <br/><br/>
                   By the time you look at the chat, the prospect is already vetted, scored, and ready for a closing conversation.
                 </p>
                 <a href="https://app.flazly.com/signup" className="text-zinc-900 font-bold flex items-center gap-2 hover:gap-3 transition-all text-lg">
-                  See AI in Action <span className="text-pink-500">→</span>
+                  See AI in Action <span className="text-brand">→</span>
                 </a>
               </div>
               <div className="relative h-[400px] rounded-2xl bg-gradient-to-br from-[#1E293B] to-[#0F172A] border border-zinc-200 p-6 flex flex-col gap-4 shadow-2xl">
@@ -96,8 +96,8 @@ const Features: React.FC = () => {
                  <div className="self-end bg-zinc-100 px-4 py-3 rounded-2xl rounded-tr-sm text-sm max-w-[80%]">Agency. We have 10 clients.</div>
                  <div className="self-start bg-gradient-to-r from-purple-600 to-pink-600 px-4 py-3 rounded-2xl rounded-tl-sm text-sm max-w-[80%]">Perfect. What's the best email to send the agency curriculum to?</div>
                  <div className="absolute -right-6 top-1/2 bg-zinc-50 border border-zinc-200 p-4 rounded-xl shadow-xl animate-bounce">
-                    <div className="text-xs text-muted-foreground uppercase font-bold mb-1">Lead Extracted</div>
-                    <div className="font-bold flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-green-500"/> Agency Owner</div>
+                    <div className="text-xs text-zinc-500 uppercase font-bold mb-1">Lead Extracted</div>
+                    <div className="font-bold flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-success"/> Agency Owner</div>
                  </div>
               </div>
             </div>
@@ -114,20 +114,20 @@ const Features: React.FC = () => {
               <h3 className="text-2xl font-bold text-rose-400 mb-6">Manual Workflow</h3>
               <ul className="space-y-4">
                 {["Hours wasted typing repetitive answers", "Leads lost in hidden request folders", "Zero scalable data extraction", "Delayed response times killing conversions"].map((item, i) => (
-                  <li key={i} className="flex items-start gap-3 text-muted-foreground">
+                  <li key={i} className="flex items-start gap-3 text-zinc-500">
                     <X className="text-destructive shrink-0 mt-1" size={18} />
                     <span>{item}</span>
                   </li>
                 ))}
               </ul>
             </div>
-            <div className="bg-gradient-to-br from-purple-500/10 to-pink-500/10 border border-pink-500/20 p-10 rounded-3xl relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-pink-500/20 blur-3xl rounded-full" />
+            <div className="bg-gradient-to-br from-purple-500/10 to-pink-500/10 border border-brand/20 p-10 rounded-3xl relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-brand/20 blur-3xl rounded-full" />
               <h3 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400 mb-6">Flazly Workflow</h3>
               <ul className="space-y-4">
                 {["Instant, contextual replies 24/7", "AI automatically extracts emails and phones", "Leads synced directly to a searchable CRM", "Zero manual effort until lead is qualified"].map((item, i) => (
                   <li key={i} className="flex items-start gap-3 text-zinc-700">
-                    <ShieldCheck className="text-pink-400 shrink-0 mt-1" size={18} />
+                    <ShieldCheck className="text-brand shrink-0 mt-1" size={18} />
                     <span>{item}</span>
                   </li>
                 ))}

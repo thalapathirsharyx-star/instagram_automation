@@ -17,7 +17,7 @@ import { createPortal } from 'react-dom';
 const InputHandle = () => (
   <Handle type="target" position={Position.Top} className="w-4 h-4 bg-slate-400 dark:bg-zinc-500 border-2 border-white dark:border-zinc-900" />
 );
-const OutputHandle = ({ colorClass = 'bg-purple-500' }: { colorClass?: string }) => (
+const OutputHandle = ({ colorClass = 'bg-brand' }: { colorClass?: string }) => (
   <Handle type="source" position={Position.Bottom} className={`w-4 h-4 ${colorClass} border-2 border-white dark:border-zinc-900`} />
 );
 
@@ -35,7 +35,7 @@ const TriggerNode = ({ data, isConnectable }: any) => (
         placeholder="Trigger Name..."
       />
       <input 
-        className="w-full bg-slate-50 dark:bg-zinc-950/50 border border-slate-200 dark:border-white/5 rounded-lg px-3 py-2 text-xs text-slate-700 dark:text-zinc-300 focus:outline-none focus:ring-1 focus:ring-sky-500/50"
+        className="w-full bg-slate-50 dark:bg-[#09090B]/50 border border-slate-200 dark:border-zinc-200 rounded-lg px-3 py-2 text-xs text-slate-700 dark:text-zinc-300 focus:outline-none focus:ring-1 focus:ring-sky-500/50"
         value={data.value}
         onChange={(e) => data.onChange(data.id, 'value', e.target.value)}
         placeholder="Type keyword to match..."
@@ -46,11 +46,11 @@ const TriggerNode = ({ data, isConnectable }: any) => (
 );
 
 const ActionNode = ({ data, isConnectable }: any) => (
-  <div className="bg-white dark:bg-primary border-2 border-purple-400/50 rounded-xl shadow-lg w-72">
+  <div className="bg-white dark:bg-primary border-2 border-brand/50 rounded-xl shadow-lg w-72">
     <InputHandle />
-    <div className="bg-purple-500/10 px-4 py-2 rounded-t-lg border-b border-purple-500/20 flex items-center gap-2">
-      <Zap size={14} className="text-purple-500" />
-      <span className="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider">Action</span>
+    <div className="bg-brand/10 px-4 py-2 rounded-t-lg border-b border-brand/20 flex items-center gap-2">
+      <Zap size={14} className="text-brand" />
+      <span className="text-xs font-bold text-brand dark:text-brand uppercase tracking-wider">Action</span>
     </div>
     <div className="p-4 flex flex-col gap-3">
       <input 
@@ -60,22 +60,22 @@ const ActionNode = ({ data, isConnectable }: any) => (
         placeholder="Action Name..."
       />
       <textarea 
-        className="w-full bg-slate-50 dark:bg-zinc-950/50 border border-slate-200 dark:border-white/5 rounded-lg px-3 py-2 text-xs text-slate-700 dark:text-zinc-300 focus:outline-none focus:ring-1 focus:ring-purple-500/50 min-h-[60px]"
+        className="w-full bg-slate-50 dark:bg-[#09090B]/50 border border-slate-200 dark:border-zinc-200 rounded-lg px-3 py-2 text-xs text-slate-700 dark:text-zinc-300 focus:outline-none focus:ring-1 focus:ring-purple-500/50 min-h-[60px]"
         value={data.value}
         onChange={(e) => data.onChange(data.id, 'value', e.target.value)}
         placeholder="What should the AI say or send?"
       />
     </div>
-    <OutputHandle colorClass="bg-purple-500" />
+    <OutputHandle colorClass="bg-brand" />
   </div>
 );
 
 const ConditionNode = ({ data, isConnectable }: any) => (
   <div className="bg-white dark:bg-primary border-2 border-amber-400/50 rounded-xl shadow-lg w-72">
     <InputHandle />
-    <div className="bg-amber-500/10 px-4 py-2 rounded-t-lg border-b border-amber-500/20 flex items-center gap-2">
-      <HelpCircle size={14} className="text-amber-500" />
-      <span className="text-xs font-bold text-amber-400 dark:text-amber-400 uppercase tracking-wider">Condition</span>
+    <div className="bg-warning/10 px-4 py-2 rounded-t-lg border-b border-amber-500/20 flex items-center gap-2">
+      <HelpCircle size={14} className="text-warning" />
+      <span className="text-xs font-bold text-warning dark:text-warning uppercase tracking-wider">Condition</span>
     </div>
     <div className="p-4 flex flex-col gap-3">
       <input 
@@ -85,13 +85,13 @@ const ConditionNode = ({ data, isConnectable }: any) => (
         placeholder="Condition Name..."
       />
       <input 
-        className="w-full bg-slate-50 dark:bg-zinc-950/50 border border-slate-200 dark:border-white/5 rounded-lg px-3 py-2 text-xs text-slate-700 dark:text-zinc-300 focus:outline-none focus:ring-1 focus:ring-amber-500/50"
+        className="w-full bg-slate-50 dark:bg-[#09090B]/50 border border-slate-200 dark:border-zinc-200 rounded-lg px-3 py-2 text-xs text-slate-700 dark:text-zinc-300 focus:outline-none focus:ring-1 focus:ring-amber-500/50"
         value={data.value}
         onChange={(e) => data.onChange(data.id, 'value', e.target.value)}
         placeholder="e.g. Check if business hours"
       />
     </div>
-    <OutputHandle colorClass="bg-amber-500" />
+    <OutputHandle colorClass="bg-warning" />
   </div>
 );
 
@@ -99,8 +99,8 @@ const DelayNode = ({ data, isConnectable }: any) => (
   <div className="bg-white dark:bg-primary border-2 border-slate-400/50 rounded-xl shadow-lg w-72">
     <InputHandle />
     <div className="bg-slate-500/10 px-4 py-2 rounded-t-lg border-b border-slate-500/20 flex items-center gap-2">
-      <Clock size={14} className="text-slate-500" />
-      <span className="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider">Delay</span>
+      <Clock size={14} className="text-zinc-500" />
+      <span className="text-xs font-bold text-slate-600 dark:text-zinc-500 uppercase tracking-wider">Delay</span>
     </div>
     <div className="p-4 flex flex-col gap-3">
       <input 
@@ -110,7 +110,7 @@ const DelayNode = ({ data, isConnectable }: any) => (
         placeholder="Delay Name..."
       />
       <input 
-        className="w-full bg-slate-50 dark:bg-zinc-950/50 border border-slate-200 dark:border-white/5 rounded-lg px-3 py-2 text-xs text-slate-700 dark:text-zinc-300 focus:outline-none focus:ring-1 focus:ring-slate-500/50"
+        className="w-full bg-slate-50 dark:bg-[#09090B]/50 border border-slate-200 dark:border-zinc-200 rounded-lg px-3 py-2 text-xs text-slate-700 dark:text-zinc-300 focus:outline-none focus:ring-1 focus:ring-slate-500/50"
         value={data.value}
         onChange={(e) => data.onChange(data.id, 'value', e.target.value)}
         placeholder="e.g. 15 minutes, 2 hours"
@@ -231,36 +231,36 @@ export default function PlaybookCanvas({ initialSteps, onClose, onSave }: Playbo
 
   const content = (
     <div className="fixed inset-0 z-[9999] flex flex-col bg-slate-100 dark:bg-[#0c0a10]">
-      <div className="h-16 bg-white dark:bg-primary border-b border-slate-200 dark:border-white/5 flex items-center justify-between px-6 shrink-0 shadow-sm relative z-10 w-full">
+      <div className="h-16 bg-white dark:bg-primary border-b border-slate-200 dark:border-zinc-200 flex items-center justify-between px-6 shrink-0 shadow-sm relative z-10 w-full">
         <div className="flex items-center gap-4">
           <button onClick={onClose} className="p-2 hover:bg-slate-100 dark:hover:bg-white/5 rounded-full transition-colors cursor-pointer">
-            <X size={20} className="text-slate-500 dark:text-muted-foreground" />
+            <X size={20} className="text-zinc-500 dark:text-zinc-500" />
           </button>
           <div>
             <h2 className="text-lg font-bold text-slate-800 dark:text-zinc-100 flex items-center gap-2">
-              <Activity size={18} className="text-purple-500" /> Visual Playbook Builder
+              <Activity size={18} className="text-brand" /> Visual Playbook Builder
             </h2>
-            <p className="text-xs text-slate-500 dark:text-muted-foreground">Drag & drop nodes to map your automation</p>
+            <p className="text-xs text-zinc-500 dark:text-zinc-500">Drag & drop nodes to map your automation</p>
           </div>
         </div>
         
         <div className="flex items-center gap-4">
-          <div className="flex bg-slate-100 dark:bg-zinc-950 p-1 rounded-xl border border-slate-200 dark:border-white/5">
+          <div className="flex bg-slate-100 dark:bg-[#09090B] p-1 rounded-xl border border-slate-200 dark:border-zinc-200">
             <button onClick={() => addNode('trigger')} className="px-3 py-1.5 text-xs font-semibold text-sky-600 dark:text-sky-400 hover:bg-white dark:hover:bg-white/5 rounded-lg transition-colors flex items-center gap-1">
               <Plus size={14} /> Trigger
             </button>
-            <button onClick={() => addNode('condition')} className="px-3 py-1.5 text-xs font-semibold text-amber-400 dark:text-amber-400 hover:bg-white dark:hover:bg-white/5 rounded-lg transition-colors flex items-center gap-1">
+            <button onClick={() => addNode('condition')} className="px-3 py-1.5 text-xs font-semibold text-warning dark:text-warning hover:bg-white dark:hover:bg-white/5 rounded-lg transition-colors flex items-center gap-1">
               <Plus size={14} /> Condition
             </button>
-            <button onClick={() => addNode('action')} className="px-3 py-1.5 text-xs font-semibold text-purple-600 dark:text-purple-400 hover:bg-white dark:hover:bg-white/5 rounded-lg transition-colors flex items-center gap-1">
+            <button onClick={() => addNode('action')} className="px-3 py-1.5 text-xs font-semibold text-brand dark:text-brand hover:bg-white dark:hover:bg-white/5 rounded-lg transition-colors flex items-center gap-1">
               <Plus size={14} /> Action
             </button>
-            <button onClick={() => addNode('delay')} className="px-3 py-1.5 text-xs font-semibold text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-white/5 rounded-lg transition-colors flex items-center gap-1">
+            <button onClick={() => addNode('delay')} className="px-3 py-1.5 text-xs font-semibold text-slate-600 dark:text-zinc-500 hover:bg-white dark:hover:bg-white/5 rounded-lg transition-colors flex items-center gap-1">
               <Plus size={14} /> Delay
             </button>
           </div>
           
-          <button onClick={handleSave} className="w3-button-primary px-6 h-10 shadow-glow-purple flex items-center">
+          <button onClick={handleSave} className="btn-primary px-6 h-10 shadow-glow-purple flex items-center">
             <Save size={16} />
             <span className="ml-2">Save Flow</span>
           </button>
@@ -280,7 +280,7 @@ export default function PlaybookCanvas({ initialSteps, onClose, onSave }: Playbo
         >
           <Background color="#a1a1aa" gap={16} size={1} />
           <Controls className="bg-white dark:bg-primary border-none shadow-lg fill-slate-700 dark:fill-zinc-300" />
-          <MiniMap className="bg-white dark:bg-primary border border-slate-200 dark:border-white/10 shadow-lg" maskColor="rgba(0,0,0,0.1)" />
+          <MiniMap className="bg-white dark:bg-primary border border-slate-200 dark:border-zinc-200 shadow-lg" maskColor="rgba(0,0,0,0.1)" />
         </ReactFlow>
       </div>
     </div>

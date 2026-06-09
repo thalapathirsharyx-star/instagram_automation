@@ -6,223 +6,106 @@
 @plugin "tailwindcss-animate";
 
 @theme {
-  --color-background: hsl(var(--background));
-  --color-foreground: hsl(var(--foreground));
-  --color-card: hsl(var(--card));
-  --color-card-foreground: hsl(var(--card-foreground));
-  --color-border: hsl(var(--border));
-  --color-primary: hsl(var(--primary));
-  --color-primary-foreground: hsl(var(--primary-foreground));
-  --color-secondary: hsl(var(--secondary));
-  --color-secondary-foreground: hsl(var(--secondary-foreground));
-  --color-muted: hsl(var(--muted));
-  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-brand: #4F39F6;
+  --color-brand-accent: #38BDF8;
+  --color-success: #10B981;
+  --color-warning: #F59E0B;
+  --color-danger: #EF4444;
+  --color-info: #38BDF8;
   
-  --color-brand-purple: var(--brand-purple);
-  --color-brand-indigo: var(--brand-indigo);
+  --color-background: #FAFAFA;
+  --color-surface: #FFFFFF;
+  --color-border: #E4E4E7;
+  
+  --color-text-primary: #18181B;
+  --color-text-secondary: #52525B;
+
   --font-inter: "Inter", sans-serif;
   --font-sans: "Inter", sans-serif;
-  --font-outfit: "Inter", sans-serif;
   --font-display: "Inter", sans-serif;
+  
+  --radius: 12px;
 }
 
 @layer base {
-  
-:root {
-  --background: 230 100% 99%;
-  --foreground: 224 71% 4%;
-  --card: 0 0% 100%;
-  --card-foreground: 220 14% 20%;
-  --popover: 0 0% 100%;
-  --popover-foreground: 224 71% 4%;
-  --primary: 262 83% 58%;
-  --primary-foreground: 0 0% 100%;
-  --secondary: 210 40% 96.1%;
-  --secondary-foreground: 222.2 47.4% 11.2%;
-  --muted: 210 40% 96.1%;
-  --muted-foreground: 215.4 16.3% 46.9%;
-  --accent: 210 40% 96.1%;
-  --accent-foreground: 222.2 47.4% 11.2%;
-  --destructive: 0 84.2% 60.2%;
-  --destructive-foreground: 210 40% 98%;
-  --border: 220 14% 92%;
-  --input: 220 14% 92%;
-  --ring: 262 83% 58%;
-  --radius: 12px;
-  --glass-border: rgba(0, 0, 0, 0.06);
-}
-
+  :root {
+    --background: #FAFAFA;
+    --foreground: #18181B;
+    --border: #E4E4E7;
+  }
 
   * {
     @apply border-border;
   }
 
-  button, input, select, textarea {
-    font-family: inherit;
-  }
-
-  button {
-    cursor: pointer;
-  }
-
   body {
-    @apply bg-background text-foreground font-inter antialiased m-0 p-0 selection:bg-primary/30 selection:text-primary;
-    display: block;
-    min-width: 100%;
-    overflow-x: hidden;
-    line-height: 1.5;
+    @apply bg-background text-text-primary font-inter antialiased m-0 p-0 selection:bg-brand/30 selection:text-brand;
   }
 
-  h1, h2, h3, h4, h5, h6 {
-    letter-spacing: -0.02em;
-    font-weight: 800;
+  /* Form Elements */
+  input, textarea, select {
+    @apply bg-surface border border-zinc-200 rounded-lg px-3 py-2 text-text-primary outline-none transition-all;
   }
-
-  #root {
-    width: 100%;
-    margin: 0;
-    padding: 0;
-    max-width: none;
-    text-align: left;
+  
+  input:hover, textarea:hover, select:hover {
+    @apply border-zinc-300;
+  }
+  
+  input:focus, textarea:focus, select:focus {
+    @apply border-brand ring-2 ring-brand/20;
   }
 }
 
-/* Premium Neutral Component Utilities */
-.w3-card {
-  background: var(--card);
-  border-radius: 12px;
-  border: 1px solid var(--border);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-  padding: 24px;
-  transition: all 0.2s ease-out;
-  position: relative;
-  overflow: hidden;
-}
-
-.w3-card:hover {
-  transform: translateY(-1px);
-  border-color: rgba(255, 255, 255, 0.15);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.w3-button-primary {
-  background: var(--primary);
-  color: var(--primary-foreground);
-  padding: 8px 16px;
-  border-radius: 8px;
-  font-weight: 500;
-  font-size: 14px;
-  transition: all 0.15s ease-out;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  border: 1px solid transparent;
-  cursor: pointer;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-}
-
-.w3-button-primary:hover {
-  background: rgba(255, 255, 255, 0.9);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.w3-input {
-  background: var(--background);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 8px 12px;
-  font-family: inherit;
-  font-size: 14px;
-  color: var(--foreground);
-  outline: none;
-  transition: all 0.15s ease;
-}
-
-/* Premium Marketing Buttons */
-.btn-premium-cta {
-  background: linear-gradient(to right, #4F39F6, #38BDF8);
-  color: white;
-  border-radius: 9999px;
-  border: none;
-  box-shadow: 0 4px 14px 0 rgba(79, 57, 246, 0.39);
-  transition: all 0.2s ease-in-out;
-}
-
-.btn-premium-cta:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(79, 57, 246, 0.5);
-}
-
-.w3-input:focus {
-  border-color: var(--ring);
-  box-shadow: 0 0 0 1px var(--ring);
-}
-
-.w3-badge-primary {
-  background: rgba(139, 92, 246, 0.15);
-  color: #a78bfa;
-  padding: 4px 10px;
-  border-radius: 8px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  border: 1px solid rgba(139, 92, 246, 0.3);
-}
-
-/* Animations */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes pulse-glow {
-  0%, 100% { opacity: 0.5; transform: scale(1); }
-  50% { opacity: 0.8; transform: scale(1.05); }
-}
-
-@keyframes float {
-  0% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
-  100% { transform: translateY(0px); }
-}
-
-.dashboard-page, .leads-page, .settings-page {
-  animation: fadeIn 0.5s ease-out;
-}
-
-/* Premium AI SaaS Backdrop Animations & Classes */
-  :root {
-    --background: 0 0% 100%;
-    --foreground: 0 0% 3.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 3.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 3.9%;
-    --primary: 0 0% 9%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 0 0% 96.1%;
-    --secondary-foreground: 0 0% 9%;
-    --muted: 0 0% 96.1%;
-    --muted-foreground: 0 0% 45.1%;
-    --accent: 0 0% 96.1%;
-    --accent-foreground: 0 0% 9%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 89.8%;
-    --input: 0 0% 89.8%;
-    --ring: 0 0% 3.9%;
-    --radius: 12px;
-    
-    /* Dynamic Brand Variables */
-    --brand-purple: #4F39F6;
-    --brand-indigo: #8B5CF6;
-
-    /* Premium AI Theme specifics */
-    --ai-gradient-start: #4F39F6;
-    --ai-gradient-end: #38BDF8;
-    --ai-glow: rgba(79, 57, 246, 0.25);
+@layer components {
+  /* Button System */
+  .btn-primary {
+    background: linear-gradient(to right, #4F39F6, #38BDF8);
+    @apply text-white px-4 py-2 rounded-lg font-medium transition-all shadow-sm hover:shadow-md hover:-translate-y-[1px] border-none flex items-center justify-center gap-2;
   }
+  
+  .btn-secondary {
+    @apply bg-[#09090B] text-white px-4 py-2 rounded-lg font-medium transition-all shadow-sm hover:bg-[#18181B] border-none flex items-center justify-center gap-2;
+  }
+  
+  .btn-outline {
+    @apply bg-transparent border border-[#E4E4E7] text-[#18181B] px-4 py-2 rounded-lg font-medium transition-all hover:bg-zinc-50 flex items-center justify-center gap-2;
+  }
+  
+  .btn-success {
+    @apply bg-success text-white px-4 py-2 rounded-lg font-medium transition-all hover:opacity-90 border-none flex items-center justify-center gap-2;
+  }
+  
+  .btn-danger {
+    @apply bg-danger text-white px-4 py-2 rounded-lg font-medium transition-all hover:opacity-90 border-none flex items-center justify-center gap-2;
+  }
+
+  /* Card System */
+  .card-standard {
+    @apply bg-surface border border-[#E4E4E7] rounded-xl p-6 shadow-sm transition-all;
+  }
+  
+  .card-analytics {
+    @apply bg-surface border border-[#E4E4E7] rounded-xl p-6 shadow-sm transition-all;
+    background: linear-gradient(180deg, rgba(79,57,246,0.03), transparent), #FFFFFF;
+  }
+  
+  /* Sidebar System */
+  .sidebar-item {
+    @apply flex items-center gap-3 px-4 py-2.5 rounded-lg text-zinc-500 font-medium transition-all border-l-4 border-transparent;
+  }
+  
+  .sidebar-item:hover {
+    @apply text-zinc-900 bg-zinc-100;
+  }
+  
+  .sidebar-item.active {
+    @apply bg-brand/12 border-l-brand text-zinc-900;
+  }
+  
+  .sidebar-item.active svg {
+    @apply text-brand;
+  }
+}
 
 .hero-line-grid {
   background-size: 40px 40px;

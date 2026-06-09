@@ -113,7 +113,7 @@ const PricingPage: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-xl text-muted-foreground mb-10"
+            className="text-xl text-zinc-500 mb-10"
           >
             Start for free. Upgrade when the AI starts making you money. Transparent limits, no hidden fees.
           </motion.p>
@@ -130,7 +130,7 @@ const PricingPage: React.FC = () => {
                 transition={{ delay: 0.1 * i }}
                 className={`relative bg-white border rounded-[32px] p-8 ${
                   plan.popular 
-                    ? 'border-purple-500 shadow-[0_0_40px_rgba(168,85,247,0.15)] lg:-translate-y-4' 
+                    ? 'border-brand shadow-[0_0_40px_rgba(168,85,247,0.15)] lg:-translate-y-4' 
                     : 'border-zinc-200 hover:border-zinc-200'
                 }`}
               >
@@ -141,27 +141,27 @@ const PricingPage: React.FC = () => {
                 )}
                 <div className="mb-8">
                   <h3 className="text-2xl font-bold mb-2">{plan.name}</h3>
-                  <p className="text-muted-foreground text-sm h-10">{plan.desc}</p>
+                  <p className="text-zinc-500 text-sm h-10">{plan.desc}</p>
                 </div>
                 <div className="mb-8 flex items-end gap-1">
                   <span className="text-4xl font-extrabold">₹{plan.price}</span>
-                  <span className="text-muted-foreground font-medium mb-1">/mo</span>
+                  <span className="text-zinc-500 font-medium mb-1">/mo</span>
                 </div>
                 <a 
                   href="https://app.flazly.com/signup" 
                   className={`block w-full text-center py-3.5 rounded-xl font-bold transition-all mb-8 ${
                     plan.popular 
-                      ? 'btn-premium-cta text-zinc-900' 
+                      ? 'btn-primary text-zinc-900' 
                       : 'bg-zinc-50 hover:bg-white/10 text-zinc-900 border border-zinc-200'
                   }`}
                 >
                   {plan.cta}
                 </a>
                 <div className="space-y-4">
-                  <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-4">What's included</p>
+                  <p className="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-4">What's included</p>
                   {plan.features.map((feature, idx) => (
                     <div key={idx} className="flex items-start gap-3">
-                      <Check size={18} className={plan.popular ? "text-pink-500" : "text-muted-foreground"} />
+                      <Check size={18} className={plan.popular ? "text-brand" : "text-zinc-500"} />
                       <span className="text-sm text-zinc-600">{feature}</span>
                     </div>
                   ))}
@@ -178,17 +178,17 @@ const PricingPage: React.FC = () => {
             <div className="grid md:grid-cols-2 gap-10">
               <div>
                 <h3 className="text-xl font-bold mb-3 flex items-center gap-2">
-                  <HelpCircle size={20} className="text-purple-400" /> What counts as an Active Contact?
+                  <HelpCircle size={20} className="text-brand" /> What counts as an Active Contact?
                 </h3>
-                <p className="text-muted-foreground leading-relaxed">
+                <p className="text-zinc-500 leading-relaxed">
                   An active contact is a unique Instagram user who interacts with your bot during the current billing cycle. If the same user messages you multiple times in a month, they only count as one active contact.
                 </p>
               </div>
               <div>
                 <h3 className="text-xl font-bold mb-3 flex items-center gap-2">
-                  <HelpCircle size={20} className="text-pink-400" /> What counts as an AI Message?
+                  <HelpCircle size={20} className="text-brand" /> What counts as an AI Message?
                 </h3>
-                <p className="text-muted-foreground leading-relaxed">
+                <p className="text-zinc-500 leading-relaxed">
                   Any automated response generated and sent by Flazly on your behalf counts toward your AI message limit.
                 </p>
               </div>
@@ -203,7 +203,7 @@ const PricingPage: React.FC = () => {
             {faqs.map((faq, i) => (
               <div key={i} className="bg-white border border-zinc-200 p-6 rounded-2xl">
                 <h3 className="text-lg font-bold mb-2 text-zinc-900">{faq.q}</h3>
-                <p className="text-muted-foreground">{faq.a}</p>
+                <p className="text-zinc-500">{faq.a}</p>
               </div>
             ))}
           </div>

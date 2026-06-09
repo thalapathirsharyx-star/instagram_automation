@@ -16,7 +16,7 @@ const Sidebar: React.FC = () => {
           <img src="/Dark theme.png" alt="Flazly Logo" className="hidden dark:block w-11 h-11 object-contain transition-transform duration-300 hover:scale-105" />
           <img src="/Light Theme.png" alt="Flazly Logo" className="block dark:hidden w-11 h-11 object-contain transition-transform duration-300 hover:scale-105" />
           <span className="logo-text text-lg font-extrabold tracking-tight uppercase font-inter">
-            <span className="logo-text-primary text-foreground dark:text-primary-foreground">Flaz</span><span className="text-logo-gradient">ly</span>
+            <span className="logo-text-primary text-zinc-900">Flaz</span><span className="text-logo-gradient">ly</span>
           </span>
         </div>
         <button 
@@ -32,7 +32,7 @@ const Sidebar: React.FC = () => {
         {user?.roleCode === 'SUPER_ADMIN' ? (
           <>
             {/* Super Admin Group */}
-            {!isCollapsed && <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-4 mt-4 mb-2">Overview</div>}
+            {!isCollapsed && <div className="text-xs font-semibold text-zinc-500 uppercase tracking-wider px-4 mt-4 mb-2">Overview</div>}
             <NavLink to="/admin/dashboard" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
               <LayoutDashboard size={20} />
               <span>Dashboard</span>
@@ -46,7 +46,7 @@ const Sidebar: React.FC = () => {
               <span>Activity Log</span>
             </NavLink>
 
-            {!isCollapsed && <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-4 mt-4 mb-2">Management</div>}
+            {!isCollapsed && <div className="text-xs font-semibold text-zinc-500 uppercase tracking-wider px-4 mt-4 mb-2">Management</div>}
             <NavLink to="/admin/clients" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
               <Users size={20} />
               <span>Clients</span>
@@ -71,7 +71,7 @@ const Sidebar: React.FC = () => {
         ) : (
           <>
             {/* General Group */}
-            {!isCollapsed && <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-4 mt-2 mb-2">General</div>}
+            {!isCollapsed && <div className="text-xs font-semibold text-zinc-500 uppercase tracking-wider px-4 mt-2 mb-2">General</div>}
             <NavLink to="/dashboard" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
               <LayoutDashboard size={20} />
               <span>Dashboard</span>
@@ -86,7 +86,7 @@ const Sidebar: React.FC = () => {
             </NavLink>
 
             {/* Automation Group */}
-            {!isCollapsed && <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-4 mt-4 mb-2">Automation</div>}
+            {!isCollapsed && <div className="text-xs font-semibold text-zinc-500 uppercase tracking-wider px-4 mt-4 mb-2">Automation</div>}
             <NavLink to="/knowledge" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
               <Book size={20} />
               <span>Brain Base</span>
@@ -101,17 +101,17 @@ const Sidebar: React.FC = () => {
             </NavLink>
             {/* <NavLink to="/broadcasts" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
               <Radio size={20} />
-              <span>Broadcasts {!hasProPlan && <Lock size={12} className="inline ml-1 text-muted-foreground" />}</span>
+              <span>Broadcasts {!hasProPlan && <Lock size={12} className="inline ml-1 text-zinc-500" />}</span>
             </NavLink> */}
             {user?.roleCode === 'CLIENT_ADMIN' && (
               <>
                 <NavLink to="/ai-settings" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
                   <Sparkles size={20} />
-                  <span>AI Persona {!hasProPlan && <Lock size={12} className="inline ml-1 text-muted-foreground" />}</span>
+                  <span>AI Persona {!hasProPlan && <Lock size={12} className="inline ml-1 text-zinc-500" />}</span>
                 </NavLink>
 
                 {/* Admin Group */}
-                {!isCollapsed && <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-4 mt-4 mb-2">Admin</div>}
+                {!isCollapsed && <div className="text-xs font-semibold text-zinc-500 uppercase tracking-wider px-4 mt-4 mb-2">Admin</div>}
                 <NavLink to="/team" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
                   <Users size={20} />
                   <span>Team</span>

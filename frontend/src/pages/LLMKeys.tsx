@@ -63,8 +63,8 @@ const LLMKeys: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="flex h-full min-h-[500px] items-center justify-center text-muted-foreground font-medium">
-        <Loader2 size={24} className="animate-spin mr-3 text-muted-foreground" /> Initializing AI Infrastructure...
+      <div className="flex h-full min-h-[500px] items-center justify-center text-zinc-500 font-medium">
+        <Loader2 size={24} className="animate-spin mr-3 text-zinc-500" /> Initializing AI Infrastructure...
       </div>
     );
   }
@@ -81,7 +81,7 @@ const LLMKeys: React.FC = () => {
             key={t.id} 
             className={`pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-xl shadow-lg border transition-all duration-300 ${
               t.type === 'success' 
-                ? 'bg-primary border-primary text-primary-foreground' 
+                ? 'bg-primary border-primary text-zinc-900' 
                 : 'bg-card border-destructive/20 text-destructive shadow-rose-100/50'
             }`}
             style={{ animation: 'slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1)' }}
@@ -102,7 +102,7 @@ const LLMKeys: React.FC = () => {
       {/* Header Section */}
       <div className="mb-8">
         <h2 className="text-3xl font-bold tracking-tight">AI Infrastructure</h2>
-        <p className="text-sm text-muted-foreground max-w-2xl leading-relaxed">
+        <p className="text-sm text-zinc-500 max-w-2xl leading-relaxed">
           Manage the AI providers powering Flazly's automation, lead qualification, customer conversations, and autonomous AI agents.
         </p>
       </div>
@@ -110,14 +110,14 @@ const LLMKeys: React.FC = () => {
       {/* Metrics Row */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         <div className="bg-card border border-border rounded-2xl p-5 shadow-sm">
-          <div className="flex items-center gap-2 text-muted-foreground text-xs font-semibold uppercase tracking-wider mb-3">
+          <div className="flex items-center gap-2 text-zinc-500 text-xs font-semibold uppercase tracking-wider mb-3">
             <Server size={14} /> Connected Providers
           </div>
-          <div className="text-2xl font-bold text-foreground">{connectedCount} <span className="text-sm font-medium text-muted-foreground">/ 3</span></div>
+          <div className="text-2xl font-bold text-foreground">{connectedCount} <span className="text-sm font-medium text-zinc-500">/ 3</span></div>
         </div>
         
         <div className="bg-card border border-border rounded-2xl p-5 shadow-sm">
-          <div className="flex items-center gap-2 text-muted-foreground text-xs font-semibold uppercase tracking-wider mb-3">
+          <div className="flex items-center gap-2 text-zinc-500 text-xs font-semibold uppercase tracking-wider mb-3">
             <Zap size={14} /> Active Engine
           </div>
           <div className="text-2xl font-bold text-foreground capitalize">
@@ -126,7 +126,7 @@ const LLMKeys: React.FC = () => {
         </div>
 
         <div className="bg-card border border-border rounded-2xl p-5 shadow-sm">
-          <div className="flex items-center gap-2 text-muted-foreground text-xs font-semibold uppercase tracking-wider mb-3">
+          <div className="flex items-center gap-2 text-zinc-500 text-xs font-semibold uppercase tracking-wider mb-3">
             <ShieldCheck size={14} /> System Health
           </div>
           <div className="flex items-center gap-2 text-2xl font-bold text-emerald-400">
@@ -136,7 +136,7 @@ const LLMKeys: React.FC = () => {
         </div>
 
         <div className="bg-card border border-border rounded-2xl p-5 shadow-sm">
-          <div className="flex items-center gap-2 text-muted-foreground text-xs font-semibold uppercase tracking-wider mb-3">
+          <div className="flex items-center gap-2 text-zinc-500 text-xs font-semibold uppercase tracking-wider mb-3">
             <Activity size={14} /> Requests Today
           </div>
           <div className="text-2xl font-bold text-foreground">4,231</div>
@@ -145,7 +145,7 @@ const LLMKeys: React.FC = () => {
 
       {/* Active Provider Highlight */}
       <div className="bg-card border border-border rounded-2xl p-6 lg:p-8 shadow-sm mb-8 relative overflow-hidden group hover:border-primary/20 transition-colors">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-violet-500/5 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none transition-opacity duration-700 opacity-50 group-hover:opacity-100"></div>
+        <div className="absolute top-0 right-0 w-96 h-96 bg-brand/5 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none transition-opacity duration-700 opacity-50 group-hover:opacity-100"></div>
         
         <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-8 relative z-10">
           <div>
@@ -157,15 +157,15 @@ const LLMKeys: React.FC = () => {
             <h2 className="text-3xl font-extrabold text-foreground mb-2 tracking-tight">
               {keys.active_provider === 'openai' ? 'OpenAI GPT-4' : keys.active_provider === 'gemini' ? 'Google Gemini Pro' : 'Groq Llama-3'}
             </h2>
-            <p className="text-sm text-muted-foreground max-w-lg leading-relaxed">
+            <p className="text-sm text-zinc-500 max-w-lg leading-relaxed">
               Currently intercepting and processing all live user requests. This engine is highly integrated with the platform's core automation loop.
             </p>
             
             <div className="mt-8">
-              <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3 block">Currently Powering</span>
+              <span className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-3 block">Currently Powering</span>
               <div className="grid grid-cols-2 gap-y-3 gap-x-6">
                 {['AI Chat Agents', 'Instagram DM Automation', 'Lead Qualification', 'CRM Sync Workflows'].map(module => (
-                  <div key={module} className="flex items-center gap-2.5 text-sm text-muted-foreground font-medium">
+                  <div key={module} className="flex items-center gap-2.5 text-sm text-zinc-500 font-medium">
                     <div className="w-5 h-5 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center">
                       <Check size={12} className="text-foreground" strokeWidth={3} />
                     </div>
@@ -177,7 +177,7 @@ const LLMKeys: React.FC = () => {
           </div>
           
           <div className="bg-muted border border-border rounded-xl p-5 w-full lg:w-80 shrink-0 shadow-inner">
-            <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Change Default Engine</label>
+            <label className="block text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-3">Change Default Engine</label>
             <div className="relative mb-4">
               <select 
                 value={keys.active_provider}
@@ -188,10 +188,10 @@ const LLMKeys: React.FC = () => {
                 <option value="gemini">Google Gemini</option>
                 <option value="groq">Groq</option>
               </select>
-              <ArrowRightLeft size={16} className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
+              <ArrowRightLeft size={16} className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-500 pointer-events-none" />
             </div>
             
-            <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 mt-5">Model Override (Optional)</label>
+            <label className="block text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 mt-5">Model Override (Optional)</label>
             <div className="relative mb-3">
               <input
                 type="text"
@@ -202,7 +202,7 @@ const LLMKeys: React.FC = () => {
               />
             </div>
 
-            <p className="text-[11px] text-muted-foreground leading-relaxed font-medium">
+            <p className="text-[11px] text-zinc-500 leading-relaxed font-medium">
               Leave model blank to use defaults. Changes apply instantly to all production workflows.
             </p>
           </div>
@@ -212,8 +212,8 @@ const LLMKeys: React.FC = () => {
       <div className="mb-6 flex items-center justify-between">
         <h2 className="text-lg font-bold text-foreground">Provider Connections</h2>
         <div className="flex items-center gap-4">
-          <div className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground">
-            <Key size={14} className="text-muted-foreground" /> Masked keys are preserved on save
+          <div className="flex items-center gap-1.5 text-xs font-semibold text-zinc-500">
+            <Key size={14} className="text-zinc-500" /> Masked keys are preserved on save
           </div>
           <button
             onClick={() => handleSave()}
@@ -233,12 +233,12 @@ const LLMKeys: React.FC = () => {
         <div className={`bg-card border ${keys.active_provider === 'openai' ? 'border-violet-400 ring-1 ring-violet-400 shadow-violet-100' : 'border-border hover:border-border'} rounded-2xl p-6 shadow-sm transition-all duration-200 group flex flex-col`}>
           <div className="flex justify-between items-start mb-6">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center text-purple-600 border border-purple-100">
+              <div className="w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center text-brand border border-brand">
                 <Sparkles size={20} />
               </div>
               <div>
                 <h3 className="font-bold text-foreground">OpenAI</h3>
-                <p className="text-xs font-medium text-muted-foreground">GPT-4, GPT-3.5-Turbo</p>
+                <p className="text-xs font-medium text-zinc-500">GPT-4, GPT-3.5-Turbo</p>
               </div>
             </div>
             {keys.openai ? (
@@ -253,7 +253,7 @@ const LLMKeys: React.FC = () => {
           </div>
           
           <div className="flex-1">
-            <label className="block text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-2">API Secret Key</label>
+            <label className="block text-[11px] font-bold text-zinc-500 uppercase tracking-wider mb-2">API Secret Key</label>
             <div className="relative group-focus-within:ring-2 ring-violet-500/20 rounded-lg transition-all">
               <input
                 type={visibleFields.openai ? 'text' : 'password'}
@@ -265,7 +265,7 @@ const LLMKeys: React.FC = () => {
               <button
                 type="button"
                 onClick={() => toggleVisibility('openai')}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-muted-foreground transition-colors"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-500 transition-colors"
               >
                 {visibleFields.openai ? <EyeOff size={16} /> : <Eye size={16} />}
               </button>
@@ -273,8 +273,8 @@ const LLMKeys: React.FC = () => {
           </div>
           
           <div className="mt-6 pt-4 border-t border-border flex items-center justify-between text-xs font-medium">
-            <span className="text-muted-foreground">Last verified: Just now</span>
-            <span className={keys.active_provider === 'openai' ? "text-foreground font-bold" : "text-muted-foreground"}>
+            <span className="text-zinc-500">Last verified: Just now</span>
+            <span className={keys.active_provider === 'openai' ? "text-foreground font-bold" : "text-zinc-500"}>
               {keys.active_provider === 'openai' ? "Primary Engine" : "Backup Ready"}
             </span>
           </div>
@@ -289,7 +289,7 @@ const LLMKeys: React.FC = () => {
               </div>
               <div>
                 <h3 className="font-bold text-foreground">Google Gemini</h3>
-                <p className="text-xs font-medium text-muted-foreground">Gemini 1.5 Pro / Flash</p>
+                <p className="text-xs font-medium text-zinc-500">Gemini 1.5 Pro / Flash</p>
               </div>
             </div>
             {keys.gemini ? (
@@ -304,7 +304,7 @@ const LLMKeys: React.FC = () => {
           </div>
           
           <div className="flex-1">
-            <label className="block text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-2">API Secret Key</label>
+            <label className="block text-[11px] font-bold text-zinc-500 uppercase tracking-wider mb-2">API Secret Key</label>
             <div className="relative group-focus-within:ring-2 ring-violet-500/20 rounded-lg transition-all">
               <input
                 type={visibleFields.gemini ? 'text' : 'password'}
@@ -316,7 +316,7 @@ const LLMKeys: React.FC = () => {
               <button
                 type="button"
                 onClick={() => toggleVisibility('gemini')}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-muted-foreground transition-colors"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-500 transition-colors"
               >
                 {visibleFields.gemini ? <EyeOff size={16} /> : <Eye size={16} />}
               </button>
@@ -324,8 +324,8 @@ const LLMKeys: React.FC = () => {
           </div>
           
           <div className="mt-6 pt-4 border-t border-border flex items-center justify-between text-xs font-medium">
-            <span className="text-muted-foreground">Last verified: Just now</span>
-            <span className={keys.active_provider === 'gemini' ? "text-foreground font-bold" : "text-muted-foreground"}>
+            <span className="text-zinc-500">Last verified: Just now</span>
+            <span className={keys.active_provider === 'gemini' ? "text-foreground font-bold" : "text-zinc-500"}>
               {keys.active_provider === 'gemini' ? "Primary Engine" : "Backup Ready"}
             </span>
           </div>
@@ -340,7 +340,7 @@ const LLMKeys: React.FC = () => {
               </div>
               <div>
                 <h3 className="font-bold text-foreground">Groq</h3>
-                <p className="text-xs font-medium text-muted-foreground">Llama-3 Ultra-fast</p>
+                <p className="text-xs font-medium text-zinc-500">Llama-3 Ultra-fast</p>
               </div>
             </div>
             {keys.groq ? (
@@ -355,7 +355,7 @@ const LLMKeys: React.FC = () => {
           </div>
           
           <div className="flex-1">
-            <label className="block text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-2">API Secret Key</label>
+            <label className="block text-[11px] font-bold text-zinc-500 uppercase tracking-wider mb-2">API Secret Key</label>
             <div className="relative group-focus-within:ring-2 ring-violet-500/20 rounded-lg transition-all">
               <input
                 type={visibleFields.groq ? 'text' : 'password'}
@@ -367,7 +367,7 @@ const LLMKeys: React.FC = () => {
               <button
                 type="button"
                 onClick={() => toggleVisibility('groq')}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-muted-foreground transition-colors"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-500 transition-colors"
               >
                 {visibleFields.groq ? <EyeOff size={16} /> : <Eye size={16} />}
               </button>
@@ -375,8 +375,8 @@ const LLMKeys: React.FC = () => {
           </div>
           
           <div className="mt-6 pt-4 border-t border-border flex items-center justify-between text-xs font-medium">
-            <span className="text-muted-foreground">Last verified: Just now</span>
-            <span className={keys.active_provider === 'groq' ? "text-foreground font-bold" : "text-muted-foreground"}>
+            <span className="text-zinc-500">Last verified: Just now</span>
+            <span className={keys.active_provider === 'groq' ? "text-foreground font-bold" : "text-zinc-500"}>
               {keys.active_provider === 'groq' ? "Primary Engine" : "Backup Ready"}
             </span>
           </div>

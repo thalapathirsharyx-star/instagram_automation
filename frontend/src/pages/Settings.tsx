@@ -30,7 +30,7 @@ const SettingsCard: React.FC<{ icon: any, title: string, subtitle: string, child
       </div>
       <div>
         <h3 className="text-lg font-bold text-foreground">{title}</h3>
-        <p className="text-[13px] text-muted-foreground font-medium mt-1 leading-relaxed">{subtitle}</p>
+        <p className="text-[13px] text-zinc-500 font-medium mt-1 leading-relaxed">{subtitle}</p>
       </div>
     </div>
     <div className="flex flex-col gap-6 flex-grow pt-4 border-t border-border">
@@ -304,7 +304,7 @@ const Settings: React.FC = () => {
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8 border-b border-border pb-6">
         <div>
           <h2 className="text-3xl font-bold tracking-tight">Platform Settings</h2>
-          <p className="text-muted-foreground text-sm">Manage your personal profile, security preferences, and core system integrations.</p>
+          <p className="text-zinc-500 text-sm">Manage your personal profile, security preferences, and core system integrations.</p>
         </div>
       </div>
 
@@ -321,15 +321,15 @@ const Settings: React.FC = () => {
                 onClick={() => setActiveTab(tab.id as TabType)}
                 className={`w-full flex items-center justify-between px-4 py-3 rounded-lg font-bold text-sm transition-all duration-200 border ${
                   isActive 
-                    ? 'bg-primary text-primary-foreground border-primary shadow-sm'
-                    : 'bg-transparent text-muted-foreground border-transparent hover:bg-muted hover:text-foreground'
+                    ? 'bg-primary text-zinc-900 border-primary shadow-sm'
+                    : 'bg-transparent text-zinc-500 border-transparent hover:bg-muted hover:text-foreground'
                 }`}
               >
                 <div className="flex items-center gap-3">
-                  <Icon size={16} className={isActive ? "text-muted-foreground" : "text-muted-foreground"} />
+                  <Icon size={16} className={isActive ? "text-zinc-500" : "text-zinc-500"} />
                   {tab.label}
                 </div>
-                {isActive && <ChevronRight size={14} className="text-muted-foreground" />}
+                {isActive && <ChevronRight size={14} className="text-zinc-500" />}
               </button>
             );
           })}
@@ -348,11 +348,11 @@ const Settings: React.FC = () => {
                 {isEditingProfile ? (
                   <div className="space-y-4">
                     <div className="flex gap-4 items-center mb-2">
-                      <div className="w-12 h-12 bg-secondary text-muted-foreground rounded-full flex items-center justify-center border border-border font-bold text-lg shadow-sm uppercase shrink-0">
+                      <div className="w-12 h-12 bg-secondary text-zinc-500 rounded-full flex items-center justify-center border border-border font-bold text-lg shadow-sm uppercase shrink-0">
                         {profileEmail[0]?.toUpperCase() || 'A'}
                       </div>
                       <div className="flex-grow">
-                        <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest ml-1">Email Address</label>
+                        <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest ml-1">Email Address</label>
                         <input 
                           type="email"
                           value={profileEmail}
@@ -383,12 +383,12 @@ const Settings: React.FC = () => {
                 ) : (
                   <>
                     <div className="flex gap-4 items-center mb-2">
-                      <div className="w-12 h-12 bg-secondary text-muted-foreground rounded-full flex items-center justify-center border border-border font-bold text-lg shadow-sm uppercase shrink-0">
+                      <div className="w-12 h-12 bg-secondary text-zinc-500 rounded-full flex items-center justify-center border border-border font-bold text-lg shadow-sm uppercase shrink-0">
                         {user?.email?.[0] || 'A'}
                       </div>
                       <div>
                         <div className="font-bold text-foreground text-base">{user?.email || 'app.flazly@gmail.com'}</div>
-                        <div className="text-xs text-muted-foreground font-medium mt-0.5">{user?.role || 'Administrator Access'}</div>
+                        <div className="text-xs text-zinc-500 font-medium mt-0.5">{user?.role || 'Administrator Access'}</div>
                       </div>
                     </div>
                     <button 
@@ -422,36 +422,36 @@ const Settings: React.FC = () => {
 
                   {!isGoogleRegistered && (
                     <div>
-                      <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest ml-1">Current Password</label>
+                      <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest ml-1">Current Password</label>
                       <input 
                         type="password"
                         placeholder="Enter your current password"
                         value={currentPassword}
                         onChange={(e) => setCurrentPassword(e.target.value)}
-                        className="w-full bg-card border border-border rounded-lg px-4 py-2.5 text-sm text-foreground focus:border-border focus:ring-1 focus:ring-violet-500 outline-none transition-all mt-1 shadow-sm placeholder:text-muted-foreground"
+                        className="w-full bg-card border border-border rounded-lg px-4 py-2.5 text-sm text-foreground focus:border-border focus:ring-1 focus:ring-violet-500 outline-none transition-all mt-1 shadow-sm placeholder:text-zinc-500"
                       />
                     </div>
                   )}
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest ml-1">New Password</label>
+                      <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest ml-1">New Password</label>
                       <input 
                         type="password"
                         placeholder="Minimum 6 characters"
                         value={newPassword}
                         onChange={(e) => setNewPassword(e.target.value)}
-                        className="w-full bg-card border border-border rounded-lg px-4 py-2.5 text-sm text-foreground focus:border-border focus:ring-1 focus:ring-violet-500 outline-none transition-all mt-1 shadow-sm placeholder:text-muted-foreground"
+                        className="w-full bg-card border border-border rounded-lg px-4 py-2.5 text-sm text-foreground focus:border-border focus:ring-1 focus:ring-violet-500 outline-none transition-all mt-1 shadow-sm placeholder:text-zinc-500"
                       />
                     </div>
                     <div>
-                      <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest ml-1">Confirm New Password</label>
+                      <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest ml-1">Confirm New Password</label>
                       <input 
                         type="password"
                         placeholder="Retype your new password"
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
-                        className="w-full bg-card border border-border rounded-lg px-4 py-2.5 text-sm text-foreground focus:border-border focus:ring-1 focus:ring-violet-500 outline-none transition-all mt-1 shadow-sm placeholder:text-muted-foreground"
+                        className="w-full bg-card border border-border rounded-lg px-4 py-2.5 text-sm text-foreground focus:border-border focus:ring-1 focus:ring-violet-500 outline-none transition-all mt-1 shadow-sm placeholder:text-zinc-500"
                       />
                     </div>
                   </div>
@@ -476,15 +476,15 @@ const Settings: React.FC = () => {
                 {isSettingUp2Fa ? (
                   <div className="space-y-6">
                     <div className="p-6 bg-muted rounded-xl border border-border flex flex-col items-center gap-4 shadow-inner">
-                      <p className="text-sm text-muted-foreground text-center font-medium">Scan this QR code with your authenticator app (e.g. Google Authenticator, Duo):</p>
+                      <p className="text-sm text-zinc-500 text-center font-medium">Scan this QR code with your authenticator app (e.g. Google Authenticator, Duo):</p>
                       {qrCodeUrl && (
                         <div className="bg-card p-3 rounded-xl border border-border shadow-sm">
                           <img src={qrCodeUrl} alt="2FA QR Code" className="w-40 h-40" />
                         </div>
                       )}
                       <div className="text-center w-full max-w-sm mt-2">
-                        <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest block mb-1">Manual Setup Key</span>
-                        <code className="text-xs text-muted-foreground font-mono bg-card px-3 py-2 rounded-lg border border-border block select-all">{secret}</code>
+                        <span className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest block mb-1">Manual Setup Key</span>
+                        <code className="text-xs text-zinc-500 font-mono bg-card px-3 py-2 rounded-lg border border-border block select-all">{secret}</code>
                       </div>
                     </div>
 
@@ -502,7 +502,7 @@ const Settings: React.FC = () => {
                     )}
 
                     <div className="space-y-2 max-w-xs mx-auto">
-                      <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest ml-1 text-center block">Enter 6-Digit Code</label>
+                      <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest ml-1 text-center block">Enter 6-Digit Code</label>
                       <input 
                         type="text"
                         placeholder="000 000"
@@ -535,7 +535,7 @@ const Settings: React.FC = () => {
                       <CheckCircle2 size={14} className="text-emerald-400" />
                       2FA Active
                     </div>
-                    <p className="text-sm text-muted-foreground font-medium leading-relaxed">
+                    <p className="text-sm text-zinc-500 font-medium leading-relaxed">
                       Your account is currently protected by a secondary Time-based One-Time Password (TOTP).
                     </p>
                     <button 
@@ -547,11 +547,11 @@ const Settings: React.FC = () => {
                   </div>
                 ) : (
                   <div className="space-y-6">
-                    <div className="flex items-center gap-2 text-muted-foreground font-bold text-[11px] uppercase tracking-widest bg-secondary px-3 py-1.5 rounded-lg w-fit border border-border">
-                      <AlertCircle size={14} className="text-muted-foreground" />
+                    <div className="flex items-center gap-2 text-zinc-500 font-bold text-[11px] uppercase tracking-widest bg-secondary px-3 py-1.5 rounded-lg w-fit border border-border">
+                      <AlertCircle size={14} className="text-zinc-500" />
                       2FA Inactive
                     </div>
-                    <p className="text-sm text-muted-foreground font-medium leading-relaxed max-w-xl">
+                    <p className="text-sm text-zinc-500 font-medium leading-relaxed max-w-xl">
                       Protect your account from unauthorized access by requiring a second form of authentication during sign in.
                     </p>
                     <button 
@@ -575,7 +575,7 @@ const Settings: React.FC = () => {
                   </div>
                 </div>
                 <div className="pt-4 border-t border-destructive/20/50 mt-2">
-                  <p className="text-sm text-muted-foreground font-medium leading-relaxed mb-6">
+                  <p className="text-sm text-zinc-500 font-medium leading-relaxed mb-6">
                     This action is permanent. All your access tokens, CRM logs, message metadata, and settings will be completely destroyed.
                   </p>
                   <button 
@@ -597,7 +597,7 @@ const Settings: React.FC = () => {
                 subtitle="Connect and manage your Facebook Page and Instagram Professional account."
               >
                 {isLoadingStatus ? (
-                  <div className="flex items-center gap-3 p-4 bg-muted rounded-xl border border-border text-muted-foreground font-bold text-xs uppercase tracking-widest">
+                  <div className="flex items-center gap-3 p-4 bg-muted rounded-xl border border-border text-zinc-500 font-bold text-xs uppercase tracking-widest">
                     <div className="animate-spin w-4 h-4 border-2 border-border border-t-transparent rounded-full" />
                     Validating Connection State...
                   </div>
@@ -609,12 +609,12 @@ const Settings: React.FC = () => {
                     </div>
                     
                     <div className="p-5 bg-muted rounded-xl border border-border shadow-sm flex items-center gap-4">
-                      <div className="w-12 h-12 bg-card rounded-lg border border-border shadow-sm flex items-center justify-center text-muted-foreground">
+                      <div className="w-12 h-12 bg-card rounded-lg border border-border shadow-sm flex items-center justify-center text-zinc-500">
                         <Smartphone size={24} />
                       </div>
                       <div>
                         <div className="text-sm font-bold text-foreground">{connectionDetails?.name}</div>
-                        <div className="text-[10px] text-muted-foreground font-mono mt-1 uppercase tracking-widest">Meta Business ID: {connectionDetails?.id}</div>
+                        <div className="text-[10px] text-zinc-500 font-mono mt-1 uppercase tracking-widest">Meta Business ID: {connectionDetails?.id}</div>
                       </div>
                     </div>
 
@@ -638,7 +638,7 @@ const Settings: React.FC = () => {
                   </div>
                 ) : (
                   <div className="space-y-6">
-                    <p className="text-sm text-muted-foreground font-medium leading-relaxed">
+                    <p className="text-sm text-zinc-500 font-medium leading-relaxed">
                       Link your Instagram Professional account to grant Flazly access to read and respond to direct messages and comments.
                     </p>
                     <div className="flex flex-col sm:flex-row gap-3">
@@ -654,7 +654,7 @@ const Settings: React.FC = () => {
                         onClick={() => setShowGuide(true)}
                         className="btn-base btn-outline flex-1 sm:flex-none"
                       >
-                        <Info size={16} className="text-muted-foreground"/> Setup Guide
+                        <Info size={16} className="text-zinc-500"/> Setup Guide
                       </button>
                     </div>
                   </div>
@@ -671,12 +671,12 @@ const Settings: React.FC = () => {
                 subtitle="Configure payload destinations and API endpoints."
               >
                 <div className="space-y-4">
-                  <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest ml-1">Inbound Webhook URL</label>
-                  <div className="bg-muted p-4 rounded-xl border border-border text-sm font-mono text-muted-foreground truncate shadow-inner select-all">
+                  <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest ml-1">Inbound Webhook URL</label>
+                  <div className="bg-muted p-4 rounded-xl border border-border text-sm font-mono text-zinc-500 truncate shadow-inner select-all">
                     {`${window.location.origin}/api/v1/Instagram/Webhook`}
                   </div>
                   <button className="btn-base btn-outline text-xs mt-2">
-                    <Zap size={14} className="text-amber-500" /> Dispatch Test Event
+                    <Zap size={14} className="text-warning" /> Dispatch Test Event
                   </button>
                 </div>
               </SettingsCard>
@@ -694,11 +694,11 @@ const Settings: React.FC = () => {
             <div className="px-6 py-5 border-b border-border flex justify-between items-center bg-muted/50">
               <div>
                 <h2 className="text-lg font-bold text-foreground">Required Meta Configuration</h2>
-                <p className="text-xs text-muted-foreground font-medium mt-1">Please ensure these steps are completed before linking.</p>
+                <p className="text-xs text-zinc-500 font-medium mt-1">Please ensure these steps are completed before linking.</p>
               </div>
               <button 
                 onClick={() => setShowGuide(false)}
-                className="p-2 text-muted-foreground hover:text-muted-foreground hover:bg-secondary rounded-full transition-colors"
+                className="p-2 text-zinc-500 hover:text-zinc-500 hover:bg-secondary rounded-full transition-colors"
               >
                 <X size={20} />
               </button>
@@ -712,8 +712,8 @@ const Settings: React.FC = () => {
                 </div>
                 <div className="pt-1">
                   <h4 className="font-bold text-foreground text-sm mb-1">Switch to Professional Account</h4>
-                  <p className="text-muted-foreground text-sm">
-                    Open the Instagram App &gt; Settings &gt; Account Type. Make sure you are switched to a <strong className="text-muted-foreground">Business</strong> or <strong className="text-muted-foreground">Creator</strong> account.
+                  <p className="text-zinc-500 text-sm">
+                    Open the Instagram App &gt; Settings &gt; Account Type. Make sure you are switched to a <strong className="text-zinc-500">Business</strong> or <strong className="text-zinc-500">Creator</strong> account.
                   </p>
                 </div>
               </div>
@@ -724,7 +724,7 @@ const Settings: React.FC = () => {
                 </div>
                 <div className="pt-1">
                   <h4 className="font-bold text-foreground text-sm mb-1">Link to a Facebook Page</h4>
-                  <p className="text-muted-foreground text-sm">
+                  <p className="text-zinc-500 text-sm">
                     On your Instagram profile, click Edit Profile &gt; Public Business Information &gt; Page. Select or create a Facebook Page to link.
                   </p>
                 </div>
@@ -736,7 +736,7 @@ const Settings: React.FC = () => {
                 </div>
                 <div className="pt-1">
                   <h4 className="font-bold text-foreground text-sm mb-1">Allow Message Access</h4>
-                  <p className="text-muted-foreground text-sm">
+                  <p className="text-zinc-500 text-sm">
                     In Instagram Settings &gt; Privacy &gt; Messages. Scroll to the bottom and turn <strong className="text-emerald-400 font-bold uppercase text-[10px] bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20 ml-1">On</strong> the "Allow Access to Messages" toggle.
                   </p>
                 </div>

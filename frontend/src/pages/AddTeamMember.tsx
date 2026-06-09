@@ -39,19 +39,19 @@ const AddTeamMember: React.FC = () => {
       <div className="flex justify-between items-end">
         <div>
           <div className="flex items-center gap-2 mb-2">
-            <Link to="/team" className="p-2 -ml-2 text-muted-foreground hover:text-foreground transition-colors rounded-lg hover:bg-secondary">
+            <Link to="/team" className="p-2 -ml-2 text-zinc-500 hover:text-foreground transition-colors rounded-lg hover:bg-secondary">
               <ArrowLeft size={20} />
             </Link>
             <h1 className="text-3xl font-bold text-foreground">Add Team Member</h1>
           </div>
-          <p className="text-muted-foreground font-medium">Invite a new user to your workspace.</p>
+          <p className="text-zinc-500 font-medium">Invite a new user to your workspace.</p>
         </div>
       </div>
 
       <div className="max-w-xl">
-        <div className="w3-card p-6 border border-border shadow-sm relative bg-card rounded-2xl">
+        <div className="card-standard p-6 border border-border shadow-sm relative bg-card rounded-2xl">
           <div className="flex items-center gap-3 mb-6 pb-6 border-b border-border">
-            <div className="p-2.5 bg-secondary text-muted-foreground rounded-xl border border-border">
+            <div className="p-2.5 bg-secondary text-zinc-500 rounded-xl border border-border">
               <UserPlus size={20} />
             </div>
             <h3 className="text-lg font-bold text-foreground">Member Details</h3>
@@ -66,7 +66,7 @@ const AddTeamMember: React.FC = () => {
 
           <form onSubmit={handleInvite} className="space-y-5">
             <div>
-              <label className="block text-xs font-bold text-muted-foreground mb-1.5 uppercase tracking-wider">First Name</label>
+              <label className="block text-xs font-bold text-zinc-500 mb-1.5 uppercase tracking-wider">First Name</label>
               <input 
                 required
                 type="text" 
@@ -77,7 +77,7 @@ const AddTeamMember: React.FC = () => {
               />
             </div>
             <div>
-              <label className="block text-xs font-bold text-muted-foreground mb-1.5 uppercase tracking-wider">Last Name</label>
+              <label className="block text-xs font-bold text-zinc-500 mb-1.5 uppercase tracking-wider">Last Name</label>
               <input 
                 type="text" 
                 value={formData.last_name}
@@ -87,7 +87,7 @@ const AddTeamMember: React.FC = () => {
               />
             </div>
             <div>
-              <label className="block text-xs font-bold text-muted-foreground mb-1.5 uppercase tracking-wider">Email Address</label>
+              <label className="block text-xs font-bold text-zinc-500 mb-1.5 uppercase tracking-wider">Email Address</label>
               <input 
                 required
                 type="email" 
@@ -98,7 +98,7 @@ const AddTeamMember: React.FC = () => {
               />
             </div>
             <div>
-              <label className="block text-xs font-bold text-muted-foreground mb-1.5 uppercase tracking-wider">Temporary Password</label>
+              <label className="block text-xs font-bold text-zinc-500 mb-1.5 uppercase tracking-wider">Temporary Password</label>
               <div className="relative">
                 <input 
                   required
@@ -112,7 +112,7 @@ const AddTeamMember: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-muted-foreground transition-colors p-1"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-500 transition-colors p-1"
                   aria-label={showPassword ? "Hide password" : "Show password"}
                 >
                   {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}

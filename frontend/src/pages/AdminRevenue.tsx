@@ -43,13 +43,13 @@ const AdminRevenue: React.FC = () => {
 
   const planColors: Record<string, string> = {
     Free: 'bg-zinc-500',
-    Pro: 'bg-violet-500',
+    Pro: 'bg-brand',
     Business: 'bg-blue-500',
     Advanced: 'bg-emerald-500',
   };
 
   const planTextColors: Record<string, string> = {
-    Free: 'text-muted-foreground',
+    Free: 'text-zinc-500',
     Pro: 'text-foreground',
     Business: 'text-blue-400',
     Advanced: 'text-emerald-400',
@@ -71,7 +71,7 @@ const AdminRevenue: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="flex h-64 items-center justify-center text-muted-foreground font-medium">
+      <div className="flex h-64 items-center justify-center text-zinc-500 font-medium">
         <div className="flex flex-col items-center gap-4">
           <div className="w-8 h-8 border-4 border-emerald-500/20 border-t-emerald-600 rounded-full animate-spin"></div>
           <span className="text-sm">Calculating Financials...</span>
@@ -87,10 +87,10 @@ const AdminRevenue: React.FC = () => {
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8 border-b border-border pb-6">
         <div>
           <h2 className="text-3xl font-bold tracking-tight">Revenue & Analytics</h2>
-          <p className="text-muted-foreground text-sm">Track your platform's financial health, subscription distribution, and MRR growth.</p>
+          <p className="text-zinc-500 text-sm">Track your platform's financial health, subscription distribution, and MRR growth.</p>
         </div>
         <div className="flex items-center gap-3">
-          <button className="flex items-center justify-center gap-2 px-4 py-2.5 bg-card border border-border rounded-lg text-muted-foreground font-semibold hover:bg-muted hover:border-border transition-all shadow-sm">
+          <button className="flex items-center justify-center gap-2 px-4 py-2.5 bg-card border border-border rounded-lg text-zinc-500 font-semibold hover:bg-muted hover:border-border transition-all shadow-sm">
             <span>Export CSV</span>
           </button>
         </div>
@@ -102,7 +102,7 @@ const AdminRevenue: React.FC = () => {
           { title: 'Monthly Recurring', value: `₹${mrr.toLocaleString()}`, icon: IndianRupee, iconColor: 'text-emerald-400', iconBg: 'bg-emerald-500/10', border: 'border-emerald-500/20', trend: '+18%', up: true },
           { title: 'Annual Run Rate', value: `₹${arr.toLocaleString()}`, icon: TrendingUp, iconColor: 'text-foreground', iconBg: 'bg-primary/10', border: 'border-primary/20', trend: '+18%', up: true },
           { title: 'Paid Customers', value: paidClients, icon: CreditCard, iconColor: 'text-blue-400', iconBg: 'bg-blue-500/10', border: 'border-blue-500/20', trend: `${conversionRate}% conv.`, up: true },
-          { title: 'Total Accounts', value: clients.length, icon: Users, iconColor: 'text-amber-400', iconBg: 'bg-amber-50', border: 'border-amber-100', trend: '+12%', up: true },
+          { title: 'Total Accounts', value: clients.length, icon: Users, iconColor: 'text-warning', iconBg: 'bg-amber-50', border: 'border-amber-100', trend: '+12%', up: true },
         ].map((card, i) => (
           <div key={i} className="bg-card border border-border rounded-2xl p-6 shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
             <div className="flex justify-between items-start mb-4">
@@ -114,7 +114,7 @@ const AdminRevenue: React.FC = () => {
               </div>
             </div>
             <div>
-              <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest mb-1">{card.title}</p>
+              <p className="text-[11px] font-bold text-zinc-500 uppercase tracking-widest mb-1">{card.title}</p>
               <h3 className="text-3xl font-extrabold text-foreground tracking-tight">{card.value}</h3>
             </div>
           </div>
@@ -145,8 +145,8 @@ const AdminRevenue: React.FC = () => {
                       <span className="text-sm font-bold text-foreground">{plan} Tier</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="text-xs font-bold text-muted-foreground">{count} accounts</span>
-                      <span className="text-xs font-bold text-muted-foreground bg-secondary px-2 py-0.5 rounded-md">{percentage}%</span>
+                      <span className="text-xs font-bold text-zinc-500">{count} accounts</span>
+                      <span className="text-xs font-bold text-zinc-500 bg-secondary px-2 py-0.5 rounded-md">{percentage}%</span>
                     </div>
                   </div>
                   <div className="h-2.5 w-full bg-secondary rounded-full overflow-hidden">
@@ -171,7 +171,7 @@ const AdminRevenue: React.FC = () => {
               const price = PLAN_PRICES[plan] || 0;
               const revenue = price * count;
               
-              const tColor = planTextColors[plan] || 'text-muted-foreground';
+              const tColor = planTextColors[plan] || 'text-zinc-500';
               const bgLight = planBgLight[plan] || 'bg-muted';
               const bLight = planBorderLight[plan] || 'border-border';
 
@@ -183,12 +183,12 @@ const AdminRevenue: React.FC = () => {
                     </div>
                     <div>
                       <div className="font-bold text-sm text-foreground">{plan} Plan</div>
-                      <div className="text-xs text-muted-foreground font-medium mt-0.5">{count} {count === 1 ? 'tenant' : 'tenants'} × ₹{price.toLocaleString()}</div>
+                      <div className="text-xs text-zinc-500 font-medium mt-0.5">{count} {count === 1 ? 'tenant' : 'tenants'} × ₹{price.toLocaleString()}</div>
                     </div>
                   </div>
                   <div className="text-right">
                     <div className="font-extrabold text-base text-foreground">₹{revenue.toLocaleString()}</div>
-                    <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mt-0.5">/ month</div>
+                    <div className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mt-0.5">/ month</div>
                   </div>
                 </div>
               );
@@ -215,7 +215,7 @@ const AdminRevenue: React.FC = () => {
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {clients.filter(c => c.plan && c.plan !== 'Free').map((client) => {
-            const tColor = planTextColors[client.plan] || 'text-muted-foreground';
+            const tColor = planTextColors[client.plan] || 'text-zinc-500';
             const bgLight = planBgLight[client.plan] || 'bg-muted';
             const bLight = planBorderLight[client.plan] || 'border-border';
 
@@ -226,7 +226,7 @@ const AdminRevenue: React.FC = () => {
                 </div>
                 <div className="flex-grow min-w-0">
                   <div className="font-bold text-sm text-foreground truncate">{client.name}</div>
-                  <div className="text-xs text-muted-foreground font-medium truncate">{client.email}</div>
+                  <div className="text-xs text-zinc-500 font-medium truncate">{client.email}</div>
                 </div>
                 <div className={`px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider border shrink-0 ${bgLight} ${tColor} ${bLight}`}>
                   {client.plan}
@@ -238,10 +238,10 @@ const AdminRevenue: React.FC = () => {
           {paidClients === 0 && (
             <div className="col-span-full py-16 text-center flex flex-col items-center justify-center">
               <div className="w-16 h-16 bg-muted rounded-2xl flex items-center justify-center mb-4 border border-border shadow-sm">
-                <Activity size={24} className="text-muted-foreground" />
+                <Activity size={24} className="text-zinc-500" />
               </div>
               <h3 className="text-base font-bold text-foreground mb-1">No paying customers yet</h3>
-              <p className="text-muted-foreground text-sm">Your MRR starts tracking once users upgrade their free accounts.</p>
+              <p className="text-zinc-500 text-sm">Your MRR starts tracking once users upgrade their free accounts.</p>
             </div>
           )}
         </div>

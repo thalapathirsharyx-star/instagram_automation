@@ -43,7 +43,7 @@ const Navbar: React.FC = () => {
             </button>
             <button
               onClick={() => window.location.href = 'https://app.flazly.com/signup'}
-              className="btn-premium-cta px-5 py-2.5 text-xs font-bold"
+              className="btn-primary px-5 py-2.5 text-xs font-bold"
             >
               Start Free Trial
             </button>
@@ -61,7 +61,7 @@ const Navbar: React.FC = () => {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-[#111118] border-t border-zinc-200 shadow-xl"
+            className="md:hidden bg-surface border-t border-zinc-200 shadow-xl"
           >
             <div className="px-6 py-8 flex flex-col gap-6">
               {navLinks.map((link) => (
@@ -83,7 +83,7 @@ const Navbar: React.FC = () => {
               </button>
               <button
                 onClick={() => { window.location.href = 'https://app.flazly.com/signup'; setMobileOpen(false); }}
-                className="btn-premium-cta py-3.5 w-full text-sm font-bold"
+                className="btn-primary py-3.5 w-full text-sm font-bold"
               >
                 Start Free Trial
               </button>

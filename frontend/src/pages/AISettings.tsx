@@ -77,7 +77,7 @@ const AISettings: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="flex h-64 items-center justify-center text-muted-foreground font-medium">
+      <div className="flex h-64 items-center justify-center text-zinc-500 font-medium">
         <div className="flex flex-col items-center gap-4">
           <div className="w-8 h-8 border-4 border-primary/20 border-t-violet-600 rounded-full animate-spin"></div>
           <span className="text-sm">Loading Neural Config...</span>
@@ -95,7 +95,7 @@ const AISettings: React.FC = () => {
         <div className="fixed top-6 right-6 z-50 pointer-events-none">
           <div className={`pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-xl shadow-lg border transition-all duration-300 animate-in slide-in-from-right-8 ${
             notification.type === 'success' 
-              ? 'bg-primary border-primary text-primary-foreground' 
+              ? 'bg-primary border-primary text-zinc-900' 
               : 'bg-card border-destructive/20 text-destructive shadow-rose-100/50'
           }`}>
             {notification.type === 'success' ? <Sparkles size={18} className="text-emerald-400" /> : <AlertCircle size={18} className="text-destructive" />}
@@ -108,7 +108,7 @@ const AISettings: React.FC = () => {
       <header className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8 border-b border-border pb-6">
         <div>
           <h2 className="text-3xl font-bold tracking-tight">System Instructions</h2>
-          <p className="text-muted-foreground text-sm">Define the core personality, rules of engagement, and base logic for your AI conversational agent.</p>
+          <p className="text-zinc-500 text-sm">Define the core personality, rules of engagement, and base logic for your AI conversational agent.</p>
         </div>
         
         <div className="flex items-center gap-4 shrink-0">
@@ -132,8 +132,8 @@ const AISettings: React.FC = () => {
               <Cpu className="text-foreground" size={18} />
               <span>Base Prompt Overlay</span>
             </div>
-            <div className="flex items-center gap-1.5 px-3 py-1 bg-card border border-border rounded-md text-[10px] font-bold text-muted-foreground uppercase tracking-wider shadow-sm">
-              <Zap size={10} className="text-amber-500" /> Llama-3.3 Engine
+            <div className="flex items-center gap-1.5 px-3 py-1 bg-card border border-border rounded-md text-[10px] font-bold text-zinc-500 uppercase tracking-wider shadow-sm">
+              <Zap size={10} className="text-warning" /> Llama-3.3 Engine
             </div>
           </div>
           
@@ -147,7 +147,7 @@ const AISettings: React.FC = () => {
           />
           
           <div className="p-4 bg-primary/10 border-t border-primary/20 flex items-start gap-3">
-            <div className="p-1.5 bg-violet-100 rounded text-foreground shrink-0 mt-0.5">
+            <div className="p-1.5 bg-brand rounded text-foreground shrink-0 mt-0.5">
               <Lightbulb size={16} />
             </div>
             <p className="text-xs text-foreground/80 font-medium leading-relaxed">
@@ -164,7 +164,7 @@ const AISettings: React.FC = () => {
             <h3 className="text-base font-bold flex items-center gap-2 mb-2 text-foreground">
               <Sparkles size={18} className="text-foreground" /> Interaction Tone
             </h3>
-            <p className="text-xs text-muted-foreground font-medium mb-5">Click a preset to instantly update the prompt's tone instructions.</p>
+            <p className="text-xs text-zinc-500 font-medium mb-5">Click a preset to instantly update the prompt's tone instructions.</p>
             
             <div className="grid grid-cols-2 gap-3">
               {['Professional', 'Friendly', 'Salesy', 'Casual'].map((t) => (
@@ -174,7 +174,7 @@ const AISettings: React.FC = () => {
                   className={`py-2.5 px-4 rounded-xl text-xs font-bold transition-all border ${
                     tone === t 
                       ? 'bg-primary/10 text-foreground border-violet-300 ring-1 ring-violet-300 shadow-sm' 
-                      : 'bg-card text-muted-foreground border-border hover:border-border hover:bg-muted'
+                      : 'bg-card text-zinc-500 border-border hover:border-border hover:bg-muted'
                   }`}
                 >
                   {t}
@@ -191,32 +191,32 @@ const AISettings: React.FC = () => {
               </h3>
               <ul className="space-y-5">
                 <li className="flex flex-col gap-1.5">
-                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1.5">
+                  <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest flex items-center gap-1.5">
                     <div className="w-1.5 h-1.5 rounded-full bg-zinc-400"></div> Persona
                   </span>
-                  <p className="text-sm font-medium text-muted-foreground leading-relaxed ml-3">Give the agent a name, role, and specific vocabulary to use.</p>
+                  <p className="text-sm font-medium text-zinc-500 leading-relaxed ml-3">Give the agent a name, role, and specific vocabulary to use.</p>
                 </li>
                 <li className="flex flex-col gap-1.5">
-                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1.5">
+                  <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest flex items-center gap-1.5">
                     <div className="w-1.5 h-1.5 rounded-full bg-zinc-400"></div> Empathy
                   </span>
-                  <p className="text-sm font-medium text-muted-foreground leading-relaxed ml-3">Instruct the AI to mirror the customer's language natively.</p>
+                  <p className="text-sm font-medium text-zinc-500 leading-relaxed ml-3">Instruct the AI to mirror the customer's language natively.</p>
                 </li>
                 <li className="flex flex-col gap-1.5">
-                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1.5">
+                  <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest flex items-center gap-1.5">
                     <div className="w-1.5 h-1.5 rounded-full bg-rose-400"></div> Restrictions
                   </span>
-                  <p className="text-sm font-medium text-muted-foreground leading-relaxed ml-3">Explicitly declare what the AI <strong className="text-destructive">cannot</strong> do (e.g. "Never promise refunds").</p>
+                  <p className="text-sm font-medium text-zinc-500 leading-relaxed ml-3">Explicitly declare what the AI <strong className="text-destructive">cannot</strong> do (e.g. "Never promise refunds").</p>
                 </li>
               </ul>
             </div>
             <Bot className="absolute -bottom-10 -right-10 w-48 h-48 text-zinc-200 opacity-50" strokeWidth={1} />
           </div>
 
-          <div className="bg-gradient-to-br from-violet-600 to-indigo-700 rounded-2xl shadow-md p-6 text-primary-foreground relative overflow-hidden">
+          <div className="bg-gradient-to-br from-violet-600 to-indigo-700 rounded-2xl shadow-md p-6 text-zinc-900 relative overflow-hidden">
             <div className="absolute top-0 right-0 w-32 h-32 bg-card/10 blur-2xl rounded-full -mr-10 -mt-10"></div>
             <div className="relative z-10">
-              <h3 className="font-bold flex items-center gap-2 mb-2 text-primary-foreground">
+              <h3 className="font-bold flex items-center gap-2 mb-2 text-zinc-900">
                 <Cpu size={16} className="text-violet-200" /> Live Updates
               </h3>
               <p className="text-sm font-medium leading-relaxed text-violet-100/90">

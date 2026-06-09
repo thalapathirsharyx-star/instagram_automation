@@ -209,7 +209,7 @@ const KnowledgeBase: React.FC = () => {
       <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 mb-8">
         <div>
           <h2 className="text-3xl font-bold tracking-tight">Brain Base</h2>
-          <p className="text-muted-foreground text-sm">Upload documents, FAQs, and business context. The AI uses this data to answer customer questions automatically.</p>
+          <p className="text-zinc-500 text-sm">Upload documents, FAQs, and business context. The AI uses this data to answer customer questions automatically.</p>
         </div>
 
         <div className="flex flex-wrap items-center gap-3 shrink-0">
@@ -248,7 +248,7 @@ const KnowledgeBase: React.FC = () => {
       </div>
 
       {isLoading ? (
-        <div className="flex h-64 items-center justify-center text-muted-foreground font-medium">
+        <div className="flex h-64 items-center justify-center text-zinc-500 font-medium">
           <div className="flex flex-col items-center gap-4">
             <div className="w-8 h-8 border-4 border-primary/20 border-t-violet-600 rounded-full animate-spin"></div>
             <span className="text-sm">Syncing Knowledge Base...</span>
@@ -263,7 +263,7 @@ const KnowledgeBase: React.FC = () => {
                </div>
                <div className="max-w-md mx-auto">
                  <h3 className="text-xl font-bold text-foreground mb-2">No knowledge base items yet</h3>
-                 <p className="text-sm text-muted-foreground leading-relaxed font-medium">
+                 <p className="text-sm text-zinc-500 leading-relaxed font-medium">
                    {activeTab === 'all' && "Your AI agent is currently un-trained. Click one of the buttons above to upload PDFs, store FAQs, or write business facts."}
                    {activeTab === 'documents' && "You haven't uploaded any documents. Upload PDFs to let the AI learn your business instantly."}
                    {activeTab === 'faqs' && "You haven't added any FAQs. Define specific Question & Answer pairs for the AI to memorize."}
@@ -300,7 +300,7 @@ const KnowledgeBase: React.FC = () => {
                            isDoc ? <File size={18} strokeWidth={2.5}/> :
                            <FileText size={18} strokeWidth={2.5}/>}
                         </div>
-                        <span className="text-[10px] font-bold text-muted-foreground bg-muted border border-border px-2.5 py-1 rounded-md uppercase tracking-wider">
+                        <span className="text-[10px] font-bold text-zinc-500 bg-muted border border-border px-2.5 py-1 rounded-md uppercase tracking-wider">
                           {item.category}
                         </span>
                       </div>
@@ -309,7 +309,7 @@ const KnowledgeBase: React.FC = () => {
                         {isFaq ? formatFaqTitle(item.title) : item.title}
                       </h3>
                       
-                      <p className="text-[13px] text-muted-foreground leading-relaxed font-medium line-clamp-4">
+                      <p className="text-[13px] text-zinc-500 leading-relaxed font-medium line-clamp-4">
                         {isFaq ? formatFaqContent(item.content) : item.content}
                       </p>
                     </div>
@@ -352,9 +352,9 @@ const KnowledgeBase: React.FC = () => {
             
             <div className="px-6 py-5 border-b border-border flex justify-between items-center bg-muted/50">
               <div className="flex items-center gap-3">
-                {activeModal === 'upload' && <div className="p-2 bg-violet-100 text-foreground rounded-lg"><UploadCloud size={18} /></div>}
+                {activeModal === 'upload' && <div className="p-2 bg-brand text-foreground rounded-lg"><UploadCloud size={18} /></div>}
                 {activeModal === 'faq' && <div className="p-2 bg-blue-500/10 text-blue-400 rounded-lg"><HelpCircle size={18} /></div>}
-                {activeModal === 'fact' && <div className="p-2 bg-secondary text-muted-foreground rounded-lg"><FileText size={18} /></div>}
+                {activeModal === 'fact' && <div className="p-2 bg-secondary text-zinc-500 rounded-lg"><FileText size={18} /></div>}
                 
                 <div>
                   <h2 className="text-lg font-bold text-foreground">
@@ -364,7 +364,7 @@ const KnowledgeBase: React.FC = () => {
                   </h2>
                 </div>
               </div>
-              <button onClick={closeModal} className="p-2 text-muted-foreground hover:text-muted-foreground hover:bg-secondary rounded-full transition-colors">
+              <button onClick={closeModal} className="p-2 text-zinc-500 hover:text-zinc-500 hover:bg-secondary rounded-full transition-colors">
                 <X size={20} />
               </button>
             </div>
@@ -388,7 +388,7 @@ const KnowledgeBase: React.FC = () => {
                         <UploadCloud size={24} className="text-foreground" />
                       </div>
                       <h4 className="text-base font-bold text-foreground mb-1">Click or drag file here</h4>
-                      <p className="text-xs text-muted-foreground font-medium">Supports PDF and TXT. Max 10MB.</p>
+                      <p className="text-xs text-zinc-500 font-medium">Supports PDF and TXT. Max 10MB.</p>
                     </>
                   )}
                 </div>
@@ -397,7 +397,7 @@ const KnowledgeBase: React.FC = () => {
               {activeModal === 'faq' && (
                 <div className="space-y-4">
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest ml-1">Question</label>
+                    <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest ml-1">Question</label>
                     <input 
                       type="text" 
                       placeholder="e.g. Do you ship internationally?" 
@@ -407,7 +407,7 @@ const KnowledgeBase: React.FC = () => {
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest ml-1">Answer</label>
+                    <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest ml-1">Answer</label>
                     <textarea 
                       placeholder="Yes, we ship to over 50 countries..." 
                       value={newAnswer}
@@ -423,7 +423,7 @@ const KnowledgeBase: React.FC = () => {
                 <div className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-1.5">
-                      <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest ml-1">Title</label>
+                      <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest ml-1">Title</label>
                       <input 
                         type="text" 
                         placeholder="e.g. Return Policy" 
@@ -433,7 +433,7 @@ const KnowledgeBase: React.FC = () => {
                       />
                     </div>
                     <div className="space-y-1.5">
-                      <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest ml-1">Category</label>
+                      <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest ml-1">Category</label>
                       <select 
                         value={category}
                         onChange={(e) => setCategory(e.target.value)}
@@ -448,7 +448,7 @@ const KnowledgeBase: React.FC = () => {
                     </div>
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest ml-1">Fact Details</label>
+                    <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest ml-1">Fact Details</label>
                     <textarea 
                       placeholder="Paste business details here..." 
                       value={newContent}

@@ -44,7 +44,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ type: 'spring', duration: 0.4, bounce: 0.15 }}
-            className="relative w-full max-w-md bg-white dark:bg-zinc-950 border border-slate-200 dark:border-white/10 rounded-3xl p-6 shadow-[0_20px_50px_rgba(0,0,0,0.15)] dark:shadow-[0_25px_60px_rgba(0,0,0,0.5)] overflow-hidden"
+            className="relative w-full max-w-md bg-white dark:bg-[#09090B] border border-slate-200 dark:border-zinc-200 rounded-3xl p-6 shadow-[0_20px_50px_rgba(0,0,0,0.15)] dark:shadow-[0_25px_60px_rgba(0,0,0,0.5)] overflow-hidden"
           >
             {/* Ambient accent top glow */}
             <div className={`absolute top-0 left-0 right-0 h-[3px] ${
@@ -57,7 +57,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
             {!isLoading && (
               <button
                 onClick={onCancel}
-                className="absolute top-4 right-4 text-slate-400 hover:text-slate-650 dark:text-muted-foreground dark:hover:text-zinc-350 transition-colors p-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-primary"
+                className="absolute top-4 right-4 text-zinc-500 hover:text-slate-650 dark:text-zinc-500 dark:hover:text-zinc-350 transition-colors p-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-primary"
               >
                 <X size={16} />
               </button>
@@ -67,8 +67,8 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
             <div className="flex items-start gap-4 mb-6 mt-2">
               <div className={`p-3 rounded-2xl shrink-0 border ${
                 type === 'danger' ? 'bg-rose-500/10 text-destructive border-rose-500/20' :
-                type === 'warning' ? 'bg-amber-500/10 text-amber-500 border-amber-500/20' :
-                'bg-purple-500/10 text-purple-500 border-purple-500/20'
+                type === 'warning' ? 'bg-warning/10 text-warning border-amber-500/20' :
+                'bg-brand/10 text-brand border-brand/20'
               }`}>
                 {type === 'danger' && <AlertCircle size={24} />}
                 {type === 'warning' && <AlertTriangle size={24} />}
@@ -78,19 +78,19 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
                 <h3 className="text-lg font-bold text-slate-900 dark:text-zinc-100 leading-snug">
                   {title}
                 </h3>
-                <p className="text-sm text-slate-500 dark:text-muted-foreground font-medium leading-relaxed">
+                <p className="text-sm text-zinc-500 dark:text-zinc-500 font-medium leading-relaxed">
                   {message}
                 </p>
               </div>
             </div>
 
             {/* Actions */}
-            <div className="flex justify-end gap-3 pt-4 border-t border-slate-100 dark:border-white/5">
+            <div className="flex justify-end gap-3 pt-4 border-t border-slate-100 dark:border-zinc-200">
               <button
                 type="button"
                 onClick={onCancel}
                 disabled={isLoading}
-                className="px-5 py-2.5 bg-slate-50 hover:bg-slate-100 dark:bg-primary dark:hover:bg-primary/90 border border-slate-200/60 dark:border-white/5 rounded-xl text-sm font-bold text-slate-600 dark:text-zinc-350 transition-all disabled:opacity-50 cursor-pointer"
+                className="px-5 py-2.5 bg-slate-50 hover:bg-slate-100 dark:bg-primary dark:hover:bg-primary/90 border border-slate-200/60 dark:border-zinc-200 rounded-xl text-sm font-bold text-slate-600 dark:text-zinc-350 transition-all disabled:opacity-50 cursor-pointer"
               >
                 {cancelText}
               </button>
@@ -98,10 +98,10 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
                 type="button"
                 onClick={onConfirm}
                 disabled={isLoading}
-                className={`px-6 py-2.5 text-primary-foreground font-bold text-sm rounded-xl transition-all flex items-center gap-2 disabled:opacity-50 cursor-pointer ${
+                className={`px-6 py-2.5 text-zinc-900 font-bold text-sm rounded-xl transition-all flex items-center gap-2 disabled:opacity-50 cursor-pointer ${
                   type === 'danger' ? 'bg-rose-600 hover:bg-destructive/90 shadow-lg shadow-rose-600/10 dark:shadow-rose-600/5' :
-                  type === 'warning' ? 'bg-amber-600 hover:bg-amber-700 shadow-lg shadow-amber-600/10 dark:shadow-amber-600/5' :
-                  'bg-purple-650 hover:bg-purple-700 shadow-lg shadow-purple-650/10 dark:shadow-purple-650/5'
+                  type === 'warning' ? 'bg-warning hover:bg-warning shadow-lg shadow-amber-600/10 dark:shadow-amber-600/5' :
+                  'bg-brand hover:bg-brand shadow-lg shadow-purple-650/10 dark:shadow-purple-650/5'
                 }`}
               >
                 {isLoading && <Loader2 size={14} className="animate-spin" />}

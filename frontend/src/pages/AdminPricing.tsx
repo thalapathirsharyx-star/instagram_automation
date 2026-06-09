@@ -56,7 +56,7 @@ const AdminPricing: React.FC = () => {
         <button 
           onClick={handleSave}
           disabled={saving}
-          className="bg-primary text-primary-foreground hover:bg-primary/90 transition-colors shadow-sm" 
+          className="bg-primary text-zinc-900 hover:bg-primary/90 transition-colors shadow-sm" 
           style={{ padding: '10px 24px', borderRadius: '12px', fontSize: '0.9rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '8px', opacity: saving ? 0.7 : 1, border: 'none', cursor: 'pointer' }}
         >
           <Save size={18} /> {saving ? 'Saving...' : 'Save Configuration'}

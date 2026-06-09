@@ -16,23 +16,23 @@ const UpgradeOverlay: React.FC<Props> = ({ feature, onClose }) => {
         {onClose && (
           <button 
             onClick={onClose}
-            className="absolute top-0 right-0 p-2 text-muted-foreground hover:text-primary-foreground transition-colors"
+            className="absolute top-0 right-0 p-2 text-zinc-500 hover:text-zinc-900 transition-colors"
           >
             <X size={20} />
           </button>
         )}
-        <div className="mx-auto w-16 h-16 rounded-2xl bg-purple-500/20 border border-purple-500/30 flex items-center justify-center mb-6">
-          <Lock size={28} className="text-purple-400" />
+        <div className="mx-auto w-16 h-16 rounded-2xl bg-brand/20 border border-brand/30 flex items-center justify-center mb-6">
+          <Lock size={28} className="text-brand" />
         </div>
-        <h3 className="text-xl font-bold text-primary-foreground mb-2">
+        <h3 className="text-xl font-bold text-zinc-900 mb-2">
           Upgrade to Unlock {feature}
         </h3>
-        <p className="text-muted-foreground text-sm mb-6 leading-relaxed">
+        <p className="text-zinc-500 text-sm mb-6 leading-relaxed">
           This feature requires a Pro plan or higher. Upgrade now to access {feature.toLowerCase()} and supercharge your Instagram automation.
         </p>
         <button
           onClick={() => navigate('/billing')}
-          className="px-8 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-primary-foreground font-bold rounded-xl hover:from-purple-500 hover:to-indigo-500 transition-all shadow-lg shadow-purple-500/25 flex items-center gap-2 mx-auto"
+          className="px-8 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-zinc-900 font-bold rounded-xl hover:from-purple-500 hover:to-indigo-500 transition-all shadow-lg shadow-purple-500/25 flex items-center gap-2 mx-auto"
         >
           <Sparkles size={16} />
           View Plans & Upgrade
