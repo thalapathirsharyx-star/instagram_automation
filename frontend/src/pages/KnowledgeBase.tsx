@@ -467,7 +467,7 @@ const KnowledgeBase: React.FC = () => {
                 <button 
                   onClick={activeModal === 'faq' ? handleAddFaq : handleAddFact} 
                   disabled={isSaving || (activeModal === 'faq' ? (!newQuestion || !newAnswer) : (!newTitle || !newContent))} 
-                  className="btn-base btn-primary"
+                  className="btn-base btn-success"
                 >
                   {isSaving ? <Loader2 size={16} className="animate-spin" /> : 'Save Entry'}
                 </button>

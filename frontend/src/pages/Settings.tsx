@@ -365,7 +365,7 @@ const Settings: React.FC = () => {
                       <button 
                         onClick={handleUpdateProfile}
                         disabled={isUpdatingProfile}
-                        className="btn-base btn-primary"
+                        className="btn-base btn-success"
                       >
                         {isUpdatingProfile ? 'Saving...' : 'Save Changes'}
                       </button>
@@ -460,7 +460,7 @@ const Settings: React.FC = () => {
                     <button 
                       onClick={handleChangePassword}
                       disabled={isChangingPassword || (!isGoogleRegistered && !currentPassword) || !newPassword || !confirmPassword}
-                      className="btn-base btn-primary"
+                      className="btn-base btn-success"
                     >
                       {isChangingPassword ? 'Updating...' : 'Update Password'}
                     </button>
@@ -523,7 +523,7 @@ const Settings: React.FC = () => {
                       <button 
                         onClick={handleVerifyAndEnable2FA}
                         disabled={isVerifying2Fa || !totpVerificationCode}
-                        className="btn-base btn-primary"
+                        className="btn-base btn-success"
                       >
                         {isVerifying2Fa ? 'Verifying...' : 'Verify & Enable 2FA'}
                       </button>
@@ -556,7 +556,7 @@ const Settings: React.FC = () => {
                     </p>
                     <button 
                       onClick={handleSetup2FA}
-                      className="btn-base btn-primary"
+                      className="btn-base btn-success"
                     >
                       Enable 2FA Now
                     </button>
@@ -747,7 +747,7 @@ const Settings: React.FC = () => {
             <div className="px-6 py-4 bg-muted border-t border-border flex flex-col sm:flex-row gap-3">
               <button 
                 onClick={handleConnect}
-                className="btn-base btn-primary flex-1"
+                className="btn-base btn-success flex-1"
               >
                 <CheckCircle2 size={18} />
                 <span>I've Completed These Steps</span>

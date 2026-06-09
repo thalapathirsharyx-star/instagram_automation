@@ -66,7 +66,7 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   return (
     <ToastContext.Provider value={{ toast, toasts, dismiss }}>
       {children}
-      <Toaster ContainerPosition="bottom-right" />
+      <Toaster ContainerPosition="top-right" />
     </ToastContext.Provider>
   );
 };
@@ -88,7 +88,7 @@ const Toaster: React.FC<{ ContainerPosition?: 'top-right' | 'bottom-right' }> = 
           <motion.div
             key={t.id}
             layout
-            initial={{ opacity: 0, y: 50, scale: 0.9 }}
+            initial={{ opacity: 0, y: -50, scale: 0.9 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, scale: 0.85, transition: { duration: 0.15 } }}
             transition={{ type: 'spring', stiffness: 350, damping: 25 }}

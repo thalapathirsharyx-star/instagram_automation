@@ -218,7 +218,7 @@ const LLMKeys: React.FC = () => {
           <button
             onClick={() => handleSave()}
             disabled={isSaving}
-            className="bg-primary text-primary-foreground hover:bg-primary/90 transition-all shadow-md hover:shadow-lg disabled:opacity-70 disabled:hover:bg-primary px-5 py-2.5 rounded-lg text-sm font-semibold flex items-center gap-2"
+            className="btn-base btn-success px-5 disabled:opacity-70"
           >
             {isSaving ? <Loader2 size={16} className="animate-spin" /> : <ShieldCheck size={16} />}
             <span>Save Configuration</span>

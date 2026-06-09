@@ -196,11 +196,9 @@ const Automation: React.FC = () => {
   const TabButton = ({ id, label, icon: Icon }: { id: any, label: string, icon: any }) => (
     <button 
       onClick={() => setActiveTab(id)}
-      className={`px-5 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 flex items-center gap-2 ${
-        activeTab === id 
-          ? 'bg-primary text-primary-foreground shadow-md' 
-          : 'text-muted-foreground hover:text-foreground hover:bg-secondary'
-      }`}
+      className={`btn-base ${activeTab === id 
+        ? 'btn-primary' 
+        : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200 hover:text-zinc-900 border border-transparent'}`}
     >
       <Icon size={16} /> <span>{label}</span>
     </button>
@@ -326,7 +324,7 @@ const Automation: React.FC = () => {
                         + Delay
                       </button>
                     </div>
-                    <button onClick={handleSavePlaybook} disabled={isSaving} className="bg-primary text-primary-foreground hover:bg-primary/90 transition-colors px-6 py-2.5 rounded-lg text-sm font-semibold flex items-center gap-2 shadow-sm disabled:opacity-50">
+                    <button onClick={handleSavePlaybook} disabled={isSaving} className="btn-base btn-success px-6 disabled:opacity-50">
                       {isSaving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />} Save Sequence
                     </button>
                   </div>
@@ -418,7 +416,7 @@ const Automation: React.FC = () => {
                   </div>
 
                   <div className="flex justify-end pt-4 border-t border-border">
-                    <button onClick={addCommentTrigger} className="bg-primary text-primary-foreground hover:bg-primary/90 transition-colors px-6 py-2.5 rounded-lg text-sm font-semibold flex items-center gap-2 shadow-sm">
+                    <button onClick={addCommentTrigger} className="btn-base btn-primary px-6">
                       <Plus size={16} /> Create Trigger
                     </button>
                   </div>
@@ -504,7 +502,7 @@ const Automation: React.FC = () => {
                   </div>
 
                   <div className="mt-6 flex justify-end pt-4 border-t border-border">
-                    <button onClick={handleSaveWelcome} disabled={isSaving} className="bg-primary text-primary-foreground hover:bg-primary/90 transition-colors px-6 py-2.5 rounded-lg text-sm font-semibold flex items-center gap-2 shadow-sm disabled:opacity-50">
+                    <button onClick={handleSaveWelcome} disabled={isSaving} className="btn-base btn-success px-6 disabled:opacity-50">
                       {isSaving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />} Save Payload
                     </button>
                   </div>
@@ -682,7 +680,7 @@ const Automation: React.FC = () => {
 
           {activeTab === 'advanced' && (
             <div className="mt-6 flex justify-end">
-              <button onClick={handleSaveAdvanced} disabled={isSaving} className="bg-primary text-primary-foreground hover:bg-primary/90 transition-colors px-8 py-2.5 rounded-lg text-sm font-semibold flex items-center gap-2 shadow-sm disabled:opacity-50">
+              <button onClick={handleSaveAdvanced} disabled={isSaving} className="btn-base btn-success px-8 disabled:opacity-50">
                 {isSaving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />} Save All Advanced Rules
               </button>
             </div>

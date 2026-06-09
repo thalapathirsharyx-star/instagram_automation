@@ -639,7 +639,7 @@ const ProductCatalog: React.FC = () => {
                 <button
                   type="submit"
                   disabled={isSaving}
-                  className="btn-base btn-primary px-8"
+                  className="btn-base btn-success px-8"
                 >
                   {isSaving ? (
                     <>

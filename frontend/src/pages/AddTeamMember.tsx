@@ -122,7 +122,7 @@ const AddTeamMember: React.FC = () => {
             <button 
               type="submit" 
               disabled={isInviting}
-              className="w-full mt-6 py-3 bg-primary text-primary-foreground font-bold text-sm rounded-xl hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm flex items-center justify-center gap-2"
+              className="w-full mt-6 py-3 btn-success font-bold text-sm rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm flex items-center justify-center gap-2"
             >
               {isInviting ? 'Adding...' : 'Add Team Member'}
             </button>
