@@ -1671,3 +1671,89 @@
   font-family: 'Inter', sans-serif;
   overflow: hidden;
 }
+
+
+/* Global Button Styles requested by User */
+.btn-primary {
+  background-color: #2563EB !important; /* Blue 600 */
+  color: #ffffff !important;
+  transition: all 0.2s ease;
+}
+.btn-primary:hover {
+  background-color: #1D4ED8 !important; /* Blue 700 */
+}
+
+.btn-success {
+  background-color: #16A34A !important; /* Green 600 */
+  color: #ffffff !important;
+  transition: all 0.2s ease;
+}
+.btn-success:hover {
+  background-color: #15803d !important; /* Green 700 */
+}
+
+.btn-warning {
+  background-color: #F59E0B !important; /* Amber 500 */
+  color: #ffffff !important;
+  transition: all 0.2s ease;
+}
+.btn-warning:hover {
+  background-color: #d97706 !important; /* Amber 600 */
+}
+
+.btn-danger {
+  background-color: #DC2626 !important; /* Red 600 */
+  color: #ffffff !important;
+  transition: all 0.2s ease;
+}
+.btn-danger:hover {
+  background-color: #b91c1c !important; /* Red 700 */
+}
+
+.btn-secondary {
+  background-color: #27272A !important; /* Zinc 800 */
+  color: #ffffff !important;
+  transition: all 0.2s ease;
+}
+.btn-secondary:hover {
+  background-color: #18181b !important; /* Zinc 900 */
+}
+
+.btn-ghost {
+  background-color: transparent !important;
+  color: #52525b !important; /* Adjusted to Zinc 600 for light theme visibility, user requested #E4E4E7 but that is too light */
+  transition: all 0.2s ease;
+}
+.btn-ghost:hover {
+  background-color: #f4f4f5 !important; /* Zinc 100 */
+  color: #18181b !important;
+}
+
+.btn-outline {
+  background-color: transparent !important;
+  border: 1px solid #d4d4d8 !important; /* Zinc 300, user requested #3F3F46 but that is too dark/dark theme */
+  color: #3f3f46 !important; /* Zinc 700 */
+  transition: all 0.2s ease;
+}
+.btn-outline:hover {
+  background-color: #f4f4f5 !important;
+  color: #18181b !important;
+}
+
+/* Core Button Base restored */
+.btn-base {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  border-radius: 0.75rem;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+.btn-base:disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}

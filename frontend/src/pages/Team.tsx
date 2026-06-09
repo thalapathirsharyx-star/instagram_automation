@@ -61,7 +61,7 @@ const Team: React.FC = () => {
         </div>
         <Link
           to="/team/add"
-          className="px-5 py-2.5 bg-primary text-primary-foreground font-bold text-sm rounded-xl hover:bg-primary/90 transition-colors shadow-sm flex items-center justify-center gap-2"
+          className="px-5 py-2.5 btn-primary font-bold text-sm rounded-xl hover:bg-primary/90 transition-colors shadow-sm flex items-center justify-center gap-2"
         >
           Add Team Member
         </Link>
@@ -124,7 +124,7 @@ const Team: React.FC = () => {
                       {member.role !== 'Client Admin' && (
                         <button
                           onClick={() => setConfirmRemoveId(member.id)}
-                          className="p-2 text-muted-foreground hover:text-red-600 hover:bg-red-50 rounded-lg transition-all opacity-0 group-hover:opacity-100 focus:opacity-100 inline-flex"
+                          className="p-2 text-muted-foreground hover:bg-red-600 hover:text-white rounded-lg transition-all opacity-0 group-hover:opacity-100 focus:opacity-100 inline-flex"
                           title="Remove member"
                         >
                           <Trash2 size={18} />

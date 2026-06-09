@@ -421,7 +421,7 @@ const ProductCatalog: React.FC = () => {
                       <div className="flex items-center gap-2">
                         <button 
                           onClick={() => handleOpenEditModal(product)}
-                          className="btn-base btn-secondary px-2"
+                          className="btn-base btn-outline px-2"
                         >
                           <Edit size={16} />
                         </button>
@@ -552,7 +552,7 @@ const ProductCatalog: React.FC = () => {
                   <button
                     type="button"
                     onClick={addVariantRow}
-                    className="btn-base btn-secondary text-xs"
+                    className="btn-base btn-outline text-xs"
                   >
                     <Plus size={14} /> Add Row
                   </button>
@@ -632,7 +632,7 @@ const ProductCatalog: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="btn-base btn-secondary"
+                  className="btn-base btn-outline"
                 >
                   Cancel
                 </button>

@@ -162,7 +162,7 @@ const Dashboard: React.FC = () => {
         </div>
         <button 
           onClick={handleGenerateReport} 
-          className="btn-base btn-secondary"
+          className="btn-base btn-outline"
         >
           <Download size={16} />
           <span>Export Analytics</span>

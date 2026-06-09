@@ -51,7 +51,7 @@ const Leads: React.FC = () => {
               className="w-full sm:w-64 bg-card border border-border rounded-lg pl-9 pr-4 py-2.5 text-sm font-medium text-foreground placeholder-zinc-400 focus:outline-none focus:border-border focus:ring-1 focus:ring-violet-500 transition-all shadow-sm"
             />
           </div>
-          <button onClick={fetchLeads} className="btn-base btn-secondary">
+          <button onClick={fetchLeads} className="btn-base btn-outline">
             <Filter size={16} />
             <span>Filter</span>
           </button>
@@ -140,13 +140,13 @@ const Leads: React.FC = () => {
                     <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                       <button 
                         onClick={(e) => { e.stopPropagation(); setSelectedLead(lead); }}
-                        className="btn-base btn-secondary px-2" title="View Intelligence"
+                        className="btn-base btn-outline px-2" title="View Intelligence"
                       >
                         <ExternalLink size={16} />
                       </button>
                       <button 
                         onClick={(e) => e.stopPropagation()}
-                        className="btn-base btn-secondary px-2"
+                        className="btn-base btn-outline px-2"
                       >
                         <MoreHorizontal size={16} />
                       </button>
@@ -163,8 +163,8 @@ const Leads: React.FC = () => {
           <div className="px-6 py-4 border-t border-border bg-muted/50 flex justify-between items-center text-xs font-medium text-muted-foreground">
             <span>Showing {filteredLeads.length} leads</span>
             <div className="flex gap-2">
-              <button className="btn-base btn-secondary">Previous</button>
-              <button className="btn-base btn-secondary">Next</button>
+              <button className="btn-base btn-outline">Previous</button>
+              <button className="btn-base btn-outline">Next</button>
             </div>
           </div>
         )}
@@ -240,7 +240,7 @@ const Leads: React.FC = () => {
               <div className="flex gap-3 w-full sm:w-auto">
                 <button 
                   onClick={() => setSelectedLead(null)}
-                  className="btn-base btn-secondary flex-1 sm:flex-none"
+                  className="btn-base btn-outline flex-1 sm:flex-none"
                 >
                   Close
                 </button>

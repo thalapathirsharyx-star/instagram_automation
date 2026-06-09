@@ -263,7 +263,7 @@ const Inbox: React.FC = () => {
                   <button
                     onClick={handleSendMessage}
                     disabled={!isManualMode || !messageText.trim()}
-                    className={`btn-base px-2 ${isManualMode && messageText.trim() ? 'btn-primary' : 'btn-secondary'}`}
+                    className={`btn-base px-2 ${isManualMode && messageText.trim() ? 'btn-primary' : 'btn-outline'}`}
                   >
                     <Send size={16} />
                   </button>

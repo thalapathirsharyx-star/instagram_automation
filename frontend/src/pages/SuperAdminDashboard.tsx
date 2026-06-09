@@ -87,7 +87,7 @@ const SuperAdminDashboard: React.FC = () => {
           <p style={{ margin: '8px 0 0', color: 'var(--text-dim)' }}>Global metrics across all tenants and clients.</p>
         </div>
         <div style={{ display: 'flex', gap: '12px' }}>
-          <button className="btn-base btn-secondary">
+          <button className="btn-base btn-outline">
             <Server size={18} /> System Status: OK
           </button>
           <button className="btn-base btn-primary">
@@ -155,7 +155,7 @@ const SuperAdminDashboard: React.FC = () => {
               <div style={{ color: 'var(--text-dim)', textAlign: 'center', padding: '20px 0' }}>No active consumers yet.</div>
             )}
           </div>
-          <button className="btn-base btn-secondary w-full mt-5 border-transparent text-primary hover:bg-muted">
+          <button className="btn-base btn-outline w-full mt-5 border-transparent text-primary hover:bg-muted">
             View All Clients
           </button>
         </div>

@@ -374,7 +374,7 @@ const Settings: React.FC = () => {
                           setIsEditingProfile(false);
                           setProfileEmail(user?.email || '');
                         }}
-                        className="btn-base btn-secondary"
+                        className="btn-base btn-outline"
                       >
                         Cancel
                       </button>
@@ -393,7 +393,7 @@ const Settings: React.FC = () => {
                     </div>
                     <button 
                       onClick={() => setIsEditingProfile(true)}
-                      className="btn-base btn-secondary"
+                      className="btn-base btn-outline"
                     >
                       Edit Profile
                     </button>
@@ -516,7 +516,7 @@ const Settings: React.FC = () => {
                     <div className="flex justify-center gap-3 pt-4">
                       <button 
                         onClick={() => setIsSettingUp2Fa(false)}
-                        className="btn-base btn-secondary"
+                        className="btn-base btn-outline"
                       >
                         Cancel
                       </button>
@@ -652,7 +652,7 @@ const Settings: React.FC = () => {
                       </button>
                       <button 
                         onClick={() => setShowGuide(true)}
-                        className="btn-base btn-secondary flex-1 sm:flex-none"
+                        className="btn-base btn-outline flex-1 sm:flex-none"
                       >
                         <Info size={16} className="text-muted-foreground"/> Setup Guide
                       </button>
@@ -675,7 +675,7 @@ const Settings: React.FC = () => {
                   <div className="bg-muted p-4 rounded-xl border border-border text-sm font-mono text-muted-foreground truncate shadow-inner select-all">
                     {`${window.location.origin}/api/v1/Instagram/Webhook`}
                   </div>
-                  <button className="btn-base btn-secondary text-xs mt-2">
+                  <button className="btn-base btn-outline text-xs mt-2">
                     <Zap size={14} className="text-amber-500" /> Dispatch Test Event
                   </button>
                 </div>
@@ -754,7 +754,7 @@ const Settings: React.FC = () => {
               </button>
               <button 
                  onClick={() => setShowGuide(false)}
-                 className="btn-base btn-secondary flex-1 sm:flex-none"
+                 className="btn-base btn-outline flex-1 sm:flex-none"
               >
                 Cancel
               </button>

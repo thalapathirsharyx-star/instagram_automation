@@ -196,7 +196,7 @@ const KnowledgeBase: React.FC = () => {
   const TabButton = ({ id, label, icon: Icon }: { id: any, label: string, icon: any }) => (
     <button 
       onClick={() => setActiveTab(id)}
-      className={`btn-base ${activeTab === id ? 'btn-primary' : 'btn-secondary'}`}
+      className={`btn-base ${activeTab === id ? 'btn-primary' : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200 hover:text-zinc-900 border border-transparent'}`}
     >
       <Icon size={16} /> <span className="hidden sm:inline">{label}</span>
     </button>
@@ -215,14 +215,14 @@ const KnowledgeBase: React.FC = () => {
         <div className="flex flex-wrap items-center gap-3 shrink-0">
           <button 
             onClick={() => setActiveModal('upload')}
-            className="btn-base btn-secondary"
+            className="btn-base bg-white border border-zinc-200 text-zinc-700 hover:bg-zinc-50 shadow-sm"
           >
             <UploadCloud size={16} className="text-foreground" />
             <span className="hidden sm:inline">Upload PDF</span>
           </button>
           <button 
             onClick={() => setActiveModal('faq')}
-            className="btn-base btn-secondary"
+            className="btn-base bg-white border border-zinc-200 text-zinc-700 hover:bg-zinc-50 shadow-sm"
           >
             <HelpCircle size={16} className="text-blue-400" />
             <span className="hidden sm:inline">Add FAQ</span>
@@ -322,7 +322,7 @@ const KnowledgeBase: React.FC = () => {
                         {item.category !== 'Document' && (
                           <button 
                             onClick={() => handleEditItem(item)}
-                            className="btn-base btn-secondary px-2 opacity-0 group-hover:opacity-100"
+                            className="btn-base btn-outline px-2 opacity-0 group-hover:opacity-100"
                             title="Edit"
                           >
                             <Edit2 size={16} />
@@ -463,7 +463,7 @@ const KnowledgeBase: React.FC = () => {
 
             {activeModal !== 'upload' && (
               <div className="px-6 py-4 bg-muted border-t border-border flex justify-end gap-3">
-                <button onClick={closeModal} className="btn-base btn-secondary">Cancel</button>
+                <button onClick={closeModal} className="btn-base btn-outline">Cancel</button>
                 <button 
                   onClick={activeModal === 'faq' ? handleAddFaq : handleAddFact} 
                   disabled={isSaving || (activeModal === 'faq' ? (!newQuestion || !newAnswer) : (!newTitle || !newContent))} 
