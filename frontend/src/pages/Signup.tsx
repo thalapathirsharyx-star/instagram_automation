@@ -294,6 +294,9 @@ const Signup: React.FC = () => {
           @keyframes countPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
           @keyframes dotPulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
           @keyframes stairSlide { 0% { transform: translateX(100%); } 100% { transform: translateX(0); } }
+          @keyframes tooltipPop { 0% { opacity: 0; transform: scale(0.5) translateY(10px); } 60% { transform: scale(1.1) translateY(-2px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
+          @keyframes ringPing { 0% { transform: scale(1); opacity: 0.8; } 100% { transform: scale(1.6); opacity: 0; } }
+          @keyframes iconBounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-2px) scale(1.05); } }
           .float-card-1 { animation: floatY 5s ease-in-out infinite; }
           .float-card-2 { animation: floatY2 4s ease-in-out infinite 0.5s; }
           .float-icon { animation: floatY 3.5s ease-in-out infinite, pulse-glow 3s ease-in-out infinite; }
@@ -302,7 +305,7 @@ const Signup: React.FC = () => {
           .breathe-dots { animation: breathe 4s ease-in-out infinite; }
           .slide-up-1 { animation: slideUp 0.8s ease-out forwards; }
           .slide-up-2 { animation: slideUp 0.8s ease-out 0.2s forwards; opacity: 0; }
-          .chart-line { stroke-dasharray: 200; animation: drawLine 2s ease-out 0.5s forwards; stroke-dashoffset: 200; }
+          .chart-line { stroke-dasharray: 300; animation: drawLine 2.5s ease-out 0.5s forwards; stroke-dashoffset: 300; }
           .count-pulse { animation: countPulse 3s ease-in-out infinite; }
           .dot-pulse-1 { animation: dotPulse 2s ease-in-out infinite; }
           .dot-pulse-2 { animation: dotPulse 2s ease-in-out infinite 0.4s; }
@@ -311,6 +314,9 @@ const Signup: React.FC = () => {
           .stair-2 { animation: stairSlide 0.6s ease-out 0.4s forwards; transform: translateX(100%); }
           .stair-3 { animation: stairSlide 0.6s ease-out 0.6s forwards; transform: translateX(100%); }
           .stair-4 { animation: stairSlide 0.6s ease-out 0.8s forwards; transform: translateX(100%); }
+          .tooltip-anim { opacity: 0; animation: tooltipPop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) 1.8s forwards; transform-origin: bottom center; }
+          .ring-anim { animation: ringPing 2s cubic-bezier(0, 0, 0.2, 1) infinite 1s; }
+          .icon-bounce { animation: iconBounce 2s ease-in-out infinite; }
         `}} />
         {/* Geometric Background Elements */}
         <div className="absolute top-0 left-0 w-[400px] h-[400px] bg-[#3B29C6] translate-x-[-30%] translate-y-[-30%] rotate-45" />
@@ -327,15 +333,22 @@ const Signup: React.FC = () => {
 
         <div className="absolute bottom-10 right-[60%] w-64 h-64 bg-black/5 rounded-full blur-3xl"></div>
 
-        {/* Floating Icons */}
-        <div className="absolute top-[20%] left-[25%] w-14 h-14 bg-white rounded-full flex items-center justify-center shadow-2xl z-20 overflow-hidden float-icon">
-          <img src="/Dark theme.png" alt="Flazly Logo" className="w-8 h-8 object-contain" />
+        {/* New Floating SaaS Elements */}
+        <div className="absolute top-[18%] left-[20%] bg-white rounded-full px-4 py-2 flex items-center gap-2 shadow-2xl z-20 float-card-1">
+          <div className="w-5 h-5 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          </div>
+          <span className="text-zinc-800 text-[11px] font-extrabold tracking-wide">Lead Captured</span>
         </div>
-        <div className="absolute top-[15%] right-[30%] w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-2xl z-20 float-icon-2">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" alt="IG" className="w-5 h-5 object-cover" />
-        </div>
-        <div className="absolute top-[50%] right-[15%] w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-2xl z-20 float-icon-3">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="#0084FF"><path d="M12 2C6.477 2 2 6.145 2 11.258c0 2.898 1.48 5.485 3.79 7.202v3.136c0 .356.388.563.684.368l3.413-2.26c.677.18 1.385.275 2.113.275 5.523 0 10-4.145 10-9.258C22 6.145 17.523 2 12 2zm1.144 12.35l-2.91-3.11-5.63 3.11 6.195-6.578 2.91 3.11 5.63-3.11-6.195 6.578z"/></svg>
+
+        <div className="absolute top-[25%] right-[15%] bg-white rounded-xl p-3 shadow-2xl z-20 flex items-center gap-3 float-card-2">
+          <div className="w-8 h-8 rounded-full bg-indigo-50 flex items-center justify-center text-[#4F39F6]">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
+          </div>
+          <div>
+            <p className="text-[9px] text-zinc-400 font-bold uppercase">Conversion</p>
+            <p className="text-sm font-black text-zinc-900">+84%</p>
+          </div>
         </div>
 
         {/* Dashboard Widgets */}
@@ -350,7 +363,7 @@ const Signup: React.FC = () => {
                 <path d="M0 45 Q 15 45, 25 30 T 50 15 T 75 25 T 100 35" fill="none" stroke="#E5E7EB" strokeWidth="2" />
                 <path className="chart-line" d="M0 40 Q 15 40, 25 25 T 50 5 T 75 15 T 100 30" fill="none" stroke="#4F39F6" strokeWidth="2.5" />
               </svg>
-              <div className="absolute top-0 left-[45%] bg-white border border-zinc-100 shadow-xl rounded px-1.5 py-0.5 z-10 text-[9px] font-bold text-zinc-800 flex flex-col items-center">
+              <div className="absolute top-0 left-[45%] bg-white border border-zinc-100 shadow-xl rounded px-1.5 py-0.5 z-10 text-[9px] font-bold text-zinc-800 flex flex-col items-center tooltip-anim">
                 $23,827<br/><span className="text-zinc-400 font-medium">August</span>
               </div>
             </div>
@@ -363,9 +376,14 @@ const Signup: React.FC = () => {
           <div className="bg-white rounded-xl p-5 shadow-2xl w-[180px] -translate-y-10 float-card-2 slide-up-2">
             <h3 className="text-[13px] font-bold text-zinc-900 mb-3">AI Agent</h3>
             <div className="flex flex-col items-center justify-center pb-1">
-              <div className="w-14 h-14 rounded-full border-[3px] border-[#4F39F6]/20 p-1 mb-2.5 flex items-center justify-center">
-                <div className="w-full h-full rounded-full bg-zinc-100 overflow-hidden">
-                  <div className="w-full h-full bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center text-white"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg></div>
+              <div className="relative w-14 h-14 mb-2.5">
+                {/* Radar ping effect */}
+                <div className="absolute inset-0 rounded-full border-[2px] border-[#4F39F6] ring-anim z-0"></div>
+                {/* Main circle */}
+                <div className="absolute inset-0 rounded-full border-[3px] border-[#4F39F6]/20 p-1 flex items-center justify-center bg-white z-10">
+                  <div className="w-full h-full rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center text-white icon-bounce">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                  </div>
                 </div>
               </div>
               <p className="text-[9px] text-zinc-400 font-bold uppercase tracking-widest">Responses sent</p>
