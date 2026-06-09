@@ -23,6 +23,7 @@ import {
   Zap,
   Eye,
   Filter,
+  Info,
 } from 'lucide-react';
 
 interface BroadcastItem {
@@ -39,7 +40,7 @@ interface BroadcastItem {
 }
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; icon: React.ReactNode }> = {
-  draft:     { label: 'Draft',     color: 'bg-primary/90 text-zinc-500',                     icon: <Clock size={12} /> },
+  draft:     { label: 'Draft',     color: 'bg-zinc-100 text-zinc-500',                     icon: <Clock size={12} /> },
   scheduled: { label: 'Scheduled', color: 'bg-warning/10 text-warning border-amber-500/20', icon: <Clock size={12} /> },
   sending:   { label: 'Sending',   color: 'bg-sky-500/10 text-sky-400 border-sky-500/20',       icon: <Loader2 size={12} className="animate-spin" /> },
   completed: { label: 'Completed', color: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20', icon: <CheckCircle2 size={12} /> },
@@ -61,6 +62,7 @@ const Broadcasts: React.FC = () => {
   const [audienceCount, setAudienceCount] = useState<number | null>(null);
   const [isCountLoading, setIsCountLoading] = useState(false);
   const [showUpgradePrompt, setShowUpgradePrompt] = useState(false);
+  const [showTipsModal, setShowTipsModal] = useState(false);
 
   // Custom modal states
   const [confirmConfig, setConfirmConfig] = useState<{
@@ -235,18 +237,52 @@ const Broadcasts: React.FC = () => {
       {showUpgradePrompt && <UpgradeOverlay feature="Broadcasts" onClose={() => setShowUpgradePrompt(false)} />}
       
       {/* Header */}
-      <div className="flex flex-col gap-4 md:flex-row md:justify-between md:items-end">
+      <div className="flex flex-col xl:flex-row xl:justify-between xl:items-center gap-6">
         <div>
-          <h1 className="text-3xl font-bold text-zinc-100 mb-2">Broadcasts</h1>
+          <div className="flex items-center gap-3 mb-2">
+            <h1 className="text-3xl font-bold text-zinc-900">Broadcasts</h1>
+            <button 
+              onClick={() => setShowTipsModal(true)}
+              className="text-zinc-400 hover:text-brand transition-colors mt-1"
+              title="Broadcast Tips"
+            >
+              <Info size={22} />
+            </button>
+          </div>
           <p className="text-zinc-500 font-medium">Send bulk messages to your leads and contacts.</p>
         </div>
-        <button
-          onClick={() => setShowCreate(!showCreate)}
-          className="btn-primary px-6 shadow-glow-purple self-start"
-        >
-          <Plus size={18} />
-          <span>{showCreate ? 'Cancel' : 'New Broadcast'}</span>
-        </button>
+        
+        <div className="flex flex-col sm:flex-row items-center gap-4">
+          {/* Top Right Analytics */}
+          <div className="flex items-center gap-6 bg-white border border-zinc-200 rounded-xl px-6 py-3 shadow-sm">
+            <div className="text-center">
+              <div className="text-xl font-black text-zinc-900">{broadcasts.length}</div>
+              <div className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider mt-1">Campaigns</div>
+            </div>
+            <div className="w-px h-8 bg-zinc-200"></div>
+            <div className="text-center">
+              <div className="text-xl font-black text-emerald-500">
+                {broadcasts.reduce((sum, b) => sum + (b.sent_count || 0), 0)}
+              </div>
+              <div className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider mt-1">Sent</div>
+            </div>
+            <div className="w-px h-8 bg-zinc-200"></div>
+            <div className="text-center">
+              <div className="text-xl font-black text-brand">
+                {broadcasts.reduce((sum, b) => sum + (b.total_recipients || 0), 0)}
+              </div>
+              <div className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider mt-1">Recipients</div>
+            </div>
+          </div>
+
+          <button
+            onClick={() => setShowCreate(!showCreate)}
+            className="btn-primary h-[60px] px-6 shadow-glow-purple whitespace-nowrap"
+          >
+            <Plus size={18} />
+            <span>{showCreate ? 'Cancel' : 'New Broadcast'}</span>
+          </button>
+        </div>
       </div>
 
       {/* Create Form */}
@@ -256,7 +292,7 @@ const Broadcasts: React.FC = () => {
             <div className="p-2.5 bg-brand/10 text-brand rounded-xl border border-brand/20">
               <Radio size={20} />
             </div>
-            <h3 className="text-lg font-bold text-zinc-100">Create Broadcast</h3>
+            <h3 className="text-lg font-bold text-zinc-900">Create Broadcast</h3>
           </div>
 
           {error && (
@@ -275,7 +311,7 @@ const Broadcasts: React.FC = () => {
                   type="text"
                   value={form.name}
                   onChange={(e) => setForm({ ...form, name: e.target.value })}
-                  className="w-full bg-primary border border-zinc-200 rounded-xl px-4 py-2.5 text-sm text-zinc-100 focus:border-brand/50 outline-none transition-colors"
+                  className="w-full bg-white border border-zinc-200 rounded-xl px-4 py-2.5 text-sm text-zinc-900 focus:border-brand/50 outline-none transition-colors"
                   placeholder="e.g. Weekly Product Drop Announcement"
                 />
               </div>
@@ -294,7 +330,7 @@ const Broadcasts: React.FC = () => {
                       className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all border ${
                         form.filters.lead_status.includes(status)
                           ? 'bg-brand/20 text-brand border-brand/30'
-                          : 'bg-primary text-zinc-500 border-zinc-200 hover:border-zinc-700'
+                          : 'bg-white text-zinc-500 border-zinc-200 hover:border-zinc-700'
                       }`}
                     >
                       {status}
@@ -309,7 +345,7 @@ const Broadcasts: React.FC = () => {
                       }));
                       setAudienceCount(null);
                     }}
-                    className="px-3 py-1.5 rounded-lg text-xs font-bold bg-primary text-zinc-500 border border-zinc-200 hover:text-zinc-500 transition-all"
+                    className="px-3 py-1.5 rounded-lg text-xs font-bold bg-white text-zinc-500 border border-zinc-200 hover:text-zinc-500 transition-all"
                   >
                     All Leads
                   </button>
@@ -325,7 +361,7 @@ const Broadcasts: React.FC = () => {
                 rows={4}
                 value={form.message}
                 onChange={(e) => setForm({ ...form, message: e.target.value })}
-                className="w-full bg-primary border border-zinc-200 rounded-xl px-4 py-3 text-sm text-zinc-100 focus:border-brand/50 outline-none transition-colors resize-none"
+                className="w-full bg-white border border-zinc-200 rounded-xl px-4 py-3 text-sm text-zinc-900 focus:border-brand/50 outline-none transition-colors resize-none"
                 placeholder="Write your broadcast message here..."
               />
               <div className="mt-1.5 text-right text-[10px] font-bold text-zinc-500 uppercase tracking-wider">
@@ -340,7 +376,7 @@ const Broadcasts: React.FC = () => {
                   type="button"
                   onClick={handlePreviewAudience}
                   disabled={isCountLoading}
-                  className="px-4 py-2 bg-primary/90 border border-zinc-200 rounded-xl text-sm font-bold text-zinc-500 hover:bg-zinc-700 transition-colors flex items-center gap-2"
+                  className="px-4 py-2 bg-zinc-100 border border-zinc-200 rounded-xl text-sm font-bold text-zinc-500 hover:bg-zinc-700 transition-colors flex items-center gap-2"
                 >
                   {isCountLoading ? <Loader2 size={14} className="animate-spin" /> : <Eye size={14} />}
                   Preview Audience
@@ -366,15 +402,16 @@ const Broadcasts: React.FC = () => {
       )}
 
       {/* Broadcasts List */}
-      <div className="grid gap-6">
-        {isLoading ? (
+      {!showCreate && (
+        <div className="grid gap-6">
+          {isLoading ? (
           <div className="card-standard border border-zinc-200 p-12 text-center text-zinc-500">
             <Loader2 size={24} className="animate-spin mx-auto mb-3" />
             Loading broadcasts...
           </div>
         ) : broadcasts.length === 0 ? (
           <div className="card-standard border border-zinc-200 p-16 text-center flex flex-col items-center">
-            <div className="w-20 h-20 bg-primary rounded-2xl flex items-center justify-center mb-5 border border-zinc-200">
+            <div className="w-20 h-20 bg-white rounded-2xl flex items-center justify-center mb-5 border border-zinc-200">
               <Radio className="text-zinc-500" size={32} />
             </div>
             <h3 className="text-lg font-bold text-zinc-500 mb-2">No Broadcasts Yet</h3>
@@ -398,7 +435,7 @@ const Broadcasts: React.FC = () => {
                   {/* Left Info */}
                   <div className="flex-grow space-y-3">
                     <div className="flex items-center gap-3">
-                      <h3 className="text-lg font-bold text-zinc-100">{bc.name}</h3>
+                      <h3 className="text-lg font-bold text-zinc-900">{bc.name}</h3>
                       <span className={`text-[10px] uppercase font-bold tracking-wider px-2.5 py-1 rounded-md border flex items-center gap-1.5 ${cfg.color}`}>
                         {cfg.icon} {cfg.label}
                       </span>
@@ -424,7 +461,7 @@ const Broadcasts: React.FC = () => {
                     {(bc.broadcast_status === 'completed' || bc.broadcast_status === 'sending') && (
                       <div className="flex items-center gap-6 pr-6 border-r border-zinc-200">
                         <div className="text-center">
-                          <div className="text-lg font-black text-zinc-100">{bc.sent_count}</div>
+                          <div className="text-lg font-black text-zinc-900">{bc.sent_count}</div>
                           <div className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider">Sent</div>
                         </div>
                         <div className="text-center">
@@ -441,7 +478,7 @@ const Broadcasts: React.FC = () => {
                     {/* Progress bar for sending */}
                     {bc.broadcast_status === 'sending' && (
                       <div className="w-24">
-                        <div className="h-2 bg-primary/90 rounded-full overflow-hidden">
+                        <div className="h-2 bg-zinc-100 rounded-full overflow-hidden">
                           <div
                             className="h-full bg-gradient-to-r from-purple-500 to-indigo-500 rounded-full transition-all duration-500"
                             style={{ width: `${progress}%` }}
@@ -479,55 +516,67 @@ const Broadcasts: React.FC = () => {
             );
           })
         )}
-      </div>
+        </div>
+      )}
 
-      {/* Info Card */}
-      <div className="grid lg:grid-cols-3 gap-6">
-        <div className="card-standard bg-gradient-to-br from-purple-900 to-indigo-900 border border-brand/20 text-zinc-900 overflow-hidden relative">
-          <div className="relative z-10">
-            <h4 className="font-bold flex items-center gap-2 mb-4 text-brand">
-              <Sparkles size={18} /> Broadcast Tips
-            </h4>
-            <ul className="space-y-2 text-sm font-medium text-brand/80">
-              <li>• Keep messages under 500 characters for best engagement</li>
-              <li>• Filter by "Hot" leads for highest conversion rates</li>
-              <li>• Instagram limits ~200 messages/hour per account</li>
-              <li>• Avoid spammy language to prevent account restrictions</li>
+      
+
+      {/* Tips Modal */}
+      {showTipsModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
+          <div className="card-standard max-w-md w-full border border-zinc-200 bg-white p-6 shadow-2xl animate-in zoom-in-95 duration-200 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-brand/5 blur-3xl pointer-events-none rounded-full -translate-y-1/2 translate-x-1/4"></div>
+            
+            <div className="flex justify-between items-center mb-6 relative z-10">
+              <h3 className="text-xl font-black text-zinc-900 flex items-center gap-2">
+                <div className="p-2 rounded-xl bg-brand/10 text-brand">
+                  <Sparkles size={20} />
+                </div>
+                Broadcast Tips
+              </h3>
+              <button onClick={() => setShowTipsModal(false)} className="text-zinc-400 hover:text-zinc-600 transition-colors bg-zinc-50 hover:bg-zinc-100 p-2 rounded-full">
+                <XCircle size={18} />
+              </button>
+            </div>
+            
+            <ul className="space-y-4 text-sm font-medium text-zinc-600 relative z-10 bg-zinc-50/50 rounded-xl p-4 border border-zinc-100">
+              <li className="flex gap-3">
+                <div className="mt-1 w-1.5 h-1.5 shrink-0 rounded-full bg-brand shadow-[0_0_8px_rgba(79,57,246,0.8)]" /> 
+                <p>Keep messages under <strong className="text-zinc-900 font-bold">500 characters</strong> for best engagement.</p>
+              </li>
+              <li className="flex gap-3">
+                <div className="mt-1 w-1.5 h-1.5 shrink-0 rounded-full bg-brand shadow-[0_0_8px_rgba(79,57,246,0.8)]" /> 
+                <p>Filter by <strong className="text-zinc-900 font-bold">"Hot" leads</strong> for highest conversion rates.</p>
+              </li>
+              <li className="flex gap-3">
+                <div className="mt-1 w-1.5 h-1.5 shrink-0 rounded-full bg-brand shadow-[0_0_8px_rgba(79,57,246,0.8)]" /> 
+                <p>Instagram limits <strong className="text-zinc-900 font-bold">~200 messages/hour</strong> per account.</p>
+              </li>
+              <li className="flex gap-3">
+                <div className="mt-1 w-1.5 h-1.5 shrink-0 rounded-full bg-brand shadow-[0_0_8px_rgba(79,57,246,0.8)]" /> 
+                <p>Avoid spammy language to prevent account restrictions.</p>
+              </li>
             </ul>
-          </div>
-          <Zap className="absolute -bottom-6 -right-6 w-32 h-32 text-brand opacity-20 blur-xl" />
-        </div>
-
-        <div className="card-standard border border-zinc-200 lg:col-span-2">
-          <h4 className="text-lg font-bold text-zinc-100 mb-6">Broadcast Analytics</h4>
-          <div className="grid grid-cols-3 gap-6">
-            <div className="p-5 bg-primary/50 rounded-2xl border border-zinc-200 text-center">
-              <div className="text-2xl font-black text-zinc-100">{broadcasts.length}</div>
-              <div className="text-xs text-zinc-500 font-bold uppercase tracking-wider mt-1">Total Campaigns</div>
-            </div>
-            <div className="p-5 bg-primary/50 rounded-2xl border border-zinc-200 text-center">
-              <div className="text-2xl font-black text-emerald-400">
-                {broadcasts.reduce((sum, b) => sum + (b.sent_count || 0), 0)}
-              </div>
-              <div className="text-xs text-zinc-500 font-bold uppercase tracking-wider mt-1">Messages Sent</div>
-            </div>
-            <div className="p-5 bg-primary/50 rounded-2xl border border-zinc-200 text-center">
-              <div className="text-2xl font-black text-brand">
-                {broadcasts.reduce((sum, b) => sum + (b.total_recipients || 0), 0)}
-              </div>
-              <div className="text-xs text-zinc-500 font-bold uppercase tracking-wider mt-1">Total Recipients</div>
+            
+            <div className="mt-6 relative z-10">
+              <button
+                onClick={() => setShowTipsModal(false)}
+                className="w-full btn-primary py-3 font-bold"
+              >
+                Got it
+              </button>
             </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/* Custom Confirmation Modal */}
       {confirmConfig.isOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
-          <div className="card-standard max-w-md w-full border border-brand/20 bg-[#09090B] p-6 shadow-2xl animate-in zoom-in-95 duration-200">
+          <div className="card-standard max-w-md w-full border border-brand/20 bg-surface p-6 shadow-2xl animate-in zoom-in-95 duration-200">
             <div className="flex items-center gap-3 text-warning mb-4">
               <AlertTriangle size={24} />
-              <h3 className="text-lg font-black text-zinc-100">{confirmConfig.title}</h3>
+              <h3 className="text-lg font-black text-zinc-900">{confirmConfig.title}</h3>
             </div>
             <p className="text-sm text-zinc-500 font-medium mb-6">{confirmConfig.message}</p>
             <div className="flex justify-end gap-3 pt-4 border-t border-zinc-200">
@@ -535,7 +584,7 @@ const Broadcasts: React.FC = () => {
                 type="button"
                 onClick={() => setConfirmConfig(prev => ({ ...prev, isOpen: false }))}
                 disabled={confirmConfig.isLoading}
-                className="px-5 py-2 bg-primary hover:bg-primary/90 border border-zinc-200 rounded-xl text-sm font-bold text-zinc-500 transition-colors disabled:opacity-50"
+                className="px-5 py-2 bg-white hover:bg-zinc-100 border border-zinc-200 rounded-xl text-sm font-bold text-zinc-500 transition-colors disabled:opacity-50"
               >
                 Cancel
               </button>
@@ -556,17 +605,17 @@ const Broadcasts: React.FC = () => {
       {/* Custom Alert Modal */}
       {alertConfig.isOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
-          <div className="card-standard max-w-md w-full border border-rose-500/20 bg-[#09090B] p-6 shadow-2xl animate-in zoom-in-95 duration-200">
+          <div className="card-standard max-w-md w-full border border-rose-500/20 bg-surface p-6 shadow-2xl animate-in zoom-in-95 duration-200">
             <div className="flex items-center gap-3 text-rose-450 mb-4">
               <AlertTriangle size={24} />
-              <h3 className="text-lg font-black text-zinc-100">{alertConfig.title}</h3>
+              <h3 className="text-lg font-black text-zinc-900">{alertConfig.title}</h3>
             </div>
             <p className="text-sm text-zinc-500 font-medium mb-6">{alertConfig.message}</p>
             <div className="flex justify-end pt-4 border-t border-zinc-200">
               <button
                 type="button"
                 onClick={() => setAlertConfig(prev => ({ ...prev, isOpen: false }))}
-                className="px-6 py-2 bg-primary hover:bg-primary/90 border border-zinc-200 rounded-xl text-sm font-bold text-zinc-350 transition-colors"
+                className="px-6 py-2 bg-white hover:bg-zinc-100 border border-zinc-200 rounded-xl text-sm font-bold text-zinc-350 transition-colors"
               >
                 OK
               </button>

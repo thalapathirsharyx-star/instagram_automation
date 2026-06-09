@@ -91,18 +91,18 @@ const Sidebar: React.FC = () => {
               <Book size={20} />
               <span>Brain Base</span>
             </NavLink>
-            {/* <NavLink to="/catalog" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+            <NavLink to="/catalog" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
               <ShoppingBag size={20} />
               <span>Product Catalog</span>
-            </NavLink> */}
+            </NavLink>
             <NavLink to="/automation" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
               <Zap size={20} />
               <span>Automation</span>
             </NavLink>
-            {/* <NavLink to="/broadcasts" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+            <NavLink to="/broadcasts" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
               <Radio size={20} />
               <span>Broadcasts {!hasProPlan && <Lock size={12} className="inline ml-1 text-zinc-500" />}</span>
-            </NavLink> */}
+            </NavLink>
             {user?.roleCode === 'CLIENT_ADMIN' && (
               <>
                 <NavLink to="/ai-settings" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>

@@ -253,7 +253,7 @@ const ProductCatalog: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between sm:items-end gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-zinc-100 mb-2">Product Catalog</h1>
+          <h1 className="text-3xl font-bold text-zinc-900 mb-2">Product Catalog</h1>
           <p className="text-zinc-500 font-medium">Manage your products, live stock, and variants. Your AI automatically queries this catalog in real-time to answer user requests in Instagram DMs.</p>
         </div>
         <button 
@@ -266,7 +266,7 @@ const ProductCatalog: React.FC = () => {
       </div>
 
       {/* Toolbar */}
-      <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-primary/30 border border-zinc-200 p-4 rounded-2xl">
+      <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-white/30 border border-zinc-200 p-4 rounded-2xl">
         <div className="relative w-full md:w-96">
           <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-500" size={18} />
           <input
@@ -274,7 +274,7 @@ const ProductCatalog: React.FC = () => {
             placeholder="Search by product name or SKU..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-[#09090B] border border-zinc-200 rounded-xl pl-11 pr-4 py-2.5 text-sm text-zinc-100 focus:outline-none focus:border-brand/50 transition-all font-medium"
+            className="w-full bg-surface border border-zinc-200 rounded-xl pl-11 pr-4 py-2.5 text-sm text-zinc-900 focus:outline-none focus:border-brand/50 transition-all font-medium"
           />
         </div>
         <div className="flex items-center gap-4 text-xs font-bold text-zinc-500">
@@ -292,12 +292,12 @@ const ProductCatalog: React.FC = () => {
       ) : (
         <div className="space-y-6">
           {filteredProducts.length === 0 ? (
-            <div className="card-standard py-24 text-center flex flex-col items-center justify-center border-dashed border-zinc-200 bg-primary/30">
-              <div className="w-24 h-24 bg-primary/90 border border-zinc-200 rounded-3xl flex items-center justify-center mb-8 shadow-inner">
+            <div className="card-standard py-24 text-center flex flex-col items-center justify-center border-dashed border-zinc-200 bg-white/30">
+              <div className="w-24 h-24 bg-zinc-100 border border-zinc-200 rounded-3xl flex items-center justify-center mb-8 shadow-inner">
                 <ShoppingBag size={48} className="text-brand/50" />
               </div>
               <div className="max-w-md">
-                <h3 className="text-2xl font-bold text-zinc-100 mb-3">No products found</h3>
+                <h3 className="text-2xl font-bold text-zinc-900 mb-3">No products found</h3>
                 <p className="text-zinc-500 font-medium leading-relaxed mb-10">
                   {searchQuery ? "No products match your search query." : "You haven't added any products to your catalog yet. Click the button above to add your first product."}
                 </p>
@@ -331,7 +331,7 @@ const ProductCatalog: React.FC = () => {
                   >
                     <div>
                       {/* Product Image Panel */}
-                      <div className="relative w-full h-44 bg-[#09090B] rounded-xl mb-4 overflow-hidden border border-zinc-200 flex items-center justify-center">
+                      <div className="relative w-full h-44 bg-surface rounded-xl mb-4 overflow-hidden border border-zinc-200 flex items-center justify-center">
                         {product.images ? (
                           <img 
                             src={product.images.split(',')[0].trim()} 
@@ -371,13 +371,13 @@ const ProductCatalog: React.FC = () => {
                         <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest flex items-center gap-1.5">
                           <Package size={10} /> SKU: {product.sku || 'N/A'}
                         </span>
-                        <span className="text-base font-extrabold text-zinc-100 flex items-center gap-0.5">
+                        <span className="text-base font-extrabold text-zinc-900 flex items-center gap-0.5">
                           <DollarSign size={14} className="text-brand" />
                           {product.price}
                         </span>
                       </div>
                       
-                      <h3 className="text-lg font-bold text-zinc-100 mb-2 group-hover:text-brand transition-colors line-clamp-1">
+                      <h3 className="text-lg font-bold text-zinc-900 mb-2 group-hover:text-brand transition-colors line-clamp-1">
                         {product.name}
                       </h3>
                       
@@ -394,7 +394,7 @@ const ProductCatalog: React.FC = () => {
                             <div className="flex items-center gap-2 flex-wrap">
                               <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Sizes:</span>
                               {parsedVariants.sizes.map((s, idx) => (
-                                <span key={idx} className="text-[9px] font-bold bg-primary/90 text-zinc-300 border border-zinc-200 px-2 py-0.5 rounded">
+                                <span key={idx} className="text-[9px] font-bold bg-zinc-100 text-zinc-700 border border-zinc-200 px-2 py-0.5 rounded">
                                   {s}
                                 </span>
                               ))}
@@ -404,7 +404,7 @@ const ProductCatalog: React.FC = () => {
                             <div className="flex items-center gap-2 flex-wrap">
                               <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Colors:</span>
                               {parsedVariants.colors.map((c, idx) => (
-                                <span key={idx} className="text-[9px] font-bold bg-primary/90 text-zinc-300 border border-zinc-200 px-2 py-0.5 rounded">
+                                <span key={idx} className="text-[9px] font-bold bg-zinc-100 text-zinc-700 border border-zinc-200 px-2 py-0.5 rounded">
                                   {c}
                                 </span>
                               ))}
@@ -444,7 +444,7 @@ const ProductCatalog: React.FC = () => {
       {/* Add / Edit Product Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[9999] flex items-center justify-center p-4 animate-in fade-in duration-300">
-          <div className="bg-[#09090B] border border-zinc-200 rounded-3xl w-full max-w-xl max-h-[90vh] overflow-y-auto premium-scroll shadow-2xl animate-in zoom-in-95 duration-300">
+          <div className="bg-surface border border-zinc-200 rounded-3xl w-full max-w-xl max-h-[90vh] overflow-y-auto premium-scroll shadow-2xl animate-in zoom-in-95 duration-300">
             {/* Modal Header */}
             <div className="p-6 border-b border-zinc-200 flex justify-between items-center">
               <div>
@@ -467,20 +467,20 @@ const ProductCatalog: React.FC = () => {
             <form onSubmit={handleSaveProduct} className="p-6 space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="flex flex-col gap-2">
-                  <label className="text-xs font-bold text-zinc-300 uppercase tracking-wider">Product Name *</label>
+                  <label className="text-xs font-bold text-zinc-700 uppercase tracking-wider">Product Name *</label>
                   <input
                     type="text"
                     required
                     placeholder="e.g. Leather Jacket"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="bg-primary border border-zinc-200 rounded-xl px-4 py-3 text-sm text-zinc-100 focus:outline-none focus:border-brand/50 transition-all font-medium"
+                    className="bg-white border border-zinc-200 rounded-xl px-4 py-3 text-sm text-zinc-900 focus:outline-none focus:border-brand/50 transition-all font-medium"
                   />
                 </div>
 
                 <div className="flex flex-col gap-2">
                   <div className="flex justify-between items-center">
-                    <label className="text-xs font-bold text-zinc-300 uppercase tracking-wider">SKU (Stock Keeping Unit)</label>
+                    <label className="text-xs font-bold text-zinc-700 uppercase tracking-wider">SKU (Stock Keeping Unit)</label>
                     <button
                       type="button"
                       onClick={generateRandomSku}
@@ -494,14 +494,14 @@ const ProductCatalog: React.FC = () => {
                     placeholder="e.g. LTHR-JKT-01"
                     value={sku}
                     onChange={(e) => setSku(e.target.value)}
-                    className="bg-primary border border-zinc-200 rounded-xl px-4 py-3 text-sm text-zinc-100 focus:outline-none focus:border-brand/50 transition-all font-medium"
+                    className="bg-white border border-zinc-200 rounded-xl px-4 py-3 text-sm text-zinc-900 focus:outline-none focus:border-brand/50 transition-all font-medium"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="flex flex-col gap-2">
-                  <label className="text-xs font-bold text-zinc-300 uppercase tracking-wider">Price ($) *</label>
+                  <label className="text-xs font-bold text-zinc-700 uppercase tracking-wider">Price ($) *</label>
                   <input
                     type="number"
                     step="0.01"
@@ -509,12 +509,12 @@ const ProductCatalog: React.FC = () => {
                     placeholder="e.g. 129.99"
                     value={price}
                     onChange={(e) => setPrice(e.target.value)}
-                    className="bg-primary border border-zinc-200 rounded-xl px-4 py-3 text-sm text-zinc-100 focus:outline-none focus:border-brand/50 transition-all font-medium"
+                    className="bg-white border border-zinc-200 rounded-xl px-4 py-3 text-sm text-zinc-900 focus:outline-none focus:border-brand/50 transition-all font-medium"
                   />
                 </div>
 
                 <div className="flex flex-col gap-2">
-                  <label className="text-xs font-bold text-zinc-300 uppercase tracking-wider">
+                  <label className="text-xs font-bold text-zinc-700 uppercase tracking-wider">
                     Stock Quantity {variantsList.length > 0 && '(Sum of variants)'}
                   </label>
                   <input
@@ -523,27 +523,27 @@ const ProductCatalog: React.FC = () => {
                     placeholder={variantsList.length > 0 ? "Calculated from variants" : "e.g. 25"}
                     value={stockQuantity}
                     onChange={(e) => setStockQuantity(e.target.value)}
-                    className={`bg-primary border border-zinc-200 rounded-xl px-4 py-3 text-sm text-zinc-100 focus:outline-none focus:border-brand/50 transition-all font-medium ${variantsList.length > 0 ? 'opacity-60 cursor-not-allowed bg-primary/50' : ''}`}
+                    className={`bg-white border border-zinc-200 rounded-xl px-4 py-3 text-sm text-zinc-900 focus:outline-none focus:border-brand/50 transition-all font-medium ${variantsList.length > 0 ? 'opacity-60 cursor-not-allowed bg-zinc-50' : ''}`}
                   />
                 </div>
               </div>
 
               <div className="flex flex-col gap-2">
-                <label className="text-xs font-bold text-zinc-300 uppercase tracking-wider">Description</label>
+                <label className="text-xs font-bold text-zinc-700 uppercase tracking-wider">Description</label>
                 <textarea
                   rows={3}
                   placeholder="Describe the product details (e.g. material, fit, features) for the AI assistant..."
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  className="bg-primary border border-zinc-200 rounded-xl px-4 py-3 text-sm text-zinc-100 focus:outline-none focus:border-brand/50 transition-all font-medium resize-none"
+                  className="bg-white border border-zinc-200 rounded-xl px-4 py-3 text-sm text-zinc-900 focus:outline-none focus:border-brand/50 transition-all font-medium resize-none"
                 />
               </div>
 
               {/* Product Variants Section */}
-              <div className="bg-[#09090B]/50 border border-zinc-200 p-5 rounded-2xl space-y-4">
+              <div className="bg-surface/50 border border-zinc-200 p-5 rounded-2xl space-y-4">
                 <div className="flex justify-between items-center">
                   <div>
-                    <h4 className="text-sm font-bold text-zinc-100 uppercase tracking-wider flex items-center gap-2">
+                    <h4 className="text-sm font-bold text-zinc-900 uppercase tracking-wider flex items-center gap-2">
                       <Layers size={16} className="text-brand dark:text-brand" />
                       Product Variants
                     </h4>
@@ -569,14 +569,14 @@ const ProductCatalog: React.FC = () => {
                     </div>
 
                     {variantsList.map((v) => (
-                      <div key={v.id} className="flex items-center gap-3 bg-primary/50 border border-zinc-200 p-3 rounded-xl transition-all shadow-sm">
+                      <div key={v.id} className="flex items-center gap-3 bg-zinc-50 border border-zinc-200 p-3 rounded-xl transition-all shadow-sm">
                         <div className="flex-[2] min-w-[100px]">
                           <input
                             type="text"
                             placeholder="e.g. S, M, L"
                             value={v.size}
                             onChange={(e) => updateVariantRow(v.id, 'size', e.target.value)}
-                            className="w-full bg-[#09090B]/50 border border-zinc-200 rounded-xl px-3.5 py-2.5 text-xs text-zinc-100 focus:outline-none focus:border-brand/50 transition-all font-medium"
+                            className="w-full bg-surface/50 border border-zinc-200 rounded-xl px-3.5 py-2.5 text-xs text-zinc-900 focus:outline-none focus:border-brand/50 transition-all font-medium"
                           />
                         </div>
                         <div className="flex-[2] min-w-[100px]">
@@ -585,7 +585,7 @@ const ProductCatalog: React.FC = () => {
                             placeholder="e.g. Red, Black"
                             value={v.color}
                             onChange={(e) => updateVariantRow(v.id, 'color', e.target.value)}
-                            className="w-full bg-[#09090B]/50 border border-zinc-200 rounded-xl px-3.5 py-2.5 text-xs text-zinc-100 focus:outline-none focus:border-brand/50 transition-all font-medium"
+                            className="w-full bg-surface/50 border border-zinc-200 rounded-xl px-3.5 py-2.5 text-xs text-zinc-900 focus:outline-none focus:border-brand/50 transition-all font-medium"
                           />
                         </div>
                         <div className="w-24 flex-shrink-0">
@@ -595,7 +595,7 @@ const ProductCatalog: React.FC = () => {
                             min="0"
                             value={v.stock || ''}
                             onChange={(e) => updateVariantRow(v.id, 'stock', parseInt(e.target.value, 10) || 0)}
-                            className="w-full bg-[#09090B]/50 border border-zinc-200 rounded-xl px-3 py-2.5 text-xs text-center text-zinc-100 focus:outline-none focus:border-brand/50 transition-all font-medium"
+                            className="w-full bg-surface/50 border border-zinc-200 rounded-xl px-3 py-2.5 text-xs text-center text-zinc-900 focus:outline-none focus:border-brand/50 transition-all font-medium"
                           />
                         </div>
                         <div className="w-10 flex-shrink-0 flex justify-center">
@@ -611,20 +611,20 @@ const ProductCatalog: React.FC = () => {
                     ))}
                   </div>
                 ) : (
-                  <div className="text-center py-8 border border-dashed border-zinc-200 rounded-2xl bg-[#09090B]/20">
+                  <div className="text-center py-8 border border-dashed border-zinc-200 rounded-2xl bg-surface/20">
                     <p className="text-xs text-zinc-500 font-medium">No variants added. This product will have a single global stock quantity.</p>
                   </div>
                 )}
               </div>
 
               <div className="flex flex-col gap-2">
-                <label className="text-xs font-bold text-zinc-300 uppercase tracking-wider">Product Image URL</label>
+                <label className="text-xs font-bold text-zinc-700 uppercase tracking-wider">Product Image URL</label>
                 <input
                   type="text"
                   placeholder="e.g. https://example.com/images/jacket.jpg"
                   value={images}
                   onChange={(e) => setImages(e.target.value)}
-                  className="bg-primary border border-zinc-200 rounded-xl px-4 py-3 text-sm text-zinc-100 focus:outline-none focus:border-brand/50 transition-all font-medium"
+                  className="bg-white border border-zinc-200 rounded-xl px-4 py-3 text-sm text-zinc-900 focus:outline-none focus:border-brand/50 transition-all font-medium"
                 />
               </div>
 
