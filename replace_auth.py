@@ -1,214 +1,32 @@
-import React, { useState } from 'react';
-import { useNavigate, useLocation, Link } from 'react-router-dom';
-import { Mail, Lock, LogIn, AlertCircle, Loader2, Eye, EyeOff, MessageCircle, Bot, Database, Shield, CheckCircle2 } from 'lucide-react';
-import { DotLottieReact } from '@lottiefiles/dotlottie-react';
-import { useAuth } from '../context/AuthContext';
-import api from '../lib/axios';
-import { useGoogleLogin } from '@react-oauth/google';
+import re
+import os
 
-const Login: React.FC = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [message, setMessage] = useState<{ text: string, type: 'success' | 'error' } | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+def update_file(file_path, is_signup=False):
+    with open(file_path, 'r', encoding='utf-8') as f:
+        content = f.read()
 
-  const [showPassword, setShowPassword] = useState(false);
-  const [isPending2Fa, setIsPending2Fa] = useState(false);
-  const [tempToken, setTempToken] = useState('');
-  const [totpCode, setTotpCode] = useState('');
-  const [showResend, setShowResend] = useState(false);
-  const [isResending, setIsResending] = useState(false);
+    match = re.search(r'  return \(\n    <div', content)
+    if not match:
+        print(f"Could not find return block in {file_path}")
+        return
 
-  const { login } = useAuth();
-  const navigate = useNavigate();
-  const location = useLocation();
-  const [showGoogleModal, setShowGoogleModal] = useState(false);
-  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
-
-  const from = location.state?.from?.pathname || '/dashboard';
-
-  const handleGoogleSelect = async (email: string, name: string) => {
-    setIsGoogleLoading(true);
-    setMessage(null);
-    try {
-      // Try to login via the dedicated GoogleLogin endpoint first
-      const loginRes = await api.post('/Auth/GoogleLogin', { email });
-      if (loginRes.data.Type === 'S' || loginRes.data.Type === 'Success') {
-        const { api_token, user } = loginRes.data.result;
-        setMessage({ text: 'Logged in via Google!', type: 'success' });
-        setTimeout(() => {
-          login(api_token, user);
-          navigate(from, { replace: true });
-        }, 1200);
-      } else {
-        throw new Error('User not found');
-      }
-    } catch (err: any) {
-      // If user is not found, register them!
-      try {
-        const registerRes = await api.post('/Auth/Register', {
-          first_name: name,
-          company_name: `${name}'s Company`,
-          email: email,
-          password: 'GoogleUser123!!' // This remains secure as GoogleLogin bypasses password check
-        });
-
-        if (registerRes.data.Type === 'S' || registerRes.data.Type === 'Success') {
-          const { api_token, user } = registerRes.data.result;
-          setMessage({ text: 'Registered via Google! Welcome...', type: 'success' });
-          setTimeout(() => {
-            login(api_token, user);
-            navigate(from, { replace: true });
-          }, 1200);
-        } else {
-          setMessage({ text: 'Google registration failed', type: 'error' });
-        }
-      } catch (regErr: any) {
-        console.error('Google register fallback error:', regErr);
-        setMessage({ text: 'Authentication failed. Please try again or use standard login.', type: 'error' });
-      }
-    } finally {
-      setIsGoogleLoading(false);
-      setShowGoogleModal(false);
-    }
-  };
-
-  const handleGoogleSignIn = useGoogleLogin({
-    onSuccess: async (tokenResponse) => {
-      setIsGoogleLoading(true);
-      try {
-        const profileRes = await api.get('https://www.googleapis.com/oauth2/v3/userinfo', {
-          headers: { Authorization: `Bearer ${tokenResponse.access_token}` }
-        });
-        const { email, name } = profileRes.data;
-        if (!email) {
-          setMessage({ text: 'Unable to retrieve email from Google.', type: 'error' });
-          return;
-        }
-        await handleGoogleSelect(email, name || 'Google User');
-      } catch (err) {
-        console.error('Error fetching Google userinfo:', err);
-        setMessage({ text: 'Failed to retrieve profile information from Google.', type: 'error' });
-      } finally {
-        setIsGoogleLoading(false);
-      }
-    },
-    onError: (error) => {
-      console.error('Google login failed:', error);
-      setMessage({ text: 'Google authentication failed.', type: 'error' });
-    }
-  });
-
-
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setMessage(null);
-    setShowResend(false);
-
-    try {
-      const response = await api.post('/Auth/Login', { email, password });
-
-      if (response.data.Type === 'S') {
-        const result = response.data.result;
-        if (result.status === 'pending_2fa') {
-          setIsPending2Fa(true);
-          setTempToken(result.temp_token);
-          setIsLoading(false);
-          return;
-        }
-
-        const { api_token, user } = result;
-        setMessage({ text: 'Login Successful! Redirecting...', type: 'success' });
-
-        setTimeout(() => {
-          login(api_token, user);
-          navigate(from, { replace: true });
-        }, 1000);
-      } else {
-        setMessage({ text: response.data.Message || 'Login failed', type: 'error' });
-      }
-    } catch (err: unknown) {
-      console.error('Login error:', err);
-      const error = err as { response?: { data?: { Message?: string } }; message?: string };
-      const messageText = error.response?.data?.Message || error.message || 'An error occurred during login';
-      setMessage({ text: messageText, type: 'error' });
-      if (messageText.toLowerCase().includes('verify your email')) {
-        setShowResend(true);
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleResendVerify = async () => {
-    if (!email) {
-      setMessage({ text: 'Please enter your email address to resend verification.', type: 'error' });
-      return;
-    }
-    setIsResending(true);
-    try {
-      const response = await api.post('/Auth/ResendVerification', { email });
-      if (response.data.Type === 'S' || response.data.Type === 'Success') {
-        setMessage({ text: 'Verification email resent! Please check your inbox.', type: 'success' });
-        setShowResend(false);
-      } else {
-        setMessage({ text: response.data.Message || 'Failed to resend verification email.', type: 'error' });
-      }
-    } catch (err: any) {
-      const errorMsg = err.response?.data?.Message || 'Failed to resend verification email.';
-      setMessage({ text: errorMsg, type: 'error' });
-    } finally {
-      setIsResending(false);
-    }
-  };
-
-  const handleVerify2Fa = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setMessage(null);
-
-    try {
-      const response = await api.post('/Auth/2fa/confirm', {
-        temp_token: tempToken,
-        totp_code: totpCode
-      });
-
-      if (response.data.Type === 'S') {
-        const { api_token, user } = response.data.result;
-        setMessage({ text: '2FA Verification Successful! Redirecting...', type: 'success' });
-
-        setTimeout(() => {
-          login(api_token, user);
-          navigate(from, { replace: true });
-        }, 1000);
-      } else {
-        setMessage({ text: response.data.Message || 'Verification failed', type: 'error' });
-      }
-    } catch (err: unknown) {
-      console.error('2FA verification error:', err);
-      const error = err as { response?: { data?: { Message?: string } }; message?: string };
-      const messageText = error.response?.data?.Message || error.message || 'An error occurred during verification';
-      setMessage({ text: messageText, type: 'error' });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  return (
+    start_idx = match.start()
+    
+    new_return = '''  return (
     <div className="h-screen w-full flex flex-col lg:flex-row overflow-hidden font-inter bg-white">
       {/* LEFT SIDE: FORM */}
       <div className="w-full lg:w-[45%] h-full flex flex-col justify-center px-6 lg:px-12 xl:px-20 relative z-10 overflow-y-auto">
         <div className="w-full max-w-sm mx-auto py-2">
           {/* Logo/Icon */}
-          <div className="mb-6 flex items-center gap-2">
-            <img src="/Light Theme.png" alt="Flazly Logo" className="w-8 h-8 object-contain" />
-            <span className="text-xl font-extrabold text-zinc-900 tracking-tight">Flazly</span>
+          <div className="mb-4 flex items-center gap-2">
+            <div className="w-8 h-8 rounded-xl bg-[#4F39F6] flex items-center justify-center text-white shadow-lg shadow-[#4F39F6]/20">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+            </div>
           </div>
 
-          <div className="mb-8 text-left">
-            <h1 className="text-3xl font-extrabold tracking-tight text-zinc-900 mb-2">Welcome back</h1>
-            <p className="text-sm text-zinc-500 font-medium">Log in to your account to continue.</p>
+          <div className="mb-4 text-left">
+            <h1 className="text-2xl font-extrabold tracking-tight text-zinc-900 mb-1">''' + ('Create Account' if is_signup else 'Login') + '''</h1>
+            <p className="text-xs text-zinc-500 font-medium">See your growth and get consulting support!</p>
           </div>
 
           {message && (
@@ -223,7 +41,7 @@ const Login: React.FC = () => {
             </div>
           )}
 
-          {isPending2Fa ? (
+          ''' + ('''{isPending2Fa ? (
           <form onSubmit={handleVerify2Fa} className="space-y-4">
               <div className="space-y-1">
                 <label className="text-[10px] font-bold text-zinc-900 ml-1 block" htmlFor="totpCode">Two-Factor Code</label>
@@ -246,9 +64,9 @@ const Login: React.FC = () => {
                 Cancel
               </button>
             </form>
-          ) : (
+          ) : (''' if not is_signup else '') + '''
 
-          <>
+          ''' + ('''<>''' if not is_signup else '') + '''
               {/* Google OAuth Button */}
               <button
                 type="button"
@@ -274,8 +92,33 @@ const Login: React.FC = () => {
                 </div>
               </div>
 
-              <form onSubmit={handleLogin} className="space-y-3">
-                
+              <form onSubmit={''' + ('handleSignup' if is_signup else 'handleLogin') + '''} className="space-y-3">
+                ''' + ('''
+                <div className="space-y-1">
+                  <label className="text-[11px] font-bold text-zinc-900 ml-1 block" htmlFor="firstName">Name*</label>
+                  <input
+                    type="text"
+                    id="firstName"
+                    className="w-full px-4 py-2 bg-white border border-zinc-200 rounded-full text-zinc-900 text-xs focus:ring-2 focus:ring-[#4F39F6] focus:border-[#4F39F6] outline-none transition-all duration-200 placeholder:text-zinc-400 shadow-sm"
+                    placeholder="John Doe"
+                    value={formData.firstName}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[11px] font-bold text-zinc-900 ml-1 block" htmlFor="companyName">Company*</label>
+                  <input
+                    type="text"
+                    id="companyName"
+                    className="w-full px-4 py-2 bg-white border border-zinc-200 rounded-full text-zinc-900 text-xs focus:ring-2 focus:ring-[#4F39F6] focus:border-[#4F39F6] outline-none transition-all duration-200 placeholder:text-zinc-400 shadow-sm"
+                    placeholder="Acme Corp"
+                    value={formData.companyName}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+                ''' if is_signup else '') + '''
                 
                 <div className="space-y-1">
                   <label className="text-[11px] font-bold text-zinc-900 ml-1 block" htmlFor="email">Email*</label>
@@ -284,8 +127,8 @@ const Login: React.FC = () => {
                     id="email"
                     className="w-full px-4 py-2 bg-white border border-zinc-200 rounded-full text-zinc-900 text-xs focus:ring-2 focus:ring-[#4F39F6] focus:border-[#4F39F6] outline-none transition-all duration-200 placeholder:text-zinc-400 shadow-sm"
                     placeholder="mail@website.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    value={''' + ('formData.email' if is_signup else 'email') + '''}
+                    onChange={''' + ('handleChange' if is_signup else '(e) => setEmail(e.target.value)') + '''}
                     required
                   />
                 </div>
@@ -298,8 +141,8 @@ const Login: React.FC = () => {
                       id="password"
                       className="w-full px-4 py-2 pr-10 bg-white border border-zinc-200 rounded-full text-zinc-900 text-xs focus:ring-2 focus:ring-[#4F39F6] focus:border-[#4F39F6] outline-none transition-all duration-200 placeholder:text-zinc-400 shadow-sm"
                       placeholder="Min. 8 character"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
+                      value={''' + ('formData.password' if is_signup else 'password') + '''}
+                      onChange={''' + ('handleChange' if is_signup else '(e) => setPassword(e.target.value)') + '''}
                       required
                     />
                     <button
@@ -312,7 +155,7 @@ const Login: React.FC = () => {
                   </div>
                 </div>
 
-                
+                ''' + ('''
                 <div className="flex items-center justify-between ml-1 mt-2 mb-1">
                   <div className="flex items-center gap-1.5">
                     <input type="checkbox" id="remember" className="w-3.5 h-3.5 rounded text-[#4F39F6] border-zinc-300 focus:ring-[#4F39F6] accent-[#4F39F6] cursor-pointer" />
@@ -320,18 +163,18 @@ const Login: React.FC = () => {
                   </div>
                   <a href="#" className="text-[10px] font-bold text-[#4F39F6] hover:text-purple-700 transition-colors">Forget password?</a>
                 </div>
-                
+                ''' if not is_signup else '<div className="h-0.5"></div>') + '''
 
                 <button type="submit" className="w-full bg-[#4F39F6] hover:bg-purple-700 rounded-full py-2.5 font-bold text-xs text-white shadow-lg shadow-[#4F39F6]/20 transition-all duration-200" disabled={isLoading}>
-                  {isLoading ? "Signing in..." : "Login"}
+                  {isLoading ? "''' + ('Creating account...' if is_signup else 'Signing in...') + '''" : "''' + ('Create Account' if is_signup else 'Login') + '''"}
                 </button>
               </form>
             </>
-          )}
+          ''' + (''')}''' if not is_signup else '') + '''
 
           <div className="mt-4 text-left">
             <p className="text-[11px] font-bold text-zinc-900">
-              Not registered yet? <Link to="/signup" className="text-[#4F39F6] hover:text-purple-700">Create an Account</Link>
+              ''' + ('Already have an account?' if is_signup else 'Not registered yet?') + ''' <Link to="''' + ('/login' if is_signup else '/signup') + '''" className="text-[#4F39F6] hover:text-purple-700">''' + ('Sign In' if is_signup else 'Create an Account') + '''</Link>
             </p>
           </div>
 
@@ -360,7 +203,7 @@ const Login: React.FC = () => {
 
         {/* Floating Icons */}
         <div className="absolute top-[20%] left-[25%] w-14 h-14 bg-white rounded-full flex items-center justify-center shadow-2xl z-20">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4F39F6" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 8V4H8"></path><rect width="16" height="12" x="4" y="8" rx="2"></rect><path d="M2 14h2"></path><path d="M20 14h2"></path><path d="M15 13v2"></path><path d="M9 13v2"></path></svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="#1DA1F2"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/></svg>
         </div>
         <div className="absolute top-[15%] right-[30%] w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-2xl z-20">
           <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" alt="IG" className="w-5 h-5 object-cover" />
@@ -374,8 +217,8 @@ const Login: React.FC = () => {
           
           {/* Revenue Chart Widget */}
           <div className="bg-white rounded-xl p-5 shadow-2xl w-[280px] border border-white/50 bg-clip-padding backdrop-filter relative">
-            <h2 className="text-2xl font-extrabold text-zinc-900 tracking-tight">14,208</h2>
-            <p className="text-[9px] font-bold text-zinc-400 uppercase tracking-widest mb-4">Leads This Month</p>
+            <h2 className="text-2xl font-extrabold text-zinc-900 tracking-tight">$162,751</h2>
+            <p className="text-[9px] font-bold text-zinc-400 uppercase tracking-widest mb-4">Last year</p>
             <div className="relative h-20 w-full flex items-end justify-between border-b border-zinc-100 pb-2">
               <svg className="absolute inset-0 w-full h-full" preserveAspectRatio="none" viewBox="0 0 100 50">
                 <path d="M0 45 Q 15 45, 25 30 T 50 15 T 75 25 T 100 35" fill="none" stroke="#E5E7EB" strokeWidth="2" />
@@ -392,23 +235,23 @@ const Login: React.FC = () => {
 
           {/* Rewards Widget */}
           <div className="bg-white rounded-xl p-5 shadow-2xl w-[180px] -translate-y-10">
-            <h3 className="text-[13px] font-bold text-zinc-900 mb-3">AI Agent</h3>
+            <h3 className="text-[13px] font-bold text-zinc-900 mb-3">Rewards</h3>
             <div className="flex flex-col items-center justify-center pb-1">
               <div className="w-14 h-14 rounded-full border-[3px] border-[#4F39F6]/20 p-1 mb-2.5 flex items-center justify-center">
                 <div className="w-full h-full rounded-full bg-zinc-100 overflow-hidden">
-                  <div className="w-full h-full bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center text-white"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg></div>
+                  <img src="https://i.pravatar.cc/150?img=11" alt="Avatar" className="w-full h-full object-cover" />
                 </div>
               </div>
-              <p className="text-[9px] text-zinc-400 font-bold uppercase tracking-widest">Responses sent</p>
-              <p className="text-lg font-extrabold text-zinc-900 tracking-tight">284,912</p>
+              <p className="text-[9px] text-zinc-400 font-bold uppercase tracking-widest">Points</p>
+              <p className="text-lg font-extrabold text-zinc-900 tracking-tight">172,832</p>
             </div>
           </div>
         </div>
 
         {/* Marketing Copy */}
         <div className="absolute bottom-12 text-center z-20">
-          <h2 className="text-2xl font-semibold text-white mb-2 tracking-tight">Turn conversations<br/>into revenue.</h2>
-          <p className="text-white/80 text-[11px] font-medium max-w-[250px] mx-auto leading-relaxed">Automate Instagram DMs, capture qualified leads,<br/>and sync customer data instantly.</p>
+          <h2 className="text-2xl font-semibold text-white mb-2 tracking-tight">Turn your ideas<br/>into reality.</h2>
+          <p className="text-white/80 text-[11px] font-medium max-w-[250px] mx-auto leading-relaxed">Consistent quality and experience across<br/>all platforms and devices.</p>
           <div className="flex justify-center gap-1.5 mt-6">
             <div className="w-4 h-1 rounded-full bg-white"></div>
             <div className="w-1 h-1 rounded-full bg-white/40"></div>
@@ -420,4 +263,14 @@ const Login: React.FC = () => {
     </div>
   );
 };
-export default Login;
+export default ''' + ('Signup' if is_signup else 'Login') + ''';
+'''
+
+    final_content = content[:start_idx] + new_return
+    with open(file_path, 'w', encoding='utf-8') as f:
+        f.write(final_content)
+    print(f"Successfully updated {file_path}")
+
+path = "c:/Users/mrlem/Desktop/my_works/instagram_automation/frontend/src/pages/"
+update_file(path + "Login.tsx", False)
+update_file(path + "Signup.tsx", True)

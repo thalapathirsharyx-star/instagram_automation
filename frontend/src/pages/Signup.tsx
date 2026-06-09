@@ -143,243 +143,220 @@ const Signup: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen w-full flex overflow-x-hidden bg-zinc-50 font-inter relative">
-      {/* Background Mesh Gradients & Grid */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden select-none z-0">
-        <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-purple-500/5 blur-[120px] animate-pulse" style={{ animationDuration: '10s' }} />
-        <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] rounded-full bg-indigo-500/5 blur-[120px] animate-pulse" style={{ animationDuration: '15s' }} />
-      </div>
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none" />
-
-      <div className="w-full max-w-6xl mx-auto flex flex-col lg:flex-row items-center justify-center gap-12 lg:gap-32 relative z-10 p-4 lg:p-6 min-h-screen">
-        <div className="hidden lg:flex flex-col justify-center text-left w-full max-w-md shrink-0">
-          {/* Logo */}
-          <div className="mb-6 lg:mb-8 flex items-center gap-2.5">
-            <img src="/Light Theme.png" alt="Flazly Logo" className="w-10 h-10 lg:w-12 lg:h-12 object-contain" />
-            <span className="text-2xl lg:text-3xl font-extrabold text-zinc-900 tracking-tight">Flazly</span>
+    <div className="h-screen w-full flex flex-col lg:flex-row overflow-hidden font-inter bg-white">
+      {/* LEFT SIDE: FORM */}
+      <div className="w-full lg:w-[45%] h-full flex flex-col justify-center px-6 lg:px-12 xl:px-20 relative z-10 overflow-y-auto">
+        <div className="w-full max-w-sm mx-auto py-2">
+          {/* Logo/Icon */}
+          <div className="mb-6 flex items-center gap-2">
+            <img src="/Light Theme.png" alt="Flazly Logo" className="w-8 h-8 object-contain" />
+            <span className="text-xl font-extrabold text-zinc-900 tracking-tight">Flazly</span>
           </div>
 
-          <h2 className="text-3xl lg:text-4xl font-extrabold text-zinc-900 mb-4 leading-[1.1] tracking-tight">
-            Turn conversations into <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-indigo-600">revenue</span>.
-          </h2>
-          
-          <ul className="space-y-3 mb-6 text-sm lg:text-base">
-            {[
-              'Respond to Instagram DMs instantly',
-              'Capture qualified leads automatically',
-              'Sync customer data to your CRM'
-            ].map((text, i) => (
-              <li key={i} className="flex items-center gap-3 text-zinc-600 font-semibold">
-                <div className="w-5 h-5 rounded-full bg-purple-100 flex items-center justify-center shrink-0">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" className="text-purple-600" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                </div>
-                {text}
-              </li>
-            ))}
-          </ul>
-
-          {/* Mini Workflow UI Mockup */}
-          <div className="bg-white rounded-2xl border border-zinc-200/80 shadow-[0_8px_30px_rgb(0,0,0,0.04)] p-4 lg:p-5 relative overflow-hidden group mb-6 lg:mb-8">
-            <div className="absolute inset-0 bg-gradient-to-br from-purple-500/[0.02] to-transparent pointer-events-none" />
-            <div className="flex flex-col gap-2 relative z-10">
-              
-              <div className="flex items-center gap-3 p-2.5 bg-zinc-50/50 border border-zinc-100 rounded-xl transition-all duration-300 hover:bg-white hover:border-zinc-200 hover:shadow-sm">
-                <div className="w-7 h-7 rounded-lg bg-pink-50 flex items-center justify-center text-pink-600 shrink-0 border border-pink-100">
-                  <MessageCircle size={14} />
-                </div>
-                <div>
-                  <p className="text-xs font-bold text-zinc-900 leading-none mb-0.5">Instagram DM</p>
-                  <p className="text-[9px] text-zinc-500 font-medium leading-none">Customer asks a question</p>
-                </div>
-              </div>
-
-              <div className="w-px h-2 bg-zinc-200 ml-6" />
-
-              <div className="flex items-center gap-3 p-2.5 bg-zinc-50/50 border border-zinc-100 rounded-xl transition-all duration-300 hover:bg-white hover:border-zinc-200 hover:shadow-sm">
-                <div className="w-7 h-7 rounded-lg bg-purple-50 flex items-center justify-center text-purple-600 shrink-0 border border-purple-100">
-                  <Bot size={14} />
-                </div>
-                <div>
-                  <p className="text-xs font-bold text-zinc-900 leading-none mb-0.5">AI Agent Reply</p>
-                  <p className="text-[9px] text-zinc-500 font-medium leading-none">Instant intelligent response</p>
-                </div>
-              </div>
-
-              <div className="w-px h-2 bg-zinc-200 ml-6" />
-
-              <div className="flex items-center gap-3 p-2.5 bg-zinc-50/50 border border-zinc-100 rounded-xl transition-all duration-300 hover:bg-white hover:border-zinc-200 hover:shadow-sm">
-                <div className="w-7 h-7 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-600 shrink-0 border border-indigo-100">
-                  <Database size={14} />
-                </div>
-                <div>
-                  <p className="text-xs font-bold text-zinc-900 leading-none mb-0.5">Lead Qualified & Synced</p>
-                  <p className="text-[9px] text-zinc-500 font-medium leading-none">Data sent to CRM securely</p>
-                </div>
-              </div>
-
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <Shield size={14} className="text-zinc-400" />
-            <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Powered by the Meta Graph API</span>
-          </div>
-
-        </div>
-
-      <div className="w-full max-w-md flex flex-col items-center justify-center z-20 shrink-0 py-4 lg:py-8">
-        <div className="w-full bg-white rounded-3xl p-6 lg:p-8 shadow-2xl shadow-zinc-200/50 border border-zinc-200 relative my-auto">
-          <div className="mb-6 lg:mb-8 text-center">
-            <div className="bg-transparent flex items-center justify-center mx-auto mb-2">
-              <img src="/Light Theme.png" alt="Flazly Logo" className="w-10 h-10 lg:w-12 lg:h-12 object-contain transition-transform duration-500 hover:scale-105" />
-            </div>
-            <h1 className="text-2xl lg:text-3xl font-extrabold tracking-tight text-zinc-900 mb-1">Create Account</h1>
-            <p className="text-sm lg:text-base text-zinc-500 font-semibold">Join us today and start growing</p>
+          <div className="mb-8 text-left">
+            <h1 className="text-3xl font-extrabold tracking-tight text-zinc-900 mb-2">Create an account</h1>
+            <p className="text-sm text-zinc-500 font-medium">Start automating your Instagram today.</p>
           </div>
 
           {message && (
             <div className={`${message.type === 'success'
-              ? 'bg-emerald-50 border-emerald-200 text-emerald-800'
-              : 'bg-rose-50 border-rose-200 text-rose-800'
-              } border text-sm p-4 rounded-xl flex items-center gap-3 mb-8 animate-in fade-in slide-in-from-top-2 duration-300`}>
-              {message.type === 'success' ? <UserPlus size={18} /> : <AlertCircle size={18} />}
-              <span className="font-semibold">{message.text}</span>
+              ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
+              : 'bg-rose-50 text-rose-800 border-rose-200'
+              } p-2.5 rounded-xl flex flex-col gap-1 mb-3 border text-xs animate-in fade-in`}>
+              <div className="flex items-center gap-2">
+                {message.type === 'success' ? <CheckCircle2 size={14} /> : <AlertCircle size={14} />}
+                <span className="font-semibold">{message.text}</span>
+              </div>
             </div>
           )}
 
-          <form onSubmit={handleSignup} className="space-y-4">
-            <div className="space-y-1.5">
-              <label className="text-xs font-bold text-zinc-700 ml-1 mb-1.5 block" htmlFor="firstName">Full Name</label>
-              <div className="relative group">
-                <User size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 group-focus-within:text-purple-600 transition-colors z-10" />
-                <input
-                  type="text"
-                  id="firstName"
-                  className="w-full pl-11 pr-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-zinc-900 text-sm focus:ring-4 focus:ring-purple-500/10 focus:border-purple-500 outline-none transition-all duration-200 placeholder:text-zinc-400 font-medium shadow-sm"
-                  placeholder="John Doe"
-                  value={formData.firstName}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-            </div>
+          
 
-            <div className="space-y-1.5">
-              <label className="text-xs font-bold text-zinc-700 ml-1 mb-1.5 block" htmlFor="companyName">Company Name</label>
-              <div className="relative group">
-                <Building2 size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 group-focus-within:text-purple-600 transition-colors z-10" />
-                <input
-                  type="text"
-                  id="companyName"
-                  className="w-full pl-11 pr-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-zinc-900 text-sm focus:ring-4 focus:ring-purple-500/10 focus:border-purple-500 outline-none transition-all duration-200 placeholder:text-zinc-400 font-medium shadow-sm"
-                  placeholder="Acme Corp"
-                  value={formData.companyName}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-            </div>
+          
+              {/* Google OAuth Button */}
+              <button
+                type="button"
+                onClick={() => handleGoogleSignIn()}
+                className="w-full py-2 bg-white border border-zinc-200 hover:bg-zinc-50 hover:border-zinc-300 text-zinc-700 rounded-full font-bold text-xs transition-all duration-300 flex items-center justify-center gap-2 shadow-sm mb-3"
+              >
+                <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none">
+                  <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
+                  <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
+                  <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05" />
+                  <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" fill="#EA4335" />
+                </svg>
+                <span>Sign in with Google</span>
+              </button>
 
-            <div className="space-y-1.5">
-              <label className="text-xs font-bold text-zinc-700 ml-1 mb-1.5 block" htmlFor="email">Email Address</label>
-              <div className="relative group">
-                <Mail size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 group-focus-within:text-purple-600 transition-colors z-10" />
-                <input
-                  type="email"
-                  id="email"
-                  className="w-full pl-11 pr-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-zinc-900 text-sm focus:ring-4 focus:ring-purple-500/10 focus:border-purple-500 outline-none transition-all duration-200 placeholder:text-zinc-400 font-medium shadow-sm"
-                  placeholder="name@company.com"
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
-                />
+              {/* Divider */}
+              <div className="relative mb-3">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-zinc-200"></div>
+                </div>
+                <div className="relative flex justify-center text-[10px] font-bold text-zinc-400">
+                  <span className="bg-white px-3">or Sign in with Email</span>
+                </div>
               </div>
-            </div>
 
-            <div className="space-y-1.5">
-              <label className="text-xs font-bold text-zinc-700 ml-1 mb-1.5 block" htmlFor="password">Password</label>
-              <div className="relative group">
-                <Lock size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 group-focus-within:text-purple-600 transition-colors z-10" />
-                <input
-                  type={showPassword ? "text" : "password"}
-                  id="password"
-                  className="w-full pl-11 pr-11 py-2.5 bg-white border border-zinc-200 rounded-xl text-zinc-900 text-sm focus:ring-4 focus:ring-purple-500/10 focus:border-purple-500 outline-none transition-all duration-200 placeholder:text-zinc-400 font-medium shadow-sm"
-                  placeholder="••••••••"
-                  value={formData.password}
-                  onChange={handleChange}
-                  required
-                  minLength={6}
-                />
-                <button
-                  type="button"
-                  className="absolute right-4 top-1/2 -translate-y-1/2 p-1 text-zinc-400 hover:text-purple-600 transition-colors z-10"
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              <form onSubmit={handleSignup} className="space-y-3">
+                
+                <div className="space-y-1">
+                  <label className="text-[11px] font-bold text-zinc-900 ml-1 block" htmlFor="firstName">Name*</label>
+                  <input
+                    type="text"
+                    id="firstName"
+                    className="w-full px-4 py-2 bg-white border border-zinc-200 rounded-full text-zinc-900 text-xs focus:ring-2 focus:ring-[#4F39F6] focus:border-[#4F39F6] outline-none transition-all duration-200 placeholder:text-zinc-400 shadow-sm"
+                    placeholder="John Doe"
+                    value={formData.firstName}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[11px] font-bold text-zinc-900 ml-1 block" htmlFor="companyName">Company*</label>
+                  <input
+                    type="text"
+                    id="companyName"
+                    className="w-full px-4 py-2 bg-white border border-zinc-200 rounded-full text-zinc-900 text-xs focus:ring-2 focus:ring-[#4F39F6] focus:border-[#4F39F6] outline-none transition-all duration-200 placeholder:text-zinc-400 shadow-sm"
+                    placeholder="Acme Corp"
+                    value={formData.companyName}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+                
+                
+                <div className="space-y-1">
+                  <label className="text-[11px] font-bold text-zinc-900 ml-1 block" htmlFor="email">Email*</label>
+                  <input
+                    type="email"
+                    id="email"
+                    className="w-full px-4 py-2 bg-white border border-zinc-200 rounded-full text-zinc-900 text-xs focus:ring-2 focus:ring-[#4F39F6] focus:border-[#4F39F6] outline-none transition-all duration-200 placeholder:text-zinc-400 shadow-sm"
+                    placeholder="mail@website.com"
+                    value={formData.email}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-[11px] font-bold text-zinc-900 ml-1 block" htmlFor="password">Password*</label>
+                  <div className="relative">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      id="password"
+                      className="w-full px-4 py-2 pr-10 bg-white border border-zinc-200 rounded-full text-zinc-900 text-xs focus:ring-2 focus:ring-[#4F39F6] focus:border-[#4F39F6] outline-none transition-all duration-200 placeholder:text-zinc-400 shadow-sm"
+                      placeholder="Min. 8 character"
+                      value={formData.password}
+                      onChange={handleChange}
+                      required
+                    />
+                    <button
+                      type="button"
+                      className="absolute right-3.5 top-1/2 -translate-y-1/2 p-1 text-zinc-400 hover:text-purple-600 transition-colors"
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? <EyeOff size={14} /> : <Eye size={14} />}
+                    </button>
+                  </div>
+                </div>
+
+                <div className="h-0.5"></div>
+
+                <button type="submit" className="w-full bg-[#4F39F6] hover:bg-purple-700 rounded-full py-2.5 font-bold text-xs text-white shadow-lg shadow-[#4F39F6]/20 transition-all duration-200" disabled={isLoading}>
+                  {isLoading ? "Creating account..." : "Create Account"}
                 </button>
-              </div>
-            </div>
+              </form>
 
-            <button type="submit" className="w-full mt-2 bg-zinc-950 hover:bg-black rounded-xl py-2.5 font-bold text-sm shadow-md hover:shadow-lg transition-all duration-200 flex items-center justify-center gap-3 disabled:opacity-70 group border border-zinc-950" disabled={isLoading}>
-              {isLoading ? (
-                <>
-                  <Loader2 size={20} className="animate-spin text-white" />
-                  <span className="text-white">Creating account...</span>
-                </>
-              ) : (
-                <>
-                  <span className="text-white">Create Account</span>
-                  <UserPlus size={20} className="group-hover:translate-x-1 transition-transform duration-300 text-white" />
-                </>
-              )}
-            </button>
-          </form>
-
-          {/* Divider */}
-          <div className="relative my-4">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-zinc-200"></div>
-            </div>
-            <div className="relative flex justify-center text-[10px] font-bold uppercase">
-              <span className="bg-white px-3 text-zinc-400">Or continue with</span>
-            </div>
-          </div>
-
-          {/* Google OAuth Button */}
-          <button
-            type="button"
-            onClick={() => handleGoogleSignIn()}
-            className="w-full py-2.5 bg-white border border-zinc-200 hover:bg-zinc-50 hover:border-zinc-300 text-zinc-700 rounded-xl font-bold text-sm transition-all duration-300 flex items-center justify-center gap-3 shadow-sm cursor-pointer"
-          >
-            <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none">
-              <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
-              <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
-              <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05" />
-              <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" fill="#EA4335" />
-            </svg>
-            <span>Google</span>
-          </button>
-
-          <div className="text-center mt-6 pt-6 border-t border-zinc-100">
-            <p className="text-zinc-500 font-medium text-xs lg:text-sm">
-              Already have an account?{' '}
-              <Link to="/login" className="text-purple-600 font-extrabold hover:text-purple-500 transition-colors">
-                Sign in here
-              </Link>
+          <div className="mt-4 text-left">
+            <p className="text-[11px] font-bold text-zinc-900">
+              Already have an account? <Link to="/login" className="text-[#4F39F6] hover:text-purple-700">Sign In</Link>
             </p>
           </div>
-        </div>
 
-        {/* Trust Badges */}
-        <div className="mt-4 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-[9px] font-bold text-zinc-400 uppercase tracking-wider w-full px-2">
-          <span className="flex items-center gap-1.5"><Lock size={12} className="text-zinc-400" /> Secure OAuth</span>
-          <span className="flex items-center gap-1.5"><Shield size={12} className="text-zinc-400" /> Meta Compliant</span>
-          <span className="flex items-center gap-1.5"><CheckCircle2 size={12} className="text-zinc-400" /> Enterprise Security</span>
+          <div className="mt-6">
+            <p className="text-[9px] text-zinc-400 font-medium">©2026 Flazly All rights reserved.</p>
+          </div>
         </div>
       </div>
+
+      {/* RIGHT SIDE: GRAPHIC */}
+      <div className="hidden lg:flex w-[55%] h-full bg-[#4F39F6] relative overflow-hidden items-center justify-center flex-col shadow-2xl">
+        {/* Geometric Background Elements */}
+        <div className="absolute top-0 left-0 w-[400px] h-[400px] bg-[#3B29C6] translate-x-[-30%] translate-y-[-30%] rotate-45" />
+        <div className="absolute top-10 right-10 w-32 h-32 opacity-20 bg-[radial-gradient(circle_at_center,_white_2px,_transparent_2px)] bg-[size:16px_16px]" />
+        <div className="absolute top-20 right-1/4 w-0 h-0 border-l-[30px] border-r-[30px] border-b-[50px] border-l-transparent border-r-transparent border-b-black/10 rotate-[15deg]"></div>
+        
+        {/* Staircase/Steps */}
+        <div className="absolute bottom-0 right-0 w-1/2 h-[45%] flex flex-col items-end justify-end">
+           <div className="w-full h-1/4 bg-[#402FCD]" />
+           <div className="w-[80%] h-1/4 bg-[#3325A6]" />
+           <div className="w-[60%] h-1/4 bg-[#261B7F]" />
+           <div className="w-[40%] h-1/4 bg-[#191059]" />
+        </div>
+
+        <div className="absolute bottom-10 right-[60%] w-64 h-64 bg-black/5 rounded-full blur-3xl"></div>
+
+        {/* Floating Icons */}
+        <div className="absolute top-[20%] left-[25%] w-14 h-14 bg-white rounded-full flex items-center justify-center shadow-2xl z-20">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4F39F6" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 8V4H8"></path><rect width="16" height="12" x="4" y="8" rx="2"></rect><path d="M2 14h2"></path><path d="M20 14h2"></path><path d="M15 13v2"></path><path d="M9 13v2"></path></svg>
+        </div>
+        <div className="absolute top-[15%] right-[30%] w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-2xl z-20">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" alt="IG" className="w-5 h-5 object-cover" />
+        </div>
+        <div className="absolute top-[50%] right-[15%] w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-2xl z-20">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="#0084FF"><path d="M12 2C6.477 2 2 6.145 2 11.258c0 2.898 1.48 5.485 3.79 7.202v3.136c0 .356.388.563.684.368l3.413-2.26c.677.18 1.385.275 2.113.275 5.523 0 10-4.145 10-9.258C22 6.145 17.523 2 12 2zm1.144 12.35l-2.91-3.11-5.63 3.11 6.195-6.578 2.91 3.11 5.63-3.11-6.195 6.578z"/></svg>
+        </div>
+
+        {/* Dashboard Widgets */}
+        <div className="relative z-10 flex items-center justify-center gap-5 transform -translate-y-12">
+          
+          {/* Revenue Chart Widget */}
+          <div className="bg-white rounded-xl p-5 shadow-2xl w-[280px] border border-white/50 bg-clip-padding backdrop-filter relative">
+            <h2 className="text-2xl font-extrabold text-zinc-900 tracking-tight">14,208</h2>
+            <p className="text-[9px] font-bold text-zinc-400 uppercase tracking-widest mb-4">Leads This Month</p>
+            <div className="relative h-20 w-full flex items-end justify-between border-b border-zinc-100 pb-2">
+              <svg className="absolute inset-0 w-full h-full" preserveAspectRatio="none" viewBox="0 0 100 50">
+                <path d="M0 45 Q 15 45, 25 30 T 50 15 T 75 25 T 100 35" fill="none" stroke="#E5E7EB" strokeWidth="2" />
+                <path d="M0 40 Q 15 40, 25 25 T 50 5 T 75 15 T 100 30" fill="none" stroke="#4F39F6" strokeWidth="2.5" />
+              </svg>
+              <div className="absolute top-0 left-[45%] bg-white border border-zinc-100 shadow-xl rounded px-1.5 py-0.5 z-10 text-[9px] font-bold text-zinc-800 flex flex-col items-center">
+                $23,827<br/><span className="text-zinc-400 font-medium">August</span>
+              </div>
+            </div>
+            <div className="flex justify-between text-[7px] font-bold text-zinc-400 uppercase mt-2 px-1">
+              <span>APR</span><span>MAY</span><span>JUN</span><span className="text-[#4F39F6]">JUL</span><span>AUG</span>
+            </div>
+          </div>
+
+          {/* Rewards Widget */}
+          <div className="bg-white rounded-xl p-5 shadow-2xl w-[180px] -translate-y-10">
+            <h3 className="text-[13px] font-bold text-zinc-900 mb-3">AI Agent</h3>
+            <div className="flex flex-col items-center justify-center pb-1">
+              <div className="w-14 h-14 rounded-full border-[3px] border-[#4F39F6]/20 p-1 mb-2.5 flex items-center justify-center">
+                <div className="w-full h-full rounded-full bg-zinc-100 overflow-hidden">
+                  <div className="w-full h-full bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center text-white"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg></div>
+                </div>
+              </div>
+              <p className="text-[9px] text-zinc-400 font-bold uppercase tracking-widest">Responses sent</p>
+              <p className="text-lg font-extrabold text-zinc-900 tracking-tight">284,912</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Marketing Copy */}
+        <div className="absolute bottom-12 text-center z-20">
+          <h2 className="text-2xl font-semibold text-white mb-2 tracking-tight">Turn conversations<br/>into revenue.</h2>
+          <p className="text-white/80 text-[11px] font-medium max-w-[250px] mx-auto leading-relaxed">Automate Instagram DMs, capture qualified leads,<br/>and sync customer data instantly.</p>
+          <div className="flex justify-center gap-1.5 mt-6">
+            <div className="w-4 h-1 rounded-full bg-white"></div>
+            <div className="w-1 h-1 rounded-full bg-white/40"></div>
+            <div className="w-1 h-1 rounded-full bg-white/40"></div>
+          </div>
+        </div>
+
       </div>
     </div>
   );
 };
-
 export default Signup;
