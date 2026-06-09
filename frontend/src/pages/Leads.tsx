@@ -51,11 +51,11 @@ const Leads: React.FC = () => {
               className="w-full sm:w-64 bg-card border border-border rounded-lg pl-9 pr-4 py-2.5 text-sm font-medium text-foreground placeholder-zinc-400 focus:outline-none focus:border-border focus:ring-1 focus:ring-violet-500 transition-all shadow-sm"
             />
           </div>
-          <button onClick={fetchLeads} className="flex items-center justify-center gap-2 px-4 py-2.5 bg-card border border-border rounded-lg text-muted-foreground font-semibold hover:bg-muted hover:border-border transition-all shadow-sm">
+          <button onClick={fetchLeads} className="btn-base btn-secondary">
             <Filter size={16} />
             <span>Filter</span>
           </button>
-          <button className="flex items-center justify-center gap-2 px-4 py-2.5 inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow hover:bg-primary/90">
+          <button className="btn-base btn-primary">
             <Download size={16} />
             <span className="hidden sm:inline">Export</span>
           </button>
@@ -140,13 +140,13 @@ const Leads: React.FC = () => {
                     <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                       <button 
                         onClick={(e) => { e.stopPropagation(); setSelectedLead(lead); }}
-                        className="p-2 bg-card border border-border rounded-lg text-muted-foreground hover:text-foreground hover:border-primary/20 hover:bg-primary/10 transition-all shadow-sm" title="View Intelligence"
+                        className="btn-base btn-secondary px-2" title="View Intelligence"
                       >
                         <ExternalLink size={16} />
                       </button>
                       <button 
                         onClick={(e) => e.stopPropagation()}
-                        className="p-2 bg-card border border-border rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-all shadow-sm"
+                        className="btn-base btn-secondary px-2"
                       >
                         <MoreHorizontal size={16} />
                       </button>
@@ -163,8 +163,8 @@ const Leads: React.FC = () => {
           <div className="px-6 py-4 border-t border-border bg-muted/50 flex justify-between items-center text-xs font-medium text-muted-foreground">
             <span>Showing {filteredLeads.length} leads</span>
             <div className="flex gap-2">
-              <button className="px-3 py-1.5 border border-border rounded-md bg-card hover:bg-muted disabled:opacity-50">Previous</button>
-              <button className="px-3 py-1.5 border border-border rounded-md bg-card hover:bg-muted disabled:opacity-50">Next</button>
+              <button className="btn-base btn-secondary">Previous</button>
+              <button className="btn-base btn-secondary">Next</button>
             </div>
           </div>
         )}
@@ -240,13 +240,13 @@ const Leads: React.FC = () => {
               <div className="flex gap-3 w-full sm:w-auto">
                 <button 
                   onClick={() => setSelectedLead(null)}
-                  className="flex-1 sm:flex-none px-4 py-2 bg-card border border-border rounded-lg text-muted-foreground font-bold hover:bg-muted transition-all shadow-sm text-sm"
+                  className="btn-base btn-secondary flex-1 sm:flex-none"
                 >
                   Close
                 </button>
                 <button 
                   onClick={() => window.open(`https://instagram.com/direct/t/${selectedLead.instagram_handle}`, '_blank')}
-                  className="flex-1 sm:flex-none px-4 py-2 bg-primary rounded-lg text-primary-foreground font-bold hover:bg-primary/90 transition-all flex items-center justify-center gap-2 shadow-sm text-sm"
+                  className="btn-base btn-primary flex-1 sm:flex-none"
                 >
                   <ExternalLink size={16} />
                   Open in Instagram

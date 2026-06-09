@@ -188,10 +188,7 @@ const Inbox: React.FC = () => {
                   <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest hidden sm:block">Agent Status:</span>
                   <button
                     onClick={() => setIsManualMode(!isManualMode)}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all shadow-sm border ${isManualMode
-                      ? 'bg-destructive/10 text-destructive border-destructive/20 hover:bg-destructive/10'
-                      : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20 hover:bg-emerald-500/10'
-                      }`}
+                    className={`btn-base ${isManualMode ? 'btn-danger' : 'btn-success'}`}
                   >
                     {isManualMode ? <Hand size={14} /> : <CheckCircle2 size={14} />}
                     {isManualMode ? 'Manual Mode Active' : 'AI Mode Active'}
@@ -266,10 +263,7 @@ const Inbox: React.FC = () => {
                   <button
                     onClick={handleSendMessage}
                     disabled={!isManualMode || !messageText.trim()}
-                    className={`w-10 h-10 rounded-lg flex items-center justify-center transition-all ${isManualMode && messageText.trim()
-                      ? 'bg-primary text-primary-foreground shadow-sm hover:bg-primary/90'
-                      : 'bg-secondary text-muted-foreground cursor-not-allowed'
-                      }`}
+                    className={`btn-base px-2 ${isManualMode && messageText.trim() ? 'btn-primary' : 'btn-secondary'}`}
                   >
                     <Send size={16} />
                   </button>

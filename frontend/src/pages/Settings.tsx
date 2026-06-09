@@ -365,7 +365,7 @@ const Settings: React.FC = () => {
                       <button 
                         onClick={handleUpdateProfile}
                         disabled={isUpdatingProfile}
-                        className="px-6 py-2.5 bg-primary text-primary-foreground rounded-lg font-semibold hover:bg-primary/90 transition-colors shadow-sm text-sm disabled:opacity-50"
+                        className="btn-base btn-primary"
                       >
                         {isUpdatingProfile ? 'Saving...' : 'Save Changes'}
                       </button>
@@ -374,7 +374,7 @@ const Settings: React.FC = () => {
                           setIsEditingProfile(false);
                           setProfileEmail(user?.email || '');
                         }}
-                        className="px-6 py-2.5 bg-card border border-border rounded-lg text-muted-foreground font-semibold hover:bg-muted transition-colors shadow-sm text-sm"
+                        className="btn-base btn-secondary"
                       >
                         Cancel
                       </button>
@@ -393,7 +393,7 @@ const Settings: React.FC = () => {
                     </div>
                     <button 
                       onClick={() => setIsEditingProfile(true)}
-                      className="w-fit px-5 py-2.5 bg-card border border-border rounded-lg text-muted-foreground font-semibold hover:bg-muted transition-colors shadow-sm text-sm"
+                      className="btn-base btn-secondary"
                     >
                       Edit Profile
                     </button>
@@ -460,7 +460,7 @@ const Settings: React.FC = () => {
                     <button 
                       onClick={handleChangePassword}
                       disabled={isChangingPassword || (!isGoogleRegistered && !currentPassword) || !newPassword || !confirmPassword}
-                      className="px-6 py-2.5 bg-primary text-primary-foreground rounded-lg font-semibold hover:bg-primary/90 transition-colors shadow-sm text-sm disabled:opacity-50"
+                      className="btn-base btn-primary"
                     >
                       {isChangingPassword ? 'Updating...' : 'Update Password'}
                     </button>
@@ -516,14 +516,14 @@ const Settings: React.FC = () => {
                     <div className="flex justify-center gap-3 pt-4">
                       <button 
                         onClick={() => setIsSettingUp2Fa(false)}
-                        className="px-6 py-2.5 bg-card border border-border rounded-lg text-muted-foreground font-semibold hover:bg-muted transition-colors shadow-sm text-sm"
+                        className="btn-base btn-secondary"
                       >
                         Cancel
                       </button>
                       <button 
                         onClick={handleVerifyAndEnable2FA}
                         disabled={isVerifying2Fa || !totpVerificationCode}
-                        className="px-6 py-2.5 bg-primary text-primary-foreground rounded-lg font-semibold hover:bg-primary/90 transition-colors shadow-sm text-sm disabled:opacity-50"
+                        className="btn-base btn-primary"
                       >
                         {isVerifying2Fa ? 'Verifying...' : 'Verify & Enable 2FA'}
                       </button>
@@ -540,7 +540,7 @@ const Settings: React.FC = () => {
                     </p>
                     <button 
                       onClick={() => setConfirmDisable2FA(true)}
-                      className="px-5 py-2.5 bg-card text-destructive hover:bg-destructive/10 border border-border hover:border-destructive/20 rounded-lg font-semibold transition-colors text-sm shadow-sm"
+                      className="btn-base btn-danger"
                     >
                       Disable Multi-Factor Authentication
                     </button>
@@ -556,7 +556,7 @@ const Settings: React.FC = () => {
                     </p>
                     <button 
                       onClick={handleSetup2FA}
-                      className="px-6 py-2.5 bg-primary text-primary-foreground rounded-lg font-semibold hover:bg-primary/90 transition-colors shadow-sm text-sm"
+                      className="btn-base btn-primary"
                     >
                       Enable 2FA Now
                     </button>
@@ -580,7 +580,7 @@ const Settings: React.FC = () => {
                   </p>
                   <button 
                     onClick={() => toast.error('Account deletion has been temporarily paused for Meta App Review verification.')}
-                    className="px-6 py-2.5 bg-card text-destructive border border-destructive/20 rounded-lg font-bold hover:bg-destructive hover:text-primary-foreground transition-colors text-sm shadow-sm"
+                    className="btn-base btn-danger"
                   >
                     Delete Account & Purge Data
                   </button>
@@ -630,7 +630,7 @@ const Settings: React.FC = () => {
                             toast.error('Failed to disconnect account.');
                           }
                         }}
-                        className="px-5 py-2.5 bg-card text-destructive hover:bg-destructive/10 border border-border hover:border-destructive/20 rounded-lg font-semibold transition-colors text-sm shadow-sm flex items-center gap-2"
+                        className="btn-base btn-danger"
                       >
                         <X size={16} /> Revoke Meta Access
                       </button>
@@ -645,14 +645,14 @@ const Settings: React.FC = () => {
                       <button 
                         onClick={handleConnect}
                         disabled={isConnecting}
-                        className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 text-primary-foreground rounded-xl font-bold hover:bg-blue-500 transition-colors shadow-sm disabled:opacity-70"
+                        className="btn-base btn-primary flex-1 sm:flex-none"
                       >
                         {isConnecting ? <RefreshCw className="animate-spin" size={18} /> : <Link2 size={18} />}
                         <span>{isConnecting ? 'Authenticating...' : 'Connect with Facebook'}</span>
                       </button>
                       <button 
                         onClick={() => setShowGuide(true)}
-                        className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-3 bg-card text-muted-foreground border border-border rounded-xl font-bold hover:bg-muted transition-colors shadow-sm"
+                        className="btn-base btn-secondary flex-1 sm:flex-none"
                       >
                         <Info size={16} className="text-muted-foreground"/> Setup Guide
                       </button>
@@ -675,7 +675,7 @@ const Settings: React.FC = () => {
                   <div className="bg-muted p-4 rounded-xl border border-border text-sm font-mono text-muted-foreground truncate shadow-inner select-all">
                     {`${window.location.origin}/api/v1/Instagram/Webhook`}
                   </div>
-                  <button className="flex items-center gap-2 px-4 py-2 bg-card border border-border rounded-lg text-xs font-bold text-muted-foreground hover:bg-muted transition-colors shadow-sm mt-2">
+                  <button className="btn-base btn-secondary text-xs mt-2">
                     <Zap size={14} className="text-amber-500" /> Dispatch Test Event
                   </button>
                 </div>
@@ -747,14 +747,14 @@ const Settings: React.FC = () => {
             <div className="px-6 py-4 bg-muted border-t border-border flex flex-col sm:flex-row gap-3">
               <button 
                 onClick={handleConnect}
-                className="flex-1 px-4 py-2.5 bg-blue-600 text-primary-foreground rounded-lg font-bold hover:bg-blue-500 transition-colors shadow-sm flex items-center justify-center gap-2 text-sm"
+                className="btn-base btn-primary flex-1"
               >
                 <CheckCircle2 size={18} />
                 <span>I've Completed These Steps</span>
               </button>
               <button 
                  onClick={() => setShowGuide(false)}
-                 className="flex-1 sm:flex-none px-4 py-2.5 bg-card border border-border text-muted-foreground rounded-lg font-bold hover:bg-muted transition-colors shadow-sm text-sm"
+                 className="btn-base btn-secondary flex-1 sm:flex-none"
               >
                 Cancel
               </button>

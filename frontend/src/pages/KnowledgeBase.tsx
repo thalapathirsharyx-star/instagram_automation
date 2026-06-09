@@ -196,11 +196,7 @@ const KnowledgeBase: React.FC = () => {
   const TabButton = ({ id, label, icon: Icon }: { id: any, label: string, icon: any }) => (
     <button 
       onClick={() => setActiveTab(id)}
-      className={`px-5 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 flex items-center gap-2 ${
-        activeTab === id 
-          ? 'bg-primary text-primary-foreground shadow-md' 
-          : 'text-muted-foreground hover:text-foreground hover:bg-secondary'
-      }`}
+      className={`btn-base ${activeTab === id ? 'btn-primary' : 'btn-secondary'}`}
     >
       <Icon size={16} /> <span className="hidden sm:inline">{label}</span>
     </button>
@@ -219,21 +215,21 @@ const KnowledgeBase: React.FC = () => {
         <div className="flex flex-wrap items-center gap-3 shrink-0">
           <button 
             onClick={() => setActiveModal('upload')}
-            className="flex items-center gap-2 px-4 py-2 bg-card border border-border rounded-lg text-muted-foreground font-bold hover:border-border hover:bg-muted transition-all shadow-sm text-sm"
+            className="btn-base btn-secondary"
           >
             <UploadCloud size={16} className="text-foreground" />
             <span className="hidden sm:inline">Upload PDF</span>
           </button>
           <button 
             onClick={() => setActiveModal('faq')}
-            className="flex items-center gap-2 px-4 py-2 bg-card border border-border rounded-lg text-muted-foreground font-bold hover:border-border hover:bg-muted transition-all shadow-sm text-sm"
+            className="btn-base btn-secondary"
           >
             <HelpCircle size={16} className="text-blue-400" />
             <span className="hidden sm:inline">Add FAQ</span>
           </button>
           <button 
             onClick={() => setActiveModal('fact')}
-            className="bg-primary text-primary-foreground hover:bg-primary/90 transition-colors px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2 shadow-sm"
+            className="btn-base btn-primary"
           >
             <Plus size={16} />
             <span className="hidden sm:inline">Add Fact</span>
@@ -326,7 +322,7 @@ const KnowledgeBase: React.FC = () => {
                         {item.category !== 'Document' && (
                           <button 
                             onClick={() => handleEditItem(item)}
-                            className="p-1.5 text-muted-foreground hover:text-blue-400 hover:bg-blue-500/10 rounded-lg transition-colors cursor-pointer opacity-0 group-hover:opacity-100"
+                            className="btn-base btn-secondary px-2 opacity-0 group-hover:opacity-100"
                             title="Edit"
                           >
                             <Edit2 size={16} />
@@ -334,7 +330,7 @@ const KnowledgeBase: React.FC = () => {
                         )}
                         <button 
                           onClick={() => setConfirmDeleteId(item.id)}
-                          className="p-1.5 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg transition-colors cursor-pointer opacity-0 group-hover:opacity-100"
+                          className="btn-base btn-danger px-2 opacity-0 group-hover:opacity-100"
                           title="Delete"
                         >
                           <Trash2 size={16} />
@@ -467,11 +463,11 @@ const KnowledgeBase: React.FC = () => {
 
             {activeModal !== 'upload' && (
               <div className="px-6 py-4 bg-muted border-t border-border flex justify-end gap-3">
-                <button onClick={closeModal} className="px-5 py-2.5 bg-card border border-border text-muted-foreground rounded-lg font-bold hover:bg-muted hover:border-border transition-colors shadow-sm text-sm">Cancel</button>
+                <button onClick={closeModal} className="btn-base btn-secondary">Cancel</button>
                 <button 
                   onClick={activeModal === 'faq' ? handleAddFaq : handleAddFact} 
                   disabled={isSaving || (activeModal === 'faq' ? (!newQuestion || !newAnswer) : (!newTitle || !newContent))} 
-                  className="px-6 py-2.5 bg-primary text-primary-foreground rounded-lg font-bold hover:bg-primary/90 transition-colors shadow-sm text-sm flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="btn-base btn-primary"
                 >
                   {isSaving ? <Loader2 size={16} className="animate-spin" /> : 'Save Entry'}
                 </button>

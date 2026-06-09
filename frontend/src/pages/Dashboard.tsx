@@ -162,7 +162,7 @@ const Dashboard: React.FC = () => {
         </div>
         <button 
           onClick={handleGenerateReport} 
-          className="bg-card border border-border hover:border-border hover:bg-muted text-muted-foreground shadow-sm transition-all px-4 py-2.5 rounded-lg text-sm font-semibold flex items-center gap-2"
+          className="btn-base btn-secondary"
         >
           <Download size={16} />
           <span>Export Analytics</span>
@@ -389,7 +389,7 @@ const Dashboard: React.FC = () => {
                 </p>
               </div>
               
-              <button className="mt-5 w-full bg-card text-foreground hover:bg-primary/10 transition-colors shadow-sm py-2.5 rounded-lg text-sm font-bold flex justify-center items-center gap-2">
+              <button className="btn-base w-full bg-white text-indigo-700 hover:bg-zinc-100 border-none mt-5 shadow-sm py-2.5 font-bold flex justify-center items-center gap-2">
                 Apply Recommended Tone <ArrowRight size={14} />
               </button>
             </div>

@@ -258,7 +258,7 @@ const ProductCatalog: React.FC = () => {
         </div>
         <button 
           onClick={handleOpenAddModal}
-          className="w3-button-primary shadow-glow-purple cursor-pointer self-start sm:self-auto flex items-center gap-2"
+          className="btn-base btn-primary self-start sm:self-auto"
         >
           <Plus size={18} />
           <span>Add Product</span>
@@ -303,7 +303,7 @@ const ProductCatalog: React.FC = () => {
                 </p>
               </div>
               {!searchQuery && (
-                <button onClick={handleOpenAddModal} className="w3-button-primary px-10 shadow-glow-purple">
+                <button onClick={handleOpenAddModal} className="btn-base btn-primary px-10">
                   Add First Product
                 </button>
               )}
@@ -421,13 +421,13 @@ const ProductCatalog: React.FC = () => {
                       <div className="flex items-center gap-2">
                         <button 
                           onClick={() => handleOpenEditModal(product)}
-                          className="p-1.5 text-muted-foreground hover:text-purple-400 hover:bg-purple-500/10 rounded-lg transition-all cursor-pointer"
+                          className="btn-base btn-secondary px-2"
                         >
                           <Edit size={16} />
                         </button>
                         <button 
                           onClick={() => setConfirmDeleteId(product.id)}
-                          className="p-1.5 text-muted-foreground hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-all cursor-pointer"
+                          className="btn-base btn-danger px-2"
                         >
                           <Trash2 size={16} />
                         </button>
@@ -552,7 +552,7 @@ const ProductCatalog: React.FC = () => {
                   <button
                     type="button"
                     onClick={addVariantRow}
-                    className="text-xs font-bold flex items-center gap-1 bg-purple-500/10 border border-purple-500/20 text-purple-600 dark:text-purple-400 hover:bg-purple-500/20 px-3.5 py-2 rounded-xl cursor-pointer transition-all"
+                    className="btn-base btn-secondary text-xs"
                   >
                     <Plus size={14} /> Add Row
                   </button>
@@ -602,7 +602,7 @@ const ProductCatalog: React.FC = () => {
                           <button
                             type="button"
                             onClick={() => removeVariantRow(v.id)}
-                            className="p-2 text-muted-foreground hover:text-rose-400 hover:bg-rose-500/10 rounded-xl transition-all cursor-pointer"
+                            className="btn-base btn-danger px-2"
                           >
                             <Trash2 size={16} />
                           </button>
@@ -632,14 +632,14 @@ const ProductCatalog: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-6 py-3 bg-primary/90 text-zinc-300 rounded-xl font-bold hover:bg-zinc-700 hover:text-primary-foreground transition-all cursor-pointer text-sm"
+                  className="btn-base btn-secondary"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isSaving}
-                  className="w3-button-primary shadow-glow-purple px-8 flex items-center justify-center gap-2"
+                  className="btn-base btn-primary px-8"
                 >
                   {isSaving ? (
                     <>

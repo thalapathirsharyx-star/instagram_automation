@@ -87,10 +87,10 @@ const SuperAdminDashboard: React.FC = () => {
           <p style={{ margin: '8px 0 0', color: 'var(--text-dim)' }}>Global metrics across all tenants and clients.</p>
         </div>
         <div style={{ display: 'flex', gap: '12px' }}>
-          <button className="glass-card" style={{ padding: '10px 16px', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <button className="btn-base btn-secondary">
             <Server size={18} /> System Status: OK
           </button>
-          <button className="gradient-btn" style={{ padding: '10px 20px', borderRadius: '12px', fontSize: '0.9rem', fontWeight: 600 }}>
+          <button className="btn-base btn-primary">
             Configure Platform
           </button>
         </div>
@@ -155,7 +155,7 @@ const SuperAdminDashboard: React.FC = () => {
               <div style={{ color: 'var(--text-dim)', textAlign: 'center', padding: '20px 0' }}>No active consumers yet.</div>
             )}
           </div>
-          <button style={{ width: '100%', marginTop: '20px', background: 'transparent', border: 'none', color: 'var(--primary)', fontWeight: 500, cursor: 'pointer' }}>
+          <button className="btn-base btn-secondary w-full mt-5 border-transparent text-primary hover:bg-muted">
             View All Clients
           </button>
         </div>
