@@ -62,10 +62,10 @@
     --brand-purple: #833AB4;
     --brand-indigo: #E1306C;
 
-    /* Premium AI Theme specifics (Disabled/Overridden visually) */
+    /* Premium AI Theme specifics */
     --ai-gradient-start: #833AB4;
     --ai-gradient-end: #FCAF45;
-    --ai-glow: rgba(225, 48, 108, 0.0);
+    --ai-glow: rgba(225, 48, 108, 0.25);
   }
 
   * {
@@ -257,15 +257,15 @@
   }
 
   .gradient-text-ai {
-    @apply text-foreground;
+    @apply bg-gradient-to-r from-[#833AB4] via-[#E1306C] to-[#FCAF45] bg-clip-text text-transparent;
   }
 
   .glow-indigo {
-    box-shadow: none;
+    box-shadow: 0 0 80px 40px rgba(99, 102, 241, 0.1);
   }
 
   .glow-purple {
-    box-shadow: none;
+    box-shadow: 0 0 80px 40px rgba(168, 85, 247, 0.1);
   }
 
   .dot-grid {
