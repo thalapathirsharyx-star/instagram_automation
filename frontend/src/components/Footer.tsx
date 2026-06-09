@@ -13,7 +13,7 @@ const Footer: React.FC = () => {
                 alt="Flazly Logo"
                 className="w-9 h-9 object-contain transition-transform duration-300 group-hover:scale-105"
               />
-              <span className="text-lg font-bold tracking-tight text-primary-foreground uppercase font-inter logo-text">
+              <span className="text-lg font-bold tracking-tight text-white uppercase font-inter logo-text">
                 Flaz<span className="text-logo-gradient">ly</span>
               </span>
             </Link>
@@ -41,7 +41,7 @@ const Footer: React.FC = () => {
 
           {/* Product Column */}
           <div>
-            <h4 className="text-primary-foreground text-xs font-bold uppercase tracking-wider mb-6">Product</h4>
+            <h4 className="text-white text-xs font-bold uppercase tracking-wider mb-6">Product</h4>
             <ul className="space-y-4 text-sm font-medium text-[#B4B4C7]">
               <li><a href="/#features" className="hover:text-[#E1306C] transition-colors">Features</a></li>
               <li><a href="/#setup" className="hover:text-[#E1306C] transition-colors">Integration Setup</a></li>
@@ -52,7 +52,7 @@ const Footer: React.FC = () => {
 
           {/* Developers Column */}
           <div>
-            <h4 className="text-primary-foreground text-xs font-bold uppercase tracking-wider mb-6">Developer API</h4>
+            <h4 className="text-white text-xs font-bold uppercase tracking-wider mb-6">Developer API</h4>
             <ul className="space-y-4 text-sm font-medium text-[#B4B4C7]">
               <li><a href="#" className="hover:text-[#E1306C] transition-colors">Webhooks</a></li>
               <li><a href="#" className="hover:text-[#E1306C] transition-colors">API Docs</a></li>
@@ -63,7 +63,7 @@ const Footer: React.FC = () => {
 
           {/* Legal Column */}
           <div>
-            <h4 className="text-primary-foreground text-xs font-bold uppercase tracking-wider mb-6">Legal</h4>
+            <h4 className="text-white text-xs font-bold uppercase tracking-wider mb-6">Legal</h4>
             <ul className="space-y-4 text-sm font-medium text-[#B4B4C7]">
               <li><Link to="/privacy" onClick={() => window.scrollTo(0, 0)} className="hover:text-[#E1306C] transition-colors">Privacy Policy</Link></li>
               <li><Link to="/terms" onClick={() => window.scrollTo(0, 0)} className="hover:text-[#E1306C] transition-colors">Terms of Service</Link></li>
@@ -73,7 +73,7 @@ const Footer: React.FC = () => {
 
         </div>
 
-        <div className="pt-8 border-t border-[#E1306C]/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-muted-foreground text-xs font-bold">
+        <div className="pt-8 border-t border-[#E1306C]/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-zinc-400 text-xs font-bold">
           <span>© 2026 Flazly Inc. All rights reserved.</span>
           <span>Built with ❤ for professional Instagram automation.</span>
         </div>

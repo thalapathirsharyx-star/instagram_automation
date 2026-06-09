@@ -85,7 +85,7 @@ const HeroWorkflow = () => {
       badge: "Integration",
       detail: "Synced to Google Sheets & HubSpot",
       glow: "from-[#38BDF8] to-[#3B82F6]",
-      color: "text-[#38BDF8] bg-[#38BDF8]/10 border-[#38BDF8]/20 dark:text-primary-foreground dark:bg-white/10 dark:border-white/20"
+      color: "text-[#38BDF8] bg-[#38BDF8]/10 border-[#38BDF8]/20 dark:text-white dark:bg-white/10 dark:border-white/20"
     },
     {
       title: "Lead Handoff",
@@ -101,7 +101,7 @@ const HeroWorkflow = () => {
       badge: "Sale Closed",
       detail: "Pipeline updated: +$499 Revenue",
       glow: "from-[#6366F1] to-[#38BDF8]",
-      color: "text-emerald-400 bg-emerald-500/10 border-emerald-500/20 dark:text-primary-foreground dark:bg-[#3B82F6]/20 dark:border-[#3B82F6]/35"
+      color: "text-emerald-400 bg-emerald-500/10 border-emerald-500/20 dark:text-white dark:bg-[#3B82F6]/20 dark:border-[#3B82F6]/35"
     }
   ];
 
@@ -155,11 +155,11 @@ const HeroWorkflow = () => {
 
               {/* Step number / Badge */}
               <div className="flex items-center justify-between mb-3">
-                <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider ${isSelected ? "bg-[#38BDF8] text-primary-foreground" : "bg-white/5 text-muted-foreground"
+                <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider ${isSelected ? "bg-[#38BDF8] text-white" : "bg-white/5 text-zinc-400"
                   }`}>
                   Step {idx + 1}
                 </span>
-                <span className={`text-[8px] font-bold ${isSelected ? "text-[#38BDF8]" : "text-muted-foreground"}`}>
+                <span className={`text-[8px] font-bold ${isSelected ? "text-[#38BDF8]" : "text-zinc-500"}`}>
                   {step.badge}
                 </span>
               </div>
@@ -170,12 +170,12 @@ const HeroWorkflow = () => {
               </div>
 
               {/* Step Title */}
-              <h4 className="text-xs font-bold text-primary-foreground mb-1 group-hover:text-[#38BDF8] transition-colors">
+              <h4 className="text-xs font-bold text-white mb-1 group-hover:text-[#38BDF8] transition-colors">
                 {step.title}
               </h4>
 
               {/* Detail snippet */}
-              <p className="text-[10px] text-muted-foreground leading-normal font-medium mt-auto">
+              <p className="text-[10px] text-zinc-400 leading-normal font-medium mt-auto">
                 {step.detail}
               </p>
             </div>
@@ -190,7 +190,7 @@ const HeroWorkflow = () => {
           <span className="text-[#38BDF8] font-bold">Step {activeStep + 1} / 6</span>
         </div>
         <div className="text-xs space-y-1 text-zinc-350">
-          <p className="text-primary-foreground font-semibold">
+          <p className="text-white font-semibold">
             &gt; Initializing pipeline flow node: {steps[activeStep].title.toUpperCase()}
           </p>
           <p className="text-zinc-450">
@@ -228,8 +228,8 @@ const ProductShowcase = () => {
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
             className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${activeTab === tab.id
-                ? 'bg-[#3B82F6] text-primary-foreground shadow-md shadow-[#3B82F6]/20 border border-white/10'
-                : 'text-muted-foreground hover:text-zinc-200 border border-transparent'
+                ? 'bg-[#3B82F6] text-white shadow-md shadow-[#3B82F6]/20 border border-white/10'
+                : 'text-zinc-400 hover:text-zinc-200 border border-transparent'
               }`}
           >
             {tab.icon}
@@ -300,7 +300,7 @@ const InboxMockup = () => {
         {/* Chat Item 1 */}
         <div className="p-2 rounded-xl bg-white/5 border border-zinc-700 flex flex-col gap-1 cursor-pointer">
           <div className="flex justify-between items-center">
-            <span className="text-xs font-bold text-primary-foreground">@daniel_k</span>
+            <span className="text-xs font-bold text-white">@daniel_k</span>
             <span className="text-[7px] font-bold text-[#38BDF8] bg-[#38BDF8]/10 px-1.5 py-0.5 rounded">Autopilot</span>
           </div>
           <span className="text-[9px] text-zinc-455 truncate font-medium">Wants custom sizes info</span>
@@ -313,7 +313,7 @@ const InboxMockup = () => {
             <span className="text-xs font-bold text-zinc-300">@sarah.fit</span>
             <span className="text-[7px] text-emerald-400 font-bold bg-emerald-500/10 px-1.5 py-0.5 rounded">Lead</span>
           </div>
-          <span className="text-[9px] text-muted-foreground truncate">Qualified lead: Fitness</span>
+          <span className="text-[9px] text-zinc-500 truncate">Qualified lead: Fitness</span>
           <span className="text-[7.5px] text-zinc-455 font-semibold mt-1">Synced to CRM</span>
         </div>
 
@@ -323,7 +323,7 @@ const InboxMockup = () => {
             <span className="text-xs font-bold text-zinc-300">@hype_brands</span>
             <span className="text-[7px] text-yellow-500 font-bold bg-yellow-500/10 px-1.5 py-0.5 rounded">Action Needed</span>
           </div>
-          <span className="text-[9px] text-muted-foreground truncate">Requests volume pricing</span>
+          <span className="text-[9px] text-zinc-500 truncate">Requests volume pricing</span>
           <span className="text-[7.5px] text-yellow-500/80 font-bold mt-1">Escalated</span>
         </div>
       </div>
@@ -333,11 +333,11 @@ const InboxMockup = () => {
         {/* Chat Header */}
         <div className="p-3 bg-black/40 border-b border-white/5 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-full bg-zinc-700 flex items-center justify-center text-[8px] font-bold text-primary-foreground">
+            <div className="w-6 h-6 rounded-full bg-zinc-700 flex items-center justify-center text-[8px] font-bold text-white">
               DK
             </div>
             <div className="flex flex-col">
-              <span className="text-xs font-bold text-primary-foreground">Daniel Kreuger (@daniel_k)</span>
+              <span className="text-xs font-bold text-white">Daniel Kreuger (@daniel_k)</span>
               <span className="text-[8px] text-emerald-400 font-semibold flex items-center gap-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" /> Active Now
               </span>
@@ -352,8 +352,8 @@ const InboxMockup = () => {
         <div className="flex-1 p-3 space-y-3.5 overflow-y-auto">
           {/* User Message */}
           <div className="flex gap-2 max-w-[85%]">
-            <div className="w-5 h-5 rounded-full bg-primary/90 flex items-center justify-center text-[7px] font-bold shrink-0 text-zinc-305">US</div>
-            <div className="bg-primary/90/80 border border-white/5 p-2.5 rounded-2xl rounded-tl-none">
+            <div className="w-5 h-5 rounded-full bg-zinc-800 flex items-center justify-center text-[7px] font-bold shrink-0 text-zinc-305">US</div>
+            <div className="bg-zinc-800/80 border border-white/5 p-2.5 rounded-2xl rounded-tl-none">
               <p className="text-[10px] text-zinc-200">
                 Hi! Do you have the white sneaker in size 10? How much is it?
               </p>
@@ -363,20 +363,20 @@ const InboxMockup = () => {
           {/* AI Response */}
           <div className="flex gap-2 max-w-[85%] ml-auto justify-end">
             <div className="bg-zinc-850 p-2.5 rounded-2xl rounded-tr-none text-right border border-[#38BDF8]/25">
-              <p className="text-[10px] text-primary-foreground">
+              <p className="text-[10px] text-white">
                 Yes! We have 3 pairs left in size 10. The price is $129 with free shipping. Would you like a checkout link?
               </p>
               <span className="text-[6.5px] font-bold text-zinc-450 uppercase tracking-wide mt-1 block">
                 ✦ Automated by Flazly
               </span>
             </div>
-            <div className="w-5 h-5 rounded-full bg-[#38BDF8] flex items-center justify-center text-[7px] font-bold shrink-0 text-primary-foreground font-mono">AI</div>
+            <div className="w-5 h-5 rounded-full bg-[#38BDF8] flex items-center justify-center text-[7px] font-bold shrink-0 text-white font-mono">AI</div>
           </div>
 
           {/* User Message 2 */}
           <div className="flex gap-2 max-w-[85%]">
-            <div className="w-5 h-5 rounded-full bg-primary/90 flex items-center justify-center text-[7px] font-bold shrink-0 text-zinc-300">US</div>
-            <div className="bg-primary/90/80 border border-white/5 p-2.5 rounded-2xl rounded-tl-none">
+            <div className="w-5 h-5 rounded-full bg-zinc-800 flex items-center justify-center text-[7px] font-bold shrink-0 text-zinc-300">US</div>
+            <div className="bg-zinc-800/80 border border-white/5 p-2.5 rounded-2xl rounded-tl-none">
               <p className="text-[10px] text-zinc-200">
                 Yes please! Send details to daniel@gmail.com
               </p>
@@ -386,20 +386,20 @@ const InboxMockup = () => {
           {/* AI Response 2 */}
           <div className="flex gap-2 max-w-[85%] ml-auto justify-end">
             <div className="bg-zinc-850 p-2.5 rounded-2xl rounded-tr-none text-right border border-[#38BDF8]/25">
-              <p className="text-[10px] text-primary-foreground">
+              <p className="text-[10px] text-white">
                 Awesome! I've saved daniel@gmail.com. Here is your checkout link: flazly.com/chk/shoes-10
               </p>
               <span className="text-[6.5px] font-bold text-[#38BDF8] uppercase tracking-wide mt-1 block font-extrabold">
                 ✦ Automated by Flazly
               </span>
             </div>
-            <div className="w-5 h-5 rounded-full bg-[#38BDF8] flex items-center justify-center text-[7px] font-bold shrink-0 text-primary-foreground font-mono">AI</div>
+            <div className="w-5 h-5 rounded-full bg-[#38BDF8] flex items-center justify-center text-[7px] font-bold shrink-0 text-white font-mono">AI</div>
           </div>
         </div>
 
         {/* Input area */}
         <div className="p-2 border-t border-white/5 bg-black/20 flex items-center gap-2">
-          <div className="flex-1 bg-white/5 border border-white/5 rounded-xl h-7 px-3 flex items-center text-[9px] text-muted-foreground">
+          <div className="flex-1 bg-white/5 border border-white/5 rounded-xl h-7 px-3 flex items-center text-[9px] text-zinc-500">
             AI is responding. Click to pause autopilot and reply manually...
           </div>
           <button className="h-7 px-3 bg-white/10 border border-white/20 rounded-xl text-[9px] font-bold text-zinc-200 hover:bg-white/20 transition-all cursor-pointer">
@@ -413,10 +413,10 @@ const InboxMockup = () => {
         <h5 className="text-[10px] font-bold text-zinc-555 uppercase tracking-widest">Lead Intelligence</h5>
 
         <div className="flex flex-col items-center gap-2 border-b border-white/5 pb-3">
-          <div className="w-12 h-12 rounded-full bg-zinc-700 flex items-center justify-center text-xs font-bold text-primary-foreground shadow-lg">
+          <div className="w-12 h-12 rounded-full bg-zinc-700 flex items-center justify-center text-xs font-bold text-white shadow-lg">
             DK
           </div>
-          <span className="text-xs font-bold text-primary-foreground">@daniel_k</span>
+          <span className="text-xs font-bold text-white">@daniel_k</span>
           <span className="text-[8px] bg-[#38BDF8]/10 text-[#38BDF8] border border-[#38BDF8]/20 px-2 py-0.5 rounded-full font-bold select-none">
             High-Intent Lead 🔥
           </span>
@@ -424,22 +424,22 @@ const InboxMockup = () => {
 
         <div className="space-y-3 text-[10px]">
           <div>
-            <span className="text-muted-foreground block mb-0.5">Email Address</span>
+            <span className="text-zinc-500 block mb-0.5">Email Address</span>
             <span className="text-zinc-200 font-mono font-bold">daniel@gmail.com</span>
           </div>
 
           <div>
-            <span className="text-muted-foreground block mb-0.5">Lead Location</span>
+            <span className="text-zinc-500 block mb-0.5">Lead Location</span>
             <span className="text-zinc-200 font-bold">United Kingdom</span>
           </div>
 
           <div>
-            <span className="text-muted-foreground block mb-0.5">Extracted Interest</span>
+            <span className="text-zinc-500 block mb-0.5">Extracted Interest</span>
             <span className="text-zinc-200 font-bold">White Sneaker (Size 10)</span>
           </div>
 
           <div>
-            <span className="text-muted-foreground block mb-0.5">Integrations Synced</span>
+            <span className="text-zinc-500 block mb-0.5">Integrations Synced</span>
             <div className="flex flex-wrap gap-1.5 mt-1">
               <span className="text-[8px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.5 rounded">
                 Sheets
@@ -468,7 +468,7 @@ const AgentMockup = () => {
           <textarea
             readOnly
             value="You are Flazly, an AI assistant representing flazly.com. Your tone should be extremely friendly, helpful, and outcome-oriented. Help visitors qualify their DMs, answer FAQs regarding products, pricing, features, and setup. Capture lead details from high-intent buyers, or provide a purchase link if they inquire about pricing. If you do not know the answer, ask for their email so our human staff can follow up."
-            className="w-full h-32 bg-black/40 border border-white/10 rounded-xl p-3 text-[10px] text-muted-foreground font-mono leading-relaxed resize-none outline-none focus:border-[#38BDF8]/50"
+            className="w-full h-32 bg-black/40 border border-white/10 rounded-xl p-3 text-[10px] text-zinc-400 font-mono leading-relaxed resize-none outline-none focus:border-[#38BDF8]/50"
           />
         </div>
 
@@ -500,7 +500,7 @@ const AgentMockup = () => {
           <div className="bg-white/[0.02] border border-[#38BDF8]/20 p-3 rounded-xl flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Database size={14} className="text-[#38BDF8]" />
-              <span className="text-[10px] font-bold text-primary-foreground">Sync Lead to CRM</span>
+              <span className="text-[10px] font-bold text-white">Sync Lead to CRM</span>
             </div>
             <span className="text-[8px] text-zinc-555 font-mono">hubspot.crm/leads/flazly</span>
           </div>
@@ -510,15 +510,15 @@ const AgentMockup = () => {
       {/* Right Knowledge Base Panel */}
       <div className="bg-black/30 border border-white/5 rounded-2xl p-4 flex flex-col gap-4 text-left">
         <h5 className="text-[10px] font-bold text-zinc-555 uppercase tracking-widest border-b border-white/5 pb-2">Knowledge Docs</h5>
-        <p className="text-[10px] text-muted-foreground leading-normal font-medium">
+        <p className="text-[10px] text-zinc-400 leading-normal font-medium">
           Upload catalogs, spreadsheets, FAQs, or policies. Flazly learns instantly.
         </p>
 
         {/* Upload box */}
         <div className="border border-dashed border-white/10 rounded-xl p-4 text-center bg-black/40 hover:border-[#38BDF8] transition-colors cursor-pointer group flex flex-col items-center justify-center gap-2">
-          <Upload size={18} className="text-muted-foreground group-hover:text-[#38BDF8] transition-colors" />
+          <Upload size={18} className="text-zinc-400 group-hover:text-[#38BDF8] transition-colors" />
           <span className="text-[10px] font-bold text-zinc-300">Drop PDF or txt files here</span>
-          <span className="text-[8px] text-muted-foreground">Maximum size limit 20MB per file</span>
+          <span className="text-[8px] text-zinc-500">Maximum size limit 20MB per file</span>
         </div>
 
         {/* Trained files list */}
@@ -557,7 +557,7 @@ const BuilderMockup = () => {
       <div className="flex justify-between items-center border-b border-white/5 pb-2 mb-4 shrink-0">
         <div>
           <h5 className="text-[10px] font-bold text-zinc-555 uppercase tracking-widest">Automation Editor</h5>
-          <h6 className="text-xs font-bold text-primary-foreground mt-0.5">Recipe: Comment &quot;SCALE&quot; to Lead</h6>
+          <h6 className="text-xs font-bold text-white mt-0.5">Recipe: Comment &quot;SCALE&quot; to Lead</h6>
         </div>
         <button className="btn-premium-cta px-3 py-1.5 text-[9px] font-bold flex items-center gap-1">
           <Plus size={10} /> Add Node
@@ -570,12 +570,12 @@ const BuilderMockup = () => {
 
         {/* Node 1: Trigger */}
         <div className="bg-[#121826] border border-zinc-700 p-3 rounded-xl w-64 shadow-md relative z-10 flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-primary/90 border border-zinc-700 flex items-center justify-center text-zinc-200 shrink-0">
+          <div className="w-8 h-8 rounded-lg bg-zinc-800 border border-zinc-700 flex items-center justify-center text-zinc-200 shrink-0">
             <MessageCircle size={16} />
           </div>
           <div>
-            <span className="text-[8px] font-bold text-muted-foreground uppercase tracking-wider block">1. Trigger</span>
-            <span className="text-[10.5px] font-bold text-primary-foreground">User comments &quot;SCALE&quot; on post</span>
+            <span className="text-[8px] font-bold text-zinc-500 uppercase tracking-wider block">1. Trigger</span>
+            <span className="text-[10.5px] font-bold text-white">User comments &quot;SCALE&quot; on post</span>
           </div>
         </div>
 
@@ -591,7 +591,7 @@ const BuilderMockup = () => {
           </div>
           <div>
             <span className="text-[8px] font-bold text-[#38BDF8] uppercase tracking-wider block">2. Action</span>
-            <span className="text-[10.5px] font-bold text-primary-foreground">Send DM with checkout link</span>
+            <span className="text-[10.5px] font-bold text-white">Send DM with checkout link</span>
           </div>
         </div>
 
@@ -607,7 +607,7 @@ const BuilderMockup = () => {
           </div>
           <div>
             <span className="text-[8px] font-bold text-emerald-400 uppercase tracking-wider block">3. Integration Sync</span>
-            <span className="text-[10.5px] font-bold text-primary-foreground">Sync lead data to Sheets</span>
+            <span className="text-[10.5px] font-bold text-white">Sync lead data to Sheets</span>
           </div>
         </div>
       </div>
@@ -623,7 +623,7 @@ const AnalyticsMockup = () => {
       <div className="bg-black/30 border border-white/5 rounded-2xl p-4 flex flex-col justify-between">
         <div>
           <h5 className="text-[10px] font-bold text-zinc-555 uppercase tracking-widest mb-1 border-b border-white/5 pb-2">Sales Analytics</h5>
-          <span className="text-[9px] text-muted-foreground font-medium">Live ROI and automation conversions over the last 30 days.</span>
+          <span className="text-[9px] text-zinc-500 font-medium">Live ROI and automation conversions over the last 30 days.</span>
         </div>
 
         {/* Custom SVG Line Chart */}
@@ -656,17 +656,17 @@ const AnalyticsMockup = () => {
             Revenue Trend: +34%
           </div>
           {/* Axis markers */}
-          <div className="absolute bottom-1 right-2 text-[7px] text-muted-foreground font-mono">May 1 - May 30</div>
+          <div className="absolute bottom-1 right-2 text-[7px] text-zinc-500 font-mono">May 1 - May 30</div>
         </div>
 
         {/* Bottom Metrics Bar */}
         <div className="grid grid-cols-2 gap-4 border-t border-white/5 pt-3">
           <div>
-            <span className="text-[9px] text-muted-foreground block">Total Automated Revenue</span>
-            <span className="text-base font-extrabold text-primary-foreground">$18,429.50</span>
+            <span className="text-[9px] text-zinc-500 block">Total Automated Revenue</span>
+            <span className="text-base font-extrabold text-white">$18,429.50</span>
           </div>
           <div>
-            <span className="text-[9px] text-muted-foreground block">Lead Conversion Rate</span>
+            <span className="text-[9px] text-zinc-500 block">Lead Conversion Rate</span>
             <span className="text-base font-extrabold text-[#38BDF8]">8.42%</span>
           </div>
         </div>
@@ -680,9 +680,9 @@ const AnalyticsMockup = () => {
           {/* Conv 1 */}
           <div className="bg-white/[0.02] border border-white/5 p-2 rounded-xl flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="w-6 h-6 rounded-full bg-primary/90 flex items-center justify-center text-[8px] text-zinc-200 font-bold">SM</div>
+              <div className="w-6 h-6 rounded-full bg-zinc-800 flex items-center justify-center text-[8px] text-zinc-200 font-bold">SM</div>
               <div className="flex flex-col">
-                <span className="text-[10px] font-bold text-primary-foreground">@sarah_fit</span>
+                <span className="text-[10px] font-bold text-white">@sarah_fit</span>
                 <span className="text-[8px] text-zinc-505">Captured Email: sarah@fit.co</span>
               </div>
             </div>
@@ -694,10 +694,10 @@ const AnalyticsMockup = () => {
           {/* Conv 2 */}
           <div className="bg-white/[0.02] border border-white/5 p-2 rounded-xl flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="w-6 h-6 rounded-full bg-primary/90 flex items-center justify-center text-[8px] text-zinc-200 font-bold">JD</div>
+              <div className="w-6 h-6 rounded-full bg-zinc-800 flex items-center justify-center text-[8px] text-zinc-200 font-bold">JD</div>
               <div className="flex flex-col">
-                <span className="text-[10px] font-bold text-primary-foreground">@john_dealz</span>
-                <span className="text-[8px] text-muted-foreground">Purchased Sneaker White</span>
+                <span className="text-[10px] font-bold text-white">@john_dealz</span>
+                <span className="text-[8px] text-zinc-500">Purchased Sneaker White</span>
               </div>
             </div>
             <span className="text-[8px] font-extrabold text-zinc-200 bg-white/10 border border-white/20 px-2 py-0.5 rounded">
@@ -710,11 +710,11 @@ const AnalyticsMockup = () => {
             <div className="flex items-center gap-2">
               <div className="w-6 h-6 rounded-full bg-zinc-805 flex items-center justify-center text-[8px] text-zinc-305 font-bold">CL</div>
               <div className="flex flex-col">
-                <span className="text-[10px] font-bold text-primary-foreground">@coaching_pro</span>
+                <span className="text-[10px] font-bold text-white">@coaching_pro</span>
                 <span className="text-[8px] text-zinc-505 font-bold">Captured Email</span>
               </div>
             </div>
-            <span className="text-[8px] font-bold text-muted-foreground bg-white/5 px-2 py-0.5 rounded">
+            <span className="text-[8px] font-bold text-zinc-500 bg-white/5 px-2 py-0.5 rounded">
               Lead Saved
             </span>
           </div>
@@ -724,7 +724,7 @@ const AnalyticsMockup = () => {
         <div className="bg-[#121826] border border-[#38BDF8]/20 p-3 rounded-xl text-center">
           <span className="text-[9px] text-zinc-555 uppercase tracking-widest block mb-1">Time Saved This Month</span>
           <span className="text-xl font-black text-[#38BDF8] font-mono">48.5 Hours</span>
-          <p className="text-[8px] text-muted-foreground mt-1">Based on 3,820 auto-responses generated 24/7</p>
+          <p className="text-[8px] text-zinc-500 mt-1">Based on 3,820 auto-responses generated 24/7</p>
         </div>
       </div>
     </div>
@@ -747,7 +747,7 @@ const SettingsMockup = () => {
           {/* Instagram */}
           <div className="p-3 bg-white/[0.02] border border-[#38BDF8]/20 rounded-xl flex items-center justify-between">
             <div>
-              <span className="text-[10.5px] font-bold block text-primary-foreground font-inter">Instagram Business</span>
+              <span className="text-[10.5px] font-bold block text-white font-inter">Instagram Business</span>
               <span className="text-[7.5px] text-emerald-404 flex items-center gap-1 font-semibold mt-0.5">
                 ● Connected as @flazly
               </span>
@@ -758,7 +758,7 @@ const SettingsMockup = () => {
           {/* Google Sheets */}
           <div className="p-3 bg-white/[0.02] border border-[#38BDF8]/20 rounded-xl flex items-center justify-between">
             <div>
-              <span className="text-[10.5px] font-bold block text-primary-foreground font-inter">Google Sheets</span>
+              <span className="text-[10.5px] font-bold block text-white font-inter">Google Sheets</span>
               <span className="text-[7.5px] text-emerald-404 flex items-center gap-1 font-semibold mt-0.5">
                 ● Active Leads Sheet
               </span>
@@ -769,7 +769,7 @@ const SettingsMockup = () => {
           {/* HubSpot */}
           <div className="p-3 bg-white/[0.02] border border-[#38BDF8]/20 rounded-xl flex items-center justify-between">
             <div>
-              <span className="text-[10.5px] font-bold block text-primary-foreground font-inter">HubSpot CRM</span>
+              <span className="text-[10.5px] font-bold block text-white font-inter">HubSpot CRM</span>
               <span className="text-[7.5px] text-emerald-404 flex items-center gap-1 font-semibold mt-0.5">
                 ● Contact sync active
               </span>
@@ -780,8 +780,8 @@ const SettingsMockup = () => {
           {/* Slack Notifications */}
           <div className="p-3 bg-white/[0.02] border border-white/5 rounded-xl flex items-center justify-between opacity-50 hover:opacity-100 transition-opacity">
             <div>
-              <span className="text-[10.5px] font-bold block text-primary-foreground font-inter">Slack Notifications</span>
-              <span className="text-[7.5px] text-muted-foreground mt-0.5">Not configured</span>
+              <span className="text-[10.5px] font-bold block text-white font-inter">Slack Notifications</span>
+              <span className="text-[7.5px] text-zinc-500 mt-0.5">Not configured</span>
             </div>
             <Plus size={14} className="text-[#38BDF8] shrink-0 cursor-pointer" />
           </div>
@@ -790,7 +790,7 @@ const SettingsMockup = () => {
         {/* API Token Box */}
         <div className="bg-black/40 border border-white/5 rounded-xl p-3 flex flex-col gap-1 font-mono text-[9px] text-[#A5D8FF]">
           <span className="font-sans font-bold text-zinc-300">API Access Token</span>
-          <div className="flex items-center justify-between bg-black/60 p-2 rounded border border-white/5 text-muted-foreground mt-1">
+          <div className="flex items-center justify-between bg-black/60 p-2 rounded border border-white/5 text-zinc-400 mt-1">
             <span>sk_live_2026_zen_ab8201...</span>
             <span className="text-[#38BDF8] font-sans font-bold uppercase cursor-pointer hover:underline">Copy</span>
           </div>
@@ -846,8 +846,8 @@ const ROICalculator = () => {
       <div className="premium-gradient-border shadow-2xl">
         <div className="premium-card-content p-8 flex flex-col justify-between h-full">
           <div className="mb-6">
-            <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Interactive Model</span>
-            <h3 className="text-2xl md:text-3xl font-bold text-primary-foreground mt-2 mb-3">Adjust Your Metrics</h3>
+            <span className="text-xs font-bold uppercase tracking-widest text-zinc-500">Interactive Model</span>
+            <h3 className="text-2xl md:text-3xl font-bold text-white mt-2 mb-3">Adjust Your Metrics</h3>
             <p className="text-xs text-zinc-450 leading-relaxed font-medium mt-1">
               Fine-tune the parameters below to calculate how much revenue you stand to recover by deploying Flazly AI automations.
             </p>
@@ -926,7 +926,7 @@ const ROICalculator = () => {
           <div className="absolute top-0 right-0 w-64 h-64 bg-[#38BDF8]/5 blur-[80px] rounded-full -z-10" />
 
           <div>
-            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Recovered Lost Conversions</span>
+            <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Recovered Lost Conversions</span>
             <div className="text-5xl md:text-6xl font-black roi-recovered-revenue mt-4 mb-3 tracking-tight font-sans">
               ${Math.round(monthlyRevenue).toLocaleString()}
             </div>
@@ -938,7 +938,7 @@ const ROICalculator = () => {
           <div className="grid grid-cols-2 gap-4 text-left">
             <div className="bg-black/20 p-4 rounded-2xl border border-white/5">
               <span className="text-[9px] text-zinc-550 uppercase tracking-wider block mb-1">Additional Leads</span>
-              <span className="text-lg font-bold text-primary-foreground font-mono">{Math.round(qualifiedLeads).toLocaleString()} /mo</span>
+              <span className="text-lg font-bold text-white font-mono">{Math.round(qualifiedLeads).toLocaleString()} /mo</span>
             </div>
             <div className="bg-black/20 p-4 rounded-2xl border border-white/5">
               <span className="text-[9px] text-zinc-555 uppercase tracking-wider block mb-1">Estimated Annual Growth</span>
@@ -946,7 +946,7 @@ const ROICalculator = () => {
             </div>
           </div>
 
-          <p className="text-[10.5px] text-muted-foreground font-medium leading-relaxed mt-6">
+          <p className="text-[10.5px] text-zinc-500 font-medium leading-relaxed mt-6">
             *Calculation assumes a conservative recovery of 45% of customer inquiries lost due to delayed response times and lack of manual follow-ups.
           </p>
 
@@ -980,7 +980,7 @@ const FAQItemComponent = ({ question, answer }: { question: string; answer: stri
         onClick={() => setIsOpen(!isOpen)}
         className="w-full flex items-center justify-between text-left group outline-none"
       >
-        <span className="text-base font-bold text-primary-foreground group-hover:text-[#38BDF8] transition-colors font-inter">
+        <span className="text-base font-bold text-white group-hover:text-[#38BDF8] transition-colors font-inter">
           {question}
         </span>
         <div className={`w-8 h-8 rounded-full flex items-center justify-center border transition-all shrink-0 ${isOpen
@@ -1000,7 +1000,7 @@ const FAQItemComponent = ({ question, answer }: { question: string; answer: stri
             transition={{ type: "spring", stiffness: 180, damping: 20 }}
             className="overflow-hidden"
           >
-            <p className="text-sm text-muted-foreground leading-relaxed font-medium">
+            <p className="text-sm text-zinc-400 leading-relaxed font-medium">
               {faqMarkdownLinkFix(answer)}
             </p>
           </motion.div>
@@ -1028,14 +1028,14 @@ const InstagramMobileMockup = () => {
   }, []);
 
   return (
-    <div className="relative mx-auto w-[310px] sm:w-[320px] h-[620px] rounded-[44px] border-[10px] border-primary bg-[#000000] shadow-[0_25px_60px_rgba(59,130,246,0.15)] flex flex-col overflow-hidden select-none mockup-dark">
+    <div className="relative mx-auto w-[310px] sm:w-[320px] h-[620px] rounded-[44px] border-[10px] border-zinc-800 bg-[#000000] shadow-[0_25px_60px_rgba(59,130,246,0.15)] flex flex-col overflow-hidden select-none mockup-dark">
       {/* Notch / Dynamic Island */}
-      <div className="absolute top-2.5 left-1/2 -translate-x-1/2 w-28 h-5.5 bg-primary rounded-full z-40 flex items-center justify-center border border-white/5">
-        <div className="w-2.5 h-2.5 rounded-full bg-primary/90 absolute right-4" />
+      <div className="absolute top-2.5 left-1/2 -translate-x-1/2 w-28 h-5.5 bg-zinc-900 rounded-full z-40 flex items-center justify-center border border-white/5">
+        <div className="w-2.5 h-2.5 rounded-full bg-zinc-800 absolute right-4" />
       </div>
 
       {/* Screen Header / Status Bar */}
-      <div className="h-12 bg-black flex items-end justify-between px-6 pb-2 text-[10px] text-primary-foreground/95 font-semibold shrink-0 z-30">
+      <div className="h-12 bg-black flex items-end justify-between px-6 pb-2 text-[10px] text-white/95 font-semibold shrink-0 z-30">
         <span>9:41</span>
         <div className="flex items-center gap-1.5">
           {/* Signal */}
@@ -1059,11 +1059,11 @@ const InstagramMobileMockup = () => {
       {/* Instagram App Header */}
       <div className="bg-[#0c0c0d] border-b border-zinc-900/60 py-2.5 px-3 flex items-center justify-between shrink-0 z-20">
         <div className="flex items-center gap-2">
-          <ChevronLeft size={20} className="text-primary-foreground cursor-pointer" />
+          <ChevronLeft size={20} className="text-white cursor-pointer" />
           {/* Profile Picture */}
           <div className="relative">
             <div className="w-8 h-8 rounded-full p-[1.5px] bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600 flex items-center justify-center">
-              <div className="w-full h-full rounded-full bg-[#121214] flex items-center justify-center text-[9px] font-black text-primary-foreground">
+              <div className="w-full h-full rounded-full bg-[#121214] flex items-center justify-center text-[9px] font-black text-white">
                 JD
               </div>
             </div>
@@ -1072,7 +1072,7 @@ const InstagramMobileMockup = () => {
           {/* Username & Status */}
           <div className="flex flex-col text-left">
             <div className="flex items-center gap-1">
-              <span className="text-xs font-bold text-primary-foreground tracking-tight">jordan.design</span>
+              <span className="text-xs font-bold text-white tracking-tight">jordan.design</span>
               <svg className="w-3.5 h-3.5 text-[#38BDF8]" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
               </svg>
@@ -1082,7 +1082,7 @@ const InstagramMobileMockup = () => {
         </div>
 
         {/* Header Icons */}
-        <div className="flex items-center gap-4 text-primary-foreground/90">
+        <div className="flex items-center gap-4 text-white/90">
           <Phone size={16} className="cursor-pointer hover:opacity-80" />
           <Video size={16} className="cursor-pointer hover:opacity-80" />
           <Info size={16} className="cursor-pointer hover:opacity-80" />
@@ -1094,7 +1094,7 @@ const InstagramMobileMockup = () => {
         {/* Step 0+: Welcome Auto-Reply message */}
         {step >= 0 && (
           <div className="flex flex-col items-end gap-1.5 self-end max-w-[85%] animate-in fade-in slide-in-from-bottom-2 duration-300">
-            <div className="bg-gradient-to-r from-[#7C3AED] to-[#EC4899] text-primary-foreground p-3 rounded-2xl rounded-tr-sm shadow-md leading-relaxed font-semibold">
+            <div className="bg-gradient-to-r from-[#7C3AED] to-[#EC4899] text-white p-3 rounded-2xl rounded-tr-sm shadow-md leading-relaxed font-semibold">
               Welcome to jordan.design! 👋 Let us know if you have any questions about pricing, sizing, or shipping.
             </div>
             <span className="text-[7.5px] font-bold text-[#EC4899] uppercase tracking-widest mr-1">
@@ -1106,7 +1106,7 @@ const InstagramMobileMockup = () => {
         {/* Step 1: User Typing Indicator */}
         {step === 1 && (
           <div className="flex gap-2 items-center self-start">
-            <div className="w-6 h-6 rounded-full bg-primary/90 flex items-center justify-center text-[7.5px] font-bold text-muted-foreground">US</div>
+            <div className="w-6 h-6 rounded-full bg-zinc-800 flex items-center justify-center text-[7.5px] font-bold text-zinc-400">US</div>
             <div className="bg-[#26262b] px-3.5 py-2.5 rounded-2xl rounded-tl-sm flex gap-1">
               <span className="w-1.5 h-1.5 bg-zinc-405 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
               <span className="w-1.5 h-1.5 bg-zinc-405 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
@@ -1119,7 +1119,7 @@ const InstagramMobileMockup = () => {
         {step >= 2 && (
           <div className="flex gap-2 items-start self-start max-w-[85%] animate-in fade-in slide-in-from-bottom-2 duration-300">
             <div className="w-6 h-6 rounded-full bg-zinc-850 flex items-center justify-center text-[7.5px] font-bold text-zinc-305 shrink-0 select-none">US</div>
-            <div className="bg-[#26262b] text-primary-foreground p-3 rounded-2xl rounded-tl-sm font-semibold">
+            <div className="bg-[#26262b] text-white p-3 rounded-2xl rounded-tl-sm font-semibold">
               Hey! Do you ship to Canada? CA
             </div>
           </div>
@@ -1142,7 +1142,7 @@ const InstagramMobileMockup = () => {
         {/* Step 4+: AI Response 2 */}
         {step >= 4 && (
           <div className="flex flex-col items-end gap-1.5 self-end max-w-[85%] animate-in fade-in slide-in-from-bottom-2 duration-300">
-            <div className="bg-gradient-to-r from-[#7C3AED] to-[#EC4899] text-primary-foreground p-3 rounded-2xl rounded-tr-sm shadow-md leading-relaxed font-semibold">
+            <div className="bg-gradient-to-r from-[#7C3AED] to-[#EC4899] text-white p-3 rounded-2xl rounded-tr-sm shadow-md leading-relaxed font-semibold">
               Yes, we ship standard worldwide! 🌏 Shipping to Canada is ₹499. Would you like me to hold one?
             </div>
             <span className="text-[7.5px] font-bold text-[#EC4899] uppercase tracking-widest mr-1">
@@ -1154,7 +1154,7 @@ const InstagramMobileMockup = () => {
         {/* Step 5: User Typing Indicator 2 */}
         {step === 5 && (
           <div className="flex gap-2 items-center self-start">
-            <div className="w-6 h-6 rounded-full bg-primary/90 flex items-center justify-center text-[7.5px] font-bold text-muted-foreground">US</div>
+            <div className="w-6 h-6 rounded-full bg-zinc-800 flex items-center justify-center text-[7.5px] font-bold text-zinc-400">US</div>
             <div className="bg-[#26262b] px-3.5 py-2.5 rounded-2xl rounded-tl-sm flex gap-1">
               <span className="w-1.5 h-1.5 bg-zinc-405 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
               <span className="w-1.5 h-1.5 bg-zinc-405 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
@@ -1167,7 +1167,7 @@ const InstagramMobileMockup = () => {
         {step >= 6 && (
           <div className="flex gap-2 items-start self-start max-w-[85%] animate-in fade-in slide-in-from-bottom-2 duration-300">
             <div className="w-6 h-6 rounded-full bg-zinc-850 flex items-center justify-center text-[7.5px] font-bold text-zinc-305 shrink-0 select-none">US</div>
-            <div className="bg-[#26262b] text-primary-foreground p-3 rounded-2xl rounded-tl-sm font-semibold">
+            <div className="bg-[#26262b] text-white p-3 rounded-2xl rounded-tl-sm font-semibold">
               Yes please! The standard hoodie in black, size L.
             </div>
           </div>
@@ -1176,15 +1176,15 @@ const InstagramMobileMockup = () => {
 
       {/* Instagram Message Input Footer Bar */}
       <div className="p-3 bg-[#0c0c0d] border-t border-zinc-900/60 flex items-center gap-2.5 shrink-0 z-20">
-        <div className="w-7 h-7 rounded-full bg-[#0095f6] flex items-center justify-center text-primary-foreground cursor-pointer hover:bg-[#1880e6] transition-colors">
+        <div className="w-7 h-7 rounded-full bg-[#0095f6] flex items-center justify-center text-white cursor-pointer hover:bg-[#1880e6] transition-colors">
           <Camera size={14} fill="currentColor" />
         </div>
-        <div className="flex-1 bg-black border border-primary/80 rounded-full h-8.5 px-3.5 flex items-center justify-between text-[11px] text-muted-foreground">
+        <div className="flex-1 bg-black border border-zinc-800/80 rounded-full h-8.5 px-3.5 flex items-center justify-between text-[11px] text-zinc-400">
           <span>Message...</span>
-          <div className="flex items-center gap-3 text-muted-foreground">
-            <Mic size={14} className="cursor-pointer hover:text-primary-foreground transition-colors" />
-            <Image size={14} className="cursor-pointer hover:text-primary-foreground transition-colors" />
-            <Smile size={14} className="cursor-pointer hover:text-primary-foreground transition-colors" />
+          <div className="flex items-center gap-3 text-zinc-500">
+            <Mic size={14} className="cursor-pointer hover:text-white transition-colors" />
+            <Image size={14} className="cursor-pointer hover:text-white transition-colors" />
+            <Smile size={14} className="cursor-pointer hover:text-white transition-colors" />
           </div>
         </div>
       </div>
@@ -1308,15 +1308,15 @@ const ProblemStorytelling = () => {
   }, [isIntersecting]);
 
   return (
-    <div ref={sectionRef} className="grid lg:grid-cols-12 gap-8 items-stretch mt-16 w-full text-foreground dark:text-primary-foreground">
+    <div ref={sectionRef} className="grid lg:grid-cols-12 gap-8 items-stretch mt-16 w-full text-zinc-900 dark:text-white">
       {/* MOCKUP CONTAINER - 7 cols */}
       <div className="lg:col-span-7 flex flex-col items-center justify-center">
-        <div className="mockup-dark w-full max-w-[360px] h-[540px] rounded-[32px] border border-zinc-200/20 dark:border-primary bg-[#09090b] text-primary-foreground flex flex-col shadow-2xl relative overflow-hidden">
+        <div className="mockup-dark w-full max-w-[360px] h-[540px] rounded-[32px] border border-zinc-200/20 dark:border-zinc-800 bg-[#09090b] text-white flex flex-col shadow-2xl relative overflow-hidden">
           {/* Header Status Bar Mockup */}
-          <div className="px-5 pt-3 pb-2 flex items-center justify-between text-[9px] font-bold text-muted-foreground select-none border-b border-zinc-900/40 shrink-0">
+          <div className="px-5 pt-3 pb-2 flex items-center justify-between text-[9px] font-bold text-zinc-400 select-none border-b border-zinc-900/40 shrink-0">
             <span>9:41</span>
             <div className="flex items-center gap-1.5">
-              <svg className="w-2.5 h-2.5 text-muted-foreground" viewBox="0 0 24 24" fill="currentColor">
+              <svg className="w-2.5 h-2.5 text-zinc-400" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M12 3c-4.97 0-9 4.03-9 9 0 2.12.74 4.07 1.97 5.61L4.35 19.4c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0l1.9-1.9C9.07 20.2 10.47 20.5 12 20.5c4.97 0 9-4.03 9-9s-4.03-9-9-9zm0 15c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6z"/>
               </svg>
               <div className="w-4 h-2 rounded-[2px] border border-zinc-500 flex items-center p-[1px]">
@@ -1328,10 +1328,10 @@ const ProblemStorytelling = () => {
           {/* Instagram Chat Header */}
           <div className="bg-[#0c0c0d] border-b border-zinc-900/60 py-3 px-4 flex items-center justify-between shrink-0 z-10">
             <div className="flex items-center gap-2.5">
-              <ChevronLeft size={18} className="text-primary-foreground cursor-pointer hover:opacity-80" />
+              <ChevronLeft size={18} className="text-white cursor-pointer hover:opacity-80" />
               <div className="relative">
                 <div className="w-7 h-7 rounded-full p-[1.5px] bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600 flex items-center justify-center">
-                  <div className="w-full h-full rounded-full bg-[#121214] flex items-center justify-center text-[8px] font-black text-primary-foreground">
+                  <div className="w-full h-full rounded-full bg-[#121214] flex items-center justify-center text-[8px] font-black text-white">
                     AR
                   </div>
                 </div>
@@ -1342,15 +1342,15 @@ const ProblemStorytelling = () => {
                 )}
               </div>
               <div className="flex flex-col text-left">
-                <span className="text-xs font-bold text-primary-foreground tracking-tight">alex.rivera</span>
+                <span className="text-xs font-bold text-white tracking-tight">alex.rivera</span>
                 <span className={`text-[7.5px] font-extrabold tracking-wide uppercase ${
                   scene === 1 ? 'text-emerald-400' :
                   scene === 2 && timer === "00:00" ? 'text-emerald-400' :
                   scene === 2 && timer === "00:30" ? 'text-amber-400' :
                   scene === 2 && timer === "01:00" ? 'text-amber-400' :
                   scene === 2 && timer === "03:00" ? 'text-orange-400' :
-                  scene === 2 && timer === "05:00" ? 'text-destructive' :
-                  scene === 3 ? 'text-destructive' :
+                  scene === 2 && timer === "05:00" ? 'text-rose-500' :
+                  scene === 3 ? 'text-rose-500' :
                   scene === 4 ? 'text-indigo-400' :
                   'text-purple-400'
                 }`}>
@@ -1393,10 +1393,10 @@ const ProblemStorytelling = () => {
                   animate={{ opacity: 1, y: 0 }}
                   className="flex flex-col max-w-[80%] self-start"
                 >
-                  <div className="p-3 rounded-2xl text-[11px] leading-relaxed font-semibold bg-primary text-zinc-100 rounded-tl-sm border border-primary">
+                  <div className="p-3 rounded-2xl text-[11px] leading-relaxed font-semibold bg-zinc-900 text-zinc-100 rounded-tl-sm border border-zinc-800">
                     Hi, I'm interested in your service. Can you share pricing?
                   </div>
-                  <span className="text-[7.5px] font-bold text-muted-foreground uppercase tracking-widest mt-1 ml-1">
+                  <span className="text-[7.5px] font-bold text-zinc-500 uppercase tracking-widest mt-1 ml-1">
                     Alex Rivera
                   </span>
                 </motion.div>
@@ -1411,12 +1411,12 @@ const ProblemStorytelling = () => {
                   exit={{ opacity: 0, y: -10 }}
                   className="self-end max-w-[80%] flex flex-col items-end"
                 >
-                  <div className="bg-gradient-to-r from-[#818CF8]/25 to-[#4F39F6]/25 border border-[#4F39F6]/30 text-primary-foreground p-3 rounded-2xl rounded-tr-sm flex items-center gap-1">
+                  <div className="bg-gradient-to-r from-[#818CF8]/25 to-[#4F39F6]/25 border border-[#4F39F6]/30 text-white p-3 rounded-2xl rounded-tr-sm flex items-center gap-1">
                     <span className="w-1.5 h-1.5 bg-[#818CF8] rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
                     <span className="w-1.5 h-1.5 bg-[#818CF8] rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
                     <span className="w-1.5 h-1.5 bg-[#818CF8] rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
                   </div>
-                  <span className="text-[7.5px] font-bold text-muted-foreground uppercase tracking-widest mt-1 mr-1">
+                  <span className="text-[7.5px] font-bold text-zinc-500 uppercase tracking-widest mt-1 mr-1">
                     Flazly AI typing...
                   </span>
                 </motion.div>
@@ -1431,7 +1431,7 @@ const ProblemStorytelling = () => {
                   transition={{ type: "spring", stiffness: 200, damping: 20 }}
                   className="flex flex-col max-w-[85%] self-end"
                 >
-                  <div className="bg-gradient-to-r from-[#818CF8] to-[#4F39F6] text-primary-foreground p-3 rounded-2xl rounded-tr-sm shadow-lg leading-relaxed font-semibold">
+                  <div className="bg-gradient-to-r from-[#818CF8] to-[#4F39F6] text-white p-3 rounded-2xl rounded-tr-sm shadow-lg leading-relaxed font-semibold">
                     Thanks for reaching out. I'd be happy to help. What service are you interested in?
                   </div>
                   <span className="text-[7.5px] font-bold text-[#818CF8] uppercase tracking-widest mt-1 mr-1 self-end flex items-center gap-1">
@@ -1449,7 +1449,7 @@ const ProblemStorytelling = () => {
                   transition={{ delay: 0.4 }}
                   className="flex flex-col max-w-[80%] self-start"
                 >
-                  <div className="p-3 rounded-2xl text-[11px] leading-relaxed font-semibold bg-primary text-zinc-100 rounded-tl-sm border border-primary">
+                  <div className="p-3 rounded-2xl text-[11px] leading-relaxed font-semibold bg-zinc-900 text-zinc-100 rounded-tl-sm border border-zinc-800">
                     I'm looking for lead generation for my D2C brand.
                   </div>
                 </motion.div>
@@ -1464,7 +1464,7 @@ const ProblemStorytelling = () => {
                   transition={{ delay: 1.2 }}
                   className="flex flex-col max-w-[85%] self-end"
                 >
-                  <div className="bg-gradient-to-r from-[#818CF8] to-[#4F39F6] text-primary-foreground p-3 rounded-2xl rounded-tr-sm shadow-lg leading-relaxed font-semibold">
+                  <div className="bg-gradient-to-r from-[#818CF8] to-[#4F39F6] text-white p-3 rounded-2xl rounded-tr-sm shadow-lg leading-relaxed font-semibold">
                     Perfect! We sync lead data automatically. Can I get your email to send the details?
                   </div>
                   <span className="text-[7.5px] font-bold text-[#818CF8] uppercase tracking-widest mt-1 mr-1 self-end">
@@ -1482,7 +1482,7 @@ const ProblemStorytelling = () => {
                   transition={{ delay: 0.6 }}
                   className="flex flex-col max-w-[80%] self-start"
                 >
-                  <div className="p-3 rounded-2xl text-[11px] leading-relaxed font-semibold bg-primary text-zinc-100 rounded-tl-sm border border-primary">
+                  <div className="p-3 rounded-2xl text-[11px] leading-relaxed font-semibold bg-zinc-900 text-zinc-100 rounded-tl-sm border border-zinc-800">
                     Sure, it's alex@riveramedia.co
                   </div>
                 </motion.div>
@@ -1497,7 +1497,7 @@ const ProblemStorytelling = () => {
                   transition={{ delay: 1.4 }}
                   className="flex flex-col max-w-[85%] self-end"
                 >
-                  <div className="bg-gradient-to-r from-[#818CF8] to-[#4F39F6] text-primary-foreground p-3 rounded-2xl rounded-tr-sm shadow-lg leading-relaxed font-semibold">
+                  <div className="bg-gradient-to-r from-[#818CF8] to-[#4F39F6] text-white p-3 rounded-2xl rounded-tr-sm shadow-lg leading-relaxed font-semibold">
                     Captured! Details sent. Here's a link to schedule a strategy call if you want: flazly.com/book
                   </div>
                   <span className="text-[7.5px] font-bold text-[#818CF8] uppercase tracking-widest mt-1 mr-1 self-end">
@@ -1510,12 +1510,12 @@ const ProblemStorytelling = () => {
 
           {/* Instagram Chat Footer Input Mockup */}
           <div className="p-3 bg-[#09090b] border-t border-zinc-900 flex items-center gap-2 shrink-0 z-10">
-            <div className="flex-1 bg-primary border border-primary/80 rounded-full h-8 px-3 flex items-center justify-between text-[10px] text-muted-foreground select-none">
+            <div className="flex-1 bg-zinc-900 border border-zinc-800/80 rounded-full h-8 px-3 flex items-center justify-between text-[10px] text-zinc-500 select-none">
               <span>Message...</span>
               <div className="flex items-center gap-2">
-                <Mic size={12} className="text-muted-foreground" />
-                <Image size={12} className="text-muted-foreground" />
-                <Smile size={12} className="text-muted-foreground" />
+                <Mic size={12} className="text-zinc-500" />
+                <Image size={12} className="text-zinc-500" />
+                <Smile size={12} className="text-zinc-500" />
               </div>
             </div>
           </div>
@@ -1528,15 +1528,15 @@ const ProblemStorytelling = () => {
           
           {/* Header Dynamic Status */}
           <div className="flex items-center justify-between border-b border-zinc-100 dark:border-white/5 pb-4">
-            <span className="text-[10px] font-bold text-muted-foreground dark:text-muted-foreground uppercase tracking-widest">
+            <span className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-widest">
               Live Pipeline State
             </span>
             <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${
-              scene === 1 ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' :
+              scene === 1 ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20' :
               scene === 2 && (timer === "00:00" || timer === "00:30" || timer === "01:00") ? 'bg-amber-500/10 text-amber-500 border border-amber-500/20' :
               scene === 2 && timer === "03:00" ? 'bg-orange-500/10 text-orange-500 border border-orange-500/20' :
-              scene === 2 && timer === "05:00" ? 'bg-rose-500/10 text-destructive border border-rose-500/20' :
-              scene === 3 ? 'bg-rose-500/10 text-destructive border border-rose-500/20' :
+              scene === 2 && timer === "05:00" ? 'bg-rose-500/10 text-rose-500 border border-rose-500/20' :
+              scene === 3 ? 'bg-rose-500/10 text-rose-500 border border-rose-500/20' :
               scene === 4 ? 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 animate-pulse' :
               'bg-[#4F39F6]/10 text-[#818CF8] border border-[#4F39F6]/20'
             }`}>
@@ -1560,28 +1560,28 @@ const ProblemStorytelling = () => {
 
           {/* Middle Clock / Metrics Card */}
           <div className="my-8 text-left">
-            <span className="text-[10px] font-bold text-muted-foreground dark:text-muted-foreground uppercase tracking-widest block mb-2">
+            <span className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-widest block mb-2">
               Elapsed Time
             </span>
             <div className="flex items-center gap-4">
               <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shadow-inner ${
-                scene >= 5 ? 'bg-emerald-500/10 text-emerald-400' :
-                scene === 3 ? 'bg-rose-500/10 text-destructive' :
+                scene >= 5 ? 'bg-emerald-500/10 text-emerald-500' :
+                scene === 3 ? 'bg-rose-500/10 text-rose-500' :
                 scene === 4 ? 'bg-indigo-500/10 text-indigo-400' :
-                'bg-muted dark:bg-primary/90 text-zinc-450'
+                'bg-zinc-100 dark:bg-zinc-800 text-zinc-450'
               }`}>
                 {scene >= 5 ? <Bot size={24} /> : scene === 4 ? <RefreshCw size={24} className="animate-spin" /> : <Clock size={24} />}
               </div>
               <div className="flex flex-col">
                 <span className={`text-4xl font-extrabold tracking-tight tabular-nums ${
-                  scene >= 5 ? 'text-emerald-400' :
-                  scene === 3 ? 'text-destructive' :
+                  scene >= 5 ? 'text-emerald-500' :
+                  scene === 3 ? 'text-rose-500' :
                   scene === 4 ? 'text-indigo-400' :
-                  'text-foreground dark:text-primary-foreground'
+                  'text-zinc-900 dark:text-white'
                 }`}>
                   {timer}
                 </span>
-                <span className="text-xs text-muted-foreground font-medium">
+                <span className="text-xs text-zinc-500 font-medium">
                   {scene >= 5 ? "Autopilot response speed" : "Average response limit is 5 mins"}
                 </span>
               </div>
@@ -1600,10 +1600,10 @@ const ProblemStorytelling = () => {
                   exit={{ opacity: 0, y: -10 }}
                   className="space-y-2"
                 >
-                  <h4 className="text-sm font-bold text-foreground dark:text-zinc-200">
+                  <h4 className="text-sm font-bold text-zinc-800 dark:text-zinc-200">
                     Lead is waiting in DM queue
                   </h4>
-                  <p className="text-xs text-muted-foreground leading-relaxed font-medium">
+                  <p className="text-xs text-zinc-500 leading-relaxed font-medium">
                     Prospect has sent an inquiry. If they are left waiting, high-intent interest drops rapidly, leading to lost sales.
                   </p>
                 </motion.div>
@@ -1618,7 +1618,7 @@ const ProblemStorytelling = () => {
                   exit={{ opacity: 0, y: -10 }}
                   className="space-y-3"
                 >
-                  <h4 className="text-sm font-extrabold text-destructive flex items-center gap-1.5">
+                  <h4 className="text-sm font-extrabold text-rose-500 flex items-center gap-1.5">
                     <AlertCircle size={16} /> Leakage: Lost Opportunity
                   </h4>
                   <div className="grid grid-cols-2 gap-2.5">
@@ -1633,7 +1633,7 @@ const ProblemStorytelling = () => {
                         initial={{ opacity: 0, x: -10 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: index * 0.1 }}
-                        className="flex items-center gap-2 p-2.5 rounded-xl bg-rose-500/5 border border-rose-500/10 text-destructive text-xs font-bold"
+                        className="flex items-center gap-2 p-2.5 rounded-xl bg-rose-500/5 border border-rose-500/10 text-rose-500 text-xs font-bold"
                       >
                         <X size={12} className="stroke-[3]" />
                         {item}
@@ -1655,7 +1655,7 @@ const ProblemStorytelling = () => {
                   <h4 className="text-sm font-bold text-indigo-400">
                     Deploying Flazly AI
                   </h4>
-                  <p className="text-xs text-muted-foreground leading-relaxed font-medium animate-pulse">
+                  <p className="text-xs text-zinc-500 leading-relaxed font-medium animate-pulse">
                     Implementing instant, context-aware reply loops.
                   </p>
                 </motion.div>
@@ -1670,10 +1670,10 @@ const ProblemStorytelling = () => {
                   exit={{ opacity: 0, y: -10 }}
                   className="space-y-2"
                 >
-                  <h4 className="text-sm font-bold text-emerald-400 flex items-center gap-1.5">
+                  <h4 className="text-sm font-bold text-emerald-500 flex items-center gap-1.5">
                     <Bot size={16} /> Instant AI Reply Triggered
                   </h4>
-                  <p className="text-xs text-muted-foreground leading-relaxed font-medium">
+                  <p className="text-xs text-zinc-500 leading-relaxed font-medium">
                     Flazly AI instantly reads context, answers the pricing query, and prompts the prospect, saving the opportunity.
                   </p>
                 </motion.div>
@@ -1688,7 +1688,7 @@ const ProblemStorytelling = () => {
                   exit={{ opacity: 0, y: -10 }}
                   className="space-y-3"
                 >
-                  <h4 className="text-sm font-bold text-emerald-400 flex items-center gap-1.5">
+                  <h4 className="text-sm font-bold text-emerald-500 flex items-center gap-1.5">
                     <CheckCircle size={16} /> Automated Engagement Flow
                   </h4>
                   <div className="grid grid-cols-2 gap-2">
@@ -1704,7 +1704,7 @@ const ProblemStorytelling = () => {
                         initial={{ opacity: 0, x: -10 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: index * 0.08 }}
-                        className="flex items-center gap-1.5 p-2 rounded-xl bg-emerald-500/5 border border-emerald-500/10 text-emerald-400 text-[10.5px] font-bold"
+                        className="flex items-center gap-1.5 p-2 rounded-xl bg-emerald-500/5 border border-emerald-500/10 text-emerald-500 text-[10.5px] font-bold"
                       >
                         <Check size={10} className="stroke-[3]" />
                         {item}
@@ -1723,7 +1723,7 @@ const ProblemStorytelling = () => {
                   exit={{ opacity: 0, y: -10 }}
                   className="space-y-3"
                 >
-                  <h4 className="text-sm font-extrabold text-emerald-400 flex items-center gap-1.5">
+                  <h4 className="text-sm font-extrabold text-emerald-500 flex items-center gap-1.5">
                     <Sparkles size={16} /> Conversion Pipeline Complete
                   </h4>
                   <div className="space-y-2">
@@ -1737,7 +1737,7 @@ const ProblemStorytelling = () => {
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ delay: index * 0.15, type: "spring", stiffness: 150 }}
-                        className="flex items-center gap-3 p-3 rounded-2xl bg-emerald-500/5 border border-emerald-500/15 text-emerald-400 text-xs font-extrabold"
+                        className="flex items-center gap-3 p-3 rounded-2xl bg-emerald-500/5 border border-emerald-500/15 text-emerald-500 text-xs font-extrabold"
                       >
                         <span className="text-sm">{item.icon}</span>
                         {item.label}
@@ -1768,13 +1768,13 @@ const IntegrationsFlowCanvas = ({ activeStep }: { activeStep: number }) => {
       <div className="flex items-center justify-between border-b border-zinc-100 dark:border-white/5 pb-3 z-10 shrink-0">
         <div className="flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-          <span className="text-[10px] font-bold text-muted-foreground dark:text-muted-foreground uppercase tracking-widest">
+          <span className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-widest">
             {activeStep === 0 && "Step 1: Secure Integration"}
             {activeStep === 1 && "Step 2: Intent Engine"}
             {activeStep === 2 && "Step 3: Webhook Pipeline"}
           </span>
         </div>
-        <span className="text-[9px] font-mono text-muted-foreground dark:text-muted-foreground bg-muted dark:bg-white/5 px-2 py-0.5 rounded border border-zinc-200/50 dark:border-white/5">
+        <span className="text-[9px] font-mono text-zinc-500 dark:text-zinc-400 bg-zinc-100 dark:bg-white/5 px-2 py-0.5 rounded border border-zinc-200/50 dark:border-white/5">
           {activeStep === 0 && "oauth.meta.api"}
           {activeStep === 1 && "flazly.ai.engine"}
           {activeStep === 2 && "webhook.delivery"}
@@ -1811,14 +1811,14 @@ const IntegrationsFlowCanvas = ({ activeStep }: { activeStep: number }) => {
 
                 {/* Left Node: Instagram Logo */}
                 <div className="relative z-10 flex flex-col items-center gap-2">
-                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-purple-600 via-pink-500 to-yellow-500 flex items-center justify-center shadow-lg text-primary-foreground">
+                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-purple-600 via-pink-500 to-yellow-500 flex items-center justify-center shadow-lg text-white">
                     <svg className="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
                       <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
                       <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
                     </svg>
                   </div>
-                  <span className="text-[10px] font-bold text-muted-foreground">Instagram DM</span>
+                  <span className="text-[10px] font-bold text-zinc-400">Instagram DM</span>
                 </div>
 
                 {/* Middle connector status */}
@@ -1828,7 +1828,7 @@ const IntegrationsFlowCanvas = ({ activeStep }: { activeStep: number }) => {
 
                 {/* Right Node: Flazly Engine */}
                 <div className="relative z-10 flex flex-col items-center gap-2">
-                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-[#818CF8] to-[#4F39F6] flex items-center justify-center shadow-lg text-primary-foreground shadow-[#4F39F6]/20">
+                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-[#818CF8] to-[#4F39F6] flex items-center justify-center shadow-lg text-white shadow-[#4F39F6]/20">
                     <Zap size={28} className="fill-white/10" />
                   </div>
                   <span className="text-[10px] font-bold text-[#818CF8]">Flazly AI</span>
@@ -1836,11 +1836,11 @@ const IntegrationsFlowCanvas = ({ activeStep }: { activeStep: number }) => {
               </div>
 
               {/* Security Dialog Card overlay */}
-              <div className="mt-6 bg-muted/50 dark:bg-[#121826]/40 border border-zinc-200/50 dark:border-white/5 p-3 rounded-xl flex items-center gap-3 w-full max-w-[280px]">
-                <Shield className="text-emerald-400 shrink-0" size={18} />
+              <div className="mt-6 bg-zinc-50 dark:bg-[#121826]/40 border border-zinc-200/50 dark:border-white/5 p-3 rounded-xl flex items-center gap-3 w-full max-w-[280px]">
+                <Shield className="text-emerald-500 shrink-0" size={18} />
                 <div className="flex flex-col text-left">
-                  <span className="text-[10px] font-bold text-foreground dark:text-zinc-200">Meta API Compliance Verified</span>
-                  <span className="text-[8px] text-muted-foreground font-medium">SSL Encrypted token rotation key</span>
+                  <span className="text-[10px] font-bold text-zinc-800 dark:text-zinc-200">Meta API Compliance Verified</span>
+                  <span className="text-[8px] text-zinc-500 font-medium">SSL Encrypted token rotation key</span>
                 </div>
               </div>
             </motion.div>
@@ -1859,32 +1859,32 @@ const IntegrationsFlowCanvas = ({ activeStep }: { activeStep: number }) => {
               <div className="w-full max-w-[340px] space-y-3">
                 {/* Simulated Inbound message */}
                 <div className="flex items-center gap-2.5">
-                  <div className="w-6 h-6 rounded-full bg-primary/90 flex items-center justify-center text-[7.5px] font-bold text-muted-foreground">US</div>
-                  <div className="bg-muted dark:bg-zinc-850 p-2.5 rounded-xl text-[10.5px] leading-snug font-medium text-muted-foreground dark:text-zinc-305 max-w-[220px]">
+                  <div className="w-6 h-6 rounded-full bg-zinc-800 flex items-center justify-center text-[7.5px] font-bold text-zinc-400">US</div>
+                  <div className="bg-zinc-100 dark:bg-zinc-850 p-2.5 rounded-xl text-[10.5px] leading-snug font-medium text-zinc-700 dark:text-zinc-305 max-w-[220px]">
                     "Can I buy the hoodie? Do you ship to Germany?"
                   </div>
                 </div>
 
                 {/* Processing node */}
                 <div className="flex items-center justify-center gap-3 py-1">
-                  <div className="h-[1px] bg-zinc-200 dark:bg-primary/90 flex-1" />
+                  <div className="h-[1px] bg-zinc-200 dark:bg-zinc-800 flex-1" />
                   <div className="bg-[#4F39F6]/10 border border-[#4F39F6]/20 px-3 py-1 rounded-full text-[9px] font-mono text-[#818CF8] flex items-center gap-1.5">
                     <span className="w-1.5 h-1.5 rounded-full bg-[#818CF8] animate-ping" />
                     Flazly NLP Processing
                   </div>
-                  <div className="h-[1px] bg-zinc-200 dark:bg-primary/90 flex-1" />
+                  <div className="h-[1px] bg-zinc-200 dark:bg-zinc-800 flex-1" />
                 </div>
 
                 {/* Extracted Intent / Reply */}
                 <div className="flex flex-col items-end gap-1.5">
-                  <div className="bg-gradient-to-r from-[#818CF8] to-[#4F39F6] text-primary-foreground p-2.5 rounded-xl text-[10.5px] leading-snug font-semibold max-w-[220px]">
+                  <div className="bg-gradient-to-r from-[#818CF8] to-[#4F39F6] text-white p-2.5 rounded-xl text-[10.5px] leading-snug font-semibold max-w-[220px]">
                     "Yes! Shipping to Germany is €4.99. What color would you like?"
                   </div>
                   <div className="flex gap-2">
-                    <span className="text-[8px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded font-bold">
+                    <span className="text-[8px] bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 px-2 py-0.5 rounded font-bold">
                       ✓ Intent: Shipping
                     </span>
-                    <span className="text-[8px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded font-bold">
+                    <span className="text-[8px] bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 px-2 py-0.5 rounded font-bold">
                       ✓ Location: Germany
                     </span>
                   </div>
@@ -1905,7 +1905,7 @@ const IntegrationsFlowCanvas = ({ activeStep }: { activeStep: number }) => {
               <div className="flex items-center justify-between w-full max-w-[320px] relative">
                 {/* Core Node left */}
                 <div className="flex flex-col items-center gap-1.5 z-10">
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-tr from-[#818CF8] to-[#4F39F6] flex items-center justify-center shadow-lg text-primary-foreground">
+                  <div className="w-12 h-12 rounded-xl bg-gradient-to-tr from-[#818CF8] to-[#4F39F6] flex items-center justify-center shadow-lg text-white">
                     <Zap size={22} />
                   </div>
                   <span className="text-[9px] font-bold text-[#818CF8]">Flazly AI</span>
@@ -1924,7 +1924,7 @@ const IntegrationsFlowCanvas = ({ activeStep }: { activeStep: number }) => {
                 {/* Right integration stack */}
                 <div className="flex flex-col gap-2.5 z-10 w-[150px]">
                   {/* Sheets Node */}
-                  <div className="flex items-center gap-2 bg-emerald-500/5 dark:bg-emerald-500/10 border border-emerald-500/25 p-2 rounded-lg text-[9px] font-bold text-emerald-400">
+                  <div className="flex items-center gap-2 bg-emerald-500/5 dark:bg-emerald-500/10 border border-emerald-500/25 p-2 rounded-lg text-[9px] font-bold text-emerald-500">
                     <Database size={12} />
                     <span className="truncate">Google Sheets Sync</span>
                   </div>
@@ -1948,7 +1948,7 @@ const IntegrationsFlowCanvas = ({ activeStep }: { activeStep: number }) => {
       </div>
 
       {/* Footer detail */}
-      <div className="border-t border-zinc-100 dark:border-white/5 pt-3 flex items-center justify-between text-[8.5px] font-bold uppercase tracking-widest text-muted-foreground dark:text-muted-foreground shrink-0 z-10">
+      <div className="border-t border-zinc-100 dark:border-white/5 pt-3 flex items-center justify-between text-[8.5px] font-bold uppercase tracking-widest text-zinc-400 dark:text-zinc-500 shrink-0 z-10">
         <span>Pipeline Activity Monitor</span>
         <span>Secure connection active</span>
       </div>
@@ -1976,7 +1976,7 @@ const Landing: React.FC = () => {
   }, [autoRotate]);
 
   return (
-    <div className="dark landing-page bg-[#0A0A0F] text-primary-foreground font-inter selection:bg-[#38BDF8]/10 selection:text-[#38BDF8] min-h-screen relative overflow-x-hidden">
+    <div className="dark landing-page bg-[#0A0A0F] text-white font-inter selection:bg-[#38BDF8]/10 selection:text-[#38BDF8] min-h-screen relative overflow-x-hidden">
 
       {/* Animated Grid Background for Hero Section */}
       <div className="absolute top-0 inset-x-0 h-[1000px] hero-line-grid pointer-events-none select-none z-0" />
@@ -2047,12 +2047,12 @@ const Landing: React.FC = () => {
             </div>
 
             {/* Headline with visual gradient spec */}
-            <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight mb-6 text-balance text-zinc-950 dark:text-primary-foreground max-w-4xl leading-[1.1]">
+            <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight mb-6 text-balance text-zinc-950 dark:text-white max-w-4xl leading-[1.1]">
               Turn Instagram DMs Into <span className="text-headline-gradient">Qualified Leads</span> Automatically
             </h1>
 
             {/* Subheadline */}
-            <p className="text-base sm:text-lg text-zinc-650 dark:text-muted-foreground font-medium leading-relaxed mb-10 text-balance max-w-3xl">
+            <p className="text-base sm:text-lg text-zinc-650 dark:text-zinc-400 font-medium leading-relaxed mb-10 text-balance max-w-3xl">
               Flazly instantly responds to DMs, story replies, and comment triggers, qualifies prospects with AI, captures customer details, and helps businesses convert more conversations into customers.
             </p>
 
@@ -2067,7 +2067,7 @@ const Landing: React.FC = () => {
               </button>
               <a
                 href="#demo"
-                className="w-full sm:w-auto px-10 py-5 rounded-xl text-sm font-bold bg-white dark:bg-[#121826] border border-zinc-200 dark:border-white/10 text-zinc-650 dark:text-zinc-300 hover:bg-muted/50 dark:hover:bg-white/10 hover:border-zinc-300 dark:hover:border-white/20 transition-all flex items-center justify-center gap-2 shadow-sm"
+                className="w-full sm:w-auto px-10 py-5 rounded-xl text-sm font-bold bg-white dark:bg-[#121826] border border-zinc-200 dark:border-white/10 text-zinc-650 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-white/10 hover:border-zinc-300 dark:hover:border-white/20 transition-all flex items-center justify-center gap-2 shadow-sm"
               >
                 <Play size={14} fill="currentColor" />
                 Watch Demo
@@ -2085,9 +2085,9 @@ const Landing: React.FC = () => {
         {/* ==========================================
             SECTION 2 — TRUST STRIP
             ========================================== */}
-        <section className="py-8 border-y border-zinc-200/80 dark:border-white/5 bg-muted/30 dark:bg-[#E1306C]/5 backdrop-blur-xl relative z-10">
+        <section className="py-8 border-y border-zinc-200/80 dark:border-white/5 bg-zinc-100/30 dark:bg-[#E1306C]/5 backdrop-blur-xl relative z-10">
           <div className="max-w-6xl mx-auto px-6">
-            <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-6 text-zinc-550 dark:text-muted-foreground text-xs font-bold tracking-wider uppercase">
+            <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-6 text-zinc-550 dark:text-zinc-400 text-xs font-bold tracking-wider uppercase">
               <span className="flex items-center gap-2">
                 <CheckCircle2 size={16} className="text-[#00C26F]" /> Meta Graph API Integration
               </span>
@@ -2118,10 +2118,10 @@ const Landing: React.FC = () => {
           <div className="max-w-6xl mx-auto px-6 text-center">
             <div className="max-w-2xl mx-auto mb-16">
               <span className="text-xs font-bold uppercase tracking-widest text-[#4F39F6] dark:text-[#818CF8]">THE COST OF MANUAL DM MANAGEMENT</span>
-              <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-4 text-foreground dark:text-primary-foreground leading-tight mt-3">
+              <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-4 text-zinc-900 dark:text-white leading-tight mt-3">
                 Every Unanswered DM Is Lost Revenue
               </h2>
-              <p className="text-sm md:text-base text-zinc-650 dark:text-muted-foreground font-medium leading-relaxed mt-2 text-balance">
+              <p className="text-sm md:text-base text-zinc-650 dark:text-zinc-400 font-medium leading-relaxed mt-2 text-balance">
                 Potential customers are messaging your business right now. Slow replies, missed follow-ups, and manual processes cause leads to disappear before they ever become customers.
               </p>
             </div>
@@ -2140,10 +2140,10 @@ const Landing: React.FC = () => {
               {/* Left Column: 3 Steps */}
               <div className="flex flex-col text-left">
                 <span className="text-xs font-bold uppercase tracking-widest text-[#4F39F6] dark:text-[#818CF8]">How It Works</span>
-                <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-foreground dark:text-primary-foreground mt-3 mb-6">
+                <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-zinc-900 dark:text-white mt-3 mb-6">
                   3 Steps to Automated Lead Capture
                 </h2>
-                <p className="text-sm md:text-base text-zinc-550 dark:text-muted-foreground font-medium mb-12">
+                <p className="text-sm md:text-base text-zinc-550 dark:text-zinc-400 font-medium mb-12">
                   Turn your Instagram profile into a 24/7 lead generation engine in minutes.
                 </p>
 
@@ -2179,16 +2179,16 @@ const Landing: React.FC = () => {
                     >
                       <div className={`w-12 h-12 rounded-2xl flex items-center justify-center font-bold font-mono shrink-0 transition-all duration-300 ${
                         activeStep === idx
-                          ? "bg-[#4F39F6] text-primary-foreground shadow-md shadow-[#4F39F6]/20"
+                          ? "bg-[#4F39F6] text-white shadow-md shadow-[#4F39F6]/20"
                           : "bg-[#3B82F6]/10 text-[#38BDF8]"
                       }`}>
                         {step.step}
                       </div>
                       <div>
                         <h3 className={`text-base font-bold mb-1 transition-colors duration-300 ${
-                          activeStep === idx ? "text-[#4F39F6] dark:text-[#818CF8]" : "text-foreground dark:text-primary-foreground"
+                          activeStep === idx ? "text-[#4F39F6] dark:text-[#818CF8]" : "text-zinc-900 dark:text-white"
                         }`}>{step.title}</h3>
-                        <p className="text-xs text-muted-foreground dark:text-muted-foreground leading-relaxed font-medium">{step.desc}</p>
+                        <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed font-medium">{step.desc}</p>
                       </div>
                     </div>
                   ))}
@@ -2198,14 +2198,14 @@ const Landing: React.FC = () => {
               {/* Right Column: Interactive Platform Pipeline */}
               <div className="flex flex-col items-center justify-center">
                 <IntegrationsFlowCanvas activeStep={activeStep} />
-                <span className="text-[10px] text-muted-foreground uppercase tracking-widest font-mono mt-6">
+                <span className="text-[10px] text-zinc-500 uppercase tracking-widest font-mono mt-6">
                   Interactive Platform Pipeline
                 </span>
               </div>
             </div>
 
             {/* Examples block below */}
-            <div className="bg-muted/50 dark:bg-[#121826]/20 border border-zinc-200/80 dark:border-white/5 p-8 rounded-3xl max-w-4xl mx-auto mt-20">
+            <div className="bg-zinc-100/50 dark:bg-[#121826]/20 border border-zinc-200/80 dark:border-white/5 p-8 rounded-3xl max-w-4xl mx-auto mt-20">
               <h4 className="text-sm font-bold text-zinc-650 dark:text-zinc-300 uppercase tracking-widest text-center mb-8">
                 What Flazly AI Captures In Real-Time
               </h4>
@@ -2221,8 +2221,8 @@ const Landing: React.FC = () => {
                     <span className="text-[8px] font-bold text-[#38BDF8] bg-[#38BDF8]/10 px-2 py-0.5 rounded-full uppercase tracking-wider">
                       {item.badge}
                     </span>
-                    <span className="text-xs font-bold text-foreground dark:text-primary-foreground block mt-3 mb-1">{item.label}</span>
-                    <span className="text-[10px] text-muted-foreground dark:text-muted-foreground font-mono block truncate">{item.detail}</span>
+                    <span className="text-xs font-bold text-zinc-800 dark:text-white block mt-3 mb-1">{item.label}</span>
+                    <span className="text-[10px] text-zinc-500 dark:text-zinc-400 font-mono block truncate">{item.detail}</span>
                   </div>
                 ))}
               </div>
@@ -2238,10 +2238,10 @@ const Landing: React.FC = () => {
           <div className="max-w-6xl mx-auto px-6">
             <div className="text-center max-w-2xl mx-auto mb-16">
               <span className="text-xs font-bold uppercase tracking-widest text-[#4F39F6] dark:text-[#818CF8]">Business Outcomes</span>
-              <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-primary-foreground mt-3 mb-4 leading-tight">
+              <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-white mt-3 mb-4 leading-tight">
                 Capture Leads On Autopilot, 24/7
               </h2>
-              <p className="text-sm md:text-base text-muted-foreground font-medium">
+              <p className="text-sm md:text-base text-zinc-400 font-medium">
                 Designed to minimize manual workload and maximize conversion rates inside Instagram.
               </p>
             </div>
@@ -2310,7 +2310,7 @@ const Landing: React.FC = () => {
                   </div>
 
                   <div className="absolute w-28 h-28 rounded-full bg-gradient-to-b from-white to-zinc-50 dark:from-[#1E293B] dark:to-[#0F172A] border border-zinc-200/50 dark:border-white/10 shadow-[0_10px_25px_rgba(0,0,0,0.1),inset_0_1px_1px_rgba(255,255,255,0.15)] dark:shadow-[0_10px_25px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.05)] flex flex-col items-center justify-center z-10">
-                    <div className="w-20 h-20 rounded-full bg-muted/50 dark:bg-zinc-950 border border-zinc-200/80 dark:border-primary flex items-center justify-center shadow-lg p-4">
+                    <div className="w-20 h-20 rounded-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200/80 dark:border-zinc-800 flex items-center justify-center shadow-lg p-4">
                       <img src="/Dark theme.png" alt="Flazly Logo" className="hidden dark:block w-12 h-12 object-contain" />
                       <img src="/Light Theme.png" alt="Flazly Logo" className="block dark:hidden w-12 h-12 object-contain" />
                     </div>
@@ -2372,8 +2372,8 @@ const Landing: React.FC = () => {
                       <div className="w-10 h-10 rounded-xl bg-[#E1306C]/10 text-[#E1306C] border border-[#E1306C]/20 flex items-center justify-center mb-4 shrink-0 font-semibold">
                         {benefit.icon}
                       </div>
-                      <h3 className="text-base font-bold mb-2 text-foreground dark:text-primary-foreground font-inter">{benefit.title}</h3>
-                      <p className="text-xs text-zinc-650 dark:text-muted-foreground leading-relaxed font-medium font-sans">{benefit.desc}</p>
+                      <h3 className="text-base font-bold mb-2 text-zinc-900 dark:text-white font-inter">{benefit.title}</h3>
+                      <p className="text-xs text-zinc-650 dark:text-zinc-400 leading-relaxed font-medium font-sans">{benefit.desc}</p>
                     </div>
                   </div>
                 </motion.div>
@@ -2388,7 +2388,7 @@ const Landing: React.FC = () => {
                   <div className="absolute w-36 h-36 rounded-full bg-[#4F39F6]/10 dark:bg-[#4F39F6]/20 blur-xl animate-pulse"></div>
                   <div className="absolute w-40 h-40 rounded-full border border-dashed border-[#818CF8]/25 animate-spin" style={{ animationDuration: '50s' }}></div>
                   <div className="absolute w-24 h-24 rounded-full bg-gradient-to-b from-white to-zinc-50 dark:from-[#1E293B] dark:to-[#0F172A] border border-zinc-200/50 dark:border-white/10 shadow-sm flex flex-col items-center justify-center z-10">
-                    <div className="w-18 h-18 rounded-full bg-muted/50 dark:bg-zinc-950 border border-zinc-200/80 dark:border-primary flex items-center justify-center shadow-md p-3.5">
+                    <div className="w-18 h-18 rounded-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200/80 dark:border-zinc-800 flex items-center justify-center shadow-md p-3.5">
                       <img src="/Dark theme.png" alt="Flazly Logo" className="hidden dark:block w-9 h-9 object-contain" />
                       <img src="/Light Theme.png" alt="Flazly Logo" className="block dark:hidden w-9 h-9 object-contain" />
                     </div>
@@ -2429,7 +2429,7 @@ const Landing: React.FC = () => {
                     <div className="w-10 h-10 rounded-xl bg-[#E1306C]/10 text-[#E1306C] border border-[#E1306C]/20 flex items-center justify-center mb-4 shrink-0 font-semibold">
                       {benefit.icon}
                     </div>
-                    <h3 className="text-base font-bold mb-2 text-foreground dark:text-primary-foreground font-inter">{benefit.title}</h3>
+                    <h3 className="text-base font-bold mb-2 text-zinc-900 dark:text-white font-inter">{benefit.title}</h3>
                     <p className="text-xs text-zinc-650 dark:text-zinc-450 leading-relaxed font-medium font-sans">{benefit.desc}</p>
                   </div>
                 ))}
@@ -2442,14 +2442,14 @@ const Landing: React.FC = () => {
         {/* ==========================================
             SECTION 6 — PRODUCT SHOWCASE / MODULE DEEP DIVE
             ========================================== */}
-        <section className="py-28 border-t border-zinc-200/80 dark:border-white/5 bg-muted/10 dark:bg-[#121826]/10 relative overflow-hidden">
+        <section className="py-28 border-t border-zinc-200/80 dark:border-white/5 bg-zinc-100/10 dark:bg-[#121826]/10 relative overflow-hidden">
           <div className="max-w-6xl mx-auto px-6">
             <div className="text-center max-w-2xl mx-auto mb-20">
               <span className="text-xs font-bold uppercase tracking-widest text-[#4F39F6] dark:text-[#818CF8]">Core Capabilities</span>
-              <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-primary-foreground mt-3 mb-4">
+              <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-white mt-3 mb-4">
                 Designed to Generate More Business Leads
               </h2>
-              <p className="text-sm md:text-base text-muted-foreground font-medium">
+              <p className="text-sm md:text-base text-zinc-400 font-medium">
                 Everything you need to automate conversations, capture details, and scale lead collection.
               </p>
             </div>
@@ -2462,8 +2462,8 @@ const Landing: React.FC = () => {
                   feats: ["Live chat stream", "One-click AI pause", "Lead status tags"],
                   gridClass: "md:col-span-1",
                   visual: (
-                    <div className="w-full bg-muted/50/50 dark:bg-[#121826]/30 border border-zinc-200/50 dark:border-white/5 p-4 rounded-2xl flex flex-col gap-2.5 mb-5 shadow-[inset_0_1px_2px_rgba(0,0,0,0.01)]">
-                      <div className="flex justify-between items-center text-[9px] font-bold text-muted-foreground uppercase tracking-wider">
+                    <div className="w-full bg-zinc-50/50 dark:bg-[#121826]/30 border border-zinc-200/50 dark:border-white/5 p-4 rounded-2xl flex flex-col gap-2.5 mb-5 shadow-[inset_0_1px_2px_rgba(0,0,0,0.01)]">
+                      <div className="flex justify-between items-center text-[9px] font-bold text-zinc-400 uppercase tracking-wider">
                         <span>Inbox Stream</span>
                         <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse"></span>Live</span>
                       </div>
@@ -2471,8 +2471,8 @@ const Landing: React.FC = () => {
                         <div className="flex items-center gap-2 min-w-0">
                           <div className="w-7 h-7 rounded-full bg-indigo-500/10 text-indigo-500 border border-indigo-500/20 flex items-center justify-center text-[10px] font-extrabold shrink-0">JD</div>
                           <div className="flex flex-col min-w-0">
-                            <span className="text-[10px] font-bold text-foreground dark:text-primary-foreground truncate">John Doe</span>
-                            <span className="text-[8px] text-muted-foreground dark:text-zinc-450 truncate">"Price list please?"</span>
+                            <span className="text-[10px] font-bold text-zinc-900 dark:text-white truncate">John Doe</span>
+                            <span className="text-[8px] text-zinc-500 dark:text-zinc-450 truncate">"Price list please?"</span>
                           </div>
                         </div>
                         <span className="px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-600 dark:text-purple-400 text-[8px] font-bold uppercase tracking-wide border border-purple-500/20 shrink-0">Autopilot</span>
@@ -2487,7 +2487,7 @@ const Landing: React.FC = () => {
                   gridClass: "md:col-span-2",
                   special: true,
                   visual: (
-                    <div className="bg-muted/50/50 dark:bg-[#121826]/30 border border-zinc-200/50 dark:border-white/5 p-5 rounded-2xl flex flex-col gap-3 min-w-[280px] w-full lg:w-auto shrink-0 shadow-[inset_0_1px_2px_rgba(0,0,0,0.01)]">
+                    <div className="bg-zinc-50/50 dark:bg-[#121826]/30 border border-zinc-200/50 dark:border-white/5 p-5 rounded-2xl flex flex-col gap-3 min-w-[280px] w-full lg:w-auto shrink-0 shadow-[inset_0_1px_2px_rgba(0,0,0,0.01)]">
                       <div className="flex items-center justify-between border-b border-zinc-150 dark:border-white/5 pb-2.5">
                         <div className="flex items-center gap-2">
                           <div className="w-8 h-8 rounded-full bg-[#4F39F6]/10 text-[#4F39F6] dark:text-indigo-400 border border-[#4F39F6]/20 flex items-center justify-center relative shrink-0">
@@ -2495,11 +2495,11 @@ const Landing: React.FC = () => {
                             <span className="absolute bottom-0 right-0 w-2 h-2 bg-emerald-500 border-2 border-white dark:border-[#0c0f1a] rounded-full"></span>
                           </div>
                           <div>
-                            <div className="text-[11px] font-bold text-foreground dark:text-primary-foreground">Flazly AI</div>
-                            <div className="text-[8px] text-emerald-400 font-bold uppercase tracking-wide">Autopilot</div>
+                            <div className="text-[11px] font-bold text-zinc-900 dark:text-white">Flazly AI</div>
+                            <div className="text-[8px] text-emerald-500 font-bold uppercase tracking-wide">Autopilot</div>
                           </div>
                         </div>
-                        <span className="text-[9px] text-muted-foreground font-semibold">99.8% Accuracy</span>
+                        <span className="text-[9px] text-zinc-400 font-semibold">99.8% Accuracy</span>
                       </div>
                       <div className="flex flex-col gap-2">
                         <div className="bg-white dark:bg-black/20 p-2.5 rounded-2xl rounded-tr-none text-[10px] text-zinc-650 dark:text-zinc-300 self-end max-w-[85%] border border-zinc-100 dark:border-white/5 shadow-sm">
@@ -2522,18 +2522,18 @@ const Landing: React.FC = () => {
                   feats: ["PDF & TXT training docs", "FAQ overriding builder", "Static fact book storage"],
                   gridClass: "md:col-span-1",
                   visual: (
-                    <div className="w-full bg-muted/50/50 dark:bg-[#121826]/30 border border-zinc-200/50 dark:border-white/5 p-4 rounded-2xl flex flex-col gap-2.5 mb-5 shadow-[inset_0_1px_2px_rgba(0,0,0,0.01)]">
-                      <div className="flex justify-between items-center text-[9px] font-bold text-muted-foreground uppercase tracking-wider">
+                    <div className="w-full bg-zinc-50/50 dark:bg-[#121826]/30 border border-zinc-200/50 dark:border-white/5 p-4 rounded-2xl flex flex-col gap-2.5 mb-5 shadow-[inset_0_1px_2px_rgba(0,0,0,0.01)]">
+                      <div className="flex justify-between items-center text-[9px] font-bold text-zinc-400 uppercase tracking-wider">
                         <span>Source Material</span>
-                        <span className="text-emerald-400 font-bold">Trained</span>
+                        <span className="text-emerald-500 font-bold">Trained</span>
                       </div>
                       <div className="flex items-center gap-3 bg-white dark:bg-[#090b11]/80 p-2.5 rounded-xl border border-zinc-150 dark:border-white/5 shadow-sm">
                         <div className="w-8 h-8 rounded-lg bg-indigo-500/10 text-indigo-500 border border-indigo-500/20 flex items-center justify-center shrink-0">
                           <FileText size={16} />
                         </div>
                         <div className="flex-grow min-w-0">
-                          <div className="text-[10px] font-bold text-foreground dark:text-primary-foreground truncate">product_catalog_2026.pdf</div>
-                          <div className="w-full bg-muted dark:bg-primary/90 h-1.5 rounded-full mt-1.5 overflow-hidden">
+                          <div className="text-[10px] font-bold text-zinc-900 dark:text-white truncate">product_catalog_2026.pdf</div>
+                          <div className="w-full bg-zinc-100 dark:bg-zinc-800 h-1.5 rounded-full mt-1.5 overflow-hidden">
                             <div className="bg-indigo-500 h-full w-full rounded-full"></div>
                           </div>
                         </div>
@@ -2547,14 +2547,14 @@ const Landing: React.FC = () => {
                   feats: ["Visual workflow node map", "Keyword rule matching", "Flexible webhook nodes"],
                   gridClass: "md:col-span-1",
                   visual: (
-                    <div className="w-full bg-muted/50/50 dark:bg-[#121826]/30 border border-zinc-200/50 dark:border-white/5 p-4 rounded-2xl flex items-center justify-between gap-2 mb-5 shadow-[inset_0_1px_2px_rgba(0,0,0,0.01)]">
-                      <div className="bg-white dark:bg-[#090b11]/80 px-2.5 py-1.5 rounded-xl border border-zinc-150 dark:border-white/5 shadow-sm text-[9px] font-bold text-muted-foreground dark:text-zinc-350">
+                    <div className="w-full bg-zinc-50/50 dark:bg-[#121826]/30 border border-zinc-200/50 dark:border-white/5 p-4 rounded-2xl flex items-center justify-between gap-2 mb-5 shadow-[inset_0_1px_2px_rgba(0,0,0,0.01)]">
+                      <div className="bg-white dark:bg-[#090b11]/80 px-2.5 py-1.5 rounded-xl border border-zinc-150 dark:border-white/5 shadow-sm text-[9px] font-bold text-zinc-700 dark:text-zinc-350">
                         Trigger "Price"
                       </div>
                       <div className="flex-grow border-t border-dashed border-zinc-300 dark:border-zinc-700 relative">
-                        <span className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-indigo-500 flex items-center justify-center text-[7px] text-primary-foreground shadow-sm">⚡</span>
+                        <span className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-indigo-500 flex items-center justify-center text-[7px] text-white shadow-sm">⚡</span>
                       </div>
-                      <div className="bg-indigo-500 text-primary-foreground px-2.5 py-1.5 rounded-xl text-[9px] font-bold shadow-sm">
+                      <div className="bg-indigo-500 text-white px-2.5 py-1.5 rounded-xl text-[9px] font-bold shadow-sm">
                         Send DM
                       </div>
                     </div>
@@ -2566,14 +2566,14 @@ const Landing: React.FC = () => {
                   feats: ["Reels & post comment hook", "Post-specific keywords", "Automated outbound links"],
                   gridClass: "md:col-span-1",
                   visual: (
-                    <div className="w-full bg-muted/50/50 dark:bg-[#121826]/30 border border-zinc-200/50 dark:border-white/5 p-4 rounded-2xl flex flex-col gap-2.5 mb-5 shadow-[inset_0_1px_2px_rgba(0,0,0,0.01)]">
-                      <div className="flex justify-between items-center text-[9px] font-bold text-muted-foreground uppercase tracking-wider">
+                    <div className="w-full bg-zinc-50/50 dark:bg-[#121826]/30 border border-zinc-200/50 dark:border-white/5 p-4 rounded-2xl flex flex-col gap-2.5 mb-5 shadow-[inset_0_1px_2px_rgba(0,0,0,0.01)]">
+                      <div className="flex justify-between items-center text-[9px] font-bold text-zinc-400 uppercase tracking-wider">
                         <span>Comment Trigger</span>
                         <span className="text-[#818CF8] font-bold">Active</span>
                       </div>
                       <div className="bg-white dark:bg-[#090b11]/80 p-2.5 rounded-xl border border-zinc-150 dark:border-white/5 shadow-sm flex flex-col gap-1">
-                        <div className="text-[10px] text-foreground dark:text-zinc-200 font-bold">"@alex: Send details!"</div>
-                        <div className="flex items-center gap-1.5 text-[8px] text-emerald-400 font-bold">
+                        <div className="text-[10px] text-zinc-800 dark:text-zinc-200 font-bold">"@alex: Send details!"</div>
+                        <div className="flex items-center gap-1.5 text-[8px] text-emerald-500 font-bold">
                           <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
                           Auto-DM Sent
                         </div>
@@ -2587,8 +2587,8 @@ const Landing: React.FC = () => {
                   feats: ["Entity extraction logic", "Google Sheets sync", "HubSpot CRM plugin"],
                   gridClass: "md:col-span-2",
                   visual: (
-                    <div className="bg-muted/50/50 dark:bg-[#121826]/30 border border-zinc-200/50 dark:border-white/5 p-5 rounded-2xl flex flex-col gap-2 min-w-[280px] w-full lg:w-auto shrink-0 shadow-[inset_0_1px_2px_rgba(0,0,0,0.01)]">
-                      <div className="text-[9px] font-bold text-muted-foreground uppercase tracking-wider mb-1">Live Sync Queue</div>
+                    <div className="bg-zinc-50/50 dark:bg-[#121826]/30 border border-zinc-200/50 dark:border-white/5 p-5 rounded-2xl flex flex-col gap-2 min-w-[280px] w-full lg:w-auto shrink-0 shadow-[inset_0_1px_2px_rgba(0,0,0,0.01)]">
+                      <div className="text-[9px] font-bold text-zinc-400 uppercase tracking-wider mb-1">Live Sync Queue</div>
                       <div className="flex flex-col gap-1.5">
                         {[
                           { handle: "@alex_runner", email: "alex@gmail.com", status: "Synced to Sheets" },
@@ -2596,10 +2596,10 @@ const Landing: React.FC = () => {
                         ].map((lead, i) => (
                           <div key={i} className="flex justify-between items-center bg-white dark:bg-black/20 p-2.5 rounded-xl border border-zinc-100 dark:border-white/5 text-[9px] shadow-sm">
                             <div className="flex flex-col min-w-0 pr-2">
-                              <span className="font-bold text-foreground dark:text-primary-foreground truncate">{lead.handle}</span>
-                              <span className="text-muted-foreground dark:text-zinc-450 truncate">{lead.email}</span>
+                              <span className="font-bold text-zinc-900 dark:text-white truncate">{lead.handle}</span>
+                              <span className="text-zinc-500 dark:text-zinc-450 truncate">{lead.email}</span>
                             </div>
-                            <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 dark:text-emerald-400 border border-emerald-500/20 font-bold uppercase tracking-tighter text-[7px] shrink-0">{lead.status}</span>
+                            <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 font-bold uppercase tracking-tighter text-[7px] shrink-0">{lead.status}</span>
                           </div>
                         ))}
                       </div>
@@ -2612,15 +2612,15 @@ const Landing: React.FC = () => {
                   feats: ["Lead segment selection", "Sequential broadcasts", "Delivered stats reporting"],
                   gridClass: "md:col-span-1",
                   visual: (
-                    <div className="w-full bg-muted/50/50 dark:bg-[#121826]/30 border border-zinc-200/50 dark:border-white/5 p-4 rounded-2xl flex flex-col gap-2.5 mb-5 shadow-[inset_0_1px_2px_rgba(0,0,0,0.01)]">
-                      <div className="flex justify-between items-center text-[9px] font-bold text-muted-foreground uppercase tracking-wider">
+                    <div className="w-full bg-zinc-50/50 dark:bg-[#121826]/30 border border-zinc-200/50 dark:border-white/5 p-4 rounded-2xl flex flex-col gap-2.5 mb-5 shadow-[inset_0_1px_2px_rgba(0,0,0,0.01)]">
+                      <div className="flex justify-between items-center text-[9px] font-bold text-zinc-400 uppercase tracking-wider">
                         <span>Campaign Delivery</span>
                         <span className="text-indigo-500 font-bold">Sending</span>
                       </div>
                       <div className="bg-white dark:bg-[#090b11]/80 p-2.5 rounded-xl border border-zinc-150 dark:border-white/5 shadow-sm flex items-center justify-between">
                         <div className="flex flex-col min-w-0 pr-2">
-                          <span className="text-[10px] font-bold text-foreground dark:text-primary-foreground truncate">Summer Launch</span>
-                          <span className="text-[8px] text-muted-foreground dark:text-zinc-450">1,240 recipients</span>
+                          <span className="text-[10px] font-bold text-zinc-900 dark:text-white truncate">Summer Launch</span>
+                          <span className="text-[8px] text-zinc-500 dark:text-zinc-450">1,240 recipients</span>
                         </div>
                         <div className="text-[11px] font-extrabold text-indigo-500 shrink-0">92%</div>
                       </div>
@@ -2640,12 +2640,12 @@ const Landing: React.FC = () => {
 
                     <div className="flex-grow flex flex-col justify-between">
                       <div>
-                        <h3 className="text-lg font-bold text-foreground dark:text-primary-foreground mb-2 font-inter">{mod.title}</h3>
-                        <p className="text-xs text-zinc-650 dark:text-muted-foreground leading-relaxed mb-6 font-medium font-sans">{mod.desc}</p>
+                        <h3 className="text-lg font-bold text-zinc-900 dark:text-white mb-2 font-inter">{mod.title}</h3>
+                        <p className="text-xs text-zinc-650 dark:text-zinc-400 leading-relaxed mb-6 font-medium font-sans">{mod.desc}</p>
                       </div>
                       <ul className="space-y-2.5 border-t border-zinc-100 dark:border-white/5 pt-5">
                         {mod.feats.map((f, i) => (
-                          <li key={i} className="flex items-center gap-2.5 text-xs text-muted-foreground dark:text-zinc-300 font-medium font-sans">
+                          <li key={i} className="flex items-center gap-2.5 text-xs text-zinc-700 dark:text-zinc-300 font-medium font-sans">
                             <Check size={12} className="text-[#38BDF8] shrink-0" />
                             {f}
                           </li>
@@ -2690,10 +2690,10 @@ const Landing: React.FC = () => {
           <div className="max-w-6xl mx-auto px-6">
             <div className="text-center max-w-2xl mx-auto mb-16">
               <span className="text-xs font-bold uppercase tracking-widest text-[#4F39F6] dark:text-[#818CF8]">Tailored Solutions</span>
-              <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-primary-foreground mt-3 mb-4">
+              <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-white mt-3 mb-4">
                 Who Uses Flazly?
               </h2>
-              <p className="text-sm md:text-base text-muted-foreground font-medium">
+              <p className="text-sm md:text-base text-zinc-400 font-medium">
                 Maximize the ROI of your social audience and convert inbound intent.
               </p>
             </div>
@@ -2723,8 +2723,8 @@ const Landing: React.FC = () => {
               ].map((uc, i) => (
                 <div key={i} className="p-6 rounded-3xl bg-white dark:bg-[#121826]/40 border border-zinc-200/80 dark:border-white/5 flex flex-col justify-between hover:border-[#38BDF8]/20 dark:hover:border-[#38BDF8]/40 transition-all shadow-sm hover:shadow-md">
                   <div>
-                    <h3 className="text-base font-bold text-foreground dark:text-primary-foreground mb-2 font-inter">{uc.title}</h3>
-                    <p className="text-xs text-zinc-650 dark:text-muted-foreground leading-relaxed font-medium">{uc.desc}</p>
+                    <h3 className="text-base font-bold text-zinc-900 dark:text-white mb-2 font-inter">{uc.title}</h3>
+                    <p className="text-xs text-zinc-650 dark:text-zinc-400 leading-relaxed font-medium">{uc.desc}</p>
                   </div>
                 </div>
               ))}
@@ -2736,11 +2736,11 @@ const Landing: React.FC = () => {
         {/* ==========================================
             SECTION 8 — SOCIAL PROOF & OUTCOMES
             ========================================== */}
-        <section className="py-28 border-t border-zinc-200/80 dark:border-white/5 bg-muted/20 dark:bg-[#121826]/20 relative overflow-hidden">
+        <section className="py-28 border-t border-zinc-200/80 dark:border-white/5 bg-zinc-100/20 dark:bg-[#121826]/20 relative overflow-hidden">
           <div className="max-w-6xl mx-auto px-6">
             <div className="text-center max-w-2xl mx-auto mb-20">
               <span className="text-xs font-bold uppercase tracking-widest text-[#4F39F6] dark:text-[#818CF8]">Success Stories</span>
-              <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-primary-foreground mt-3 mb-4 leading-tight">
+              <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-white mt-3 mb-4 leading-tight">
                 Trusted by High-Growth Brands
               </h2>
             </div>
@@ -2757,7 +2757,7 @@ const Landing: React.FC = () => {
                   <div className="w-10 h-10 rounded-xl bg-white/[0.02] border border-white/5 flex items-center justify-center mb-4 text-[#38BDF8]">
                     {metric.icon}
                   </div>
-                  <div className="text-3xl md:text-4xl font-extrabold text-primary-foreground mb-2 tracking-tight">{metric.value}</div>
+                  <div className="text-3xl md:text-4xl font-extrabold text-white mb-2 tracking-tight">{metric.value}</div>
                   <div className="text-[10px] font-bold text-zinc-550 uppercase tracking-widest font-mono">{metric.label}</div>
                 </div>
               ))}
@@ -2796,12 +2796,12 @@ const Landing: React.FC = () => {
 
                     <div className="flex items-center justify-between border-t border-white/5 pt-6">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-[#833AB4] flex items-center justify-center text-xs font-bold text-primary-foreground shadow-lg">
+                        <div className="w-10 h-10 rounded-full bg-[#833AB4] flex items-center justify-center text-xs font-bold text-white shadow-lg">
                           {t.avatar}
                         </div>
                         <div className="flex flex-col">
-                          <span className="text-sm font-bold text-primary-foreground leading-tight font-inter">{t.name}</span>
-                          <span className="text-xs text-muted-foreground mt-0.5">{t.role}</span>
+                          <span className="text-sm font-bold text-white leading-tight font-inter">{t.name}</span>
+                          <span className="text-xs text-zinc-500 mt-0.5">{t.role}</span>
                         </div>
                       </div>
                       <div className="bg-[#E1306C]/10 border border-[#E1306C]/20 px-3.5 py-1.5 rounded-full text-xs font-bold text-[#E1306C]">
@@ -2823,10 +2823,10 @@ const Landing: React.FC = () => {
           <div className="max-w-6xl mx-auto px-6">
             <div className="text-center max-w-2xl mx-auto mb-16">
               <span className="text-xs font-bold uppercase tracking-widest text-[#4F39F6] dark:text-[#818CF8]">Enterprise Security</span>
-              <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-primary-foreground mt-3 mb-4 leading-tight">
+              <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-white mt-3 mb-4 leading-tight">
                 Secure Connections, Complete Control
               </h2>
-              <p className="text-sm md:text-base text-muted-foreground font-medium">
+              <p className="text-sm md:text-base text-zinc-400 font-medium">
                 We safeguard your Instagram business account with enterprise-grade data protection.
               </p>
             </div>
@@ -2860,8 +2860,8 @@ const Landing: React.FC = () => {
               ].map((sec, idx) => (
                 <div key={idx} className="bg-white dark:bg-[#121826]/40 border border-zinc-200/80 dark:border-white/5 rounded-3xl p-8 hover:border-[#38BDF8]/20 dark:hover:border-[#38BDF8]/40 transition-all flex flex-col justify-between shadow-sm hover:shadow-md">
                   <div>
-                    <h3 className="text-base font-bold text-foreground dark:text-primary-foreground mb-3 font-inter">{sec.title}</h3>
-                    <p className="text-xs text-zinc-650 dark:text-muted-foreground leading-relaxed font-medium">{sec.desc}</p>
+                    <h3 className="text-base font-bold text-zinc-900 dark:text-white mb-3 font-inter">{sec.title}</h3>
+                    <p className="text-xs text-zinc-650 dark:text-zinc-400 leading-relaxed font-medium">{sec.desc}</p>
                   </div>
                 </div>
               ))}
@@ -2873,14 +2873,14 @@ const Landing: React.FC = () => {
         {/* ==========================================
             SECTION 10 — ROI CALCULATOR
             ========================================== */}
-        <section className="py-28 relative border-t border-zinc-200/80 dark:border-white/5 bg-muted/10 dark:bg-[#121826]/10">
+        <section className="py-28 relative border-t border-zinc-200/80 dark:border-white/5 bg-zinc-100/10 dark:bg-[#121826]/10">
           <div className="max-w-6xl mx-auto px-6">
             <div className="text-center max-w-2xl mx-auto mb-16">
               <span className="text-xs font-bold uppercase tracking-widest text-[#4F39F6] dark:text-[#818CF8]">ROI Calculator</span>
-              <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-4 text-primary-foreground mt-3">
+              <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-4 text-white mt-3">
                 Calculate Your Recovered Revenue
               </h2>
-              <p className="text-sm md:text-base text-muted-foreground font-medium">
+              <p className="text-sm md:text-base text-zinc-400 font-medium">
                 See how much revenue is left unrecovered without automated lead pipelines.
               </p>
             </div>
@@ -2893,14 +2893,14 @@ const Landing: React.FC = () => {
         {/* ==========================================
             SECTION 11 — PRICING (GROWTH DOMINANT)
             ========================================== */}
-        <section id="pricing" className="py-28 border-t border-zinc-200/80 dark:border-white/5 bg-muted/10 dark:bg-[#121826]/10 relative">
+        <section id="pricing" className="py-28 border-t border-zinc-200/80 dark:border-white/5 bg-zinc-100/10 dark:bg-[#121826]/10 relative">
           <div className="max-w-6xl mx-auto px-6">
             <div className="text-center max-w-2xl mx-auto mb-16">
               <span className="text-xs font-bold uppercase tracking-widest text-[#4F39F6] dark:text-[#818CF8]">Pricing Plans</span>
-              <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-primary-foreground mt-3 mb-4 leading-tight">
+              <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-white mt-3 mb-4 leading-tight">
                 Simple, Transparent Pricing
               </h2>
-              <p className="text-sm md:text-base text-muted-foreground font-medium leading-relaxed">
+              <p className="text-sm md:text-base text-zinc-400 font-medium leading-relaxed">
                 Scale your lead capture volume. All plans include our 14-day free trial.
               </p>
             </div>
@@ -2970,25 +2970,25 @@ const Landing: React.FC = () => {
                   <div className={`premium-gradient-border flex-1 flex ${tier.popular ? 'border-[#E1306C] md:-translate-y-4 shadow-xl shadow-[#E1306C]/10' : 'mt-4'}`}>
                     <div className="premium-card-content p-8 flex flex-col justify-between flex-grow relative">
                       {tier.popular && (
-                        <span className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-[#833AB4] via-[#E1306C] to-[#FCAF45] text-primary-foreground text-[9px] font-extrabold px-4 py-1.5 rounded-full uppercase tracking-widest shadow-lg shadow-[#E1306C]/20">
+                        <span className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-[#833AB4] via-[#E1306C] to-[#FCAF45] text-white text-[9px] font-extrabold px-4 py-1.5 rounded-full uppercase tracking-widest shadow-lg shadow-[#E1306C]/20">
                           Most Popular
                         </span>
                       )}
 
                       <div>
                         <div className="mb-6">
-                          <h3 className="text-xl font-bold text-primary-foreground mb-1.5 font-inter">{tier.name}</h3>
-                          <p className="text-xs text-muted-foreground font-medium leading-relaxed">{tier.desc}</p>
+                          <h3 className="text-xl font-bold text-white mb-1.5 font-inter">{tier.name}</h3>
+                          <p className="text-xs text-zinc-400 font-medium leading-relaxed">{tier.desc}</p>
                         </div>
 
                         <div className="flex items-baseline gap-1 mb-4">
-                          <span className="text-4xl font-extrabold text-primary-foreground">{tier.price}</span>
-                          <span className="text-sm font-bold text-muted-foreground">/mo</span>
+                          <span className="text-4xl font-extrabold text-white">{tier.price}</span>
+                          <span className="text-sm font-bold text-zinc-500">/mo</span>
                         </div>
 
                         <div className="mb-8 border-b border-white/5 pb-6">
                           <span className="text-lg font-bold text-[#38BDF8] font-mono">{tier.volume}</span>
-                          <span className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider block mt-1">
+                          <span className="text-[10px] text-zinc-500 uppercase font-bold tracking-wider block mt-1">
                             Automated DMs / Month
                           </span>
                         </div>
@@ -3007,7 +3007,7 @@ const Landing: React.FC = () => {
                         onClick={() => navigate('/signup')}
                         className={`w-full py-4 rounded-xl text-xs font-bold transition-all cursor-pointer ${tier.popular
                             ? 'btn-premium-cta font-bold'
-                            : 'bg-muted dark:bg-white/5 border border-zinc-200 dark:border-white/10 text-muted-foreground dark:text-zinc-300 hover:bg-secondary dark:hover:bg-white/10'
+                            : 'bg-zinc-100 dark:bg-white/5 border border-zinc-200 dark:border-white/10 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200/50 dark:hover:bg-white/10'
                           }`}
                       >
                         {tier.btn}
@@ -3028,7 +3028,7 @@ const Landing: React.FC = () => {
           <div className="max-w-3xl mx-auto px-6">
             <div className="text-center mb-16">
               <span className="text-xs font-bold uppercase tracking-widest text-[#4F39F6] dark:text-[#818CF8]">Have Questions?</span>
-              <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-primary-foreground mt-3 leading-tight">
+              <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-white mt-3 leading-tight">
                 Frequently Asked Questions
               </h2>
             </div>
@@ -3074,10 +3074,10 @@ const Landing: React.FC = () => {
           {/* Ambient backdrop glow using logo colors */}
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-gradient-to-r from-[#EC4899]/10 via-[#818CF8]/10 to-[#4F39F6]/10 blur-[100px] pointer-events-none rounded-full" />
           <div className="max-w-4xl mx-auto px-6 relative z-10 font-inter">
-            <h2 className="text-4xl md:text-6xl font-extrabold text-primary-foreground mb-6 leading-tight tracking-tight cta-heading-glow">
+            <h2 className="text-4xl md:text-6xl font-extrabold text-white mb-6 leading-tight tracking-tight cta-heading-glow">
               Stop Losing Leads Inside Your <span className="text-logo-gradient">Instagram DMs</span>
             </h2>
-            <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto mb-10 font-medium leading-relaxed">
+            <p className="text-base md:text-lg text-zinc-400 max-w-2xl mx-auto mb-10 font-medium leading-relaxed">
               Let Flazly AI respond instantly, qualify prospects, capture customer details, and help your business convert more conversations into revenue.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full max-w-md mx-auto">
@@ -3090,7 +3090,7 @@ const Landing: React.FC = () => {
               </button>
               <button
                 onClick={() => navigate('/signup')}
-                className="w-full sm:w-auto px-10 py-5 rounded-xl text-sm font-bold bg-white dark:bg-[#121826] border border-zinc-200 dark:border-white/10 text-zinc-650 dark:text-zinc-300 hover:bg-muted/50 dark:hover:bg-white/10 hover:border-zinc-300 dark:hover:border-white/20 transition-all flex items-center justify-center gap-2 shadow-sm cursor-pointer"
+                className="w-full sm:w-auto px-10 py-5 rounded-xl text-sm font-bold bg-white dark:bg-[#121826] border border-zinc-200 dark:border-white/10 text-zinc-650 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-white/10 hover:border-zinc-300 dark:hover:border-white/20 transition-all flex items-center justify-center gap-2 shadow-sm cursor-pointer"
               >
                 Book A Demo
               </button>

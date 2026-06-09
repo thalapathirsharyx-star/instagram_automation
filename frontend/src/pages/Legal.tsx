@@ -9,7 +9,7 @@ interface LegalPageProps {
 const PrivacyContent: React.FC = () => (
   <>
     <h1>Privacy Policy</h1>
-    <p className="text-xs text-muted-foreground mb-6">Last Updated: June 1, 2026</p>
+    <p className="text-xs text-zinc-500 mb-6">Last Updated: June 1, 2026</p>
     
     <section>
       <h2>1. Overview & Commitment to Privacy</h2>
@@ -129,7 +129,7 @@ const PrivacyContent: React.FC = () => (
 const TermsContent: React.FC = () => (
   <>
     <h1>Terms of Service</h1>
-    <p className="text-xs text-muted-foreground mb-6">Last Updated: June 1, 2026</p>
+    <p className="text-xs text-zinc-500 mb-6">Last Updated: June 1, 2026</p>
 
     <section>
       <h2>1. Acceptance of Terms</h2>
@@ -207,7 +207,7 @@ const TermsContent: React.FC = () => (
 const DeletionContent: React.FC = () => (
   <>
     <h1>Data Deletion Instructions</h1>
-    <p className="text-xs text-muted-foreground mb-6">Last Updated: June 1, 2026</p>
+    <p className="text-xs text-zinc-500 mb-6">Last Updated: June 1, 2026</p>
 
     <section>
       <h2>How to Manage and Delete Your Data</h2>
