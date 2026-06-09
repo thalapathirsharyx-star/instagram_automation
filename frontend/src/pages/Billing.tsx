@@ -253,8 +253,8 @@ const Billing: React.FC = () => {
                   <p className="text-[11px] font-bold text-zinc-500 uppercase tracking-widest">API Usage</p>
                   <p className="text-sm font-bold text-foreground">{planRecordsUsed} / {planMaxRecords}</p>
                 </div>
-                <div className="w-full bg-secondary rounded-full h-2.5 mb-8 overflow-hidden">
-                  <div className={`h-full rounded-full transition-all duration-1000 ${planProgress > 90 ? 'bg-rose-500' : planProgress > 75 ? 'bg-warning' : 'bg-brand'}`} style={{ width: `${planProgress}%` }}></div>
+                <div className="w-full bg-zinc-100 border border-zinc-200/50 rounded-full h-2.5 mb-8 overflow-hidden shadow-inner">
+                  <div className={`h-full rounded-full transition-all duration-1000 ${planProgress > 90 ? 'bg-rose-500' : planProgress > 75 ? 'bg-warning' : 'bg-brand'}`} style={{ width: `${planProgress > 0 ? planProgress : 0}%` }}></div>
                 </div>
                 
                 <div className="flex justify-start">
