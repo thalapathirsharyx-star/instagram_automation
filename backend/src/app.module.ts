@@ -57,8 +57,11 @@ import { TokenMonitorService } from '@Service/TokenMonitor.service';
 import { OCRService } from '@Service/OCR.service';
 import { ProductCatalogController } from '@Controller/ProductCatalog.controller';
 import { ProductCatalogService } from '@Service/ProductCatalog.service';
+import { SequenceService } from '@Service/Sequence.service';
+import { SequenceController } from '@Controller/Sequence.controller';
 import { ScheduleModule } from '@nestjs/schedule';
 import { SubscriptionCronService } from '@Service/Admin/SubscriptionCron.service';
+import { SequenceProcessorService } from '@Service/SequenceProcessor.service';
 @Module({
   imports: [
     /*
@@ -125,6 +128,7 @@ import { SubscriptionCronService } from '@Service/Admin/SubscriptionCron.service
     TeamController,
     BroadcastController,
     ProductCatalogController,
+    SequenceController,
   ],
   providers: [
     AuthService,
@@ -162,7 +166,9 @@ import { SubscriptionCronService } from '@Service/Admin/SubscriptionCron.service
     TokenMonitorService,
     OCRService,
     ProductCatalogService,
+    SequenceService,
     SubscriptionCronService,
+    SequenceProcessorService,
     {
       provide: "REDIS_CLIENT",
       useFactory: () => {

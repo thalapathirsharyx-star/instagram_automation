@@ -617,16 +617,7 @@ const ProductCatalog: React.FC = () => {
                 )}
               </div>
 
-              <div className="flex flex-col gap-2">
-                <label className="text-xs font-bold text-zinc-700 uppercase tracking-wider">Product Image URL</label>
-                <input
-                  type="text"
-                  placeholder="e.g. https://example.com/images/jacket.jpg"
-                  value={images}
-                  onChange={(e) => setImages(e.target.value)}
-                  className="bg-white border border-zinc-200 rounded-xl px-4 py-3 text-sm text-zinc-900 focus:outline-none focus:border-brand/50 transition-all font-medium"
-                />
-              </div>
+
 
               <div className="pt-4 border-t border-zinc-200 flex justify-end gap-4">
                 <button

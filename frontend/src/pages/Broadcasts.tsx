@@ -24,6 +24,12 @@ import {
   Eye,
   Filter,
   Info,
+  GitMerge,
+  MessageSquare,
+  Timer,
+  Play,
+  Settings2,
+  Workflow,
 } from 'lucide-react';
 
 interface BroadcastItem {
@@ -63,6 +69,7 @@ const Broadcasts: React.FC = () => {
   const [isCountLoading, setIsCountLoading] = useState(false);
   const [showUpgradePrompt, setShowUpgradePrompt] = useState(false);
   const [showTipsModal, setShowTipsModal] = useState(false);
+  const [activeTab, setActiveTab] = useState('one-time');
 
   // Custom modal states
   const [confirmConfig, setConfirmConfig] = useState<{
@@ -275,15 +282,44 @@ const Broadcasts: React.FC = () => {
             </div>
           </div>
 
-          <button
-            onClick={() => setShowCreate(!showCreate)}
-            className="btn-primary h-[60px] px-6 shadow-glow-purple whitespace-nowrap"
-          >
-            <Plus size={18} />
-            <span>{showCreate ? 'Cancel' : 'New Broadcast'}</span>
-          </button>
+          {activeTab === 'one-time' && (
+            <button
+              onClick={() => setShowCreate(!showCreate)}
+              className="btn-primary h-[60px] px-6 shadow-glow-purple whitespace-nowrap"
+            >
+              <Plus size={18} />
+              <span>{showCreate ? 'Cancel' : 'New Broadcast'}</span>
+            </button>
+          )}
         </div>
       </div>
+
+      {/* Tabs */}
+      <div className="flex items-center gap-2 border-b border-zinc-200 pb-px mb-2">
+        <button
+          onClick={() => setActiveTab('one-time')}
+          className={`px-6 py-3 font-bold text-sm border-b-2 transition-colors flex items-center gap-2 ${
+            activeTab === 'one-time'
+              ? 'border-brand text-brand'
+              : 'border-transparent text-zinc-500 hover:text-zinc-700 hover:border-zinc-300'
+          }`}
+        >
+          <Send size={16} /> One-Time Broadcasts
+        </button>
+        <button
+          onClick={() => setActiveTab('drip')}
+          className={`px-6 py-3 font-bold text-sm border-b-2 transition-colors flex items-center gap-2 ${
+            activeTab === 'drip'
+              ? 'border-brand text-brand'
+              : 'border-transparent text-zinc-500 hover:text-zinc-700 hover:border-zinc-300'
+          }`}
+        >
+          <Workflow size={16} /> Drip Sequences <span className="px-2 py-0.5 rounded-full bg-brand/10 text-brand text-[10px] uppercase tracking-wider ml-1">Pro</span>
+        </button>
+      </div>
+
+      {activeTab === 'one-time' && (
+        <div className="flex flex-col gap-8">
 
       {/* Create Form */}
       {showCreate && (
@@ -518,8 +554,141 @@ const Broadcasts: React.FC = () => {
         )}
         </div>
       )}
+      </div>
+      )}
 
-      
+      {activeTab === 'drip' && (
+        <div className="flex flex-col xl:flex-row gap-8 animate-in fade-in duration-500">
+          {/* Sequence List / Sidebar */}
+          <div className="w-full xl:w-1/3 flex flex-col gap-4">
+            <div className="card-standard border border-zinc-200 p-0 overflow-hidden shadow-sm">
+              <div className="p-4 border-b border-zinc-200 bg-zinc-50/80 flex justify-between items-center">
+                <h3 className="font-bold text-zinc-900">Your Sequences</h3>
+                <button className="text-brand hover:bg-brand/10 p-1.5 rounded-lg transition-colors">
+                  <Plus size={18} />
+                </button>
+              </div>
+              <div className="p-4 flex flex-col gap-3">
+                <div className="p-5 rounded-2xl border-2 border-brand bg-brand/5 cursor-pointer transition-all shadow-sm">
+                  <div className="flex justify-between items-start mb-3">
+                    <h4 className="font-bold text-brand text-sm">Abandoned Cart Recovery</h4>
+                    <span className="flex items-center gap-1 text-[10px] font-bold text-emerald-500 uppercase tracking-widest bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">Active</span>
+                  </div>
+                  <p className="text-xs text-zinc-500 font-medium mb-4">4 steps • 1,240 Enrolled</p>
+                  <div className="flex items-center gap-4 text-xs font-bold text-zinc-700 pt-3 border-t border-brand/10">
+                    <span className="flex items-center gap-1.5"><MessageSquare size={14} className="text-brand/60" /> 840 Sent</span>
+                    <span className="flex items-center gap-1.5"><Zap size={14} className="text-warning" /> 12% Conv.</span>
+                  </div>
+                </div>
+
+                <div className="p-5 rounded-2xl border border-zinc-200 hover:border-zinc-300 bg-white cursor-pointer transition-all shadow-sm">
+                  <div className="flex justify-between items-start mb-3">
+                    <h4 className="font-bold text-zinc-900 text-sm">Welcome Series (New Leads)</h4>
+                    <span className="flex items-center gap-1 text-[10px] font-bold text-zinc-500 uppercase tracking-widest bg-zinc-100 px-2 py-0.5 rounded border border-zinc-200">Draft</span>
+                  </div>
+                  <p className="text-xs text-zinc-500 font-medium">3 steps • 0 Enrolled</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Visual Sequence Builder */}
+          <div className="w-full xl:w-2/3">
+            <div className="card-standard border border-zinc-200 bg-[#f8f9fa] p-8 min-h-[600px] relative shadow-inner overflow-hidden">
+              {/* Background grid pattern */}
+              <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(#18181b 1px, transparent 1px)', backgroundSize: '24px 24px' }}></div>
+              
+              <div className="absolute top-6 right-6 flex gap-3 z-20">
+                <button className="btn-base bg-white border border-zinc-200 text-zinc-700 hover:bg-zinc-50 shadow-sm px-4"><Settings2 size={16} /> Settings</button>
+                <button className="btn-primary shadow-glow-purple px-5"><Play size={16} /> Start Sequence</button>
+              </div>
+
+              <div className="max-w-md mx-auto pt-14 flex flex-col items-center relative z-10">
+                
+                {/* Trigger Block */}
+                <div className="w-full bg-white border border-zinc-200 rounded-2xl p-5 shadow-sm text-center relative hover:border-brand transition-colors cursor-pointer group hover:shadow-md">
+                  <div className="w-12 h-12 bg-indigo-50 text-indigo-500 rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 group-hover:bg-brand group-hover:text-white transition-all shadow-sm">
+                    <Users size={22} />
+                  </div>
+                  <h4 className="font-bold text-zinc-900 mb-1">Sequence Trigger</h4>
+                  <p className="text-xs text-zinc-500 font-medium">When lead status changes to "Hot"</p>
+                </div>
+
+                {/* Arrow */}
+                <div className="w-px h-10 bg-zinc-300 relative">
+                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-6 h-6 bg-white border border-zinc-200 rounded-full flex items-center justify-center cursor-pointer hover:bg-brand hover:text-white hover:border-brand transition-all text-zinc-400 opacity-0 group-hover:opacity-100">
+                    <Plus size={12} />
+                  </div>
+                </div>
+
+                {/* Message Block */}
+                <div className="w-full bg-white border border-zinc-200 rounded-2xl p-5 shadow-sm relative hover:border-brand transition-colors cursor-pointer group text-left hover:shadow-md">
+                  <div className="flex justify-between items-start mb-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 bg-sky-50 text-sky-500 rounded-xl flex items-center justify-center border border-sky-100">
+                        <MessageSquare size={18} />
+                      </div>
+                      <h4 className="font-bold text-zinc-900">Send Message 1</h4>
+                    </div>
+                  </div>
+                  <div className="bg-zinc-50/80 rounded-xl p-3.5 text-xs text-zinc-700 font-medium border border-zinc-200/60 leading-relaxed">
+                    "Hey {'{{name}}'}! Saw you were checking out our latest summer collection..."
+                  </div>
+                </div>
+
+                {/* Arrow */}
+                <div className="w-px h-10 bg-zinc-300 relative"></div>
+
+                {/* Delay Block */}
+                <div className="bg-white border-2 border-warning/30 rounded-full px-6 py-2.5 shadow-sm relative flex items-center gap-2 cursor-pointer hover:border-warning hover:bg-warning/5 transition-colors">
+                  <Timer size={16} className="text-warning" />
+                  <span className="text-xs font-black text-zinc-700 uppercase tracking-wide">Wait 24 Hours</span>
+                </div>
+
+                {/* Arrow */}
+                <div className="w-px h-10 bg-zinc-300 relative"></div>
+
+                {/* Condition Block */}
+                <div className="w-full bg-white border border-zinc-200 rounded-2xl p-5 shadow-sm relative hover:border-brand transition-colors cursor-pointer group hover:shadow-md">
+                  <div className="flex justify-center mb-3">
+                    <div className="w-10 h-10 bg-rose-50 text-rose-500 rounded-xl flex items-center justify-center border border-rose-100">
+                      <GitMerge size={18} />
+                    </div>
+                  </div>
+                  <h4 className="font-bold text-zinc-900 text-center mb-1">Condition Check</h4>
+                  <p className="text-xs text-zinc-500 font-medium text-center">If no reply from user</p>
+                </div>
+
+                {/* Arrow */}
+                <div className="w-px h-10 bg-zinc-300 relative"></div>
+
+                {/* Message Block 2 */}
+                <div className="w-full bg-white border border-zinc-200 rounded-2xl p-5 shadow-sm relative hover:border-brand transition-colors cursor-pointer group text-left hover:shadow-md">
+                  <div className="flex justify-between items-start mb-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 bg-emerald-50 text-emerald-500 rounded-xl flex items-center justify-center border border-emerald-100">
+                        <MessageSquare size={18} />
+                      </div>
+                      <h4 className="font-bold text-zinc-900">Send Follow-Up</h4>
+                    </div>
+                  </div>
+                  <div className="bg-zinc-50/80 rounded-xl p-3.5 text-xs text-zinc-700 font-medium border border-zinc-200/60 leading-relaxed">
+                    "Just checking in! As a thank you, here is 10% off using code SUMMER10..."
+                  </div>
+                </div>
+                
+                {/* Add Step Button */}
+                <div className="mt-8">
+                  <button className="w-12 h-12 bg-white border-2 border-dashed border-zinc-300 rounded-full flex items-center justify-center text-zinc-400 hover:text-brand hover:border-brand hover:bg-brand/5 transition-all shadow-sm">
+                    <Plus size={20} />
+                  </button>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Tips Modal */}
       {showTipsModal && (
