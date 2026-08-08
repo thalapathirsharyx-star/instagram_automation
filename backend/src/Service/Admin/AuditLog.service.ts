@@ -15,9 +15,9 @@ export class AuditLogService {
   private SameReferenceColumn = AuditLogSameTableReferenceName;
   private LogTableIdentifierName = AuditLogIdentityName;
   private ChangeTableReferenceName = AuditLogChangeTableReferenceName;
-  private DB = new InfluxDB({ url: this._ConfigService.get("InfluxDB.INFLUX_URL"), token: this._ConfigService.get("InfluxDB.INFLUX_TOKEN") });
-  private writeApi = this.DB.getWriteApi(this._ConfigService.get("InfluxDB.INFLUX_ORG"), this._ConfigService.get("InfluxDB.INFLUX_BUCKET"), 's');
-  private queryApi = this.DB.getQueryApi(this._ConfigService.get("InfluxDB.INFLUX_ORG"));
+  private DB = new InfluxDB({ url: this._ConfigService.get("InfluxDB.INFLUX_URL") || "http://localhost:8086", token: this._ConfigService.get("InfluxDB.INFLUX_TOKEN") || "dummy" });
+  private writeApi = this.DB.getWriteApi(this._ConfigService.get("InfluxDB.INFLUX_ORG") || "dummy_org", this._ConfigService.get("InfluxDB.INFLUX_BUCKET") || "dummy_bucket", 's');
+  private queryApi = this.DB.getQueryApi(this._ConfigService.get("InfluxDB.INFLUX_ORG") || "dummy_org");
   constructor(
     private _ConfigService: ConfigService,
     private _EventEmitter: EventEmitter2,
