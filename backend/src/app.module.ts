@@ -75,8 +75,8 @@ import { SubscriptionCronService } from '@Service/Admin/SubscriptionCron.service
       imports: [ConfigModule],
       useFactory: (_ConfigService: ConfigService) => ({
         type: 'postgres',
-        url: process.env.DATABASE_URL,
-        ssl: process.env.DATABASE_URL ? { rejectUnauthorized: false } : false,
+        url: process.env.EXTERNAL_DATABASE_URL || process.env.DATABASE_URL,
+        ssl: (process.env.EXTERNAL_DATABASE_URL || process.env.DATABASE_URL) ? { rejectUnauthorized: false } : false,
         host: _ConfigService.get("Database.Host"),
         port: _ConfigService.get("Database.Port"),
         username: _ConfigService.get("Database.User"),
