@@ -75,6 +75,7 @@ import { SubscriptionCronService } from '@Service/Admin/SubscriptionCron.service
       imports: [ConfigModule],
       useFactory: (_ConfigService: ConfigService) => ({
         type: 'postgres',
+        url: process.env.DATABASE_URL,
         host: _ConfigService.get("Database.Host"),
         port: _ConfigService.get("Database.Port"),
         username: _ConfigService.get("Database.User"),
@@ -166,6 +167,9 @@ import { SubscriptionCronService } from '@Service/Admin/SubscriptionCron.service
     {
       provide: "REDIS_CLIENT",
       useFactory: () => {
+        if (process.env.REDIS_URL) {
+          return new Redis(process.env.REDIS_URL);
+        }
         return new Redis({
           host: process.env.REDIS_HOST,
           port: Number(process.env.REDIS_PORT),
