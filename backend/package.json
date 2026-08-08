@@ -115,5 +115,8 @@
     ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
+  },
+  "overrides": {
+    "tar": "^6.2.1"
   }
 }
