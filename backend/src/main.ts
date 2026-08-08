@@ -23,7 +23,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule, new ExpressAdapter(server), { 
     rawBody: true,
     cors: { 
-      origin: ["http://localhost:5173", "https://localhost:5173", "http://localhost:8000", "https://flazly.in", "https://app.flazly.in"], 
+      origin: ["http://localhost:5173", "https://localhost:5173", "http://localhost:8000", "https://flazly.in", "https://app.flazly.in", "https://flazly.com", "https://app.flazly.com", "https://www.flazly.com"], 
       credentials: true, 
       exposedHeaders: "*" 
     } 
