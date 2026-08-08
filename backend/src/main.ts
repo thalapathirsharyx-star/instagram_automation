@@ -1,4 +1,4 @@
-﻿import { NestFactory } from '@nestjs/core';
+import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import compression from 'compression';
@@ -10,9 +10,17 @@ import { ExceptionHelper } from './Helper/Exception.helper';
 import { CommonSeederService } from './Database/Seeds/CommonSeeder.service';
 import { ConfigService } from '@nestjs/config';
 
+import { ExpressAdapter } from '@nestjs/platform-express';
+const express = require('express');
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, { 
+  const server = express();
+  // Start listening immediately to pass Back4App's 6-second health check timeout!
+  server.listen(parseInt(process.env.PORT) || 8000, '0.0.0.0', () => {
+    console.log(`[HealthCheck] Fast-boot server listening on port ${parseInt(process.env.PORT) || 8000}`);
+  });
+
+  const app = await NestFactory.create(AppModule, new ExpressAdapter(server), { 
     rawBody: true,
     cors: { 
       origin: ["http://localhost:5173", "https://localhost:5173", "http://localhost:8000", "https://flazly.in", "https://app.flazly.in"], 
@@ -42,7 +50,8 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('swagger', app, document, { swaggerOptions: { tagsSorter: 'alpha', enableSearch: true } });
   const _ConfigService = app.get(ConfigService);
-  await app.listen(_ConfigService.get("Port"), '0.0.0.0');
+  await app.init(); // Replaces app.listen because the Express server is already listening
+
   if (_ConfigService.get("Database.Seed") == "true") {
     const _CommonSeederService = app.get(CommonSeederService);
     await _CommonSeederService.Run();
