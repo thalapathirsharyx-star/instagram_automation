@@ -15,7 +15,7 @@ export default () => ({
   },
   JWT: {
     SecertToken: process.env.TOKEN_SECRET,
-    ExpiresIn: process.env.ExpiresIn,
+    ExpiresIn: process.env.ExpiresIn || process.env.EXPIRES_IN || process.env.expiresIn || '1d',
   },
   InfluxDB: {
     INFLUX_URL: process.env.INFLUX_URL,

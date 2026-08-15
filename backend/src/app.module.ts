@@ -103,10 +103,9 @@ import { SubscriptionCronService } from '@Service/Admin/SubscriptionCron.service
       imports: [ConfigModule],
       useFactory: (_ConfigService: ConfigService) => ({
         secret: _ConfigService.get("JWT.SecertToken"),
-        signOptions: { expiresIn: _ConfigService.get("JWT.ExpiresIn") },
+        signOptions: { expiresIn: _ConfigService.get("JWT.ExpiresIn") || '1d' },
       }),
       inject: [ConfigService]
-
     }),
   ],
   controllers: [
