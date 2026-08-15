@@ -101,10 +101,14 @@ import { SubscriptionCronService } from '@Service/Admin/SubscriptionCron.service
     }),
     JwtModule.registerAsync({
       imports: [ConfigModule],
-      useFactory: (_ConfigService: ConfigService) => ({
-        secret: _ConfigService.get("JWT.SecertToken"),
-        signOptions: { expiresIn: _ConfigService.get("JWT.ExpiresIn") || '1d' },
-      }),
+      useFactory: (_ConfigService: ConfigService) => {
+        const rawExpiresIn = _ConfigService.get("JWT.ExpiresIn");
+        const isValid = typeof rawExpiresIn === 'string' && /^\d+[smhdw]$/.test(rawExpiresIn.trim());
+        return {
+          secret: _ConfigService.get("JWT.SecertToken"),
+          signOptions: { expiresIn: isValid ? rawExpiresIn.trim() : '1d' },
+        };
+      },
       inject: [ConfigService]
     }),
   ],
