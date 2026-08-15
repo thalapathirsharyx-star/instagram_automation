@@ -23,7 +23,25 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule, new ExpressAdapter(server), { 
     rawBody: true,
     cors: { 
-      origin: ["http://localhost:5173", "https://localhost:5173", "http://localhost:8000", "https://flazly.in", "https://app.flazly.in", "https://flazly.com", "https://app.flazly.com", "https://www.flazly.com"], 
+      origin: (origin, callback) => {
+        if (!origin) return callback(null, true);
+        const allowedOrigins = [
+          "http://localhost:5173",
+          "https://localhost:5173",
+          "http://localhost:8000",
+          "https://flazly.in",
+          "https://app.flazly.in",
+          "https://flazly.com",
+          "https://app.flazly.com",
+          "https://www.flazly.com"
+        ];
+        const isAllowed = allowedOrigins.includes(origin) || origin.endsWith('.vercel.app');
+        if (isAllowed) {
+          callback(null, true);
+        } else {
+          callback(new Error('Not allowed by CORS'));
+        }
+      },
       credentials: true, 
       exposedHeaders: "*" 
     } 
