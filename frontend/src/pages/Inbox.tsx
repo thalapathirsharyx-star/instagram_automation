@@ -228,7 +228,7 @@ const Inbox: React.FC = () => {
                       ? 'bg-[#F3E8FF] border border-[#E9D5FF] text-zinc-800 rounded-tr-sm'
                       : 'bg-white border border-zinc-100 shadow-sm text-zinc-800 rounded-tl-sm'
                       }`}>
-                      {msg.message_text.startsWith('[IMAGE]') ? (
+                      {msg.message_text?.startsWith('[IMAGE]') ? (
                         <img src={msg.message_text.replace('[IMAGE] ', '')} alt="Shared image" className="rounded-xl max-w-full h-auto" />
                       ) : (
                         <p className="whitespace-pre-wrap">
