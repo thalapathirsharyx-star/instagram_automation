@@ -279,7 +279,7 @@ const Settings: React.FC = () => {
           toast.error('Instagram connection cancelled.');
           setIsConnecting(false);
         }
-      }, { scope: 'instagram_manage_messages,instagram_manage_comments,pages_manage_metadata,pages_read_engagement,pages_show_list,instagram_basic' });
+      }, { config_id: import.meta.env.VITE_FB_CONFIG_ID || '1765463831255418' });
     } catch (error) {
       console.error('FB Logic Error:', error);
       setIsConnecting(false);
