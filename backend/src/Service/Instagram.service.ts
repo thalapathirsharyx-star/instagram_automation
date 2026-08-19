@@ -777,7 +777,7 @@ export class InstagramService {
     lead.last_message_time = new Date();
     await lead.save();
 
-    return { success: true };
+    return outboundMsg;
   }
 
   async getKnowledgeBase(companyId: string) {
