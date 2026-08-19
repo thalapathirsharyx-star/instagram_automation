@@ -69,6 +69,21 @@ function AppContent() {
     }
   }, [theme]);
 
+  // Scroll to hash element if present in the URL, else scroll to top
+  useEffect(() => {
+    if (location.hash) {
+      const id = location.hash.replace('#', '');
+      const element = document.getElementById(id);
+      if (element) {
+        setTimeout(() => {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }, 150);
+      }
+    } else {
+      window.scrollTo(0, 0);
+    }
+  }, [location]);
+
   // Routing for landing page domain (flazly.com)
   if (isLandingDomain) {
     if (location.pathname === '/login') {
