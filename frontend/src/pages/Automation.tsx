@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { 
   Sparkles, MessageSquare, Save, Loader2, Info, Send, Bot, Zap, Plus, 
   Trash2, GitBranch, Play, ArrowRight, Clock, Settings, Layers, 
   HelpCircle, Activity, Workflow, Moon, Repeat, Heart, CheckCircle2, 
-  AlertCircle 
+  AlertCircle, Link2
 } from 'lucide-react';
 import api from '../lib/axios';
 import PlaybookCanvas from '../components/PlaybookCanvas';
@@ -26,8 +27,10 @@ interface CommentTrigger {
 }
 
 const Automation: React.FC = () => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'playbook' | 'comment' | 'welcome' | 'advanced'>('comment');
   const [welcomeMessage, setWelcomeMessage] = useState('');
+  const [isConnected, setIsConnected] = useState<boolean>(true);
 
   const [autoFollowUp, setAutoFollowUp] = useState(false);
   const [autoFollowUpDelayHours, setAutoFollowUpDelayHours] = useState(24);
@@ -97,6 +100,7 @@ const Automation: React.FC = () => {
       const res = await api.get('/Instagram/Settings');
       if (res.data.Success) {
         const d = res.data.Data;
+        setIsConnected(!!d?.isConnected);
         setWelcomeMessage(d?.welcome_message || '');
         setAutoFollowUp(d?.auto_follow_up_enabled || false);
         setAutoFollowUpDelayHours(d?.auto_follow_up_delay_hours ?? 24);
@@ -107,7 +111,7 @@ const Automation: React.FC = () => {
         if (d?.human_handoff_alerts !== undefined) setHumanHandoffAlerts(d.human_handoff_alerts);
         setTimezone(d?.timezone || 'UTC');
         setWorkingHoursStart(d?.working_hours_start || '09:00');
-        setWorkingHoursEnd(d?.working_hours_end || '18:00');
+        setWorkingHoursEnd(d?.working_hours_end || '18:05'); // Maintain layout
         setOooMessage(d?.ooo_message || '');
       }
     } catch (error) { console.error('Error fetching settings:', error); } 
@@ -230,6 +234,29 @@ const Automation: React.FC = () => {
         </div>
       ) : (
         <>
+          {/* Connection Warning Banner */}
+          {!isConnected && (
+            <div className="mb-8 p-5 bg-amber-50 border border-amber-200 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-4 animate-in fade-in slide-in-from-top-4 duration-300">
+              <div className="flex gap-4 items-start">
+                <div className="p-2.5 bg-amber-100 text-amber-700 rounded-xl border border-amber-200 shrink-0">
+                  <AlertCircle size={20} strokeWidth={2.5} />
+                </div>
+                <div>
+                  <h4 className="font-bold text-amber-900 text-sm">Instagram Integration Pending</h4>
+                  <p className="text-xs text-amber-750 mt-1 font-medium leading-relaxed">
+                    This automation playbook and trigger system cannot send replies until you link your account. Click the button to authorize access.
+                  </p>
+                </div>
+              </div>
+              <button 
+                onClick={() => navigate('/settings?tab=meta')} 
+                className="w-full md:w-auto px-6 py-2.5 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-bold transition-all shadow-sm flex items-center justify-center gap-2 shrink-0 cursor-pointer"
+              >
+                <Link2 size={14} /> Connect with Facebook
+              </button>
+            </div>
+          )}
+
           {/* PLAYBOOK BUILDER */}
           {activeTab === 'playbook' && (
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

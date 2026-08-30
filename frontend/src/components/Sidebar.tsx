@@ -84,6 +84,10 @@ const Sidebar: React.FC = () => {
               <MessageSquare size={20} />
               <span>Inbox</span>
             </NavLink>
+            <NavLink to="/settings" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+              <Settings size={20} />
+              <span>Settings</span>
+            </NavLink>
 
             {/* Automation Group */}
             {!isCollapsed && <div className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest px-4 mt-4 mb-1">Automation</div>}
@@ -119,10 +123,6 @@ const Sidebar: React.FC = () => {
                 <NavLink to="/billing" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
                   <CreditCard size={20} />
                   <span>Billing</span>
-                </NavLink>                
-                <NavLink to="/settings" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-                  <Settings size={20} />
-                  <span>Settings</span>
                 </NavLink>
               </>
             )}

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { getBalance, getLeads } from '../api/crm.api';
+import { useNavigate } from 'react-router-dom';
+import { getBalance, getLeads, getInstagramSettings } from '../api/crm.api';
 import { 
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, 
   AreaChart, Area, PieChart, Pie, Cell 
@@ -17,7 +18,9 @@ import {
   Activity,
   ArrowRight,
   CheckCircle2,
-  Sparkles
+  Sparkles,
+  AlertCircle,
+  Link2
 } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
 
@@ -61,6 +64,7 @@ const DashboardCard: React.FC<{ title: string; value: string | number; icon: any
 };
 
 const Dashboard: React.FC = () => {
+  const navigate = useNavigate();
   const { toast } = useToast();
   const [balance, setBalance] = useState<number>(0);
   const [leadCount, setLeadCount] = useState<number>(0);
@@ -69,6 +73,7 @@ const Dashboard: React.FC = () => {
   const [interactionData, setInteractionData] = useState<any[]>([]);
   const [funnelData, setFunnelData] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isConnected, setIsConnected] = useState<boolean>(true);
   const [playbookFunnel, setPlaybookFunnel] = useState({
     started: 0, replied: 0, captured: 0, converted: 0
   });
@@ -80,10 +85,21 @@ const Dashboard: React.FC = () => {
   const fetchStats = async () => {
     try {
       setIsLoading(true);
-      const [balanceRes, leadsRes] = await Promise.all([
+      const [balanceRes, leadsRes, igSettingsRes] = await Promise.all([
         getBalance(),
-        getLeads()
+        getLeads(),
+        getInstagramSettings().catch(err => {
+          console.error('Failed to fetch IG settings in dashboard:', err);
+          return { Success: false, Data: { isConnected: false } };
+        })
       ]);
+      
+      if (igSettingsRes && igSettingsRes.Success) {
+        setIsConnected(!!igSettingsRes.Data?.isConnected);
+      } else {
+        setIsConnected(false);
+      }
+
       const leads = leadsRes?.Data || [];
       setBalance(balanceRes?.Data ?? 0);
       setLeadCount(leads.length);
@@ -168,6 +184,29 @@ const Dashboard: React.FC = () => {
           <span>Export Analytics</span>
         </button>
       </div>
+
+      {/* Connection Warning Banner */}
+      {!isConnected && (
+        <div className="mb-8 p-5 bg-amber-50 border border-amber-200 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-4 animate-in fade-in slide-in-from-top-4 duration-300">
+          <div className="flex gap-4 items-start">
+            <div className="p-2.5 bg-amber-100 text-amber-700 rounded-xl border border-amber-200 shrink-0">
+              <AlertCircle size={20} strokeWidth={2.5} />
+            </div>
+            <div>
+              <h4 className="font-bold text-amber-900 text-sm">Instagram Connection Required</h4>
+              <p className="text-xs text-amber-750 mt-1 font-medium leading-relaxed">
+                To activate AI auto-replies, lead capturing, and comment automations, you must link your Facebook Page.
+              </p>
+            </div>
+          </div>
+          <button 
+            onClick={() => navigate('/settings?tab=meta')} 
+            className="w-full md:w-auto px-6 py-2.5 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-bold transition-all shadow-sm flex items-center justify-center gap-2 shrink-0 cursor-pointer"
+          >
+            <Link2 size={14} /> Connect with Facebook
+          </button>
+        </div>
+      )}
 
       {/* KPI Row */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">

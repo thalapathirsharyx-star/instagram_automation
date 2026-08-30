@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
 import { ConfirmModal } from '../components/ConfirmModal';
+import { useLocation } from 'react-router-dom';
 
 const SettingsCard: React.FC<{ icon: any, title: string, subtitle: string, children: React.ReactNode }> = ({ icon: Icon, title, subtitle, children }) => (
   <div className="bg-white border border-zinc-200/80 rounded-2xl shadow-sm flex flex-col gap-6 group hover:border-zinc-300 transition-all duration-300 p-6 md:p-8">
@@ -293,6 +294,15 @@ const Settings: React.FC = () => {
 
   type TabType = 'profile' | 'meta' | 'webhooks';
   const [activeTab, setActiveTab] = useState<TabType>('profile');
+  const location = useLocation();
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const tabParam = params.get('tab');
+    if (tabParam && ['profile', 'meta', 'webhooks'].includes(tabParam)) {
+      setActiveTab(tabParam as TabType);
+    }
+  }, [location]);
 
   const tabs = [
     { id: 'profile', label: 'My Profile', icon: User },
