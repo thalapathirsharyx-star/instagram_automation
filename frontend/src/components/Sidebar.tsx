@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
-import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, Users, MessageSquare, Settings, Book, Zap, Sparkles, ChevronLeft, ChevronRight, CreditCard, Radio, Activity, DollarSign, Key, Lock, IndianRupee, ClipboardList, ShoppingBag } from 'lucide-react';
+import { NavLink, useLocation } from 'react-router-dom';
+import { LayoutDashboard, Users, MessageSquare, Settings, Book, Zap, Sparkles, ChevronLeft, ChevronRight, CreditCard, Radio, Activity, DollarSign, Key, Lock, IndianRupee, ClipboardList, ShoppingBag, Shield } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 const Sidebar: React.FC = () => {
   const { user } = useAuth();
+  const location = useLocation();
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   const hasProPlan = ['Pro', 'Business', 'Advanced'].includes(user?.company?.plan);
+  const isMetaActive = location.pathname === '/settings' && location.search.includes('tab=meta');
+  const isSettingsActive = location.pathname === '/settings' && !location.search.includes('tab=meta');
 
   return (
     <aside className={`sidebar ${isCollapsed ? 'collapsed' : ''}`}>
@@ -83,6 +86,10 @@ const Sidebar: React.FC = () => {
             <NavLink to="/inbox" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
               <MessageSquare size={20} />
               <span>Inbox</span>
+            </NavLink>
+            <NavLink to="/meta-integration" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+              <Shield size={20} />
+              <span>Meta Integration</span>
             </NavLink>
             <NavLink to="/settings" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
               <Settings size={20} />

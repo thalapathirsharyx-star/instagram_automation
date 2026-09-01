@@ -23,7 +23,7 @@ import {
 } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
 import { ConfirmModal } from '../components/ConfirmModal';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const SettingsCard: React.FC<{ icon: any, title: string, subtitle: string, children: React.ReactNode }> = ({ icon: Icon, title, subtitle, children }) => (
   <div className="bg-white border border-zinc-200/80 rounded-2xl shadow-sm flex flex-col gap-6 group hover:border-zinc-300 transition-all duration-300 p-6 md:p-8">
@@ -292,22 +292,26 @@ const Settings: React.FC = () => {
     }
   };
 
-  type TabType = 'profile' | 'meta' | 'webhooks';
+  type TabType = 'profile' | 'webhooks';
   const [activeTab, setActiveTab] = useState<TabType>('profile');
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const tabParam = params.get('tab');
-    if (tabParam && ['profile', 'meta', 'webhooks'].includes(tabParam)) {
+    if (tabParam === 'meta') {
+      navigate('/meta-integration', { replace: true });
+      return;
+    }
+    if (tabParam && ['profile', 'webhooks'].includes(tabParam)) {
       setActiveTab(tabParam as TabType);
     }
-  }, [location]);
+  }, [location, navigate]);
 
   const tabs = [
     { id: 'profile', label: 'My Profile', icon: User },
     ...(user?.roleCode !== 'SUPER_ADMIN' ? [
-      { id: 'meta', label: 'Meta Integration', icon: Shield },
       { id: 'webhooks', label: 'Developer API', icon: Database }
     ] : [])
   ];
@@ -628,80 +632,6 @@ const Settings: React.FC = () => {
                   </button>
                 </div>
               </div>
-            </div>
-          )}
-
-          {activeTab === 'meta' && user?.roleCode !== 'SUPER_ADMIN' && (
-            <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
-              <SettingsCard 
-                icon={Shield} 
-                title="Meta Integration" 
-                subtitle="Connect and manage your Facebook Page and Instagram Professional account."
-              >
-                {isLoadingStatus ? (
-                  <div className="flex items-center gap-3 p-4 bg-zinc-50 rounded-xl border border-zinc-200 text-zinc-500 font-bold text-xs uppercase tracking-widest">
-                    <div className="animate-spin w-4 h-4 border-2 border-violet-500 border-t-transparent rounded-full" />
-                    Validating Connection State...
-                  </div>
-                ) : isConnected ? (
-                  <div className="space-y-6">
-                    <div className="flex items-center gap-2 text-emerald-700 font-bold text-[11px] uppercase tracking-widest bg-emerald-50 px-3 py-1.5 rounded-lg w-fit border border-emerald-200">
-                      <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                      Live Connection established
-                    </div>
-                    
-                    <div className="p-5 bg-zinc-50 rounded-xl border border-zinc-200 shadow-sm flex items-center gap-4">
-                      <div className="w-12 h-12 bg-white rounded-lg border border-zinc-200 shadow-sm flex items-center justify-center text-zinc-400">
-                        <Smartphone size={24} />
-                      </div>
-                      <div>
-                        <div className="text-sm font-bold text-zinc-900">{connectionDetails?.name}</div>
-                        <div className="text-[10px] text-zinc-500 font-mono mt-1 uppercase tracking-widest">Meta Business ID: {connectionDetails?.id}</div>
-                      </div>
-                    </div>
-
-                    <div className="pt-2">
-                      <button 
-                        onClick={async () => {
-                          try {
-                            await disconnectInstagram();
-                            setIsConnected(false);
-                            setConnectionDetails(null);
-                            toast.success('Account disconnected successfully.');
-                          } catch (e) {
-                            toast.error('Failed to disconnect account.');
-                          }
-                        }}
-                        className="px-5 py-2.5 bg-white text-rose-600 hover:bg-rose-50 border border-zinc-200 hover:border-rose-200 rounded-lg font-semibold transition-colors text-sm shadow-sm flex items-center gap-2"
-                      >
-                        <X size={16} /> Revoke Meta Access
-                      </button>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="space-y-6">
-                    <p className="text-sm text-zinc-600 font-medium leading-relaxed">
-                      Link your Instagram Professional account to grant Flazly access to read and respond to direct messages and comments.
-                    </p>
-                    <div className="flex flex-col sm:flex-row gap-3">
-                      <button 
-                        onClick={handleConnect}
-                        disabled={isConnecting}
-                        className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition-colors shadow-sm disabled:opacity-70"
-                      >
-                        {isConnecting ? <RefreshCw className="animate-spin" size={18} /> : <Link2 size={18} />}
-                        <span>{isConnecting ? 'Authenticating...' : 'Connect with Facebook'}</span>
-                      </button>
-                      <button 
-                        onClick={() => setShowGuide(true)}
-                        className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-3 bg-white text-zinc-700 border border-zinc-200 rounded-xl font-bold hover:bg-zinc-50 transition-colors shadow-sm"
-                      >
-                        <Info size={16} className="text-zinc-400"/> Setup Guide
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </SettingsCard>
             </div>
           )}
 

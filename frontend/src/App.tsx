@@ -5,6 +5,7 @@ import Dashboard from './pages/Dashboard';
 import Inbox from './pages/Inbox';
 import Leads from './pages/Leads';
 import Settings from './pages/Settings';
+import MetaIntegration from './pages/MetaIntegration';
 import KnowledgeBase from './pages/KnowledgeBase';
 // import ProductCatalog from './pages/ProductCatalog';
 import UploadDocument from './pages/UploadDocument';
@@ -255,6 +256,7 @@ function AppContent() {
             <Route path="/admin/activity" element={<ProtectedRoute><AdminActivity /></ProtectedRoute>} />
             <Route path="/admin/llm-keys" element={<ProtectedRoute><LLMKeys /></ProtectedRoute>} />
             
+            <Route path="/meta-integration" element={<ProtectedRoute><MetaIntegration /></ProtectedRoute>} />
             <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
             <Route path="/team" element={<ProtectedRoute><Team /></ProtectedRoute>} />
             <Route path="/team/add" element={<ProtectedRoute><AddTeamMember /></ProtectedRoute>} />
