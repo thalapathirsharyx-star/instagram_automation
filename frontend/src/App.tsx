@@ -114,18 +114,15 @@ function AppContent() {
     }
   }
 
-  // Routing for main app domain (app.flazly.com)
+  // Routing for legal pages on any domain - render directly without redirecting
   if (location.pathname === '/privacy') {
-    window.location.href = 'https://flazly.com/privacy';
-    return null;
+    return <PrivacyPolicy />;
   }
   if (location.pathname === '/terms') {
-    window.location.href = 'https://flazly.com/terms';
-    return null;
+    return <TermsOfService />;
   }
   if (location.pathname === '/data-deletion') {
-    window.location.href = 'https://flazly.com/data-deletion';
-    return null;
+    return <DataDeletion />;
   }
   if (location.pathname === '/landing') {
     return <Landing />;
