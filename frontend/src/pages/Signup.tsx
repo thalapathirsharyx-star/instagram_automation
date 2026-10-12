@@ -154,10 +154,10 @@ const Signup: React.FC = () => {
       <div className="w-full max-w-6xl mx-auto flex flex-col lg:flex-row items-center justify-center gap-12 lg:gap-32 relative z-10 p-4 lg:p-6 min-h-screen">
         <div className="hidden lg:flex flex-col justify-center text-left w-full max-w-md shrink-0">
           {/* Logo */}
-          <div className="mb-6 lg:mb-8 flex items-center gap-2.5">
-            <img src="/Light Theme.png" alt="Flazly Logo" className="w-10 h-10 lg:w-12 lg:h-12 object-contain" />
-            <span className="text-2xl lg:text-3xl font-extrabold text-zinc-900 tracking-tight">Flazly</span>
-          </div>
+          <Link to="/" className="mb-6 lg:mb-8 flex items-center gap-2.5 group cursor-pointer w-fit">
+            <img src="/Light Theme.png" alt="Flazly Logo" className="w-10 h-10 lg:w-12 lg:h-12 object-contain transition-transform duration-300 group-hover:scale-105" />
+            <span className="text-2xl lg:text-3xl font-extrabold text-zinc-900 tracking-tight group-hover:text-purple-600 transition-colors">Flazly</span>
+          </Link>
 
           <h2 className="text-3xl lg:text-4xl font-extrabold text-zinc-900 mb-4 leading-[1.1] tracking-tight">
             Turn conversations into <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-indigo-600">revenue</span>.
@@ -230,9 +230,9 @@ const Signup: React.FC = () => {
       <div className="w-full max-w-md flex flex-col items-center justify-center z-20 shrink-0 py-4 lg:py-8">
         <div className="w-full bg-white rounded-3xl p-6 lg:p-8 shadow-2xl shadow-zinc-200/50 border border-zinc-200 relative my-auto">
           <div className="mb-6 lg:mb-8 text-center">
-            <div className="bg-transparent flex items-center justify-center mx-auto mb-2">
-              <img src="/Light Theme.png" alt="Flazly Logo" className="w-10 h-10 lg:w-12 lg:h-12 object-contain transition-transform duration-500 hover:scale-105" />
-            </div>
+            <Link to="/" className="bg-transparent flex items-center justify-center mx-auto mb-2 group w-fit cursor-pointer">
+              <img src="/Light Theme.png" alt="Flazly Logo" className="w-10 h-10 lg:w-12 lg:h-12 object-contain transition-transform duration-300 group-hover:scale-110" />
+            </Link>
             <h1 className="text-2xl lg:text-3xl font-extrabold tracking-tight text-zinc-900 mb-1">Create Account</h1>
             <p className="text-sm lg:text-base text-zinc-500 font-semibold">Join us today and start growing</p>
           </div>

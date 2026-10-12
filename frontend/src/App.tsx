@@ -85,31 +85,32 @@ function AppContent() {
     }
   }, [location]);
 
-  // Routing for landing page domain (flazly.com)
-  if (isLandingDomain) {
-    if (location.pathname === '/login') {
+  // Routing for landing page domain (flazly.com) OR unauthenticated root / /landing
+  if (isLandingDomain || location.pathname === '/landing' || (location.pathname === '/' && !isAuthenticated)) {
+    if (isLandingDomain && location.pathname === '/login') {
       window.location.href = 'https://app.flazly.com/login';
       return null;
     }
-    if (location.pathname === '/signup') {
+    if (isLandingDomain && location.pathname === '/signup') {
       window.location.href = 'https://app.flazly.com/signup';
       return null;
     }
 
-    const landingPublicRoutes = ['/', '/privacy', '/terms', '/data-deletion'];
+    const landingPublicRoutes = ['/', '/landing', '/privacy', '/terms', '/data-deletion'];
     const isLandingRoute = landingPublicRoutes.includes(location.pathname);
 
     if (isLandingRoute) {
       return (
         <Routes>
           <Route path="/" element={<Landing />} />
+          <Route path="/landing" element={<Landing />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
           <Route path="/terms" element={<TermsOfService />} />
           <Route path="/data-deletion" element={<DataDeletion />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       );
-    } else {
+    } else if (isLandingDomain) {
       return <Navigate to="/" replace />;
     }
   }
