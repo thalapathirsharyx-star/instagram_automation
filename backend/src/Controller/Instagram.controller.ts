@@ -198,8 +198,51 @@ export class InstagramController extends AuthBaseController {
 
   @UseGuards(JwtAuthGuard)
   @Post('Connect')
-  async Connect(@Body('token') token: string, @Req() req: any) {
-    const result = await this._InstagramService.linkInstagramAccount(req.user?.company_id, token);
+  async Connect(@Body() body: { token: string; pageId?: string }, @Req() req: any) {
+    if (!body?.token) {
+      throw new HttpException('A Facebook access token is required', HttpStatus.BAD_REQUEST);
+    }
+    try {
+      const result = await this._InstagramService.linkInstagramAccount(
+        req.user?.company_id,
+        body.token,
+        body.pageId
+      );
+      return this.SendResponseData(result);
+    } catch (err: any) {
+      // When the user administers several eligible Pages we cannot guess which one they
+      // mean; hand the list back so the UI can ask.
+      if (err?.choices) {
+        return {
+          Success: false,
+          Message: err.message,
+          Data: { requires_page_selection: true, choices: err.choices }
+        };
+      }
+      throw err;
+    }
+  }
+
+  /**
+   * A human agent takes over a conversation. While held, the automation engine stops
+   * replying and outbound messages are attributed to this agent.
+   */
+  @UseGuards(JwtAuthGuard)
+  @Post('Leads/:leadId/Handoff')
+  async ClaimConversation(@Param('leadId') leadId: string, @Req() req: any) {
+    const result = await this._InstagramService.claimConversation(
+      req.user?.company_id,
+      leadId,
+      req.user?.user_id
+    );
+    return this.SendResponseData(result);
+  }
+
+  /** Returns a conversation to the automation engine. */
+  @UseGuards(JwtAuthGuard)
+  @Post('Leads/:leadId/Release')
+  async ReleaseConversation(@Param('leadId') leadId: string, @Req() req: any) {
+    const result = await this._InstagramService.releaseConversation(req.user?.company_id, leadId);
     return this.SendResponseData(result);
   }
 

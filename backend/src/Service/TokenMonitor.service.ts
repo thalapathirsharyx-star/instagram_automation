@@ -4,7 +4,7 @@ import { IsNull, Not, LessThan } from 'typeorm';
 import { instagram_lead } from '@Database/Table/CRM/instagram_lead';
 import { instagram_message } from '@Database/Table/CRM/instagram_message';
 import axios from 'axios';
-import { GRAPH_VERSION } from './Instagram.service';
+import { GRAPH_VERSION, InstagramService } from './Instagram.service';
 
 /**
  * TokenMonitorService handles two critical background tasks:
@@ -15,6 +15,8 @@ import { GRAPH_VERSION } from './Instagram.service';
  */
 @Injectable()
 export class TokenMonitorService implements OnModuleInit {
+
+  constructor(private readonly instagramService: InstagramService) { }
 
   private readonly TOKEN_CHECK_INTERVAL = 6 * 60 * 60 * 1000; // Every 6 hours
   private readonly USAGE_RESET_INTERVAL = 60 * 60 * 1000;      // Every 1 hour
@@ -72,7 +74,12 @@ export class TokenMonitorService implements OnModuleInit {
 
           if (!data.is_valid) {
             console.error(`[TOKEN MONITOR] ❌ INVALID TOKEN for company "${company.name}" (${company.id}). Token has been revoked or expired.`);
-            // Future: Send email notification or in-app alert to the user
+            // Flag the workspace so the dashboard tells the user to reconnect, instead of
+            // leaving automation silently broken until someone notices.
+            await this.instagramService.markConnectionRevoked(
+              company.id,
+              'Instagram access was revoked or has expired. Reconnect the account to resume automation.'
+            );
             continue;
           }
 
@@ -83,6 +90,10 @@ export class TokenMonitorService implements OnModuleInit {
 
             if (daysUntilExpiry <= 7) {
               console.warn(`[TOKEN MONITOR] ⚠️ Token for company "${company.name}" expires in ${daysUntilExpiry} days (${expiresAt.toISOString()}). User needs to reconnect.`);
+              await this.instagramService.markConnectionRevoked(
+                company.id,
+                `Instagram access expires in ${daysUntilExpiry} day(s). Reconnect the account to avoid interruption.`
+              );
             } else if (daysUntilExpiry <= 30) {
               console.log(`[TOKEN MONITOR] 🔔 Token for company "${company.name}" expires in ${daysUntilExpiry} days.`);
             } else {

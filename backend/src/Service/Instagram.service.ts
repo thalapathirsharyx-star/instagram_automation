@@ -65,7 +65,7 @@ export class InstagramService {
   /**
    * Automatically connects an Instagram account using a user access token.
    */
-  async linkInstagramAccount(companyId: string, userToken: string) {
+  async linkInstagramAccount(companyId: string, userToken: string, pageId?: string) {
     console.log(`[CONNECT] Linking Instagram for Company: ${companyId}`);
 
     const APP_ID = process.env.FB_APP_ID;
@@ -73,6 +73,27 @@ export class InstagramService {
 
     if (!APP_ID || !APP_SECRET) {
       throw new Error('PLATFORM_CONFIG_MISSING: The server is not configured with a Meta App ID/Secret.');
+    }
+
+    // The client hands us a token it obtained from the Facebook JS SDK. Confirm it was
+    // issued for THIS app before exchanging it, so a token minted for an unrelated
+    // Facebook app can never be used to attach an account to this workspace.
+    try {
+      const debugRes = await axios.get(`https://graph.facebook.com/${GRAPH_VERSION}/debug_token`, {
+        params: { input_token: userToken, access_token: `${APP_ID}|${APP_SECRET}` }
+      });
+      const info = debugRes.data?.data;
+      if (!info?.is_valid) {
+        throw new Error('META_TOKEN_INVALID: The Facebook token is not valid. Please try connecting again.');
+      }
+      if (String(info.app_id) !== String(APP_ID)) {
+        console.error(`[CONNECT] Rejected token issued for app ${info.app_id}, expected ${APP_ID}.`);
+        throw new Error('META_TOKEN_WRONG_APP: That Facebook token was not issued for this application.');
+      }
+    } catch (err: any) {
+      if (String(err.message).startsWith('META_TOKEN_')) throw err;
+      console.error('[CONNECT] Token inspection failed:', err.response?.data?.error?.message || err.message);
+      throw new Error('META_TOKEN_UNVERIFIABLE: Could not verify the Facebook token with Meta. Please try again.');
     }
 
     try {
@@ -112,21 +133,42 @@ export class InstagramService {
         `[CONNECT] Meta returned ${pages?.length || 0} page(s); ` +
         `${pages?.filter((p: any) => p.instagram_business_account).length || 0} with a linked Instagram account.`
       );
-      const targetPage = pages.find((p: any) => p.instagram_business_account);
+      const eligiblePages = (pages || []).filter((p: any) => p.instagram_business_account);
 
-      if (!targetPage) {
+      if (eligiblePages.length === 0) {
         throw new Error('META_NO_INSTAGRAM_LINKED: No Instagram Business Account linked to any of your Facebook Pages.');
+      }
+
+      // Honour an explicit choice when the user administers several eligible pages.
+      // Previously this always took the first page Graph happened to return, which could
+      // silently connect the wrong Instagram account.
+      let targetPage: any;
+      if (pageId) {
+        targetPage = eligiblePages.find((p: any) => String(p.id) === String(pageId));
+        if (!targetPage) {
+          throw new Error('META_PAGE_NOT_ELIGIBLE: The selected Facebook Page is not available or has no linked Instagram account.');
+        }
+      } else if (eligiblePages.length > 1) {
+        const err: any = new Error('META_MULTIPLE_PAGES: Several Facebook Pages with a linked Instagram account were found. Please choose one.');
+        err.choices = eligiblePages.map((p: any) => ({
+          page_id: p.id,
+          page_name: p.name,
+          instagram_business_id: p.instagram_business_account.id
+        }));
+        throw err;
+      } else {
+        targetPage = eligiblePages[0];
       }
 
       const igBusinessId = targetPage.instagram_business_account.id;
       const pageAccessToken = targetPage.access_token;
-      const pageId = targetPage.id;
+      const selectedPageId = targetPage.id;
 
       const company = await CompanyTable.findOne({ where: { id: companyId } });
       if (!company) throw new Error('Company not found');
 
       company.instagram_business_id = igBusinessId;
-      company.instagram_page_id = pageId;
+      company.instagram_page_id = selectedPageId;
       company.instagram_access_token = pageAccessToken;
       company.instagram_username = targetPage.name; // Save the name too!
       if (metaUserId) company.meta_user_id = metaUserId;
@@ -139,7 +181,7 @@ export class InstagramService {
       const warnings: string[] = [];
       try {
         const subRes = await axios.post(
-          `https://graph.facebook.com/${GRAPH_VERSION}/${pageId}/subscribed_apps`,
+          `https://graph.facebook.com/${GRAPH_VERSION}/${selectedPageId}/subscribed_apps`,
           null,
           {
             params: {
@@ -152,7 +194,7 @@ export class InstagramService {
           warnings.push('Meta did not confirm the webhook subscription. Comment and message automation may not receive events.');
           console.error('[WEBHOOK SUBSCRIBE] Unexpected response:', JSON.stringify(subRes.data));
         } else {
-          console.log(`[WEBHOOK SUBSCRIBE] Page ${pageId} subscribed to: ${WEBHOOK_FIELDS.join(',')}`);
+          console.log(`[WEBHOOK SUBSCRIBE] Page ${selectedPageId} subscribed to: ${WEBHOOK_FIELDS.join(',')}`);
         }
       } catch (err: any) {
         const metaErr = err.response?.data?.error;
@@ -170,6 +212,17 @@ export class InstagramService {
       if (missingScopes.length > 0) {
         warnings.push(`Missing Meta permissions: ${missingScopes.join(', ')}.`);
       }
+
+      // Confirm the linked account is really an Instagram professional (Business or
+      // Creator) account. Comment and messaging endpoints are only available to those, and
+      // a personal account otherwise fails later with an opaque Graph error.
+      const eligibility = await this.checkAccountEligibility(igBusinessId, pageAccessToken);
+      if (!eligibility.eligible) {
+        warnings.push(eligibility.reason);
+      }
+
+      // Clear any stale "reconnect required" flag now that fresh credentials are stored.
+      await this.setConnectionHealth(companyId, null);
 
       return {
         Success: true,
@@ -207,6 +260,75 @@ export class InstagramService {
       console.warn('[SCOPE CHECK] Could not inspect granted scopes:', err.response?.data?.error?.message || err.message);
       return [];
     }
+  }
+
+  /**
+   * Verifies the connected Instagram account is a professional (Business or Creator)
+   * account. Only those can use the messaging and comment-moderation endpoints.
+   */
+  private async checkAccountEligibility(
+    igBusinessId: string,
+    token: string
+  ): Promise<{ eligible: boolean; reason?: string; accountType?: string }> {
+    try {
+      const res = await axios.get(`https://graph.facebook.com/${GRAPH_VERSION}/${igBusinessId}`, {
+        params: { fields: 'id,username,account_type', access_token: token }
+      });
+      const accountType = res.data?.account_type;
+
+      // Not every API setup returns account_type. Absence is not evidence of ineligibility,
+      // so only fail on a value we positively know is wrong.
+      if (!accountType) return { eligible: true };
+
+      if (accountType === 'BUSINESS' || accountType === 'MEDIA_CREATOR') {
+        return { eligible: true, accountType };
+      }
+
+      return {
+        eligible: false,
+        accountType,
+        reason:
+          `The linked Instagram account is a "${accountType}" account. ` +
+          'Instagram messaging and comment management require a Business or Creator ' +
+          '(professional) account. Switch the account type in the Instagram app and reconnect.'
+      };
+    } catch (err: any) {
+      console.warn('[ELIGIBILITY] Could not read account_type:', err.response?.data?.error?.message || err.message);
+      return { eligible: true };
+    }
+  }
+
+  /**
+   * Records whether a workspace's Meta connection needs attention, so the dashboard can
+   * tell the user to reconnect instead of silently failing. Kept in Redis to avoid a
+   * schema change; absence simply means "healthy".
+   */
+  private async setConnectionHealth(companyId: string, state: { status: string; detail: string } | null) {
+    const key = `ig_conn_health:${companyId}`;
+    try {
+      if (state === null) {
+        await this.redisClient.del(key);
+      } else {
+        await this.redisClient.set(key, JSON.stringify({ ...state, at: new Date().toISOString() }));
+      }
+    } catch (err: any) {
+      console.warn('[CONN HEALTH] Could not record connection health:', err.message);
+    }
+  }
+
+  private async getConnectionHealth(companyId: string): Promise<{ status: string; detail: string; at: string } | null> {
+    try {
+      const raw = await this.redisClient.get(`ig_conn_health:${companyId}`);
+      return raw ? JSON.parse(raw) : null;
+    } catch (err: any) {
+      console.warn('[CONN HEALTH] Could not read connection health:', err.message);
+      return null;
+    }
+  }
+
+  /** Called by the token monitor when Meta reports a token as revoked or expired. */
+  async markConnectionRevoked(companyId: string, detail: string) {
+    await this.setConnectionHealth(companyId, { status: 'reconnect_required', detail });
   }
 
   async disconnectInstagramAccount(companyId: string) {
@@ -365,16 +487,34 @@ export class InstagramService {
     };
   }
 
-  async processIncomingMessage(input: InstagramMessageContext | string, text?: string, messageId?: string, igBusinessId?: string, skipDedupe = false, storyInfo?: { id: string, url?: string }): Promise<InstagramActionResponse | void> {
-    if (messageId && this.processedMids.has(messageId) && !skipDedupe) {
-      return;
-    }
-    if (messageId) {
+  /**
+   * Claims a message id exactly once, so a Meta webhook retry cannot produce a second
+   * reply. Backed by Redis rather than process memory: the in-memory Set was lost on every
+   * restart and was not shared between instances, so duplicates slipped through in both
+   * cases. Falls back to the in-memory set if Redis is unreachable.
+   */
+  private async claimMessageId(messageId: string): Promise<boolean> {
+    try {
+      const claimed = await this.redisClient.set(`ig_mid_seen:${messageId}`, '1', 'EX', 7 * 24 * 60 * 60, 'NX');
+      return claimed === 'OK';
+    } catch (err: any) {
+      console.warn('[DEDUPE] Redis unavailable, falling back to in-memory set:', err.message);
+      if (this.processedMids.has(messageId)) return false;
       this.processedMids.add(messageId);
-      // Fix memory leak: Enforce CACHE_LIMIT
       if (this.processedMids.size > this.CACHE_LIMIT) {
         const iterator = this.processedMids.values();
         this.processedMids.delete(iterator.next().value);
+      }
+      return true;
+    }
+  }
+
+  async processIncomingMessage(input: InstagramMessageContext | string, text?: string, messageId?: string, igBusinessId?: string, skipDedupe = false, storyInfo?: { id: string, url?: string }): Promise<InstagramActionResponse | void> {
+    if (messageId && !skipDedupe) {
+      const isNew = await this.claimMessageId(messageId);
+      if (!isNew) {
+        console.log(`[DEDUPE] Duplicate delivery for MID ${messageId}; ignoring.`);
+        return;
       }
     }
 
@@ -620,6 +760,25 @@ export class InstagramService {
       created_on: inboundMsg.created_on,
       lead
     });
+
+    // --- AUTOMATION SUPPRESSION ---
+    // Everything above persists the inbound message and pushes it to the agent's inbox.
+    // Everything below generates an automated reply, which must not happen when a human
+    // is handling the conversation or the business has switched automation off.
+    //
+    // This is the substance of the human-agent handoff: without it the AI keeps replying
+    // over the top of the agent, which is neither a credible handoff nor something Meta
+    // would accept as a Human Agent demonstration.
+    if (lead.human_agent_active) {
+      console.log(`[HANDOFF] Lead ${lead.id} is owned by agent ${lead.assigned_agent_id}; suppressing automation.`);
+      return;
+    }
+
+    if (company && company.auto_reply_enabled === false) {
+      console.log(`[AUTOMATION OFF] Company ${companyId} has auto-reply disabled; suppressing automation.`);
+      return;
+    }
+
     // Handle Image Messages (Simple Approach)
     if (context.message_text.startsWith('[IMAGE]')) {
       const currentPlan = company?.plan || 'Free';
@@ -1075,6 +1234,52 @@ export class InstagramService {
     return outboundMsg;
   }
 
+  /**
+   * A human agent takes ownership of a conversation. While owned, the automation engine
+   * stops replying (see processIncomingMessage) and every outbound message is attributed
+   * to this agent.
+   *
+   * Scoped by company_id, so an agent can only claim conversations in their own workspace.
+   */
+  async claimConversation(companyId: string, leadId: string, agentUserId: string) {
+    const lead = await instagram_lead.findOne({ where: { id: leadId, company_id: companyId } });
+    if (!lead) throw new Error('Conversation not found');
+
+    lead.human_agent_active = true;
+    lead.assigned_agent_id = agentUserId;
+    lead.handoff_at = new Date();
+    lead.lead_status = 'Handoff';
+    await lead.save();
+
+    console.log(`[HANDOFF] Agent ${agentUserId} claimed lead ${leadId}.`);
+
+    return {
+      Success: true,
+      Data: {
+        lead_id: lead.id,
+        human_agent_active: true,
+        assigned_agent_id: agentUserId,
+        handoff_at: lead.handoff_at,
+        // Tells the UI whether a reply now needs the HUMAN_AGENT tag.
+        outside_standard_window: await this.isOutsideStandardWindow(leadId)
+      }
+    };
+  }
+
+  /** Returns the conversation to the automation engine. */
+  async releaseConversation(companyId: string, leadId: string) {
+    const lead = await instagram_lead.findOne({ where: { id: leadId, company_id: companyId } });
+    if (!lead) throw new Error('Conversation not found');
+
+    lead.human_agent_active = false;
+    lead.assigned_agent_id = null as any;
+    lead.handoff_at = null as any;
+    await lead.save();
+
+    console.log(`[HANDOFF] Lead ${leadId} released back to automation.`);
+    return { Success: true, Data: { lead_id: lead.id, human_agent_active: false } };
+  }
+
   async getKnowledgeBase(companyId: string) {
     return await this.knowledgeBaseService.getKnowledgeBase(companyId);
   }
@@ -1105,12 +1310,17 @@ export class InstagramService {
 
   async getIntegrationSettings(companyId: string) {
     const company = await CompanyTable.findOneBy({ id: companyId as any });
+    const health = company?.instagram_business_id ? await this.getConnectionHealth(companyId) : null;
     return {
       Success: true,
       Data: {
         isConnected: !!company?.instagram_business_id,
         business_id: company?.instagram_business_id,
         page_name: company?.instagram_username || 'Connected Account',
+        // Surfaces a revoked or expired token so the user is told to reconnect rather than
+        // seeing automation quietly stop working.
+        needs_reconnect: health?.status === 'reconnect_required',
+        connection_detail: health?.detail || null,
         welcome_message: company?.welcome_message,
         auto_follow_up_enabled: company?.auto_follow_up_enabled || false,
         auto_follow_up_delay_hours: company?.auto_follow_up_delay_hours ?? 24,

@@ -60,6 +60,12 @@ const CommentsManager: React.FC = () => {
   const [commentToDelete, setCommentToDelete] = useState<InstagramCommentItem | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [actionLoadingId, setActionLoadingId] = useState<string | null>(null);
+  // Graph returns results in pages; keep the `after` cursors so the agent can reach
+  // older posts and long comment threads rather than only the most recent page.
+  const [mediaCursor, setMediaCursor] = useState<string | null>(null);
+  const [commentCursor, setCommentCursor] = useState<string | null>(null);
+  const [isLoadingMoreMedia, setIsLoadingMoreMedia] = useState(false);
+  const [isLoadingMoreComments, setIsLoadingMoreComments] = useState(false);
 
   useEffect(() => {
     checkConnectionAndLoad();
@@ -93,11 +99,13 @@ const CommentsManager: React.FC = () => {
       const res = await getInstagramMedia(25);
       if (res.Success && res.Data?.data) {
         setMediaList(res.Data.data);
+        setMediaCursor(res.Data.paging?.cursors?.after && res.Data.paging?.next ? res.Data.paging.cursors.after : null);
         if (res.Data.data.length > 0) {
           handleSelectMedia(res.Data.data[0]);
         }
       } else {
         setMediaList([]);
+        setMediaCursor(null);
       }
     } catch (err: any) {
       console.error('Failed to load media:', err);
@@ -116,8 +124,10 @@ const CommentsManager: React.FC = () => {
       const res = await getInstagramComments(media.id, 50);
       if (res.Success && res.Data?.data) {
         setComments(res.Data.data);
+        setCommentCursor(res.Data.paging?.cursors?.after && res.Data.paging?.next ? res.Data.paging.cursors.after : null);
       } else {
         setComments([]);
+        setCommentCursor(null);
       }
     } catch (err: any) {
       console.error('Failed to load comments:', err);
@@ -125,6 +135,42 @@ const CommentsManager: React.FC = () => {
       setComments([]);
     } finally {
       setIsLoadingComments(false);
+    }
+  };
+
+  const handleLoadMoreMedia = async () => {
+    if (!mediaCursor || isLoadingMoreMedia) return;
+    setIsLoadingMoreMedia(true);
+    try {
+      const res = await getInstagramMedia(25, mediaCursor);
+      if (res.Success && res.Data?.data) {
+        setMediaList(prev => [...prev, ...res.Data!.data]);
+        setMediaCursor(res.Data.paging?.cursors?.after && res.Data.paging?.next ? res.Data.paging.cursors.after : null);
+      } else {
+        setMediaCursor(null);
+      }
+    } catch (err: any) {
+      toast.error('Failed to load more posts: ' + (err.response?.data?.Message || err.message));
+    } finally {
+      setIsLoadingMoreMedia(false);
+    }
+  };
+
+  const handleLoadMoreComments = async () => {
+    if (!selectedMedia || !commentCursor || isLoadingMoreComments) return;
+    setIsLoadingMoreComments(true);
+    try {
+      const res = await getInstagramComments(selectedMedia.id, 50, commentCursor);
+      if (res.Success && res.Data?.data) {
+        setComments(prev => [...prev, ...res.Data!.data]);
+        setCommentCursor(res.Data.paging?.cursors?.after && res.Data.paging?.next ? res.Data.paging.cursors.after : null);
+      } else {
+        setCommentCursor(null);
+      }
+    } catch (err: any) {
+      toast.error('Failed to load more comments: ' + (err.response?.data?.Message || err.message));
+    } finally {
+      setIsLoadingMoreComments(false);
     }
   };
 
@@ -360,6 +406,17 @@ const CommentsManager: React.FC = () => {
                 );
               })
             )}
+
+            {mediaCursor && (
+              <button
+                onClick={handleLoadMoreMedia}
+                disabled={isLoadingMoreMedia}
+                className="w-full mt-1 py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-700 text-xs font-bold text-zinc-600 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800/60 transition flex items-center justify-center gap-2 disabled:opacity-60"
+              >
+                {isLoadingMoreMedia && <RefreshCw size={13} className="animate-spin" />}
+                {isLoadingMoreMedia ? 'Loading…' : 'Load older posts'}
+              </button>
+            )}
           </div>
         </div>
 
@@ -511,6 +568,17 @@ const CommentsManager: React.FC = () => {
                   </div>
                 );
               })
+            )}
+
+            {commentCursor && (
+              <button
+                onClick={handleLoadMoreComments}
+                disabled={isLoadingMoreComments}
+                className="w-full py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-700 text-xs font-bold text-zinc-600 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800/60 transition flex items-center justify-center gap-2 disabled:opacity-60"
+              >
+                {isLoadingMoreComments && <RefreshCw size={13} className="animate-spin" />}
+                {isLoadingMoreComments ? 'Loading…' : 'Load older comments'}
+              </button>
             )}
           </div>
 

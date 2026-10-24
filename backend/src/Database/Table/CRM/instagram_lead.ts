@@ -49,4 +49,23 @@ export class instagram_lead extends BaseTable {
 
   @Column({ type: 'uuid', nullable: true })
   last_story_context_id: string;
+
+  /**
+   * True while a human agent has taken over this conversation. The automation engine must
+   * not auto-reply while this is set, otherwise the AI talks over the agent.
+   *
+   * Needs a migration when DB_SYNC is false:
+   *   ALTER TABLE instagram_lead ADD COLUMN IF NOT EXISTS human_agent_active boolean NOT NULL DEFAULT false;
+   *   ALTER TABLE instagram_lead ADD COLUMN IF NOT EXISTS assigned_agent_id uuid;
+   *   ALTER TABLE instagram_lead ADD COLUMN IF NOT EXISTS handoff_at timestamp;
+   */
+  @Column({ type: 'boolean', default: false })
+  human_agent_active: boolean;
+
+  /** The user who claimed the conversation — the "human agent" for Meta's purposes. */
+  @Column({ type: 'uuid', nullable: true })
+  assigned_agent_id: string;
+
+  @Column({ type: 'timestamp', nullable: true })
+  handoff_at: Date;
 }

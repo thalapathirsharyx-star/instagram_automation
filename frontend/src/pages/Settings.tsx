@@ -236,8 +236,8 @@ const Settings: React.FC = () => {
       if (res.Success && res.Data?.isConnected) {
         setIsConnected(true);
         setConnectionDetails({
-          name: res.Data.page_name,
-          id: res.Data.business_id
+          name: res.Data.page_name || 'Connected Account',
+          id: res.Data.business_id || ''
         });
         if (res.Data.auto_reply_enabled !== undefined) setAutoReplyEnabled(res.Data.auto_reply_enabled);
         if (res.Data.human_handoff_alerts !== undefined) setHumanHandoffAlerts(res.Data.human_handoff_alerts);

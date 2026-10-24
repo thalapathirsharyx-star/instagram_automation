@@ -1,5 +1,9 @@
 import api from '../lib/axios';
-import type { ApiResponse, Lead, Message } from '../models/crm.models';
+import type {
+  ApiResponse, Lead, Message,
+  GraphPage, InstagramMediaItem, InstagramCommentItem,
+  InstagramIntegrationSettings, InstagramConnectResult, ConversationHandoffResult
+} from '../models/crm.models';
 
 export const getLeads = async (qualified?: boolean): Promise<ApiResponse<Lead[]>> => {
   const url = qualified !== undefined ? `/Instagram/Leads?qualified=${qualified}` : '/Instagram/Leads';
@@ -27,8 +31,8 @@ export const getBalance = async (): Promise<ApiResponse<number>> => {
   return response.data;
 };
 
-export const connectInstagram = async (token: string): Promise<ApiResponse<any>> => {
-  const response = await api.post<ApiResponse<any>>('/Instagram/Connect', { token });
+export const connectInstagram = async (token: string, pageId?: string): Promise<ApiResponse<InstagramConnectResult>> => {
+  const response = await api.post<ApiResponse<InstagramConnectResult>>('/Instagram/Connect', { token, pageId });
   return response.data;
 };
 
@@ -37,8 +41,8 @@ export const disconnectInstagram = async (): Promise<ApiResponse<any>> => {
   return response.data;
 };
 
-export const getInstagramSettings = async (): Promise<ApiResponse<any>> => {
-  const response = await api.get<ApiResponse<any>>('/Instagram/Settings');
+export const getInstagramSettings = async (): Promise<ApiResponse<InstagramIntegrationSettings>> => {
+  const response = await api.get<ApiResponse<InstagramIntegrationSettings>>('/Instagram/Settings');
   return response.data;
 };
 
@@ -59,19 +63,19 @@ export const updateAIPrompt = async (prompt: string): Promise<ApiResponse<any>> 
 
 // --- COMMENTS MANAGEMENT (instagram_business_manage_comments) ---
 
-export const getInstagramMedia = async (limit?: number, after?: string): Promise<ApiResponse<{ data: any[], paging?: any }>> => {
+export const getInstagramMedia = async (limit?: number, after?: string): Promise<ApiResponse<GraphPage<InstagramMediaItem>>> => {
   const params = new URLSearchParams();
   if (limit) params.append('limit', limit.toString());
   if (after) params.append('after', after);
-  const response = await api.get<ApiResponse<{ data: any[], paging?: any }>>(`/Instagram/Media?${params.toString()}`);
+  const response = await api.get<ApiResponse<GraphPage<InstagramMediaItem>>>(`/Instagram/Media?${params.toString()}`);
   return response.data;
 };
 
-export const getInstagramComments = async (mediaId: string, limit?: number, after?: string): Promise<ApiResponse<{ data: any[], paging?: any }>> => {
+export const getInstagramComments = async (mediaId: string, limit?: number, after?: string): Promise<ApiResponse<GraphPage<InstagramCommentItem>>> => {
   const params = new URLSearchParams();
   if (limit) params.append('limit', limit.toString());
   if (after) params.append('after', after);
-  const response = await api.get<ApiResponse<{ data: any[], paging?: any }>>(`/Instagram/Media/${mediaId}/Comments?${params.toString()}`);
+  const response = await api.get<ApiResponse<GraphPage<InstagramCommentItem>>>(`/Instagram/Media/${mediaId}/Comments?${params.toString()}`);
   return response.data;
 };
 
@@ -87,5 +91,22 @@ export const hideInstagramComment = async (commentId: string, hide: boolean = tr
 
 export const deleteInstagramComment = async (commentId: string): Promise<ApiResponse<any>> => {
   const response = await api.delete<ApiResponse<any>>(`/Instagram/Comments/${commentId}`);
+  return response.data;
+};
+
+// --- HUMAN AGENT HANDOFF ---
+
+/**
+ * A human agent takes over a conversation. The automation engine stops replying until
+ * the conversation is released, so the agent is not talked over by the AI.
+ */
+export const claimConversation = async (leadId: string): Promise<ApiResponse<ConversationHandoffResult>> => {
+  const response = await api.post<ApiResponse<ConversationHandoffResult>>(`/Instagram/Leads/${leadId}/Handoff`);
+  return response.data;
+};
+
+/** Hands the conversation back to the automation engine. */
+export const releaseConversation = async (leadId: string): Promise<ApiResponse<ConversationHandoffResult>> => {
+  const response = await api.post<ApiResponse<ConversationHandoffResult>>(`/Instagram/Leads/${leadId}/Release`);
   return response.data;
 };

@@ -1,14 +1,25 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { getLeads, getMessages, sendMessage } from '../api/crm.api';
-import type { Lead, Message } from '../models/crm.models';
-import { Send, MessageSquare, Bot, Hand, CheckCircle2 } from 'lucide-react';
+import { getLeads, getMessages, sendMessage, claimConversation, releaseConversation } from '../api/crm.api';
+import type { Lead, Message, ConversationHandoffResult } from '../models/crm.models';
+import { Send, MessageSquare, Bot, Hand, CheckCircle2, Loader2, UserCheck } from 'lucide-react';
+import { useToast } from '../context/ToastContext';
 import { io } from 'socket.io-client';
 
+/** Pulls the API's error message off an axios failure without resorting to `any`. */
+const extractApiMessage = (err: unknown, fallback: string): string => {
+  const message = (err as { response?: { data?: { Message?: string } } })?.response?.data?.Message;
+  return message || fallback;
+};
+
 const Inbox: React.FC = () => {
+  const { toast } = useToast();
   const [leads, setLeads] = useState<Lead[]>([]);
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
-  const [isManualMode, setIsManualMode] = useState(false);
+  // Manual mode is server state, not a local toggle. Previously this was local-only, so
+  // the AI kept auto-replying while the agent believed they had taken over.
+  const [isTogglingMode, setIsTogglingMode] = useState(false);
+  const [outsideWindow, setOutsideWindow] = useState(false);
   const [messageText, setMessageText] = useState('');
   const [socketStatus, setSocketStatus] = useState<'Connecting...' | 'Connected 🟢' | 'Disconnected 🔴'>('Connecting...');
   const chatHistoryRef = useRef<HTMLDivElement>(null);
@@ -103,6 +114,53 @@ const Inbox: React.FC = () => {
     }
   };
 
+  const isManualMode = !!selectedLead?.human_agent_active;
+
+  /**
+   * Claims or releases the conversation on the server. Claiming suppresses the automation
+   * engine for this thread and attributes outbound messages to this agent.
+   */
+  const handleToggleManualMode = async () => {
+    if (!selectedLead || isTogglingMode) return;
+    setIsTogglingMode(true);
+    try {
+      if (isManualMode) {
+        const res = await releaseConversation(selectedLead.id);
+        if (res.Success || res.Data) {
+          applyLeadUpdate({ ...selectedLead, human_agent_active: false, assigned_agent_id: null });
+          setOutsideWindow(false);
+          toast.success('Conversation handed back to the AI.');
+        } else {
+          toast.error(res.Message || 'Could not release the conversation.');
+        }
+      } else {
+        const res = await claimConversation(selectedLead.id);
+        const data = (res.Data as ConversationHandoffResult | undefined);
+        if (res.Success || data) {
+          applyLeadUpdate({
+            ...selectedLead,
+            human_agent_active: true,
+            assigned_agent_id: data?.assigned_agent_id ?? null,
+            lead_status: 'Handoff'
+          });
+          setOutsideWindow(!!data?.outside_standard_window);
+          toast.success('You have taken over this conversation. The AI will not reply.');
+        } else {
+          toast.error(res.Message || 'Could not take over the conversation.');
+        }
+      }
+    } catch (err) {
+      toast.error(extractApiMessage(err, 'Could not change conversation mode.'));
+    } finally {
+      setIsTogglingMode(false);
+    }
+  };
+
+  const applyLeadUpdate = (updated: Lead) => {
+    setSelectedLead(updated);
+    setLeads(prev => prev.map(l => (l.id === updated.id ? updated : l)));
+  };
+
   const handleSendMessage = async () => {
     if (!selectedLead || !messageText.trim()) return;
     try {
@@ -118,6 +176,8 @@ const Inbox: React.FC = () => {
       }
     } catch (error) {
       console.error('Error sending message:', error);
+      // The backend now reports Meta rejections rather than logging a phantom send.
+      toast.error(extractApiMessage(error, 'Instagram did not accept the message.'));
     }
   };
 
@@ -187,17 +247,33 @@ const Inbox: React.FC = () => {
                 <div className="flex items-center gap-3">
                   <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest hidden sm:block">Agent Status:</span>
                   <button
-                    onClick={() => setIsManualMode(!isManualMode)}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all shadow-sm border ${isManualMode
+                    onClick={handleToggleManualMode}
+                    disabled={isTogglingMode}
+                    title={isManualMode
+                      ? 'Hand this conversation back to the AI'
+                      : 'Take over this conversation as a human agent. The AI will stop replying.'}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all shadow-sm border disabled:opacity-60 ${isManualMode
                       ? 'bg-rose-50 text-rose-700 border-rose-200 hover:bg-rose-100'
                       : 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100'
                       }`}
                   >
-                    {isManualMode ? <Hand size={14} /> : <CheckCircle2 size={14} />}
-                    {isManualMode ? 'Manual Mode Active' : 'AI Mode Active'}
+                    {isTogglingMode
+                      ? <Loader2 size={14} className="animate-spin" />
+                      : isManualMode ? <Hand size={14} /> : <CheckCircle2 size={14} />}
+                    {isManualMode ? 'Human Agent Active' : 'AI Mode Active'}
                   </button>
                 </div>
               </div>
+
+              {isManualMode && (
+                <div className="px-6 sm:px-8 py-2.5 bg-rose-50/70 border-b border-rose-200/70 flex items-center gap-2">
+                  <UserCheck size={14} className="text-rose-600 shrink-0" />
+                  <p className="text-[11px] font-semibold text-rose-800 leading-snug">
+                    You have taken over this conversation — automated replies are paused.
+                    {outsideWindow && ' The 24-hour window has closed, so your reply will be sent with the Human Agent tag.'}
+                  </p>
+                </div>
+              )}
 
               {/* Chat History */}
               <div className="flex-grow p-6 sm:p-8 overflow-y-auto flex flex-col gap-6" ref={chatHistoryRef}>

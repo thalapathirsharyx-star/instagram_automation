@@ -30,9 +30,17 @@ const MetaIntegration: React.FC = () => {
       if (res.Success && res.Data?.isConnected) {
         setIsConnected(true);
         setConnectionDetails({
-          name: res.Data.page_name,
-          id: res.Data.business_id
+          name: res.Data.page_name || 'Connected Account',
+          id: res.Data.business_id || ''
         });
+        // The token monitor flags revoked or soon-to-expire access; tell the user to
+        // reconnect rather than letting automation fail silently.
+        if (res.Data.needs_reconnect) {
+          setConnectionWarnings([
+            res.Data.connection_detail ||
+            'Instagram access needs to be renewed. Please reconnect the account.'
+          ]);
+        }
       }
     }).catch(err => console.error('Failed to fetch IG settings:', err))
       .finally(() => setIsLoadingStatus(false));
