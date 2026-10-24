@@ -31,6 +31,12 @@ const GRAPH_BASE = `https://graph.facebook.com/${GRAPH_VERSION}`;
  */
 const SOCIAL_PROVISIONING_PASSWORD = 'GoogleUser123!!';
 
+/** Failed super-admin sign-ins tolerated before a temporary lockout. */
+const MAX_ADMIN_LOGIN_ATTEMPTS = 5;
+
+/** How long that lockout lasts. It expires on its own — no manual unlock needed. */
+const ADMIN_LOCKOUT_SECONDS = 15 * 60;
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -41,6 +47,55 @@ export class AuthService {
     private _SecurityAlertService: SecurityAlertService,
     private _EmailService: EmailService
   ) { }
+
+  private lockoutKey(email: string) {
+    return `admin_login_lock:${String(email).toLowerCase()}`;
+  }
+
+  /**
+   * Seconds remaining on an active lockout, or 0 when the account is not locked.
+   * A Redis outage must not lock anybody out, so failures are treated as "not locked".
+   */
+  private async getLockoutRemaining(email: string): Promise<number> {
+    try {
+      const key = this.lockoutKey(email);
+      const attempts = Number(await this._RedisClient.get(key)) || 0;
+      if (attempts < MAX_ADMIN_LOGIN_ATTEMPTS) return 0;
+      const ttl = await this._RedisClient.ttl(key);
+      return ttl > 0 ? ttl : 0;
+    } catch (err: any) {
+      console.warn('[LOGIN LOCKOUT] Redis unavailable, skipping lockout check:', err.message);
+      return 0;
+    }
+  }
+
+  /**
+   * Counts a failed attempt and returns the running total. The counter expires on its
+   * own, so the lockout lifts without an administrator touching the database.
+   */
+  private async recordFailedAttempt(email: string): Promise<number> {
+    try {
+      const key = this.lockoutKey(email);
+      const attempts = await this._RedisClient.incr(key);
+      // Start the window on the first failure, and restart it once the limit is hit so
+      // the full lockout period applies from that moment.
+      if (attempts === 1 || attempts === MAX_ADMIN_LOGIN_ATTEMPTS) {
+        await this._RedisClient.expire(key, ADMIN_LOCKOUT_SECONDS);
+      }
+      return attempts;
+    } catch (err: any) {
+      console.warn('[LOGIN LOCKOUT] Redis unavailable, not counting attempt:', err.message);
+      return 0;
+    }
+  }
+
+  private async clearFailedAttempts(email: string): Promise<void> {
+    try {
+      await this._RedisClient.del(this.lockoutKey(email));
+    } catch (err: any) {
+      console.warn('[LOGIN LOCKOUT] Could not clear attempts:', err.message);
+    }
+  }
 
   /**
    * Password sign-in.
@@ -86,23 +141,45 @@ export class AuthService {
         }
       }
     }
+    // A super admin who is already in a lockout window is refused before the password is
+    // even checked, so repeated guessing cannot extend or bypass the window.
+    if (UserData.user_role?.code === 'SUPER_ADMIN') {
+      const lockedFor = await this.getLockoutRemaining(UserData.email);
+      if (lockedFor > 0) {
+        throw new Error(
+          `Too many failed login attempts. Try again in ${Math.ceil(lockedFor / 60)} minute(s).`
+        );
+      }
+    }
+
     const isPasswordValid = await this._HashingService.Compare(password, UserData.password);
     if (!isPasswordValid) {
       if (UserData.user_role?.code === 'SUPER_ADMIN') {
-        UserData.failed_login_count = (UserData.failed_login_count || 0) + 1;
-        if (UserData.failed_login_count >= 5) {
-          UserData.status = false;
-        }
+        const attempts = await this.recordFailedAttempt(UserData.email);
+        UserData.failed_login_count = attempts;
+        // NOTE: `status` is deliberately NOT cleared here. It means "an administrator
+        // suspended this account" and has no self-service recovery — using it for a
+        // mistyped password permanently bricked the account, which is exactly how a
+        // Meta reviewer could lose access to the test credentials mid-review.
         await UserData.save();
-        if (UserData.failed_login_count >= 5) {
+
+        if (attempts >= MAX_ADMIN_LOGIN_ATTEMPTS) {
           await this._SecurityAlertService.SendAlert(
-            'Admin Account Locked',
-            `Super Admin user account has been locked due to 5+ failed login attempts:\n- Email: ${UserData.email}`
+            'Admin Account Temporarily Locked',
+            `Super Admin login was locked for ${ADMIN_LOCKOUT_SECONDS / 60} minutes after ` +
+            `${attempts} failed attempts:\n- Email: ${UserData.email}`
           );
-          throw new Error('Account locked due to too many failed login attempts.');
+          throw new Error(
+            `Too many failed login attempts. Try again in ${ADMIN_LOCKOUT_SECONDS / 60} minute(s).`
+          );
         }
       }
       throw new Error('Invalid password');
+    }
+
+    // Successful sign-in clears the lockout counter.
+    if (UserData.user_role?.code === 'SUPER_ADMIN') {
+      await this.clearFailedAttempts(UserData.email);
     }
 
     if (UserData.user_role?.code === 'SUPER_ADMIN' && UserData.failed_login_count > 0) {
@@ -521,20 +598,26 @@ export class AuthService {
     }
 
     if (!codeIsValid) {
-      UserData.failed_login_count = (UserData.failed_login_count || 0) + 1;
-      if (UserData.failed_login_count >= 5) {
-        UserData.status = false;
-      }
+      // Same reasoning as the password path: a temporary, self-expiring lockout rather
+      // than permanently disabling the account over mistyped codes.
+      const attempts = await this.recordFailedAttempt(`2fa:${UserData.email}`);
+      UserData.failed_login_count = attempts;
       await UserData.save();
-      if (UserData.failed_login_count >= 5) {
+
+      if (attempts >= MAX_ADMIN_LOGIN_ATTEMPTS) {
         await this._SecurityAlertService.SendAlert(
-          'Admin Account Locked (2FA)',
-          `Super Admin user account has been locked due to 5+ failed 2FA verification attempts:\n- Email: ${UserData.email}`
+          'Admin 2FA Temporarily Locked',
+          `Super Admin 2FA verification was locked for ${ADMIN_LOCKOUT_SECONDS / 60} minutes after ` +
+          `${attempts} failed attempts:\n- Email: ${UserData.email}`
         );
-        throw new Error('Account locked due to too many failed 2FA verification attempts.');
+        throw new Error(
+          `Too many failed verification attempts. Try again in ${ADMIN_LOCKOUT_SECONDS / 60} minute(s).`
+        );
       }
       throw new Error('Invalid verification code.');
     }
+
+    await this.clearFailedAttempts(`2fa:${UserData.email}`);
 
     if (UserData.user_role?.code === 'SUPER_ADMIN' && UserData.last_login_ip && UserData.last_login_ip !== ipAddress) {
       await this._SecurityAlertService.SendAlert(
