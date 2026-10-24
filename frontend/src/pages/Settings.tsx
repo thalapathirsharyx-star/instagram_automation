@@ -46,7 +46,7 @@ import { connectInstagram, getInstagramSettings, updateInstagramSettings, discon
 import api from '../lib/axios';
 
 const Settings: React.FC = () => {
-  const { user, updateUser } = useAuth();
+  const { user, updateUser, logout } = useAuth();
   const { toast } = useToast();
   const [isConnecting, setIsConnecting] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
@@ -90,6 +90,30 @@ const Settings: React.FC = () => {
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isGoogleRegistered, setIsGoogleRegistered] = useState(false);
+  const [confirmPurge, setConfirmPurge] = useState(false);
+  const [isPurging, setIsPurging] = useState(false);
+
+  /**
+   * Performs the erasure the published data-deletion instructions describe: disconnects
+   * Meta, deletes all Instagram-derived records for this workspace, and signs the user out.
+   */
+  const handlePurgeData = async () => {
+    setIsPurging(true);
+    try {
+      const res = await api.post('/Instagram/PurgeData');
+      if (res.data?.Type === 'S' || res.data?.Success || res.data?.Data?.Success) {
+        toast.success('Your account data has been permanently deleted.');
+        setConfirmPurge(false);
+        setTimeout(() => logout(), 1500);
+      } else {
+        toast.error(res.data?.Message || 'Failed to delete your data. Please contact support.');
+      }
+    } catch (err: any) {
+      toast.error(err.response?.data?.Message || 'Failed to delete your data. Please contact support.');
+    } finally {
+      setIsPurging(false);
+    }
+  };
   const [isChangingPassword, setIsChangingPassword] = useState(false);
 
   const handleChangePassword = async () => {
@@ -625,7 +649,7 @@ const Settings: React.FC = () => {
                     This action is permanent. All your access tokens, CRM logs, message metadata, and settings will be completely destroyed.
                   </p>
                   <button 
-                    onClick={() => toast.error('Account deletion has been temporarily paused for Meta App Review verification.')}
+                    onClick={() => setConfirmPurge(true)}
                     className="px-6 py-2.5 bg-white text-rose-600 border border-rose-200 rounded-lg font-bold hover:bg-rose-600 hover:text-white transition-colors text-sm shadow-sm"
                   >
                     Delete Account & Purge Data
@@ -745,6 +769,18 @@ const Settings: React.FC = () => {
         isLoading={isDisabling2FA}
         onConfirm={handleDisable2FA}
         onCancel={() => setConfirmDisable2FA(false)}
+      />
+
+      <ConfirmModal
+        isOpen={confirmPurge}
+        title="Delete Account & Purge Data"
+        message="This permanently deletes your Instagram connection, access tokens, leads, conversations and knowledge base. This cannot be undone."
+        confirmText="Delete Everything"
+        cancelText="Cancel"
+        type="danger"
+        isLoading={isPurging}
+        onConfirm={handlePurgeData}
+        onCancel={() => setConfirmPurge(false)}
       />
     </div>
   );

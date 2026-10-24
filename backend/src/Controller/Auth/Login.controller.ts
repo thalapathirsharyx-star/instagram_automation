@@ -43,9 +43,16 @@ export class LoginController extends AuthBaseController {
   }
 
   @Post('GoogleLogin')
-  async GoogleLogin(@Body() data: { email: string }) {
-    const result = await this._AuthService.GoogleLogin(data.email);
+  async GoogleLogin(@Body() data: { email?: string; accessToken?: string }) {
+    // The email is NOT trusted — it is derived from the verified Google token.
+    const result = await this._AuthService.GoogleLogin(data.accessToken);
     return { Type: ResponseEnum.Success, Message: 'Logged in via Google Successfully', result };
+  }
+
+  @Post('FacebookLogin')
+  async FacebookLogin(@Body() data: { accessToken: string }) {
+    const result = await this._AuthService.FacebookLogin(data.accessToken);
+    return { Type: ResponseEnum.Success, Message: 'Logged in via Facebook Successfully', result };
   }
 
   @Post('Register')

@@ -16,6 +16,20 @@ import * as randomstring from 'randomstring';
 
 import { SecurityAlertService } from './SecurityAlert.service';
 import { EmailService } from '../Email.service';
+import axios from 'axios';
+import { GRAPH_VERSION } from '../Instagram.service';
+
+const GRAPH_BASE = `https://graph.facebook.com/${GRAPH_VERSION}`;
+
+/**
+ * Placeholder password the frontend sends when provisioning an account through Google
+ * sign-in. It is public (it ships in the client bundle), so it must never be accepted as
+ * a credential at the login form — see ValidateUser.
+ *
+ * Replacing this scheme with an `auth_provider` column is the proper fix; until then this
+ * constant keeps the one place that must reject it honest.
+ */
+const SOCIAL_PROVISIONING_PASSWORD = 'GoogleUser123!!';
 
 @Injectable()
 export class AuthService {
@@ -28,7 +42,21 @@ export class AuthService {
     private _EmailService: EmailService
   ) { }
 
-  async ValidateUser(username: string, password: string): Promise<any> {
+  /**
+   * Password sign-in.
+   *
+   * `internalProvisioning` is set only by Register, which completes a social sign-up by
+   * minting a session for the account it just created. Interactive callers leave it false
+   * so SOCIAL_PROVISIONING_PASSWORD can never be used as a real password: that constant
+   * ships in the frontend bundle, and accepting it at the login form would let anyone sign
+   * in to any Google-registered account.
+   */
+  async ValidateUser(username: string, password: string, internalProvisioning = false): Promise<any> {
+    if (!internalProvisioning && password === SOCIAL_PROVISIONING_PASSWORD) {
+      console.error(`[SECURITY] Blocked login attempt using the social provisioning password for ${username}.`);
+      throw new Error('This account uses Google Sign-In. Please continue with Google.');
+    }
+
     const UserData = await user.findOne({
       where: { email: username },
       relations: ['user_role', 'company']
@@ -82,10 +110,12 @@ export class AuthService {
       await UserData.save();
     }
 
-    // For backwards compatibility or super admins, if no company is linked directly,
-    // we can either leave it undefined or fetch a default.
+    // A tenant user only ever gets their own workspace. The default-to-first-company
+    // fallback is confined to SUPER_ADMIN, who already has cross-tenant access by role;
+    // applying it to a client user would silently hand them another tenant's Instagram
+    // connection, leads and conversations.
     let companyData = UserData.company;
-    if (!companyData) {
+    if (!companyData && UserData.user_role?.code === 'SUPER_ADMIN') {
       const companies = await company.find({ relations: ["currency"] });
       companyData = companies[0] || null;
     }
@@ -121,7 +151,51 @@ export class AuthService {
     return { api_token, user: payload };
   }
 
-  async GoogleLogin(email: string): Promise<any> {
+  /**
+   * Signs a user in with Google.
+   *
+   * Takes the Google OAuth access token, not an email address. The email must be resolved
+   * from the token server-side: accepting a caller-supplied email would let anyone obtain
+   * a session for any account simply by posting that address.
+   */
+  async GoogleLogin(accessToken?: string): Promise<any> {
+    if (!accessToken) {
+      throw new Error('Google sign-in token is required');
+    }
+
+    const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
+    if (!GOOGLE_CLIENT_ID) {
+      throw new Error('Google sign-in is not configured on this server');
+    }
+
+    let email: string;
+    try {
+      // tokeninfo returns the token's audience, so we can confirm it was minted for
+      // this application and not for some unrelated Google OAuth client.
+      const infoRes = await axios.get('https://www.googleapis.com/oauth2/v3/tokeninfo', {
+        params: { access_token: accessToken }
+      });
+      const info = infoRes.data || {};
+
+      if (String(info.aud) !== String(GOOGLE_CLIENT_ID)) {
+        console.error(`[GOOGLE LOGIN] Rejected token issued for audience ${info.aud}.`);
+        throw new Error('Google token was not issued for this application');
+      }
+      if (!info.email) {
+        throw new Error('Google token does not grant access to an email address');
+      }
+      if (info.email_verified !== true && info.email_verified !== 'true') {
+        throw new Error('This Google account does not have a verified email address');
+      }
+      email = String(info.email).toLowerCase();
+    } catch (err: any) {
+      if (err.response) {
+        console.error('[GOOGLE LOGIN] Token inspection failed:', err.response?.data);
+        throw new Error('Google authentication failed. Please sign in again.');
+      }
+      throw err;
+    }
+
     const UserData = await user.findOne({
       where: { email: email },
       relations: ['user_role', 'company']
@@ -148,8 +222,12 @@ export class AuthService {
       await UserData.save();
     }
 
+    // A tenant user only ever gets their own workspace. The default-to-first-company
+    // fallback is confined to SUPER_ADMIN, who already has cross-tenant access by role;
+    // applying it to a client user would silently hand them another tenant's Instagram
+    // connection, leads and conversations.
     let companyData = UserData.company;
-    if (!companyData) {
+    if (!companyData && UserData.user_role?.code === 'SUPER_ADMIN') {
       const companies = await company.find({ relations: ["currency"] });
       companyData = companies[0] || null;
     }
@@ -180,6 +258,160 @@ export class AuthService {
       super_admin_sub_role: UserData.super_admin_sub_role,
       two_factor_enabled: UserData.two_factor_enabled
     };
+    const api_token = this._JwtService.sign(payload);
+    return { api_token, user: payload };
+  }
+
+  async FacebookLogin(accessToken: string): Promise<any> {
+    if (!accessToken) {
+      throw new Error('Access token is required');
+    }
+
+    const APP_ID = process.env.FB_APP_ID;
+    const APP_SECRET = process.env.FB_APP_SECRET;
+    if (!APP_ID || !APP_SECRET) {
+      throw new Error('Facebook login is not configured on this server');
+    }
+
+    // 1. Verify the token was issued for THIS app before trusting anything it says.
+    //    Calling /me alone is not authentication: a token minted for any other Facebook
+    //    app would also return a valid profile, letting an attacker sign in as that user.
+    //    debug_token binds the token to our app id.
+    try {
+      const debugRes = await axios.get(`${GRAPH_BASE}/debug_token`, {
+        params: { input_token: accessToken, access_token: `${APP_ID}|${APP_SECRET}` }
+      });
+      const info = debugRes.data?.data;
+      if (!info?.is_valid) {
+        throw new Error('Facebook token is not valid');
+      }
+      if (String(info.app_id) !== String(APP_ID)) {
+        console.error(`[FB LOGIN] Rejected token issued for app ${info.app_id}, expected ${APP_ID}.`);
+        throw new Error('Facebook token was not issued for this application');
+      }
+    } catch (err: any) {
+      if (err.response) {
+        console.error('[FB LOGIN ERROR] Token inspection failed:', err.response?.data?.error?.message);
+        throw new Error('Meta authentication failed. Please try connecting again.');
+      }
+      throw err;
+    }
+
+    let fbUser: any;
+    try {
+      const fbRes = await axios.get(`${GRAPH_BASE}/me`, {
+        params: {
+          fields: 'id,name,email',
+          access_token: accessToken
+        }
+      });
+      fbUser = fbRes.data;
+    } catch (err: any) {
+      console.error('[FB LOGIN ERROR] Failed to fetch user from Meta Graph API:', err.response?.data || err.message);
+      throw new Error('Meta authentication failed. Please check your Facebook permissions.');
+    }
+
+    if (!fbUser || !fbUser.id) {
+      throw new Error('Invalid response from Meta Graph API');
+    }
+
+    const fullName = fbUser.name || 'Facebook User';
+    // Key the account on the app-scoped Meta id, never on the Facebook-supplied email.
+    // Matching an existing password account by email would let anyone who controls a
+    // Facebook account bearing that address take it over.
+    const linkedEmail = `fb-${fbUser.id}@meta-login.flazly.local`;
+
+    let UserData = await user.findOne({
+      where: { email: linkedEmail },
+      relations: ['user_role', 'company']
+    });
+
+    // Legacy rows created before identities were keyed on the Meta id.
+    if (!UserData) {
+      UserData = await user.findOne({
+        where: { email: `${fbUser.id}@facebook.flazly.com` },
+        relations: ['user_role', 'company']
+      });
+    }
+
+    const email = UserData?.email || linkedEmail;
+
+    if (!UserData) {
+      // Auto-register user with default company
+      let clientRole = await user_role.findOne({ where: { code: 'CLIENT_ADMIN' } });
+      if (!clientRole) {
+        clientRole = new user_role();
+        clientRole.name = 'Client Admin';
+        clientRole.code = 'CLIENT_ADMIN';
+        clientRole.created_by_id = '0';
+        clientRole.created_on = new Date();
+        await clientRole.save();
+      }
+
+      const defaultCountry = await country.findOne({ where: {} });
+      const defaultCurrency = await currency.findOne({ where: {} });
+
+      const newCompany = new company();
+      newCompany.name = `${fullName}'s Workspace`;
+      newCompany.address = 'Meta Integrated';
+      newCompany.email = email;
+      newCompany.postal_code = '000000';
+      newCompany.country_id = defaultCountry?.id;
+      newCompany.currency_id = defaultCurrency?.id;
+      newCompany.created_by_id = '0';
+      newCompany.created_on = new Date();
+      await newCompany.save();
+
+      const newUser = new user();
+      newUser.first_name = fullName;
+      newUser.email = email;
+      // Random, never-disclosed password. A shared constant here would let anyone who
+      // knows it sign in to every Facebook-created account through the password form.
+      newUser.password = await this._HashingService.Hash(randomstring.generate(48));
+      newUser.user_role_id = clientRole.id;
+      newUser.company_id = newCompany.id;
+      newUser.created_by_id = '0';
+      newUser.created_on = new Date();
+      newUser.is_verified = true;
+      newUser.status = true;
+      await newUser.save();
+
+      UserData = await user.findOne({
+        where: { id: newUser.id },
+        relations: ['user_role', 'company']
+      });
+    }
+
+    if (!UserData) {
+      throw new Error('Failed to initialize user session');
+    }
+
+    if (UserData.status === false) {
+      throw new Error('User suspended, contact administration');
+    }
+
+    // Auto-verify Facebook authenticated accounts
+    if (UserData.is_verified === false) {
+      UserData.is_verified = true;
+      await UserData.save();
+    }
+
+    // Only ever the user's own workspace. Falling back to "the first company in the
+    // table" would hand this user another tenant's Instagram account and CRM data.
+    const companyData = UserData.company || null;
+
+    const payload = {
+      email: UserData.email,
+      user_id: UserData.id,
+      user_role_id: UserData.user_role_id,
+      user_role_code: UserData.user_role?.code || 'CLIENT_ADMIN',
+      user_role_name: UserData.user_role?.name || 'Client Admin',
+      company: companyData,
+      company_id: companyData?.id,
+      super_admin_sub_role: UserData.super_admin_sub_role,
+      two_factor_enabled: UserData.two_factor_enabled
+    };
+
     const api_token = this._JwtService.sign(payload);
     return { api_token, user: payload };
   }
@@ -315,8 +547,12 @@ export class AuthService {
     UserData.last_login_ip = ipAddress;
     await UserData.save();
 
+    // A tenant user only ever gets their own workspace. The default-to-first-company
+    // fallback is confined to SUPER_ADMIN, who already has cross-tenant access by role;
+    // applying it to a client user would silently hand them another tenant's Instagram
+    // connection, leads and conversations.
     let companyData = UserData.company;
-    if (!companyData) {
+    if (!companyData && UserData.user_role?.code === 'SUPER_ADMIN') {
       const companies = await company.find({ relations: ["currency"] });
       companyData = companies[0] || null;
     }
@@ -432,7 +668,7 @@ export class AuthService {
       return { status: 'pending_verification', message: 'Registration successful! Please check your email to verify your account.' };
     }
 
-    return this.ValidateUser(data.email, data.password);
+    return this.ValidateUser(data.email, data.password, true);
   }
 
   async Impersonate(adminUserId: string, companyId: string) {

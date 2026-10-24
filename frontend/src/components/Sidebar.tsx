@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Users, MessageSquare, Settings, Book, Zap, Sparkles, ChevronLeft, ChevronRight, CreditCard, Radio, Activity, DollarSign, Key, Lock, IndianRupee, ClipboardList, ShoppingBag, Shield } from 'lucide-react';
+import { LayoutDashboard, Users, MessageSquare, MessageCircle, Settings, Book, Zap, Sparkles, ChevronLeft, ChevronRight, CreditCard, Radio, Activity, DollarSign, Key, Lock, IndianRupee, ClipboardList, ShoppingBag, Shield } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 const Sidebar: React.FC = () => {
@@ -86,6 +86,10 @@ const Sidebar: React.FC = () => {
             <NavLink to="/inbox" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
               <MessageSquare size={20} />
               <span>Inbox</span>
+            </NavLink>
+            <NavLink to="/comments-manager" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+              <MessageCircle size={20} />
+              <span>Comments Manager</span>
             </NavLink>
             <NavLink to="/meta-integration" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
               <Shield size={20} />

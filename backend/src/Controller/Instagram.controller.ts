@@ -28,51 +28,87 @@ export class InstagramController extends AuthBaseController {
     @Query('hub.verify_token') token: string,
     @Query('hub.challenge') challenge: string,
   ) {
-    const VERIFY_TOKEN = process.env.IG_CRM_VERIFY_TOKEN || 'IG_CRM_VERIFY_TOKEN';
-    if (mode && token === VERIFY_TOKEN) {
+    const VERIFY_TOKEN = process.env.IG_CRM_VERIFY_TOKEN;
+    if (!VERIFY_TOKEN) {
+      console.error('[SECURITY] IG_CRM_VERIFY_TOKEN is not configured; refusing webhook verification.');
+      throw new HttpException('Webhook not configured', HttpStatus.FORBIDDEN);
+    }
+
+    // Meta always sends hub.mode=subscribe, and expects the challenge echoed back verbatim.
+    // https://developers.facebook.com/documentation/instagram-platform/webhooks/setup
+    const tokenMatches =
+      token != null &&
+      token.length === VERIFY_TOKEN.length &&
+      crypto.timingSafeEqual(Buffer.from(token), Buffer.from(VERIFY_TOKEN));
+
+    if (mode === 'subscribe' && tokenMatches) {
       return challenge;
     }
-    return 'Verification Failed';
+
+    console.error(`[SECURITY] Webhook verification rejected (mode=${mode}).`);
+    throw new HttpException('Verification failed', HttpStatus.FORBIDDEN);
   }
 
   @Post('Webhook')
   async HandleWebhook(@Body() body: any, @Req() req: any) {
     // 1. Verify Webhook Signature (Security)
     const signature = req.headers['x-hub-signature-256'];
-    const appSecret = process.env.FB_APP_SECRET || 'fallback_secret';
-    
+    const appSecret = process.env.FB_APP_SECRET;
+
+    if (!appSecret) {
+      console.error('[SECURITY] FB_APP_SECRET is not configured; cannot verify webhook signatures.');
+      throw new HttpException('Webhook not configured', HttpStatus.FORBIDDEN);
+    }
+
     if (!signature || !req.rawBody) {
       console.error('[SECURITY] Webhook received without signature or rawBody.');
       throw new HttpException('Missing signature or rawBody', HttpStatus.FORBIDDEN);
     }
 
     const expectedSignature = `sha256=${crypto.createHmac('sha256', appSecret).update(req.rawBody).digest('hex')}`;
-    if (signature !== expectedSignature) {
+    // Constant-time comparison: a plain !== leaks the expected digest byte by byte.
+    const signatureValid =
+      signature.length === expectedSignature.length &&
+      crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expectedSignature));
+
+    if (!signatureValid) {
       console.error('[SECURITY] Invalid webhook signature detected!');
-      if (process.env.BYPASS_SIGNATURE !== 'true') {
+      // The bypass is a local debugging aid only; it must never weaken production.
+      const bypassAllowed =
+        process.env.BYPASS_SIGNATURE === 'true' && process.env.NODE_ENV !== 'production';
+      if (!bypassAllowed) {
         throw new HttpException('Invalid signature', HttpStatus.FORBIDDEN);
       }
+      console.warn('[SECURITY] BYPASS_SIGNATURE is enabled in a non-production environment.');
     }
 
-    // MEGA-LOG: See everything exactly as it arrives
-    console.log('--- START WEBHOOK PAYLOAD ---');
-    console.log(JSON.stringify(body, null, 2));
-    console.log('--- END WEBHOOK PAYLOAD ---');
+    // Payloads carry message bodies and Instagram user ids. Log only the event shape, so
+    // customer content never lands in server logs or a screenshared console during review.
+    console.log(
+      `[WEBHOOK] object=${body?.object} entries=${Array.isArray(body?.entry) ? body.entry.length : 0}`
+    );
 
     if (body.object === 'instagram') {
       for (const entry of body.entry) {
         console.log(`Processing Entry ID: ${entry.id}`);
 
+        // FIRE AND FORGET: do not 'await', so Meta gets its 200 immediately.
+        // Each promise MUST carry its own catch — an unhandled rejection terminates the
+        // Node process, so one transient Meta or database error would take the whole
+        // backend down mid-conversation.
         if (entry.messaging && Array.isArray(entry.messaging)) {
           for (const messaging of entry.messaging) {
-            // FIRE AND FORGET: Do not 'await' so we can respond to Meta immediately
-            this.processMessagingEvent(messaging, entry.id);
+            this.processMessagingEvent(messaging, entry.id).catch(err =>
+              console.error('[WEBHOOK] Messaging event failed:', err?.message || err)
+            );
           }
         }
-        
+
         if (entry.changes && Array.isArray(entry.changes)) {
           for (const change of entry.changes) {
-            this.processChangeEvent(change, entry.id);
+            this.processChangeEvent(change, entry.id).catch(err =>
+              console.error('[WEBHOOK] Change event failed:', err?.message || err)
+            );
           }
         }
       }
@@ -82,35 +118,80 @@ export class InstagramController extends AuthBaseController {
   }
 
   /**
-   * Meta User Data Deletion Callback
-   * Required for Meta App Review compliance.
+   * Meta User Data Deletion Callback.
+   *
+   * Meta POSTs a `signed_request` identifying the Facebook user who asked for deletion.
+   * The signature must be verified with the app secret, and the data must actually be
+   * deleted — returning a confirmation code without deleting anything misrepresents
+   * compliance. https://developers.facebook.com/docs/development/create-an-app/app-dashboard/data-deletion-callback
    */
   @Post('DataDeletion')
   async DataDeletion(@Body() body: any) {
-    console.log('--- META DATA DELETION REQUEST ---');
-    console.log(body);
-    
-    // In a production app, you would decode the signed_request here
-    // and queue the user's data for deletion.
-    
+    const payload = this.parseSignedRequest(body?.signed_request);
+    if (!payload?.user_id) {
+      console.error('[DATA DELETION] Rejected request with missing or invalid signed_request.');
+      throw new HttpException('Invalid signed_request', HttpStatus.BAD_REQUEST);
+    }
+
+    const result = await this._InstagramService.handleMetaDataDeletion(payload.user_id);
+    console.log(`[DATA DELETION] Completed for Meta user ${payload.user_id}: ${result.confirmation_code}`);
+
     return {
       url: `${process.env.DOMAIN_NAME || 'https://flazly.in'}/data-deletion`,
-      confirmation_code: `DEL-${Math.random().toString(36).substring(7).toUpperCase()}`
+      confirmation_code: result.confirmation_code
     };
   }
 
   /**
-   * Meta App Deauthorization Callback
-   * Required for Meta App Review compliance.
+   * Meta App Deauthorization Callback. Fired when an app user removes Flazly from their
+   * Facebook settings, at which point the stored token is dead and must be discarded.
    */
   @Post('Deauthorize')
   async Deauthorize(@Body() body: any) {
-    console.log('--- META DEAUTHORIZATION REQUEST ---');
-    console.log(body);
-    
-    // Logic to handle deauthorization (e.g., mark tokens as invalid)
-    
+    const payload = this.parseSignedRequest(body?.signed_request);
+    if (!payload?.user_id) {
+      console.error('[DEAUTHORIZE] Rejected request with missing or invalid signed_request.');
+      throw new HttpException('Invalid signed_request', HttpStatus.BAD_REQUEST);
+    }
+
+    await this._InstagramService.handleMetaDeauthorization(payload.user_id);
+    console.log(`[DEAUTHORIZE] Cleared Instagram credentials for Meta user ${payload.user_id}`);
     return { status: 'DEAUTHORIZED' };
+  }
+
+  /**
+   * Verifies and decodes a Meta `signed_request` (base64url "signature.payload",
+   * HMAC-SHA256 over the raw payload segment using the app secret).
+   * Returns null when the signature does not check out.
+   */
+  private parseSignedRequest(signedRequest?: string): any | null {
+    const appSecret = process.env.FB_APP_SECRET;
+    if (!signedRequest || !appSecret) return null;
+
+    const [encodedSig, encodedPayload] = signedRequest.split('.');
+    if (!encodedSig || !encodedPayload) return null;
+
+    try {
+      const expected = crypto
+        .createHmac('sha256', appSecret)
+        .update(encodedPayload)
+        .digest();
+      const provided = Buffer.from(encodedSig.replace(/-/g, '+').replace(/_/g, '/'), 'base64');
+
+      if (provided.length !== expected.length || !crypto.timingSafeEqual(provided, expected)) {
+        console.error('[SIGNED REQUEST] Signature mismatch.');
+        return null;
+      }
+
+      const json = Buffer.from(
+        encodedPayload.replace(/-/g, '+').replace(/_/g, '/'),
+        'base64'
+      ).toString('utf8');
+      return JSON.parse(json);
+    } catch (err: any) {
+      console.error('[SIGNED REQUEST] Could not decode:', err.message);
+      return null;
+    }
   }
 
   // --- PROTECTED ENDPOINTS (DASHBOARD & CRM) ---
@@ -126,6 +207,21 @@ export class InstagramController extends AuthBaseController {
   @Post('Disconnect')
   async Disconnect(@Req() req: any) {
     const result = await this._InstagramService.disconnectInstagramAccount(req.user?.company_id);
+    return this.SendResponseData(result);
+  }
+
+  /**
+   * Self-serve data erasure. Backs the "Delete Account & Purge Data" action that the
+   * published data-deletion instructions tell users (and Meta reviewers) to use.
+   */
+  @UseGuards(JwtAuthGuard)
+  @Post('PurgeData')
+  async PurgeData(@Req() req: any) {
+    const companyId = req.user?.company_id;
+    if (!companyId) {
+      throw new HttpException('No workspace is associated with this account', HttpStatus.BAD_REQUEST);
+    }
+    const result = await this._InstagramService.purgeCompanyData(companyId);
     return this.SendResponseData(result);
   }
 
@@ -179,7 +275,15 @@ export class InstagramController extends AuthBaseController {
   @UseGuards(JwtAuthGuard)
   @Post('SendMessage')
   async SendMessage(@Body() body: { leadId: string, text: string }, @Req() req: any) {
-    const result = await this._InstagramService.sendManualMessage(req.user?.company_id, body.leadId, body.text);
+    if (!body?.text?.trim()) {
+      throw new HttpException('Message text is required', HttpStatus.BAD_REQUEST);
+    }
+    const result = await this._InstagramService.sendManualMessage(
+      req.user?.company_id,
+      body.leadId,
+      body.text.trim(),
+      req.user?.user_id
+    );
     return { Success: true, Data: result };
   }
 
@@ -229,8 +333,6 @@ export class InstagramController extends AuthBaseController {
   // --- PRIVATE HELPERS ---
 
   private async processMessagingEvent(messaging: any, igBusinessId: string) {
-    console.log('Messaging event received:', JSON.stringify(messaging));
-    
     // Extract text, mid, and senderId safely
     const text = messaging.message?.text;
     const mid = messaging.message?.mid;
@@ -239,7 +341,8 @@ export class InstagramController extends AuthBaseController {
     if (messaging.message_edit) {
       console.log(`[SKIP] message_edit event (MID: ${messaging.message_edit.mid}). Skipping to prevent duplicate fetch errors.`);
     } else if (messaging.message && !messaging.message.is_echo && senderId && text) {
-      console.log(`[NEW MESSAGE] "${text}" from sender: ${senderId}`);
+      // Message bodies are customer content; log only that one arrived.
+      console.log(`[NEW MESSAGE] MID ${mid} (${text.length} chars) received.`);
       const storyInfo = messaging.message.reply_to?.story;
       await this._InstagramService.processIncomingMessage(senderId, text, mid, igBusinessId, false, storyInfo);
     } else if (messaging.message && messaging.message.attachments && !messaging.message.is_echo && senderId) {
@@ -261,12 +364,11 @@ export class InstagramController extends AuthBaseController {
   }
 
   private async processChangeEvent(change: any, igBusinessId: string) {
-    console.log('Change event received:', JSON.stringify(change));
+    console.log(`[WEBHOOK] change field=${change?.field}`);
     if (change.field === 'messages' && change.value && change.value.message) {
-      console.log(`Message detected in changes: "${change.value.message.text}" from sender: ${change.value.sender.id}`);
       await this._InstagramService.processIncomingMessage(change.value.sender.id, change.value.message.text, change.value.message.mid, igBusinessId);
     } else if (change.field === 'comments' && change.value && change.value.text) {
-      console.log(`[COMMENT WEBHOOK] Comment detected: "${change.value.text}" on media ID: ${change.value.media?.id}`);
+      console.log(`[COMMENT WEBHOOK] Comment ${change.value.id} on media ${change.value.media?.id}`);
       await this._InstagramService.processIncomingComment(change.value, igBusinessId);
     }
   }
@@ -330,5 +432,51 @@ export class InstagramController extends AuthBaseController {
     const companyId = req.user.company_id;
     const result = await this._InstagramService.toggleCommentTrigger(companyId, id);
     return { Success: true, Data: result.Data };
+  }
+
+  // --- COMMENTS MANAGEMENT (instagram_business_manage_comments) ---
+
+  @UseGuards(JwtAuthGuard)
+  @Get('Media')
+  async getMedia(@Req() req: any, @Query('limit') limit?: number, @Query('after') after?: string) {
+    const companyId = req.user.company_id;
+    const result = await this._InstagramService.getMedia(companyId, limit, after);
+    return { Success: true, Data: result };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('Media/:mediaId/Comments')
+  async getComments(@Req() req: any, @Param('mediaId') mediaId: string, @Query('limit') limit?: number, @Query('after') after?: string) {
+    const companyId = req.user.company_id;
+    const result = await this._InstagramService.getComments(companyId, mediaId, limit, after);
+    return { Success: true, Data: result };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('Comments/:commentId/Reply')
+  async replyToComment(@Req() req: any, @Param('commentId') commentId: string, @Body() body: { message: string }) {
+    const companyId = req.user.company_id;
+    if (!body?.message?.trim()) {
+      throw new HttpException('Reply message is required', HttpStatus.BAD_REQUEST);
+    }
+    const result = await this._InstagramService.replyToComment(companyId, commentId, body.message.trim());
+    return { Success: true, Data: result };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('Comments/:commentId/Hide')
+  async hideComment(@Req() req: any, @Param('commentId') commentId: string, @Body() body: { hide?: boolean }) {
+    const companyId = req.user.company_id;
+    const hide = body?.hide !== false;
+    const result = await this._InstagramService.hideComment(companyId, commentId, hide);
+    return { Success: true, Data: result };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Delete('Comments/:commentId')
+  async deleteComment(@Req() req: any, @Param('commentId') commentId: string) {
+    const companyId = req.user.company_id;
+    const result = await this._InstagramService.deleteComment(companyId, commentId);
+    return { Success: true, Data: result };
   }
 }

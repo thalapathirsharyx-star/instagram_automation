@@ -5,6 +5,7 @@ import { instagram_message } from '@Database/Table/CRM/instagram_message';
 import { company as CompanyTable } from '@Database/Table/Admin/company';
 import { In } from 'typeorm';
 import axios from 'axios';
+import { GRAPH_VERSION } from './Instagram.service';
 
 @Injectable()
 export class BroadcastService {
@@ -168,7 +169,7 @@ export class BroadcastService {
       try {
         // Send the Instagram DM
         await axios.post(
-          `https://graph.facebook.com/v21.0/me/messages`,
+          `https://graph.facebook.com/${GRAPH_VERSION}/me/messages`,
           {
             recipient: { id: lead.instagram_handle },
             message: { text: bc.message }

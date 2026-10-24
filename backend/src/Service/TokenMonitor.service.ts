@@ -4,6 +4,7 @@ import { IsNull, Not, LessThan } from 'typeorm';
 import { instagram_lead } from '@Database/Table/CRM/instagram_lead';
 import { instagram_message } from '@Database/Table/CRM/instagram_message';
 import axios from 'axios';
+import { GRAPH_VERSION } from './Instagram.service';
 
 /**
  * TokenMonitorService handles two critical background tasks:
@@ -59,7 +60,7 @@ export class TokenMonitorService implements OnModuleInit {
 
       for (const company of companies) {
         try {
-          const res = await axios.get('https://graph.facebook.com/v21.0/debug_token', {
+          const res = await axios.get(`https://graph.facebook.com/${GRAPH_VERSION}/debug_token`, {
             params: {
               input_token: company.instagram_access_token,
               access_token: appToken
@@ -172,17 +173,41 @@ export class TokenMonitorService implements OnModuleInit {
         });
 
         if (lastMsg && lastMsg.direction === 'Outbound') {
+          // This follow-up is an automated re-engagement message. It is only permitted
+          // inside the standard 24-hour messaging window: it is not an eligible use of
+          // the HUMAN_AGENT tag, which covers human support replies only.
+          // https://developers.facebook.com/documentation/business-messaging/messenger-platform/policy
+          const lastInbound = await instagram_message.findOne({
+            where: { lead_id: lead.id, direction: 'Inbound' },
+            order: { created_on: 'DESC' }
+          });
+          const inboundAgeMs = lastInbound?.created_on
+            ? Date.now() - new Date(lastInbound.created_on).getTime()
+            : Number.POSITIVE_INFINITY;
+
+          if (inboundAgeMs > 24 * 60 * 60 * 1000) {
+            console.log(
+              `[FOLLOW UP] Skipping lead ${lead.id}: the 24h messaging window has closed. ` +
+              `An automated follow-up may not be sent outside it.`
+            );
+            // Stop re-evaluating this lead every cycle for a send that can never be made.
+            lead.follow_up_sent = true;
+            await lead.save();
+            continue;
+          }
+
           // Use company-configured follow-up message template, with a friendly default fallback
-          const followUpText = company.auto_follow_up_message?.trim() || 
+          const followUpText = company.auto_follow_up_message?.trim() ||
             "Hey! Just checking in to see if you had any other questions or needed help with anything?";
-          
-          const url = `https://graph.facebook.com/v21.0/${company.instagram_page_id || 'me'}/messages`;
+
+          const url = `https://graph.facebook.com/${GRAPH_VERSION}/${company.instagram_page_id || 'me'}/messages`;
           try {
             await axios.post(
               url,
               {
                 recipient: { id: lead.instagram_handle },
-                message: { text: followUpText }
+                message: { text: followUpText },
+                messaging_type: 'RESPONSE'
               },
               {
                 headers: { 'Authorization': `Bearer ${company.instagram_access_token}` }

@@ -29,6 +29,7 @@ import Team from './pages/Team';
 import AddTeamMember from './pages/AddTeamMember';
 import Billing from './pages/Billing';
 import Broadcasts from './pages/Broadcasts';
+import CommentsManager from './pages/CommentsManager';
 import { Bell, Sun, Moon, LogOut } from 'lucide-react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -236,6 +237,7 @@ function AppContent() {
             <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
             <Route path="/leads" element={<ProtectedRoute><Leads /></ProtectedRoute>} />
             <Route path="/inbox" element={<ProtectedRoute><Inbox /></ProtectedRoute>} />
+            <Route path="/comments-manager" element={<ProtectedRoute><CommentsManager /></ProtectedRoute>} />
             <Route path="/knowledge" element={<ProtectedRoute><KnowledgeBase /></ProtectedRoute>} />
             {/* <Route path="/catalog" element={<ProtectedRoute><ProductCatalog /></ProtectedRoute>} /> */}
             <Route path="/knowledge/upload" element={<ProtectedRoute><UploadDocument /></ProtectedRoute>} />

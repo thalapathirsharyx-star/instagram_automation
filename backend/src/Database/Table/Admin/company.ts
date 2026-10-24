@@ -1,4 +1,5 @@
 import { AuditLogIdentity } from "@Helper/AuditLog.decorators";
+import { SecretColumnTransformer } from "@Helper/SecretColumn.transformer";
 import { Column, Entity, Index, JoinColumn, ManyToOne, OneToMany } from "typeorm";
 import { BaseTable } from "../BaseTable";
 import { country } from "./country";
@@ -67,18 +68,33 @@ export class company extends BaseTable {
   @Column({ nullable: true })
   invoice_footer: string;
 
+  /**
+   * App-scoped Meta user id of the person who authorised the Instagram connection.
+   * Required to resolve Meta's data-deletion and deauthorization callbacks, which
+   * identify the user only by this id.
+   *
+   * Needs a migration when DB_SYNC is false:
+   *   ALTER TABLE company ADD COLUMN IF NOT EXISTS meta_user_id varchar;
+   *   CREATE INDEX IF NOT EXISTS idx_company_meta_user_id ON company (meta_user_id);
+   */
+  @Column({ nullable: true })
+  @Index()
+  meta_user_id: string;
+
   @Column({ nullable: true })
   instagram_business_id: string;
 
   @Column({ nullable: true })
   instagram_page_id: string;
 
-  @Column({ type: 'text', nullable: true })
+  // Encrypted at rest — see SecretColumnTransformer. Reads/writes stay plaintext in code.
+  @Column({ type: 'text', nullable: true, transformer: SecretColumnTransformer })
   instagram_access_token: string;
 
   @Column({ nullable: true })
   instagram_app_id: string;
 
+  // Unused — the Meta app secret comes from FB_APP_SECRET, never per-tenant. Safe to drop.
   @Column({ nullable: true })
   instagram_app_secret: string;
 

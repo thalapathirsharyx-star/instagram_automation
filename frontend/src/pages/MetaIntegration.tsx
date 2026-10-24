@@ -22,6 +22,7 @@ const MetaIntegration: React.FC = () => {
   const [isLoadingStatus, setIsLoadingStatus] = useState(true);
   const [showGuide, setShowGuide] = useState(false);
   const [connectionDetails, setConnectionDetails] = useState<{ name: string, id: string } | null>(null);
+  const [connectionWarnings, setConnectionWarnings] = useState<string[]>([]);
 
   useEffect(() => {
     setIsLoadingStatus(true);
@@ -82,7 +83,13 @@ const MetaIntegration: React.FC = () => {
                   name: res.Data?.page_name || 'Instagram Account',
                   id: res.Data?.business_id || ''
                 });
-                toast.success('Instagram Account Linked Successfully!');
+                const warnings: string[] = res.Data?.warnings || [];
+                setConnectionWarnings(warnings);
+                if (warnings.length > 0) {
+                  toast.error('Account linked, but some permissions are missing. See the warnings below.');
+                } else {
+                  toast.success('Instagram Account Linked Successfully!');
+                }
               } else {
                 const message = (res.Message || '').toUpperCase();
                 if (message.includes('META_NO_INSTAGRAM_LINKED')) {
@@ -100,7 +107,30 @@ const MetaIntegration: React.FC = () => {
           toast.error('Instagram connection cancelled.');
           setIsConnecting(false);
         }
-      }, { config_id: import.meta.env.VITE_FB_CONFIG_ID || '1765463831255418' });
+      }, {
+        // Facebook Login for Business: the permissions actually granted are the ones
+        // selected in the login configuration (config_id) in the Meta App Dashboard.
+        // `scope` is ignored whenever config_id is present, so this list is documentation
+        // of what the configuration must contain — keep the two in sync.
+        //
+        // These are the "Instagram API with Facebook Login" permissions. The
+        // instagram_business_* family belongs to Business Login for Instagram
+        // (graph.instagram.com) and does NOT apply to this flow.
+        // https://developers.facebook.com/docs/instagram-platform/overview/
+        //
+        // pages_manage_metadata is required to subscribe the Page to webhooks; without it
+        // no message or comment notifications are ever delivered.
+        config_id: import.meta.env.VITE_FB_CONFIG_ID || '1765463831255418',
+        scope: [
+          'instagram_basic',
+          'instagram_manage_messages',
+          'instagram_manage_comments',
+          'pages_show_list',
+          'pages_read_engagement',
+          'pages_manage_metadata',
+          'public_profile'
+        ].join(',')
+      });
     } catch (error) {
       console.error('FB Logic Error:', error);
       setIsConnecting(false);
@@ -167,6 +197,24 @@ const MetaIntegration: React.FC = () => {
                 <Check size={14} /> Active
               </span>
             </div>
+
+            {connectionWarnings.length > 0 && (
+              <div className="p-4 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/50 rounded-xl">
+                <h3 className="text-sm font-bold text-amber-900 dark:text-amber-200 flex items-center gap-2 mb-2">
+                  <Info size={16} className="text-amber-600 dark:text-amber-400" />
+                  Connection is incomplete
+                </h3>
+                <ul className="list-disc pl-5 space-y-1">
+                  {connectionWarnings.map((w, i) => (
+                    <li key={i} className="text-xs text-amber-800 dark:text-amber-300 leading-relaxed font-medium">{w}</li>
+                  ))}
+                </ul>
+                <p className="text-xs text-amber-800 dark:text-amber-300 font-medium mt-3">
+                  Reconnect and approve every permission Facebook asks for, otherwise real-time
+                  DM and comment automation will not receive events.
+                </p>
+              </div>
+            )}
 
             <div className="pt-2 flex flex-wrap items-center justify-between gap-4 border-t border-zinc-100 dark:border-zinc-800">
               <button 

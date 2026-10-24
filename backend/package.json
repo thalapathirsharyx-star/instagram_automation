@@ -105,16 +105,25 @@
       "json",
       "ts"
     ],
-    "rootDir": "src",
-    "testRegex": ".*\\.spec\\.ts$",
+    "rootDir": ".",
+    "testRegex": "src/.*\\.spec\\.ts$",
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
     },
     "collectCoverageFrom": [
       "**/*.(t|j)s"
     ],
-    "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
+    "coverageDirectory": "./coverage",
+    "testEnvironment": "node",
+    "moduleNameMapper": {
+      "^@Model/(.*)$": "<rootDir>/src/Model/$1",
+      "^@Root/(.*)$": "<rootDir>/src/$1",
+      "^@Service/(.*)$": "<rootDir>/src/Service/$1",
+      "^@Helper/(.*)$": "<rootDir>/src/Helper/$1",
+      "^@Controller/(.*)$": "<rootDir>/src/Controller/$1",
+      "^@Database/(.*)$": "<rootDir>/src/Database/$1",
+      "^@Config/(.*)$": "<rootDir>/src/Config/$1"
+    }
   },
   "overrides": {
     "tar": "^7.4.3"

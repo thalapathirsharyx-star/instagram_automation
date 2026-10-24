@@ -14,9 +14,38 @@ import { MoreThan } from 'typeorm';
 import { MailerService } from './Mailer.service';
 import { Redis } from 'ioredis';
 
+import * as crypto from 'crypto';
+
 import { story_context } from '@Database/Table/CRM/story_context';
 import { OCRService } from './OCR.service';
 import { ProductCatalogService } from './ProductCatalog.service';
+
+/**
+ * Graph API version used for every Meta call. Override with META_GRAPH_VERSION so the
+ * version can be rolled forward without a code change — Graph versions are deprecated
+ * roughly two years after release, and a deprecated version starts failing silently.
+ */
+export const GRAPH_VERSION = process.env.META_GRAPH_VERSION || 'v21.0';
+
+/**
+ * Webhook fields this integration depends on, for POST /{page-id}/subscribed_apps.
+ * `comments` additionally requires Advanced Access to instagram_manage_comments.
+ */
+export const WEBHOOK_FIELDS = ['messages', 'messaging_postbacks', 'comments'];
+
+/**
+ * Permissions the Instagram-API-with-Facebook-Login integration actually calls.
+ * `pages_manage_metadata` is required to subscribe a Page to webhooks — without it
+ * the subscribed_apps call fails and no real-time events ever arrive.
+ */
+export const REQUIRED_SCOPES = [
+  'instagram_basic',
+  'instagram_manage_messages',
+  'instagram_manage_comments',
+  'pages_show_list',
+  'pages_read_engagement',
+  'pages_manage_metadata'
+];
 
 @Injectable()
 export class InstagramService {
@@ -47,7 +76,7 @@ export class InstagramService {
     }
 
     try {
-      let exchangeRes = await axios.get(`https://graph.facebook.com/v21.0/oauth/access_token`, {
+      let exchangeRes = await axios.get(`https://graph.facebook.com/${GRAPH_VERSION}/oauth/access_token`, {
         params: {
           grant_type: 'fb_exchange_token',
           client_id: APP_ID,
@@ -58,7 +87,19 @@ export class InstagramService {
 
       const longLivedUserToken = exchangeRes.data.access_token;
 
-      const pagesRes = await axios.get(`https://graph.facebook.com/v21.0/me/accounts`, {
+      // Record who authorised the connection: Meta's data-deletion and deauthorization
+      // callbacks identify the app user by this app-scoped id and nothing else.
+      let metaUserId: string | null = null;
+      try {
+        const meRes = await axios.get(`https://graph.facebook.com/${GRAPH_VERSION}/me`, {
+          params: { fields: 'id', access_token: longLivedUserToken }
+        });
+        metaUserId = meRes.data?.id || null;
+      } catch (err: any) {
+        console.warn('[CONNECT] Could not resolve the authorising Meta user id:', err.message);
+      }
+
+      const pagesRes = await axios.get(`https://graph.facebook.com/${GRAPH_VERSION}/me/accounts`, {
         params: {
           fields: 'name,access_token,instagram_business_account',
           access_token: longLivedUserToken
@@ -66,7 +107,11 @@ export class InstagramService {
       });
 
       const pages = pagesRes.data.data;
-      console.log('[DEBUG IG CONNECT] Pages returned by Meta:', JSON.stringify(pages, null, 2));
+      // Never log the raw response: each page object carries a live Page access token.
+      console.log(
+        `[CONNECT] Meta returned ${pages?.length || 0} page(s); ` +
+        `${pages?.filter((p: any) => p.instagram_business_account).length || 0} with a linked Instagram account.`
+      );
       const targetPage = pages.find((p: any) => p.instagram_business_account);
 
       if (!targetPage) {
@@ -84,22 +129,55 @@ export class InstagramService {
       company.instagram_page_id = pageId;
       company.instagram_access_token = pageAccessToken;
       company.instagram_username = targetPage.name; // Save the name too!
+      if (metaUserId) company.meta_user_id = metaUserId;
       await company.save();
 
+      // Subscribe the linked Page so this app receives `messages` and `comments` notifications.
+      // `subscribed_fields` must be a comma-separated string, not a JSON array, and the granting
+      // user must have given `pages_manage_metadata` or Graph rejects the call outright.
+      // See https://developers.facebook.com/documentation/instagram-platform/webhooks/setup
+      const warnings: string[] = [];
       try {
-        await axios.post(`https://graph.facebook.com/v21.0/${pageId}/subscribed_apps`, {
-          subscribed_fields: ['messages', 'messaging_postbacks'],
-          access_token: pageAccessToken
-        });
+        const subRes = await axios.post(
+          `https://graph.facebook.com/${GRAPH_VERSION}/${pageId}/subscribed_apps`,
+          null,
+          {
+            params: {
+              subscribed_fields: WEBHOOK_FIELDS.join(','),
+              access_token: pageAccessToken
+            }
+          }
+        );
+        if (subRes.data?.success !== true) {
+          warnings.push('Meta did not confirm the webhook subscription. Comment and message automation may not receive events.');
+          console.error('[WEBHOOK SUBSCRIBE] Unexpected response:', JSON.stringify(subRes.data));
+        } else {
+          console.log(`[WEBHOOK SUBSCRIBE] Page ${pageId} subscribed to: ${WEBHOOK_FIELDS.join(',')}`);
+        }
       } catch (err: any) {
-        console.warn('[WEBHOOK SUBSCRIBE WARNING] Could not auto-subscribe page to webhooks (often requires pages_messaging). This is usually fine if configured in the Meta Dashboard:', err.message);
+        const metaErr = err.response?.data?.error;
+        console.error('[WEBHOOK SUBSCRIBE FAILED]', JSON.stringify(metaErr || err.message));
+        warnings.push(
+          `Automatic webhook subscription failed${metaErr?.message ? `: ${metaErr.message}` : ''}. ` +
+          'Real-time DM and comment automation will not work until this succeeds. ' +
+          'This usually means the pages_manage_metadata permission was not granted.'
+        );
+      }
+
+      // Report which of the permissions this integration depends on were actually granted,
+      // instead of letting the user discover a half-working connection later.
+      const missingScopes = await this.findMissingScopes(longLivedUserToken, APP_ID, APP_SECRET);
+      if (missingScopes.length > 0) {
+        warnings.push(`Missing Meta permissions: ${missingScopes.join(', ')}.`);
       }
 
       return {
         Success: true,
         Data: {
           business_id: igBusinessId,
-          page_name: targetPage.name
+          page_name: targetPage.name,
+          warnings,
+          missing_scopes: missingScopes
         }
       };
 
@@ -112,6 +190,25 @@ export class InstagramService {
     }
   }
 
+  /**
+   * Returns the REQUIRED_SCOPES the app user did NOT grant, by inspecting the token with
+   * debug_token. Returns [] when the check itself cannot be performed, so a transient
+   * Graph failure never blocks an otherwise valid connection.
+   */
+  private async findMissingScopes(userToken: string, appId: string, appSecret: string): Promise<string[]> {
+    try {
+      const res = await axios.get(`https://graph.facebook.com/${GRAPH_VERSION}/debug_token`, {
+        params: { input_token: userToken, access_token: `${appId}|${appSecret}` }
+      });
+      const granted: string[] = res.data?.data?.scopes || [];
+      if (granted.length === 0) return [];
+      return REQUIRED_SCOPES.filter(s => !granted.includes(s));
+    } catch (err: any) {
+      console.warn('[SCOPE CHECK] Could not inspect granted scopes:', err.response?.data?.error?.message || err.message);
+      return [];
+    }
+  }
+
   async disconnectInstagramAccount(companyId: string) {
     console.log(`[DISCONNECT] Unlinking Instagram for Company: ${companyId}`);
     const company = await CompanyTable.findOne({ where: { id: companyId as any } });
@@ -120,7 +217,7 @@ export class InstagramService {
     // Unsubscribe the app from the Facebook Page webhooks
     if (company.instagram_page_id && company.instagram_access_token) {
       try {
-        await axios.delete(`https://graph.facebook.com/v21.0/${company.instagram_page_id}/subscribed_apps`, {
+        await axios.delete(`https://graph.facebook.com/${GRAPH_VERSION}/${company.instagram_page_id}/subscribed_apps`, {
           params: { access_token: company.instagram_access_token }
         });
       } catch (err: any) {
@@ -135,6 +232,137 @@ export class InstagramService {
     await company.save();
     
     return { Success: true };
+  }
+
+  /**
+   * Honours Meta's data-deletion callback: removes the Instagram-derived personal data
+   * (leads, conversation history, story context) for every workspace the given Meta user
+   * authorised, and discards the stored credentials.
+   *
+   * Returns a confirmation code Meta surfaces to the user. The code is recorded in Redis
+   * so a status lookup can confirm the request was genuinely processed.
+   */
+  async handleMetaDataDeletion(metaUserId: string) {
+    const confirmationCode = `DEL-${crypto.randomBytes(8).toString('hex').toUpperCase()}`;
+
+    const companies = await CompanyTable.find({ where: { meta_user_id: metaUserId } });
+
+    if (companies.length === 0) {
+      // Either the user never connected, or they connected before meta_user_id was
+      // recorded. Say so plainly rather than implying data was deleted.
+      console.warn(
+        `[DATA DELETION] No workspace is mapped to Meta user ${metaUserId}. ` +
+        'Nothing to delete. If this account connected before meta_user_id was captured, ' +
+        'it must be resolved manually via the documented email process.'
+      );
+    }
+
+    let deletedLeads = 0;
+    let deletedMessages = 0;
+
+    for (const company of companies) {
+      const msgResult = await instagram_message.delete({ company_id: company.id });
+      deletedMessages += msgResult.affected || 0;
+
+      await story_context.delete({ company_id: company.id });
+
+      const leadResult = await instagram_lead.delete({ company_id: company.id });
+      deletedLeads += leadResult.affected || 0;
+
+      // Revoke and discard the Meta credentials for this workspace.
+      await this.disconnectInstagramAccount(company.id).catch(err =>
+        console.error(`[DATA DELETION] Disconnect failed for company ${company.id}:`, err.message)
+      );
+
+      await CompanyTable.update(company.id, { meta_user_id: null as any });
+    }
+
+    try {
+      await this.redisClient.set(
+        `meta_deletion:${confirmationCode}`,
+        JSON.stringify({
+          meta_user_id: metaUserId,
+          companies: companies.map(c => c.id),
+          deleted_leads: deletedLeads,
+          deleted_messages: deletedMessages,
+          completed_at: new Date().toISOString()
+        }),
+        'EX',
+        90 * 24 * 60 * 60
+      );
+    } catch (err: any) {
+      console.error('[DATA DELETION] Could not record the confirmation code:', err.message);
+    }
+
+    console.log(
+      `[DATA DELETION] ${confirmationCode}: ${companies.length} workspace(s), ` +
+      `${deletedLeads} lead(s), ${deletedMessages} message(s) removed.`
+    );
+
+    return { confirmation_code: confirmationCode, workspaces: companies.length };
+  }
+
+  /**
+   * Handles Meta's deauthorization callback. The token is already dead at this point,
+   * so the stored copy is cleared; CRM records are kept because the business may still
+   * be a paying customer who simply reconnects. Full erasure goes through
+   * handleMetaDataDeletion.
+   */
+  async handleMetaDeauthorization(metaUserId: string) {
+    const companies = await CompanyTable.find({ where: { meta_user_id: metaUserId } });
+    for (const company of companies) {
+      await CompanyTable.update(company.id, {
+        instagram_access_token: null as any,
+        instagram_business_id: null as any,
+        instagram_page_id: null as any,
+        instagram_username: null as any
+      });
+      console.log(`[DEAUTHORIZE] Cleared Instagram credentials for company ${company.id}.`);
+    }
+    return { workspaces: companies.length };
+  }
+
+  /**
+   * Self-serve erasure for the in-app "Delete Account & Purge Data" action, matching what
+   * the published data-deletion instructions promise.
+   */
+  async purgeCompanyData(companyId: string) {
+    const company = await CompanyTable.findOne({ where: { id: companyId as any } });
+    if (!company) throw new Error('Workspace not found');
+
+    if (company.instagram_access_token) {
+      await this.disconnectInstagramAccount(companyId).catch(err =>
+        console.error(`[PURGE] Disconnect failed for company ${companyId}:`, err.message)
+      );
+    }
+
+    const msgResult = await instagram_message.delete({ company_id: companyId });
+    await story_context.delete({ company_id: companyId });
+    await comment_trigger.delete({ company_id: companyId });
+    await knowledge_base.delete({ company_id: companyId });
+    const leadResult = await instagram_lead.delete({ company_id: companyId });
+
+    await CompanyTable.update(companyId, {
+      meta_user_id: null as any,
+      instagram_access_token: null as any,
+      instagram_business_id: null as any,
+      instagram_page_id: null as any,
+      instagram_username: null as any,
+      status: false as any
+    });
+
+    console.log(
+      `[PURGE] Company ${companyId}: removed ${leadResult.affected || 0} lead(s) and ` +
+      `${msgResult.affected || 0} message(s); workspace deactivated.`
+    );
+
+    return {
+      Success: true,
+      Data: {
+        deleted_leads: leadResult.affected || 0,
+        deleted_messages: msgResult.affected || 0
+      }
+    };
   }
 
   async processIncomingMessage(input: InstagramMessageContext | string, text?: string, messageId?: string, igBusinessId?: string, skipDedupe = false, storyInfo?: { id: string, url?: string }): Promise<InstagramActionResponse | void> {
@@ -259,7 +487,7 @@ export class InstagramService {
       lead.lead_status = 'New';
 
       try {
-        const profileRes = await axios.get(`https://graph.facebook.com/v21.0/${context.instagram_handle}?fields=name&access_token=${company?.instagram_access_token}`);
+        const profileRes = await axios.get(`https://graph.facebook.com/${GRAPH_VERSION}/${context.instagram_handle}?fields=name&access_token=${company?.instagram_access_token}`);
         if (profileRes.data.name) lead.customer_name = profileRes.data.name;
       } catch (e: any) {
         console.error('[IG PROFILE ERROR] Could not fetch profile details:', e.message);
@@ -300,7 +528,7 @@ export class InstagramService {
           // Fetch the real media_url from Meta Graph API
           if (company.instagram_access_token) {
             try {
-              const res = await axios.get(`https://graph.facebook.com/v21.0/${storyInfo.id}`, {
+              const res = await axios.get(`https://graph.facebook.com/${GRAPH_VERSION}/${storyInfo.id}`, {
                 params: {
                   fields: 'media_url,media_type',
                   access_token: company.instagram_access_token
@@ -657,7 +885,7 @@ export class InstagramService {
 
   private async fetchUserProfile(instagramId: string, token: string) {
     try {
-      const res = await axios.get(`https://graph.facebook.com/v21.0/${instagramId}`, {
+      const res = await axios.get(`https://graph.facebook.com/${GRAPH_VERSION}/${instagramId}`, {
         params: { fields: 'name', access_token: token }
       });
       return res.data;
@@ -668,7 +896,7 @@ export class InstagramService {
 
   private async fetchMessageDetails(mid: string, token: string) {
     try {
-      const res = await axios.get(`https://graph.facebook.com/v21.0/${mid}`, {
+      const res = await axios.get(`https://graph.facebook.com/${GRAPH_VERSION}/${mid}`, {
         params: { fields: 'from,message', access_token: token }
       });
       return res.data;
@@ -683,6 +911,9 @@ export class InstagramService {
     outboundMsg.lead_id = lead.id;
     outboundMsg.message_text = response.reply;
     outboundMsg.direction = 'Outbound';
+    // Mark every automated reply so it is never mistaken for a human agent message.
+    outboundMsg.action_taken = (response as any)?.action ? `AI_${(response as any).action}` : 'AI_REPLY';
+    outboundMsg.ai_notes = (response as any)?.notes || null;
     outboundMsg.created_by_id = '00000000-0000-0000-0000-000000000000';
     outboundMsg.created_on = new Date();
     outboundMsg.company_id = lead.company_id;
@@ -723,7 +954,7 @@ export class InstagramService {
   }
 
   private async sendSenderAction(recipientId: string, action: string, token: string) {
-    const url = `https://graph.facebook.com/v21.0/me/messages`;
+    const url = `https://graph.facebook.com/${GRAPH_VERSION}/me/messages`;
     const payload = { recipient: { id: recipientId }, sender_action: action };
     const headers = { 'Authorization': `Bearer ${token}` };
     try {
@@ -733,41 +964,105 @@ export class InstagramService {
     }
   }
 
-  private async sendInstagramMessage(recipientId: string, text: string, token: string) {
-    const url = `https://graph.facebook.com/v25.0/me/messages`;
-    const payload = { recipient: { id: recipientId }, message: { text } };
+  /**
+   * Sends a DM. Returns the outcome rather than throwing, so the automated paths keep
+   * their existing fire-and-forget behaviour while interactive callers can surface the
+   * real Meta error instead of reporting a message that was never delivered.
+   */
+  private async sendInstagramMessage(
+    recipientId: string,
+    text: string,
+    token: string,
+    isHumanAgent: boolean = false
+  ): Promise<{ ok: boolean; error?: string }> {
+    const url = `https://graph.facebook.com/${GRAPH_VERSION}/me/messages`;
+    const payload: any = { recipient: { id: recipientId }, message: { text } };
+
+    // Only set when the caller has established the 24-hour window has closed.
+    if (isHumanAgent) {
+      payload.messaging_type = 'MESSAGE_TAG';
+      payload.tag = 'HUMAN_AGENT';
+    } else {
+      payload.messaging_type = 'RESPONSE';
+    }
+
     const headers = { 'Authorization': `Bearer ${token}` };
+    let lastError = 'Unknown error';
 
     for (let attempt = 1; attempt <= 2; attempt++) {
       try {
         await axios.post(url, payload, { headers, timeout: 15000 });
-        return; // Success
+        return { ok: true };
       } catch (error: any) {
         const errData = error.response?.data;
         const errStatus = error.response?.status;
         const errMsg = error.message;
+        lastError = errData?.error?.message || errMsg;
         console.error(`[IG ERROR] Message failed to send (attempt ${attempt}/2):`, JSON.stringify({ status: errStatus, data: errData, message: errMsg }));
 
         if (attempt < 2 && (errStatus === 429 || errStatus >= 500)) {
           await new Promise(resolve => setTimeout(resolve, 2000));
           continue;
         }
+        break;
       }
     }
+    return { ok: false, error: lastError };
   }
 
-  async sendManualMessage(companyId: string, leadId: string, text: string) {
+  /**
+   * Returns true when the standard 24-hour messaging window for this conversation has
+   * closed, i.e. the HUMAN_AGENT tag is both permitted and required to deliver a reply.
+   *
+   * The tag must NOT be attached inside the window: Meta restricts message-tag use to
+   * its approved cases, and tagging an ordinary in-window reply is misuse.
+   * https://developers.facebook.com/documentation/business-messaging/messenger-platform/policy
+   */
+  private async isOutsideStandardWindow(leadId: string): Promise<boolean> {
+    const lastInbound = await instagram_message.findOne({
+      where: { lead_id: leadId, direction: 'Inbound' },
+      order: { created_on: 'DESC' }
+    });
+    // No inbound message on record: there is no window to extend, so do not tag.
+    if (!lastInbound?.created_on) return false;
+    const ageMs = Date.now() - new Date(lastInbound.created_on).getTime();
+    return ageMs > 24 * 60 * 60 * 1000;
+  }
+
+  async sendManualMessage(companyId: string, leadId: string, text: string, agentUserId?: string) {
     const company = await CompanyTable.findOne({ where: { id: companyId } });
+    if (!company?.instagram_access_token) {
+      throw new Error('Instagram account not connected for this workspace');
+    }
     const lead = await instagram_lead.findOne({ where: { id: leadId, company_id: companyId } });
     if (!lead) throw new Error('Lead not found');
 
-    await this.sendInstagramMessage(lead.instagram_handle, text, company?.instagram_access_token);
-    
+    // A human agent is replying from the inbox. Only escalate to the HUMAN_AGENT tag when
+    // the 24-hour window has already closed; inside the window send a standard response.
+    const useHumanAgentTag = await this.isOutsideStandardWindow(leadId);
+    if (useHumanAgentTag) {
+      console.log(`[HUMAN AGENT] Lead ${leadId} is outside the 24h window; sending with HUMAN_AGENT tag.`);
+    }
+    const sendResult = await this.sendInstagramMessage(
+      lead.instagram_handle,
+      text,
+      company.instagram_access_token,
+      useHumanAgentTag
+    );
+
+    // Never log an undelivered message as sent — the agent must see the real failure.
+    if (!sendResult.ok) {
+      throw new Error(`Instagram did not accept the message: ${sendResult.error}`);
+    }
+
     const outboundMsg = new instagram_message();
     outboundMsg.lead_id = lead.id;
     outboundMsg.message_text = text;
     outboundMsg.direction = 'Outbound';
-    outboundMsg.created_by_id = '00000000-0000-0000-0000-000000000000';
+    // Distinguishes a human agent's reply from an AI-generated one, both in the UI and
+    // in the audit trail Meta asks for when reviewing the Human Agent feature.
+    outboundMsg.action_taken = useHumanAgentTag ? 'HUMAN_AGENT_TAGGED_REPLY' : 'HUMAN_AGENT_REPLY';
+    outboundMsg.created_by_id = agentUserId || '00000000-0000-0000-0000-000000000000';
     outboundMsg.created_on = new Date();
     outboundMsg.company_id = companyId;
     await outboundMsg.save();
@@ -921,14 +1216,46 @@ export class InstagramService {
   }
 
   async processIncomingComment(changeValue: any, igBusinessId: string) {
+    const commenterId = changeValue.from?.id;
+    const commentId = changeValue.id;
+
+    // The public fallback reply below is itself a comment, so Meta delivers a `comments`
+    // event for it. Without this guard a reply containing its own trigger keyword would
+    // make the app reply to itself indefinitely.
+    if (commenterId && igBusinessId && String(commenterId) === String(igBusinessId)) {
+      console.log(`[COMMENT WEBHOOK] Skipping our own comment (${commentId}).`);
+      return;
+    }
+
     const company = await CompanyTable.findOne({ where: { instagram_business_id: igBusinessId } });
     if (!company) {
       console.error(`[COMMENT WEBHOOK] No company found with instagram_business_id: ${igBusinessId}`);
       return;
     }
 
+    if (commenterId && company.instagram_page_id && String(commenterId) === String(company.instagram_page_id)) {
+      console.log(`[COMMENT WEBHOOK] Skipping comment authored by the connected Page (${commentId}).`);
+      return;
+    }
+
+    // Meta retries a webhook delivery until it gets a 200, and may redeliver afterwards.
+    // Claim each comment id once so a retry cannot produce a second reply.
+    if (commentId) {
+      const dedupeKey = `ig_comment_seen:${company.id}:${commentId}`;
+      try {
+        const claimed = await this.redisClient.set(dedupeKey, '1', 'EX', 7 * 24 * 60 * 60, 'NX');
+        if (claimed !== 'OK') {
+          console.log(`[COMMENT WEBHOOK] Duplicate delivery for comment ${commentId}; ignoring.`);
+          return;
+        }
+      } catch (err: any) {
+        // Redis unavailable: continue rather than dropping a genuine event.
+        console.warn('[COMMENT WEBHOOK] Dedupe check unavailable:', err.message);
+      }
+    }
+
     const triggers = await comment_trigger.find({ where: { company_id: company.id, is_active: true } });
-    const commentText = changeValue.text.toUpperCase();
+    const commentText = String(changeValue.text || '').toUpperCase();
 
     const matchedTrigger = triggers.find(t => {
       const keywords = t.keyword.split(',').map(k => k.trim().toUpperCase()).filter(k => k.length > 0);
@@ -946,12 +1273,7 @@ export class InstagramService {
 
     console.log(`[COMMENT WEBHOOK] Matched trigger keyword: "${matchedTrigger.keyword}" for comment ID: ${changeValue.id}`);
 
-    // Send DM directly to the commenter's user ID
-    // Note: We use the standard messages API (not private_replies) because private_replies
-    // is blocked in Meta Development Mode for comments from non-initiated users.
-    const commenterId = changeValue.from?.id;
     const mediaId = changeValue.media?.id;
-    const commentId = changeValue.id;
 
     // Strategy 1: Try private_replies (works in Live mode)
     // Strategy 2: Fall back to public comment reply on the post (works in Dev mode too)
@@ -959,7 +1281,7 @@ export class InstagramService {
 
     // Try private reply first
     try {
-      const url = `https://graph.facebook.com/v21.0/${commentId}/private_replies`;
+      const url = `https://graph.facebook.com/${GRAPH_VERSION}/${commentId}/private_replies`;
       await axios.post(url, { message: matchedTrigger.reply_message }, {
         headers: { 'Authorization': `Bearer ${company.instagram_access_token}` }
       });
@@ -972,7 +1294,7 @@ export class InstagramService {
     // Fallback: Post a public comment reply directly on the comment thread
     if (!replySent) {
       try {
-        const url = `https://graph.facebook.com/v21.0/${commentId}/replies`;
+        const url = `https://graph.facebook.com/${GRAPH_VERSION}/${commentId}/replies`;
         await axios.post(url, {
           message: `@${changeValue.from?.username || 'there'} ${matchedTrigger.reply_message}`
         }, {
@@ -1032,5 +1354,178 @@ export class InstagramService {
       lead.last_message_time = new Date();
       await lead.save();
     }
+  }
+
+  // --- COMMENTS MANAGEMENT (instagram_business_manage_comments) ---
+
+  async getMedia(companyId: string, limit: number = 25, after?: string) {
+    const company = await CompanyTable.findOne({ where: { id: companyId as any } });
+    if (!company || !company.instagram_business_id || !company.instagram_access_token) {
+      throw new Error('Instagram account not connected for this workspace');
+    }
+
+    try {
+      const params: any = {
+        fields: 'id,caption,media_type,media_url,thumbnail_url,permalink,timestamp,comments_count,like_count',
+        limit: Math.min(Number(limit) || 25, 50),
+        access_token: company.instagram_access_token
+      };
+      if (after) {
+        params.after = after;
+      }
+
+      const response = await axios.get(`https://graph.facebook.com/${GRAPH_VERSION}/${company.instagram_business_id}/media`, { params });
+      return response.data;
+    } catch (error: any) {
+      console.error('[INSTAGRAM GET MEDIA ERROR]', error.response?.data || error.message);
+      const metaMsg = error.response?.data?.error?.message || error.message;
+      throw new Error(`Meta API Error: ${metaMsg}`);
+    }
+  }
+
+  /**
+   * Confirms the given media id belongs to the workspace's own connected Instagram account
+   * before any comment is read or modified. The access token already scopes Graph to that
+   * account, but checking here turns a confusing Meta error into a clear 403 and stops a
+   * tenant from probing ids that are not theirs.
+   */
+  private async assertOwnsMedia(company: any, mediaId: string) {
+    const res = await axios.get(`https://graph.facebook.com/${GRAPH_VERSION}/${mediaId}`, {
+      params: { fields: 'id,owner', access_token: company.instagram_access_token }
+    });
+    const ownerId = res.data?.owner?.id;
+    if (ownerId && String(ownerId) !== String(company.instagram_business_id)) {
+      throw new Error('FORBIDDEN_MEDIA: This post does not belong to the connected Instagram account.');
+    }
+  }
+
+  /**
+   * Confirms the comment hangs off media owned by the workspace's connected account.
+   */
+  private async assertOwnsComment(company: any, commentId: string) {
+    const res = await axios.get(`https://graph.facebook.com/${GRAPH_VERSION}/${commentId}`, {
+      params: { fields: 'id,media{id,owner}', access_token: company.instagram_access_token }
+    });
+    const ownerId = res.data?.media?.owner?.id;
+    if (ownerId && String(ownerId) !== String(company.instagram_business_id)) {
+      throw new Error('FORBIDDEN_COMMENT: This comment does not belong to the connected Instagram account.');
+    }
+  }
+
+  private async requireConnectedCompany(companyId: string) {
+    const company = await CompanyTable.findOne({ where: { id: companyId as any } });
+    if (!company || !company.instagram_business_id || !company.instagram_access_token) {
+      throw new Error('Instagram account not connected for this workspace');
+    }
+    return company;
+  }
+
+  async getComments(companyId: string, mediaId: string, limit: number = 50, after?: string) {
+    const company = await this.requireConnectedCompany(companyId);
+
+    try {
+      await this.assertOwnsMedia(company, mediaId);
+
+      const params: any = {
+        fields: 'id,text,timestamp,username,like_count,hidden,replies{id,text,timestamp,username}',
+        limit: Math.min(Number(limit) || 50, 100),
+        access_token: company.instagram_access_token
+      };
+      if (after) {
+        params.after = after;
+      }
+
+      const response = await axios.get(`https://graph.facebook.com/${GRAPH_VERSION}/${mediaId}/comments`, { params });
+      return response.data;
+    } catch (error: any) {
+      if (String(error.message).startsWith('FORBIDDEN_MEDIA')) throw error;
+      console.error('[INSTAGRAM GET COMMENTS ERROR]', error.response?.data || error.message);
+      const metaMsg = error.response?.data?.error?.message || error.message;
+      throw new Error(`Meta API Error: ${metaMsg}`);
+    }
+  }
+
+  async replyToComment(companyId: string, commentId: string, message: string) {
+    const company = await this.requireConnectedCompany(companyId);
+
+    try {
+      await this.assertOwnsComment(company, commentId);
+
+      const url = `https://graph.facebook.com/${GRAPH_VERSION}/${commentId}/replies`;
+      const response = await axios.post(url, null, {
+        params: { message, access_token: company.instagram_access_token }
+      });
+      return response.data;
+    } catch (error: any) {
+      if (String(error.message).startsWith('FORBIDDEN_COMMENT')) throw error;
+      console.error('[INSTAGRAM REPLY COMMENT ERROR]', error.response?.data || error.message);
+      throw new Error(`Meta API Error: ${this.describeCommentError(error)}`);
+    }
+  }
+
+  async hideComment(companyId: string, commentId: string, hide: boolean = true) {
+    const company = await this.requireConnectedCompany(companyId);
+
+    try {
+      await this.assertOwnsComment(company, commentId);
+
+      const url = `https://graph.facebook.com/${GRAPH_VERSION}/${commentId}`;
+      const response = await axios.post(url, null, {
+        params: {
+          hide,
+          access_token: company.instagram_access_token
+        }
+      });
+      return { success: true, hidden: hide, data: response.data };
+    } catch (error: any) {
+      if (String(error.message).startsWith('FORBIDDEN_COMMENT')) throw error;
+      console.error('[INSTAGRAM HIDE COMMENT ERROR]', error.response?.data || error.message);
+      throw new Error(`Meta API Error: ${this.describeCommentError(error)}`);
+    }
+  }
+
+  async deleteComment(companyId: string, commentId: string) {
+    const company = await this.requireConnectedCompany(companyId);
+
+    try {
+      await this.assertOwnsComment(company, commentId);
+
+      const url = `https://graph.facebook.com/${GRAPH_VERSION}/${commentId}`;
+      const response = await axios.delete(url, {
+        params: { access_token: company.instagram_access_token }
+      });
+      return { success: true, data: response.data };
+    } catch (error: any) {
+      if (String(error.message).startsWith('FORBIDDEN_COMMENT')) throw error;
+      console.error('[INSTAGRAM DELETE COMMENT ERROR]', error.response?.data || error.message);
+      throw new Error(`Meta API Error: ${this.describeCommentError(error)}`);
+    }
+  }
+
+  /**
+   * Turns Meta's comment errors into something an operator can act on. Comments can be
+   * deleted by their author or removed from your own media, a hidden comment cannot be
+   * replied to, and a comment deleted on Instagram disappears from the Graph entirely —
+   * each of these surfaces as a generic Graph error otherwise.
+   */
+  private describeCommentError(error: any): string {
+    const err = error.response?.data?.error;
+    const code = err?.code;
+    const subcode = err?.error_subcode;
+    const metaMsg = err?.message || error.message;
+
+    if (error.response?.status === 404 || code === 803) {
+      return 'This comment no longer exists on Instagram — it may have been deleted by its author. Refresh the comment list.';
+    }
+    if (code === 190) {
+      return 'The Instagram connection has expired or been revoked. Reconnect the account in Meta Integration.';
+    }
+    if (code === 200 || code === 10) {
+      return `Instagram refused this action for the connected account (${metaMsg}). This usually means the instagram_manage_comments permission is missing or still limited to Standard Access.`;
+    }
+    if (subcode) {
+      return `${metaMsg} (code ${code}/${subcode})`;
+    }
+    return metaMsg;
   }
 }

@@ -27,3 +27,32 @@ export interface Message {
   ai_notes?: string;
   created_on: string;
 }
+
+export interface InstagramMediaItem {
+  id: string;
+  caption?: string;
+  media_type: 'IMAGE' | 'VIDEO' | 'CAROUSEL_ALBUM';
+  media_url?: string;
+  thumbnail_url?: string;
+  permalink?: string;
+  timestamp: string;
+  comments_count?: number;
+  like_count?: number;
+}
+
+export interface InstagramCommentItem {
+  id: string;
+  text: string;
+  timestamp: string;
+  username?: string;
+  like_count?: number;
+  hidden?: boolean;
+  replies?: {
+    data: Array<{
+      id: string;
+      text: string;
+      timestamp: string;
+      username?: string;
+    }>;
+  };
+}

@@ -56,3 +56,36 @@ export const updateAIPrompt = async (prompt: string): Promise<ApiResponse<any>> 
   const response = await api.post<ApiResponse<any>>('/Instagram/Prompt', { prompt });
   return response.data;
 };
+
+// --- COMMENTS MANAGEMENT (instagram_business_manage_comments) ---
+
+export const getInstagramMedia = async (limit?: number, after?: string): Promise<ApiResponse<{ data: any[], paging?: any }>> => {
+  const params = new URLSearchParams();
+  if (limit) params.append('limit', limit.toString());
+  if (after) params.append('after', after);
+  const response = await api.get<ApiResponse<{ data: any[], paging?: any }>>(`/Instagram/Media?${params.toString()}`);
+  return response.data;
+};
+
+export const getInstagramComments = async (mediaId: string, limit?: number, after?: string): Promise<ApiResponse<{ data: any[], paging?: any }>> => {
+  const params = new URLSearchParams();
+  if (limit) params.append('limit', limit.toString());
+  if (after) params.append('after', after);
+  const response = await api.get<ApiResponse<{ data: any[], paging?: any }>>(`/Instagram/Media/${mediaId}/Comments?${params.toString()}`);
+  return response.data;
+};
+
+export const replyToInstagramComment = async (commentId: string, message: string): Promise<ApiResponse<any>> => {
+  const response = await api.post<ApiResponse<any>>(`/Instagram/Comments/${commentId}/Reply`, { message });
+  return response.data;
+};
+
+export const hideInstagramComment = async (commentId: string, hide: boolean = true): Promise<ApiResponse<any>> => {
+  const response = await api.post<ApiResponse<any>>(`/Instagram/Comments/${commentId}/Hide`, { hide });
+  return response.data;
+};
+
+export const deleteInstagramComment = async (commentId: string): Promise<ApiResponse<any>> => {
+  const response = await api.delete<ApiResponse<any>>(`/Instagram/Comments/${commentId}`);
+  return response.data;
+};
