@@ -36,7 +36,7 @@ export const ProductShowcase: React.FC = () => {
         <span className="text-xs font-bold uppercase tracking-widest text-[#4F39F6] dark:text-[#818CF8]">
           Interactive Dashboard Preview
         </span>
-        <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-zinc-900 dark:text-white mt-2 mb-3">
+        <h2 className="text-2xl sm:text-4xl font-bold tracking-tight text-zinc-900 dark:text-white mt-2 mb-3">
           Explore The Full Flazly Platform
         </h2>
         <p className="text-sm text-zinc-500 dark:text-zinc-400 font-medium">
@@ -84,7 +84,7 @@ export const ProductShowcase: React.FC = () => {
               <div className="w-3 h-3 rounded-full bg-zinc-700" />
               <div className="w-3 h-3 rounded-full bg-zinc-700" />
             </div>
-            <span className="text-[10px] text-zinc-400 font-bold uppercase tracking-wider font-mono">
+            <span className="text-[10px] text-zinc-400 font-bold uppercase tracking-wider">
               flazly_cloud_v1.0.8 // {activeTab.toUpperCase()}
             </span>
             <div className="w-12" />
@@ -139,7 +139,7 @@ const InboxMockup = () => {
             <span className="text-[7px] font-bold text-[#38BDF8] bg-[#38BDF8]/10 px-1.5 py-0.5 rounded">Autopilot</span>
           </div>
           <span className="text-[9px] text-zinc-400 truncate font-medium">Wants custom sizes info</span>
-          <span className="text-[7.5px] text-[#38BDF8] font-extrabold mt-1">🔥 High Intent</span>
+          <span className="text-[7.5px] text-[#38BDF8] font-bold mt-1">🔥 High Intent</span>
         </div>
 
         <div className="p-2 rounded-xl bg-white/[0.02] border border-white/5 flex flex-col gap-1 hover:bg-white/[0.04] transition-colors cursor-pointer opacity-70">
@@ -191,7 +191,7 @@ const InboxMockup = () => {
               <p className="text-[10px] text-white">Yes! We have 3 pairs left in size 10. The price is $129 with free shipping. Would you like a checkout link?</p>
               <span className="text-[6.5px] font-bold text-zinc-400 uppercase tracking-wide mt-1 block">✦ Automated by Flazly</span>
             </div>
-            <div className="w-5 h-5 rounded-full bg-[#38BDF8] flex items-center justify-center text-[7px] font-bold shrink-0 text-white font-mono">AI</div>
+            <div className="w-5 h-5 rounded-full bg-[#38BDF8] flex items-center justify-center text-[7px] font-bold shrink-0 text-white">AI</div>
           </div>
 
           <div className="flex gap-2 max-w-[85%]">
@@ -204,9 +204,9 @@ const InboxMockup = () => {
           <div className="flex gap-2 max-w-[85%] ml-auto justify-end">
             <div className="bg-zinc-850 p-2.5 rounded-2xl rounded-tr-none text-right border border-[#38BDF8]/25">
               <p className="text-[10px] text-white">Awesome! I've saved daniel@gmail.com. Here is your checkout link: flazly.com/chk/shoes-10</p>
-              <span className="text-[6.5px] font-bold text-[#38BDF8] uppercase tracking-wide mt-1 block font-extrabold">✦ Automated by Flazly</span>
+              <span className="text-[6.5px] font-bold text-[#38BDF8] uppercase tracking-wide mt-1 block font-bold">✦ Automated by Flazly</span>
             </div>
-            <div className="w-5 h-5 rounded-full bg-[#38BDF8] flex items-center justify-center text-[7px] font-bold shrink-0 text-white font-mono">AI</div>
+            <div className="w-5 h-5 rounded-full bg-[#38BDF8] flex items-center justify-center text-[7px] font-bold shrink-0 text-white">AI</div>
           </div>
         </div>
 
@@ -235,7 +235,7 @@ const InboxMockup = () => {
         <div className="space-y-3 text-[10px]">
           <div>
             <span className="text-zinc-500 block mb-0.5">Email Address</span>
-            <span className="text-zinc-200 font-mono font-bold">daniel@gmail.com</span>
+            <span className="text-zinc-200 font-bold">daniel@gmail.com</span>
           </div>
           <div>
             <span className="text-zinc-500 block mb-0.5">Lead Location</span>
@@ -270,7 +270,7 @@ const AgentMockup = () => {
           <textarea
             readOnly
             value="You are Flazly, an AI sales representative. Your tone should be extremely friendly, helpful, and outcome-oriented. Help visitors qualify their DMs, answer FAQs regarding products, pricing, features, and setup. Capture lead details from high-intent buyers, or provide a purchase link if they inquire about pricing."
-            className="w-full h-28 bg-black/40 border border-white/10 rounded-xl p-3 text-[10px] text-zinc-300 font-mono leading-relaxed resize-none outline-none"
+            className="w-full h-28 bg-black/40 border border-white/10 rounded-xl p-3 text-[10px] text-zinc-300 leading-relaxed resize-none outline-none"
           />
         </div>
 
@@ -278,7 +278,7 @@ const AgentMockup = () => {
           <div className="flex flex-col gap-1.5">
             <span className="text-xs font-bold text-zinc-300">Confidence Threshold</span>
             <div className="bg-black/40 border border-white/10 rounded-xl p-3 flex items-center justify-between">
-              <span className="text-[10px] font-mono text-zinc-200 font-semibold">92% Match</span>
+              <span className="text-[10px] tabular-nums text-zinc-200 font-semibold">92% Match</span>
               <div className="w-20 h-1.5 bg-white/10 rounded-full overflow-hidden">
                 <div className="h-full bg-[#38BDF8]" style={{ width: "92%" }} />
               </div>
@@ -407,17 +407,17 @@ const AnalyticsMockup = () => {
           <div className="absolute top-3 left-3 bg-[#3B82F6]/10 border border-[#3B82F6]/20 px-2 py-0.5 rounded text-[8px] font-bold text-[#38BDF8]">
             Revenue Trend: +34%
           </div>
-          <div className="absolute bottom-1 right-2 text-[7px] text-zinc-500 font-mono">May 1 - May 30</div>
+          <div className="absolute bottom-1 right-2 text-[7px] text-zinc-500 tabular-nums">May 1 - May 30</div>
         </div>
 
         <div className="grid grid-cols-2 gap-4 border-t border-white/5 pt-3">
           <div>
             <span className="text-[9px] text-zinc-500 block">Total Automated Revenue</span>
-            <span className="text-base font-extrabold text-white">$18,429.50</span>
+            <span className="text-base font-bold text-white">$18,429.50</span>
           </div>
           <div>
             <span className="text-[9px] text-zinc-500 block">Lead Conversion Rate</span>
-            <span className="text-base font-extrabold text-[#38BDF8]">8.42%</span>
+            <span className="text-base font-bold text-[#38BDF8]">8.42%</span>
           </div>
         </div>
       </div>
@@ -434,7 +434,7 @@ const AnalyticsMockup = () => {
                 <span className="text-[8px] text-zinc-400">Captured Email: sarah@fit.co</span>
               </div>
             </div>
-            <span className="text-[8px] font-extrabold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded">Lead</span>
+            <span className="text-[8px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded">Lead</span>
           </div>
 
           <div className="bg-white/[0.02] border border-white/5 p-2 rounded-xl flex items-center justify-between">
@@ -445,13 +445,13 @@ const AnalyticsMockup = () => {
                 <span className="text-[8px] text-zinc-400">Purchased Sneaker White</span>
               </div>
             </div>
-            <span className="text-[8px] font-extrabold text-zinc-200 bg-white/10 border border-white/20 px-2 py-0.5 rounded">+$129.00</span>
+            <span className="text-[8px] font-bold text-zinc-200 bg-white/10 border border-white/20 px-2 py-0.5 rounded">+$129.00</span>
           </div>
         </div>
 
         <div className="bg-[#121826] border border-[#38BDF8]/20 p-3 rounded-xl text-center">
           <span className="text-[9px] text-zinc-400 uppercase tracking-widest block mb-1">Time Saved This Month</span>
-          <span className="text-xl font-black text-[#38BDF8] font-mono">48.5 Hours</span>
+          <span className="text-xl font-bold text-[#38BDF8] tabular-nums">48.5 Hours</span>
         </div>
       </div>
     </div>
@@ -518,7 +518,7 @@ const SettingsMockup = () => {
         </p>
 
         <div className="bg-white/[0.02] border border-[#38BDF8]/20 p-3 rounded-xl text-left">
-          <span className="text-[8px] font-bold text-zinc-300 uppercase font-mono block">Webhook Endpoint</span>
+          <span className="text-[8px] font-bold text-zinc-300 uppercase block">Webhook Endpoint</span>
           <span className="text-[10px] font-mono text-zinc-200 mt-1 block truncate">https://api.yourdomain.com/webhook</span>
           <div className="flex gap-1.5 mt-3">
             <span className="text-[7px] font-bold text-[#38BDF8] bg-[#38BDF8]/10 border border-[#38BDF8]/20 px-2 py-0.5 rounded">on_lead_qualify</span>

@@ -41,13 +41,13 @@ const AdminUsage: React.FC = () => {
   );
 
   return (
-    <div className="max-w-7xl mx-auto pb-12 font-sans animate-in fade-in duration-500 h-full flex flex-col" style={{ fontFamily: '"Inter", system-ui, sans-serif' }}>
+    <div className="max-w-7xl mx-auto pb-12 font-sans animate-in fade-in duration-500 h-full flex flex-col">
       
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8 border-b border-zinc-200/80 pb-6 shrink-0">
         <div>
-          <h1 className="text-2xl font-bold text-zinc-900 tracking-tight mb-2">Tenant AI Usage</h1>
-          <p className="text-sm text-zinc-500 font-medium">Monitor API consumption, token utilization, and rate limits across all SaaS accounts.</p>
+          <h1 className="page-title">AI usage by client</h1>
+          <p className="page-sub">Monitor API consumption, token utilization, and rate limits across all SaaS accounts.</p>
         </div>
         
         <div className="flex flex-col sm:flex-row gap-3">
@@ -74,8 +74,8 @@ const AdminUsage: React.FC = () => {
         {/* Table Header Row */}
         <div className="px-6 py-4 border-b border-zinc-100 bg-zinc-50 flex justify-between items-center shrink-0 rounded-t-2xl">
           <div className="flex items-center gap-3">
-            <h3 className="text-sm font-bold text-zinc-900">Infrastructure Metrics</h3>
-            <span className="px-2.5 py-0.5 bg-zinc-200 text-zinc-700 rounded-full text-xs font-bold">{filteredClients.length} Tenants</span>
+            <h3 className="text-sm font-medium text-zinc-900">Infrastructure Metrics</h3>
+            <span className="px-2.5 py-0.5 bg-zinc-200 text-zinc-700 rounded-full text-xs font-medium">{filteredClients.length} Tenants</span>
           </div>
           <Activity size={16} className="text-zinc-400" />
         </div>
@@ -84,10 +84,10 @@ const AdminUsage: React.FC = () => {
           <table className="w-full text-left border-collapse whitespace-nowrap">
             <thead className="sticky top-0 bg-white z-10 shadow-[0_1px_0_rgba(228,228,231,1)]">
               <tr>
-                <th className="px-6 py-4 text-[11px] font-bold text-zinc-500 uppercase tracking-wider bg-zinc-50/50">Client Identity</th>
-                <th className="px-6 py-4 text-[11px] font-bold text-zinc-500 uppercase tracking-wider bg-zinc-50/50">Subscription Tier</th>
-                <th className="px-6 py-4 text-[11px] font-bold text-zinc-500 uppercase tracking-wider bg-zinc-50/50">Monthly AI Queries</th>
-                <th className="px-6 py-4 text-[11px] font-bold text-zinc-500 uppercase tracking-wider bg-zinc-50/50">Capacity Utilization</th>
+                <th className="px-6 py-4 text-[13px] font-medium text-zinc-500 bg-zinc-50/50">Client Identity</th>
+                <th className="px-6 py-4 text-[13px] font-medium text-zinc-500 bg-zinc-50/50">Subscription Tier</th>
+                <th className="px-6 py-4 text-[13px] font-medium text-zinc-500 bg-zinc-50/50">Monthly AI Queries</th>
+                <th className="px-6 py-4 text-[13px] font-medium text-zinc-500 bg-zinc-50/50">Capacity Utilization</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-zinc-100">
@@ -107,8 +107,8 @@ const AdminUsage: React.FC = () => {
                       <div className="w-16 h-16 bg-zinc-50 rounded-2xl flex items-center justify-center mb-4 border border-zinc-100">
                         <Cloud size={24} className="text-zinc-400" />
                       </div>
-                      <h3 className="text-base font-bold text-zinc-900 mb-1">No tenants found</h3>
-                      <p className="text-sm text-zinc-500 font-medium">Adjust search or check database connection.</p>
+                      <h3 className="text-base font-semibold text-zinc-900 mb-1">No tenants found</h3>
+                      <p className="page-sub">Adjust search or check database connection.</p>
                     </div>
                   </td>
                 </tr>
@@ -140,25 +140,25 @@ const AdminUsage: React.FC = () => {
                   <tr key={client.id} className="hover:bg-zinc-50 transition-colors duration-200 group">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 rounded-xl bg-zinc-100 flex items-center justify-center text-zinc-500 font-bold border border-zinc-200 shadow-sm shrink-0">
+                        <div className="w-10 h-10 rounded-xl bg-zinc-100 flex items-center justify-center text-zinc-500 font-semibold border border-zinc-200 shadow-sm shrink-0">
                           <Server size={18} />
                         </div>
                         <div className="flex flex-col">
-                          <span className="font-bold text-zinc-900">{client.name || 'Unknown'}</span>
+                          <span className="font-semibold text-zinc-900">{client.name || 'Unknown'}</span>
                           <span className="text-xs text-zinc-500 font-medium mt-0.5">{client.email || 'No email'}</span>
                         </div>
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <span className={`px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider border
+                      <span className={`px-2.5 py-1 rounded-md text-[13px] font-medium  border
                         ${client.plan !== 'Free' ? 'bg-violet-50 text-violet-700 border-violet-200' : 'bg-zinc-100 text-zinc-600 border-zinc-200'}`}>
                         {client.plan || 'Free'}
                       </span>
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-baseline gap-1.5">
-                        <span className="text-base font-bold text-zinc-900">{usage.toLocaleString()}</span>
-                        <span className="text-[11px] font-semibold text-zinc-400">/ {limit.toLocaleString()}</span>
+                        <span className="text-base font-semibold text-zinc-900">{usage.toLocaleString()}</span>
+                        <span className="text-[13px] font-semibold text-zinc-400">/ {limit.toLocaleString()}</span>
                       </div>
                     </td>
                     <td className="px-6 py-4">
@@ -169,7 +169,7 @@ const AdminUsage: React.FC = () => {
                             style={{ width: `${percent}%` }}
                           />
                         </div>
-                        <span className={`text-xs font-bold w-10 text-right ${textColor}`}>
+                        <span className={`text-xs font-medium w-10 text-right ${textColor}`}>
                           {percent}%
                         </span>
                       </div>
@@ -203,7 +203,7 @@ const AdminUsage: React.FC = () => {
                 <button
                   key={pageNum}
                   onClick={() => setCurrentPage(pageNum)}
-                  className={`w-8 h-8 flex items-center justify-center rounded-md text-xs font-bold transition-colors ${
+                  className={`w-8 h-8 flex items-center justify-center rounded-md text-xs font-medium transition-colors ${
                     currentPage === pageNum 
                       ? 'bg-zinc-900 text-white shadow-sm' 
                       : 'bg-white text-zinc-600 hover:bg-zinc-50 border border-transparent hover:border-zinc-200'

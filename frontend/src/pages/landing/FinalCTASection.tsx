@@ -11,7 +11,7 @@ export const FinalCTASection: React.FC = () => {
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-gradient-to-r from-[#EC4899]/10 via-[#818CF8]/10 to-[#4F39F6]/10 blur-[100px] pointer-events-none rounded-full" />
       
       <div className="max-w-4xl mx-auto px-6 relative z-10 font-inter">
-        <h2 className="text-4xl md:text-6xl font-extrabold text-zinc-900 dark:text-white mb-6 leading-tight tracking-tight cta-heading-glow">
+        <h2 className="text-4xl md:text-6xl font-bold text-zinc-900 dark:text-white mb-6 leading-tight tracking-tight cta-heading-glow">
           Stop Losing Leads Inside Your <span className="text-logo-gradient">Instagram DMs</span>
         </h2>
         <p className="text-base md:text-lg text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto mb-10 font-medium leading-relaxed">

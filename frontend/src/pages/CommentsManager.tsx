@@ -265,7 +265,7 @@ const CommentsManager: React.FC = () => {
             <div className="p-2.5 bg-gradient-to-tr from-purple-500 to-pink-500 text-white rounded-xl shadow-lg shadow-purple-500/20">
               <MessageSquare size={22} strokeWidth={2.5} />
             </div>
-            <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100 tracking-tight">
+            <h1 className="page-title">
               Comments Manager
             </h1>
             <span className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-purple-50 dark:bg-purple-950/40 text-purple-600 dark:text-purple-300 border border-purple-200 dark:border-purple-800">
@@ -281,7 +281,7 @@ const CommentsManager: React.FC = () => {
         <div className="flex items-center gap-3">
           {isConnected && (
             <div className="flex items-center gap-2 px-3 py-1.5 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/40 rounded-xl text-xs font-medium">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
               <span>{connectedAccount?.name}</span>
             </div>
           )}
@@ -315,7 +315,7 @@ const CommentsManager: React.FC = () => {
           </div>
           <Link
             to="/meta-integration"
-            className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-bold transition shadow-sm whitespace-nowrap"
+            className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-medium transition shadow-sm whitespace-nowrap"
           >
             Connect Meta Account
           </Link>
@@ -330,7 +330,7 @@ const CommentsManager: React.FC = () => {
           <div className="p-4 border-b border-zinc-100 dark:border-zinc-800 flex items-center justify-between bg-zinc-50/50 dark:bg-zinc-900/50">
             <div className="flex items-center gap-2">
               <InstagramIcon size={18} className="text-pink-500" />
-              <h2 className="font-bold text-sm text-zinc-800 dark:text-zinc-200">
+              <h2 className="font-medium text-sm text-zinc-800 dark:text-zinc-200">
                 Recent Posts & Reels
               </h2>
             </div>
@@ -379,7 +379,7 @@ const CommentsManager: React.FC = () => {
                           <InstagramIcon size={24} />
                         </div>
                       )}
-                      <span className="absolute bottom-1 right-1 px-1 bg-black/60 text-[9px] text-white rounded font-mono">
+                      <span className="absolute bottom-1 right-1 px-1 bg-black/60 text-[13px] text-white rounded tabular-nums">
                         {item.media_type === 'VIDEO' ? 'REEL' : 'POST'}
                       </span>
                     </div>
@@ -388,7 +388,7 @@ const CommentsManager: React.FC = () => {
                       <p className="text-xs text-zinc-800 dark:text-zinc-200 line-clamp-2 leading-snug">
                         {item.caption || '(No caption)'}
                       </p>
-                      <div className="flex items-center gap-3 text-[11px] text-zinc-400 font-medium mt-1">
+                      <div className="flex items-center gap-3 text-[13px] text-zinc-400 font-medium mt-1">
                         <span className="flex items-center gap-1">
                           <Heart size={12} className="text-rose-500" />
                           {item.like_count ?? 0}
@@ -411,7 +411,7 @@ const CommentsManager: React.FC = () => {
               <button
                 onClick={handleLoadMoreMedia}
                 disabled={isLoadingMoreMedia}
-                className="w-full mt-1 py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-700 text-xs font-bold text-zinc-600 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800/60 transition flex items-center justify-center gap-2 disabled:opacity-60"
+                className="w-full mt-1 py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-700 text-xs font-medium text-zinc-600 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800/60 transition flex items-center justify-center gap-2 disabled:opacity-60"
               >
                 {isLoadingMoreMedia && <RefreshCw size={13} className="animate-spin" />}
                 {isLoadingMoreMedia ? 'Loading…' : 'Load older posts'}
@@ -427,7 +427,7 @@ const CommentsManager: React.FC = () => {
           {selectedMedia ? (
             <div className="p-4 border-b border-zinc-100 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/50 flex items-center justify-between gap-3">
               <div className="min-w-0">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-purple-600 dark:text-purple-400">
+                <span className="text-[13px] font-medium text-purple-600 dark:text-purple-400">
                   Selected Post
                 </span>
                 <p className="text-xs text-zinc-700 dark:text-zinc-300 truncate max-w-md mt-0.5">
@@ -489,14 +489,14 @@ const CommentsManager: React.FC = () => {
                   >
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex items-center gap-2">
-                        <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-purple-500 to-indigo-600 text-white flex items-center justify-center font-bold text-xs uppercase shadow-sm">
+                        <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-purple-500 to-indigo-600 text-white flex items-center justify-center font-medium text-xs uppercase shadow-sm">
                           {c.username ? c.username.charAt(0) : 'U'}
                         </div>
                         <div>
-                          <span className="text-xs font-bold text-zinc-800 dark:text-zinc-200">
+                          <span className="text-xs font-medium text-zinc-800 dark:text-zinc-200">
                             @{c.username || 'instagram_user'}
                           </span>
-                          <span className="text-[10px] text-zinc-400 ml-2">
+                          <span className="text-[13px] text-zinc-400 ml-2">
                             {new Date(c.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} • {new Date(c.timestamp).toLocaleDateString([], { month: 'short', day: 'numeric' })}
                           </span>
                         </div>
@@ -505,7 +505,7 @@ const CommentsManager: React.FC = () => {
                       {/* Action buttons */}
                       <div className="flex items-center gap-1.5">
                         {isHidden && (
-                          <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400">
+                          <span className="text-[13px] font-medium px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400">
                             Hidden
                           </span>
                         )}
@@ -553,10 +553,10 @@ const CommentsManager: React.FC = () => {
                       <div className="mt-3 pl-9 space-y-2 border-l-2 border-purple-200 dark:border-purple-900/60 ml-4">
                         {c.replies.data.map(reply => (
                           <div key={reply.id} className="text-xs bg-white dark:bg-zinc-800/60 p-2.5 rounded-lg border border-zinc-200/50 dark:border-zinc-700/50">
-                            <div className="flex items-center gap-1.5 mb-1 text-[11px] font-bold text-purple-600 dark:text-purple-400">
+                            <div className="flex items-center gap-1.5 mb-1 text-[13px] font-medium text-purple-600 dark:text-purple-400">
                               <CornerDownRight size={12} />
                               @{reply.username || connectedAccount?.name || 'Reply'}
-                              <span className="text-[10px] text-zinc-400 font-normal">
+                              <span className="text-[13px] text-zinc-400 font-normal">
                                 {new Date(reply.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                               </span>
                             </div>
@@ -574,7 +574,7 @@ const CommentsManager: React.FC = () => {
               <button
                 onClick={handleLoadMoreComments}
                 disabled={isLoadingMoreComments}
-                className="w-full py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-700 text-xs font-bold text-zinc-600 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800/60 transition flex items-center justify-center gap-2 disabled:opacity-60"
+                className="w-full py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-700 text-xs font-medium text-zinc-600 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800/60 transition flex items-center justify-center gap-2 disabled:opacity-60"
               >
                 {isLoadingMoreComments && <RefreshCw size={13} className="animate-spin" />}
                 {isLoadingMoreComments ? 'Loading…' : 'Load older comments'}
@@ -593,13 +593,13 @@ const CommentsManager: React.FC = () => {
                   </span>
                   <button 
                     onClick={() => setReplyTargetComment(null)}
-                    className="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 text-xs font-bold"
+                    className="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 text-xs font-medium"
                   >
                     Cancel
                   </button>
                 </div>
               ) : (
-                <div className="text-[11px] text-zinc-400 mb-1.5 px-1 font-medium">
+                <div className="text-[13px] text-zinc-400 mb-1.5 px-1 font-medium">
                   Select a comment above to post a public reply as @{connectedAccount?.name || 'Account'}.
                 </div>
               )}
@@ -620,7 +620,7 @@ const CommentsManager: React.FC = () => {
                 <button
                   type="submit"
                   disabled={!replyTargetComment || !replyText.trim() || isSubmittingReply}
-                  className="px-4 py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white rounded-xl text-xs font-bold shadow-md shadow-purple-500/20 transition-all flex items-center gap-1.5 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+                  className="px-4 py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white rounded-xl text-xs font-medium shadow-md shadow-purple-500/20 transition-all flex items-center gap-1.5 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
                 >
                   <Send size={13} className={isSubmittingReply ? 'animate-pulse' : ''} />
                   <span>Reply</span>
@@ -640,7 +640,7 @@ const CommentsManager: React.FC = () => {
             <div className="w-10 h-10 rounded-xl bg-rose-100 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 flex items-center justify-center mb-4">
               <Trash2 size={20} />
             </div>
-            <h3 className="font-bold text-zinc-900 dark:text-zinc-100 text-base mb-1">
+            <h3 className="font-semibold text-zinc-900 dark:text-zinc-100 text-base mb-1">
               Delete Comment?
             </h3>
             <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-4 leading-relaxed">

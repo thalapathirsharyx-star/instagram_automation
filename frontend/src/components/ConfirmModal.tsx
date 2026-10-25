@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { AlertTriangle, AlertCircle, Info, Loader2, X } from 'lucide-react';
+import { Loader2, X } from 'lucide-react';
 
 interface ConfirmModalProps {
   isOpen: boolean;
@@ -14,6 +14,11 @@ interface ConfirmModalProps {
   onCancel: () => void;
 }
 
+/**
+ * A dialog states what will happen and names the action in the button, so the
+ * confirm label matches the verb the person just chose. Motion answers the
+ * person opening it and nothing else.
+ */
 export const ConfirmModal: React.FC<ConfirmModalProps> = ({
   isOpen,
   title,
@@ -25,84 +30,69 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
   onConfirm,
   onCancel,
 }) => {
+  const confirmRef = useRef<HTMLButtonElement>(null);
+
+  // Escape closes, and focus lands on the action so the keyboard works alone.
+  useEffect(() => {
+    if (!isOpen) return;
+    confirmRef.current?.focus();
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && !isLoading) onCancel();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [isOpen, isLoading, onCancel]);
+
+  const confirmClass =
+    type === 'danger' ? 'btn btn-danger' : type === 'warning' ? 'btn btn-primary' : 'btn btn-accent';
+
   return (
     <AnimatePresence>
       {isOpen && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
-          {/* Backdrop */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
+            transition={{ duration: 0.15 }}
             onClick={isLoading ? undefined : onCancel}
-            className="absolute inset-0 bg-black/60 backdrop-blur-md"
+            className="absolute inset-0 bg-ink/45"
           />
 
-          {/* Modal Container */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            transition={{ type: 'spring', duration: 0.4, bounce: 0.15 }}
-            className="relative w-full max-w-md bg-white dark:bg-zinc-950 border border-slate-200 dark:border-white/10 rounded-3xl p-6 shadow-[0_20px_50px_rgba(0,0,0,0.15)] dark:shadow-[0_25px_60px_rgba(0,0,0,0.5)] overflow-hidden"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="confirm-title"
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 8 }}
+            transition={{ duration: 0.16, ease: 'easeOut' }}
+            className="surface-lifted relative w-full max-w-md overflow-hidden"
           >
-            {/* Ambient accent top glow */}
-            <div className={`absolute top-0 left-0 right-0 h-[3px] ${
-              type === 'danger' ? 'bg-gradient-to-r from-rose-500 to-red-600' :
-              type === 'warning' ? 'bg-gradient-to-r from-amber-500 to-orange-500' :
-              'bg-gradient-to-r from-purple-500 to-indigo-650'
-            }`} />
-
-            {/* Close Button */}
-            {!isLoading && (
-              <button
-                onClick={onCancel}
-                className="absolute top-4 right-4 text-slate-400 hover:text-slate-650 dark:text-zinc-500 dark:hover:text-zinc-350 transition-colors p-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-zinc-900"
-              >
-                <X size={16} />
-              </button>
-            )}
-
-            {/* Content */}
-            <div className="flex items-start gap-4 mb-6 mt-2">
-              <div className={`p-3 rounded-2xl shrink-0 border ${
-                type === 'danger' ? 'bg-rose-500/10 text-rose-500 border-rose-500/20' :
-                type === 'warning' ? 'bg-amber-500/10 text-amber-500 border-amber-500/20' :
-                'bg-purple-500/10 text-purple-500 border-purple-500/20'
-              }`}>
-                {type === 'danger' && <AlertCircle size={24} />}
-                {type === 'warning' && <AlertTriangle size={24} />}
-                {type === 'primary' && <Info size={24} />}
-              </div>
-              <div className="space-y-1.5">
-                <h3 className="text-lg font-bold text-slate-900 dark:text-zinc-100 leading-snug">
+            <div className="flex items-start justify-between gap-4 border-b border-hairline p-5">
+              <div>
+                <h3 id="confirm-title" className="font-display text-[17px] font-semibold text-ink">
                   {title}
                 </h3>
-                <p className="text-sm text-slate-500 dark:text-zinc-400 font-medium leading-relaxed">
-                  {message}
-                </p>
+                <p className="mt-1.5 text-[15px] leading-relaxed text-ink-soft">{message}</p>
               </div>
+              {!isLoading && (
+                <button onClick={onCancel} className="btn btn-quiet btn-icon -mt-1 -mr-1" aria-label="Close">
+                  <X size={16} />
+                </button>
+              )}
             </div>
 
-            {/* Actions */}
-            <div className="flex justify-end gap-3 pt-4 border-t border-slate-100 dark:border-white/5">
-              <button
-                type="button"
-                onClick={onCancel}
-                disabled={isLoading}
-                className="px-5 py-2.5 bg-slate-50 hover:bg-slate-100 dark:bg-zinc-900 dark:hover:bg-zinc-800 border border-slate-200/60 dark:border-white/5 rounded-xl text-sm font-bold text-slate-600 dark:text-zinc-350 transition-all disabled:opacity-50 cursor-pointer"
-              >
+            <div className="flex justify-end gap-2 p-4">
+              <button type="button" onClick={onCancel} disabled={isLoading} className="btn">
                 {cancelText}
               </button>
               <button
+                ref={confirmRef}
                 type="button"
                 onClick={onConfirm}
                 disabled={isLoading}
-                className={`px-6 py-2.5 text-white font-bold text-sm rounded-xl transition-all flex items-center gap-2 disabled:opacity-50 cursor-pointer ${
-                  type === 'danger' ? 'bg-rose-600 hover:bg-rose-700 shadow-lg shadow-rose-600/10 dark:shadow-rose-600/5' :
-                  type === 'warning' ? 'bg-amber-600 hover:bg-amber-700 shadow-lg shadow-amber-600/10 dark:shadow-amber-600/5' :
-                  'bg-purple-650 hover:bg-purple-700 shadow-lg shadow-purple-650/10 dark:shadow-purple-650/5'
-                }`}
+                className={confirmClass}
               >
                 {isLoading && <Loader2 size={14} className="animate-spin" />}
                 {confirmText}

@@ -64,7 +64,7 @@ export const PricingSection: React.FC = () => {
       <div className="max-w-6xl mx-auto px-6">
         <div className="text-center max-w-2xl mx-auto mb-16">
           <span className="text-xs font-bold uppercase tracking-widest text-[#4F39F6] dark:text-[#818CF8]">Pricing Plans</span>
-          <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-zinc-900 dark:text-white mt-3 mb-4 leading-tight">
+          <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-zinc-900 dark:text-white mt-3 mb-4 leading-tight">
             Simple, Transparent Pricing
           </h2>
           <p className="text-sm md:text-base text-zinc-600 dark:text-zinc-400 font-medium leading-relaxed">
@@ -86,7 +86,7 @@ export const PricingSection: React.FC = () => {
               <div className={`premium-gradient-border flex-1 flex ${tier.popular ? 'border-[#38BDF8] md:-translate-y-4 shadow-xl shadow-[#38BDF8]/10' : 'mt-4'}`}>
                 <div className="premium-card-content p-8 flex flex-col justify-between flex-grow relative">
                   {tier.popular && (
-                    <span className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-[#38BDF8] to-[#6366F1] text-white text-[9px] font-extrabold px-4 py-1.5 rounded-full uppercase tracking-widest shadow-lg shadow-[#38BDF8]/20">
+                    <span className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-[#38BDF8] to-[#6366F1] text-white text-[9px] font-bold px-4 py-1.5 rounded-full uppercase tracking-widest shadow-lg shadow-[#38BDF8]/20">
                       Most Popular
                     </span>
                   )}
@@ -98,12 +98,12 @@ export const PricingSection: React.FC = () => {
                     </div>
 
                     <div className="flex items-baseline gap-1 mb-4">
-                      <span className="text-4xl font-extrabold text-white">{tier.price}</span>
+                      <span className="text-4xl font-bold text-white">{tier.price}</span>
                       <span className="text-sm font-bold text-zinc-400">/mo</span>
                     </div>
 
                     <div className="mb-8 border-b border-white/5 pb-6">
-                      <span className="text-lg font-bold text-[#38BDF8] font-mono">{tier.volume}</span>
+                      <span className="text-lg font-bold text-[#38BDF8] tabular-nums">{tier.volume}</span>
                       <span className="text-[10px] text-zinc-400 uppercase font-bold tracking-wider block mt-1">
                         Automated DMs / Month
                       </span>

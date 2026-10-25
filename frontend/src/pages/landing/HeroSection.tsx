@@ -18,7 +18,7 @@ export const HeroSection: React.FC = () => {
         </div>
 
         {/* Main Headline */}
-        <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight mb-6 text-zinc-950 dark:text-white max-w-4xl leading-[1.08] text-balance">
+        <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight mb-6 text-zinc-950 dark:text-white max-w-4xl leading-[1.08] text-balance">
           Turn Instagram DMs Into <span className="text-headline-gradient">Qualified Leads</span> Automatically
         </h1>
 

@@ -16,6 +16,8 @@ import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Landing from './pages/Landing';
 import VerifyEmail from './pages/VerifyEmail';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 import { PrivacyPolicy, TermsOfService, DataDeletion } from './pages/Legal';
 import SuperAdminDashboard from './pages/SuperAdminDashboard';
 import ClientManagement from './pages/ClientManagement';
@@ -30,10 +32,17 @@ import AddTeamMember from './pages/AddTeamMember';
 import Billing from './pages/Billing';
 import Broadcasts from './pages/Broadcasts';
 import CommentsManager from './pages/CommentsManager';
-import { Bell, Sun, Moon, LogOut } from 'lucide-react';
+import { Sun, Moon, LogOut } from 'lucide-react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import { ToastProvider } from './context/ToastContext';
+
+/** Signed-out account pages: reachable without a session, served on the app domain. */
+const ACCOUNT_PATHS = ['/login', '/signup', '/verify-email', '/forgot-password'];
+const ACCOUNT_PATH_PREFIXES = ['/ResetPassword/', '/reset-password/'];
+
+const isAccountPath = (pathname: string) =>
+  ACCOUNT_PATHS.includes(pathname) || ACCOUNT_PATH_PREFIXES.some((prefix) => pathname.startsWith(prefix));
 
 function AppContent() {
   const location = useLocation();
@@ -71,29 +80,37 @@ function AppContent() {
     }
   }, [theme]);
 
-  // Scroll to hash element if present in the URL, else scroll to top
+  // Scroll to the hash target if the URL has one, else to the top.
   useEffect(() => {
-    if (location.hash) {
-      const id = location.hash.replace('#', '');
+    if (!location.hash) {
+      window.scrollTo(0, 0);
+      return;
+    }
+
+    const id = decodeURIComponent(location.hash.slice(1));
+    // Arriving from another route, the section is not in the DOM yet. A fixed
+    // delay guessed at that; this watches for it across a few frames instead,
+    // then gives up rather than scrolling to the wrong place.
+    let attempts = 0;
+    let frame = requestAnimationFrame(function find() {
       const element = document.getElementById(id);
       if (element) {
-        setTimeout(() => {
-          element.scrollIntoView({ behavior: 'smooth' });
-        }, 150);
+        element.scrollIntoView({ block: 'start' });
+      } else if (attempts++ < 90) {
+        frame = requestAnimationFrame(find);
       }
-    } else {
-      window.scrollTo(0, 0);
-    }
+    });
+
+    return () => cancelAnimationFrame(frame);
   }, [location]);
 
   // Routing for landing page domain (flazly.com) OR unauthenticated root / /landing
   if (isLandingDomain || location.pathname === '/landing' || (location.pathname === '/' && !isAuthenticated)) {
-    if (isLandingDomain && location.pathname === '/login') {
-      window.location.href = 'https://app.flazly.com/login';
-      return null;
-    }
-    if (isLandingDomain && location.pathname === '/signup') {
-      window.location.href = 'https://app.flazly.com/signup';
+    // Account pages live on the app domain. Emailed links (verification,
+    // password reset) can arrive on the marketing domain, so forward the whole
+    // path and query instead of only /login and /signup.
+    if (isLandingDomain && isAccountPath(location.pathname)) {
+      window.location.href = `https://app.flazly.com${location.pathname}${location.search}`;
       return null;
     }
 
@@ -130,8 +147,7 @@ function AppContent() {
     return <Landing />;
   }
 
-  const appPublicRoutes = ['/login', '/signup', '/verify-email'];
-  const isAppPublicPage = appPublicRoutes.includes(location.pathname);
+  const isAppPublicPage = isAccountPath(location.pathname);
 
   // If user is logged in and tries to access login/signup, redirect to dashboard
   if (isAuthenticated && (location.pathname === '/login' || location.pathname === '/signup')) {
@@ -144,6 +160,10 @@ function AppContent() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/verify-email" element={<VerifyEmail />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        {/* The reset email builds this exact casing; the lowercase form is an alias. */}
+        <Route path="/ResetPassword/:userId" element={<ResetPassword />} />
+        <Route path="/reset-password/:userId" element={<ResetPassword />} />
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     );
@@ -151,19 +171,33 @@ function AppContent() {
 
   const isImpersonating = !!localStorage.getItem('admin_token');
 
+  // The plan is the one piece of account state worth standing in the header: it
+  // decides what the person can reach, and a free plan is the prompt to upgrade.
+  const plan = user?.company?.plan;
+  const isFreePlan = !plan || plan.toUpperCase() === 'FREE';
+  const planLabel = user?.roleCode === 'SUPER_ADMIN'
+    ? 'Administrator'
+    : isFreePlan ? 'Free plan' : `${plan} plan`;
+  const planChipClass = user?.roleCode === 'SUPER_ADMIN'
+    ? 'chip chip-warn'
+    : isFreePlan ? 'chip' : 'chip chip-accent';
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', width: '100%', maxWidth: '100vw', overflow: 'hidden' }}>
       {isImpersonating && (
-        <div className="bg-gradient-to-r from-amber-600 via-purple-700 to-amber-600 text-white px-6 py-2 flex items-center justify-between text-xs font-bold uppercase tracking-wider shadow-lg border-b border-amber-500/20 animate-in slide-in-from-top duration-300" style={{ flexShrink: 0, zIndex: 9999 }}>
-          <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping shrink-0" />
-            <span>Impersonating: <strong className="text-white underline">{user?.company?.name || 'Client Account'}</strong> (Read-Only Actions Restricted)</span>
-          </div>
-          <button 
+        <div
+          className="flex items-center justify-between gap-4 px-5 py-2 text-[13px] bg-signal-warn text-on-signal"
+          style={{ flexShrink: 0, zIndex: 9999 }}
+        >
+          <span>
+            You are viewing <strong>{user?.company?.name || 'a client account'}</strong> as an
+            administrator. Actions that change their data are blocked.
+          </span>
+          <button
             onClick={handleStopImpersonation}
-            className="bg-white/10 hover:bg-white/20 text-white px-4 py-1.5 rounded-lg border border-white/20 transition-all cursor-pointer font-extrabold text-[10px]"
+            className="shrink-0 rounded-[6px] border border-white/40 px-3 py-1 font-medium transition-colors hover:bg-white/15"
           >
-            Stop Impersonation
+            Return to my account
           </button>
         </div>
       )}
@@ -172,56 +206,49 @@ function AppContent() {
 
       <main className="content-area">
         <header className="top-header relative z-[100]">
-          <div className="flex-grow"></div>
-          <div className="flex items-center gap-6">
-            <button 
+          <div className="flex-grow" />
+          <div className="flex items-center gap-2">
+            <span className={planChipClass}>{planLabel}</span>
+
+            <button
               onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-              className="p-2.5 bg-white/5 rounded-xl text-zinc-400 hover:text-purple-400 hover:bg-purple-500/10 transition-all duration-300 border border-white/5 hover:border-purple-500/20 cursor-pointer"
-              aria-label="Toggle Theme"
+              className="btn btn-quiet btn-icon"
+              aria-label={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
             >
-              {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+              {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
             </button>
-            <div className="relative cursor-pointer group">
-              <div className="p-2.5 bg-white/5 rounded-xl text-zinc-400 group-hover:text-purple-400 group-hover:bg-purple-500/10 transition-all duration-300 border border-white/5 group-hover:border-purple-500/20">
-                <Bell size={20} />
-              </div>
-              <span className={`absolute -top-1 -right-1 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full ${theme === 'light' ? 'border-0' : 'border-2 border-[#0f0f14]'} shadow-lg group-hover:scale-110 transition-transform shadow-purple-500/30`}>3</span>
-            </div>
-            <div className="relative" onMouseLeave={() => setShowProfileDropdown(false)}>
-              <div 
-                className="flex items-center gap-3 pl-6 border-l border-white/5 cursor-pointer"
+
+            <div className="relative ml-1 pl-3 border-l border-hairline" onMouseLeave={() => setShowProfileDropdown(false)}>
+              <button
+                className="flex items-center gap-2.5 py-1"
                 onMouseEnter={() => setShowProfileDropdown(true)}
+                onClick={() => setShowProfileDropdown((open) => !open)}
+                aria-haspopup="menu"
+                aria-expanded={showProfileDropdown}
               >
-                <div className="text-right hidden sm:block">
-                  <div className="flex items-center justify-end gap-2 mb-0.5">
-                    <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-widest ${user?.roleCode === 'SUPER_ADMIN' ? 'bg-amber-500/10 text-amber-500 border border-amber-500/20' : (!user?.company?.plan || user?.company?.plan?.toUpperCase() === 'FREE' ? 'bg-rose-500/10 text-rose-500 border border-rose-500/20' : 'bg-purple-500/10 text-purple-500 border border-purple-500/20')}`}>
-                      {user?.roleCode === 'SUPER_ADMIN' ? 'SUPER ADMIN' : (!user?.company?.plan || user?.company?.plan?.toUpperCase() === 'FREE' ? '14 DAYS TRIAL' : `${user?.company?.plan} PLAN`)}
-                    </span>
-                    <div className="text-sm font-bold text-zinc-100">{user?.email ? user.email.split('@')[0] : 'Guest'}</div>
-                  </div>
-                  <div className="text-[10px] font-bold text-emerald-500 uppercase tracking-wider flex items-center justify-end gap-1.5 mt-0.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Active Now
-                  </div>
-                </div>
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center text-white font-bold shadow-lg shadow-purple-500/20 uppercase transition-transform hover:scale-105 border border-white/10">
+                <span className="hidden text-[13px] text-ink-soft sm:block">
+                  {user?.email ? user.email.split('@')[0] : 'Guest'}
+                </span>
+                <span className="avatar-initial" style={{ width: 30, height: 30 }}>
                   {user?.email ? user.email[0] : 'G'}
-                </div>
-              </div>
+                </span>
+              </button>
 
               {showProfileDropdown && (
-                <div className="absolute right-0 top-full pt-2 w-48 z-50">
-                  <div className="bg-zinc-900 border border-white/10 rounded-xl shadow-xl overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
-                    <div className="p-3 border-b border-white/10">
-                      <div className="text-sm font-bold text-white truncate">{user?.email}</div>
-                      <div className="text-xs text-zinc-500">{user?.role || 'Member'}</div>
+                <div className="absolute right-0 top-full w-56 pt-2 z-50" role="menu">
+                  <div className="surface-lifted overflow-hidden">
+                    <div className="border-b border-hairline p-3">
+                      <div className="truncate text-[13px] font-medium text-ink">{user?.email}</div>
+                      <div className="text-[13px] text-ink-soft">{user?.role || 'Member'}</div>
                     </div>
                     <div className="p-1">
-                      <button 
+                      <button
                         onClick={logout}
-                        className="w-full flex items-center gap-3 px-3 py-2 text-sm text-rose-400 hover:bg-rose-500/10 rounded-lg transition-colors font-medium"
+                        className="flex w-full items-center gap-2.5 rounded-[6px] px-2.5 py-2 text-[15px] text-ink-soft transition-colors hover:bg-porcelain-deep hover:text-ink"
+                        role="menuitem"
                       >
                         <LogOut size={16} />
-                        Logout
+                        Sign out
                       </button>
                     </div>
                   </div>

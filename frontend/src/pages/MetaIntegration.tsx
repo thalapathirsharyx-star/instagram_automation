@@ -162,7 +162,7 @@ const MetaIntegration: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8 border-b border-zinc-200/80 dark:border-zinc-800 pb-6">
         <div>
-          <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100 tracking-tight mb-2 flex items-center gap-3">
+          <h1 className="page-title flex items-center gap-3">
             <div className="p-2 bg-violet-100 dark:bg-violet-950/60 text-violet-600 dark:text-violet-400 rounded-xl">
               <Shield size={22} strokeWidth={2.5} />
             </div>
@@ -178,14 +178,14 @@ const MetaIntegration: React.FC = () => {
       <div className="bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800 rounded-2xl shadow-sm p-6 md:p-8 space-y-6">
         
         {isLoadingStatus ? (
-          <div className="flex items-center gap-3 p-6 bg-zinc-50 dark:bg-zinc-800/50 rounded-xl border border-zinc-200 dark:border-zinc-700 text-zinc-500 dark:text-zinc-400 font-bold text-xs uppercase tracking-widest">
+          <div className="flex items-center gap-3 p-6 bg-zinc-50 dark:bg-zinc-800/50 rounded-xl border border-zinc-200 dark:border-zinc-700 text-zinc-500 dark:text-zinc-400 font-medium text-xs">
             <div className="animate-spin w-5 h-5 border-2 border-violet-500 border-t-transparent rounded-full" />
             Validating Connection State...
           </div>
         ) : isConnected ? (
           <div className="space-y-6">
-            <div className="flex items-center gap-2 text-emerald-700 dark:text-emerald-400 font-bold text-[11px] uppercase tracking-widest bg-emerald-50 dark:bg-emerald-950/50 px-3 py-1.5 rounded-lg w-fit border border-emerald-200 dark:border-emerald-800">
-              <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            <div className="flex items-center gap-2 text-emerald-700 dark:text-emerald-400 font-medium text-[13px] bg-emerald-50 dark:bg-emerald-950/50 px-3 py-1.5 rounded-lg w-fit border border-emerald-200 dark:border-emerald-800">
+              <div className="w-2 h-2 rounded-full bg-emerald-500" />
               Live Connection Established
             </div>
 
@@ -195,8 +195,8 @@ const MetaIntegration: React.FC = () => {
                   <Smartphone size={28} />
                 </div>
                 <div>
-                  <div className="text-base font-bold text-zinc-900 dark:text-zinc-100">{connectionDetails?.name}</div>
-                  <div className="text-xs text-zinc-500 dark:text-zinc-400 font-mono mt-1 uppercase tracking-wider">
+                  <div className="text-base font-semibold text-zinc-900 dark:text-zinc-100">{connectionDetails?.name}</div>
+                  <div className="text-xs text-zinc-500 dark:text-zinc-400 font-mono mt-1">
                     Meta Business ID: <span className="text-zinc-800 dark:text-zinc-200 font-semibold">{connectionDetails?.id}</span>
                   </div>
                 </div>
@@ -208,7 +208,7 @@ const MetaIntegration: React.FC = () => {
 
             {connectionWarnings.length > 0 && (
               <div className="p-4 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/50 rounded-xl">
-                <h3 className="text-sm font-bold text-amber-900 dark:text-amber-200 flex items-center gap-2 mb-2">
+                <h3 className="text-sm font-medium text-amber-900 dark:text-amber-200 flex items-center gap-2 mb-2">
                   <Info size={16} className="text-amber-600 dark:text-amber-400" />
                   Connection is incomplete
                 </h3>
@@ -243,7 +243,7 @@ const MetaIntegration: React.FC = () => {
         ) : (
           <div className="space-y-6">
             <div className="p-4 bg-blue-50/70 dark:bg-blue-950/30 border border-blue-200/80 dark:border-blue-800/50 rounded-xl">
-              <h3 className="text-sm font-bold text-blue-900 dark:text-blue-200 flex items-center gap-2 mb-1">
+              <h3 className="text-sm font-medium text-blue-900 dark:text-blue-200 flex items-center gap-2 mb-1">
                 <Sparkles size={16} className="text-blue-600 dark:text-blue-400" /> Connect Your Instagram Account
               </h3>
               <p className="text-xs text-blue-700 dark:text-blue-300 leading-relaxed font-medium">
@@ -255,14 +255,14 @@ const MetaIntegration: React.FC = () => {
               <button 
                 onClick={handleConnect}
                 disabled={isConnecting}
-                className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition-colors shadow-sm disabled:opacity-70 cursor-pointer"
+                className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition-colors shadow-sm disabled:opacity-70 cursor-pointer"
               >
                 {isConnecting ? <RefreshCw className="animate-spin" size={18} /> : <Link2 size={18} />}
                 <span>{isConnecting ? 'Authenticating...' : 'Connect with Facebook'}</span>
               </button>
               <button 
                 onClick={() => setShowGuide(true)}
-                className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-3 bg-white dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-700 rounded-xl font-bold hover:bg-zinc-50 dark:hover:bg-zinc-700 transition-colors shadow-sm cursor-pointer"
+                className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-3 bg-white dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-700 rounded-xl font-semibold hover:bg-zinc-50 dark:hover:bg-zinc-700 transition-colors shadow-sm cursor-pointer"
               >
                 <Info size={16} className="text-zinc-400"/> Setup Guide
               </button>
@@ -278,7 +278,7 @@ const MetaIntegration: React.FC = () => {
             
             <div className="px-6 py-5 border-b border-zinc-100 dark:border-zinc-800 flex justify-between items-center bg-zinc-50/50 dark:bg-zinc-800/50">
               <div>
-                <h2 className="text-lg font-bold text-zinc-900 dark:text-zinc-100">Required Meta Configuration</h2>
+                <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">Required Meta Configuration</h2>
                 <p className="text-xs text-zinc-500 dark:text-zinc-400 font-medium mt-1">Please ensure these steps are completed before linking.</p>
               </div>
               <button 
@@ -292,11 +292,11 @@ const MetaIntegration: React.FC = () => {
             <div className="p-6 md:p-8 space-y-6">
               
               <div className="flex gap-4 items-start">
-                <div className="w-8 h-8 bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 rounded-full flex items-center justify-center shrink-0 border border-blue-100 dark:border-blue-900 font-bold text-xs">
+                <div className="w-8 h-8 bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 rounded-full flex items-center justify-center shrink-0 border border-blue-100 dark:border-blue-900 font-medium text-xs">
                   1
                 </div>
                 <div className="pt-0.5">
-                  <h4 className="font-bold text-zinc-900 dark:text-zinc-100 text-sm mb-1">Switch to Professional Account</h4>
+                  <h4 className="font-medium text-zinc-900 dark:text-zinc-100 text-sm mb-1">Switch to Professional Account</h4>
                   <p className="text-xs text-zinc-500 dark:text-zinc-400 font-medium leading-relaxed">
                     Open the Instagram App &gt; Settings &gt; Account Type. Make sure you are switched to a <strong className="text-zinc-700 dark:text-zinc-300">Business</strong> or <strong className="text-zinc-700 dark:text-zinc-300">Creator</strong> account.
                   </p>
@@ -304,11 +304,11 @@ const MetaIntegration: React.FC = () => {
               </div>
 
               <div className="flex gap-4 items-start">
-                <div className="w-8 h-8 bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 rounded-full flex items-center justify-center shrink-0 border border-blue-100 dark:border-blue-900 font-bold text-xs">
+                <div className="w-8 h-8 bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 rounded-full flex items-center justify-center shrink-0 border border-blue-100 dark:border-blue-900 font-medium text-xs">
                   2
                 </div>
                 <div className="pt-0.5">
-                  <h4 className="font-bold text-zinc-900 dark:text-zinc-100 text-sm mb-1">Link to a Facebook Page</h4>
+                  <h4 className="font-medium text-zinc-900 dark:text-zinc-100 text-sm mb-1">Link to a Facebook Page</h4>
                   <p className="text-xs text-zinc-500 dark:text-zinc-400 font-medium leading-relaxed">
                     On your Instagram profile, click Edit Profile &gt; Public Business Information &gt; Page. Select or create a Facebook Page to link.
                   </p>
@@ -316,13 +316,13 @@ const MetaIntegration: React.FC = () => {
               </div>
 
               <div className="flex gap-4 items-start">
-                <div className="w-8 h-8 bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 rounded-full flex items-center justify-center shrink-0 border border-blue-100 dark:border-blue-900 font-bold text-xs">
+                <div className="w-8 h-8 bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 rounded-full flex items-center justify-center shrink-0 border border-blue-100 dark:border-blue-900 font-medium text-xs">
                   3
                 </div>
                 <div className="pt-0.5">
-                  <h4 className="font-bold text-zinc-900 dark:text-zinc-100 text-sm mb-1">Allow Message Access</h4>
+                  <h4 className="font-medium text-zinc-900 dark:text-zinc-100 text-sm mb-1">Allow Message Access</h4>
                   <p className="text-xs text-zinc-500 dark:text-zinc-400 font-medium leading-relaxed">
-                    In Instagram Settings &gt; Privacy &gt; Messages. Scroll to the bottom and turn <strong className="text-emerald-600 font-bold uppercase text-[10px] bg-emerald-50 dark:bg-emerald-950 px-1.5 py-0.5 rounded border border-emerald-200 dark:border-emerald-800 ml-1">On</strong> the "Allow Access to Messages" toggle.
+                    In Instagram Settings &gt; Privacy &gt; Messages. Scroll to the bottom and turn <strong className="text-emerald-600 font-medium uppercase text-[13px] bg-emerald-50 dark:bg-emerald-950 px-1.5 py-0.5 rounded border border-emerald-200 dark:border-emerald-800 ml-1">On</strong> the "Allow Access to Messages" toggle.
                   </p>
                 </div>
               </div>
@@ -332,14 +332,14 @@ const MetaIntegration: React.FC = () => {
             <div className="px-6 py-4 bg-zinc-50 dark:bg-zinc-800/50 border-t border-zinc-200 dark:border-zinc-800 flex flex-col sm:flex-row gap-3">
               <button 
                 onClick={handleConnect}
-                className="flex-1 px-4 py-2.5 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700 transition-colors shadow-sm flex items-center justify-center gap-2 text-sm cursor-pointer"
+                className="flex-1 px-4 py-2.5 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors shadow-sm flex items-center justify-center gap-2 text-sm cursor-pointer"
               >
                 <CheckCircle2 size={18} />
                 <span>I've Completed These Steps</span>
               </button>
               <button 
                  onClick={() => setShowGuide(false)}
-                 className="flex-1 sm:flex-none px-4 py-2.5 bg-white dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 text-zinc-700 dark:text-zinc-200 rounded-lg font-bold hover:bg-zinc-50 dark:hover:bg-zinc-700 transition-colors shadow-sm text-sm cursor-pointer"
+                 className="flex-1 sm:flex-none px-4 py-2.5 bg-white dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 text-zinc-700 dark:text-zinc-200 rounded-lg font-medium hover:bg-zinc-50 dark:hover:bg-zinc-700 transition-colors shadow-sm text-sm cursor-pointer"
               >
                 Cancel
               </button>

@@ -1,85 +1,64 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getBalance, getLeads, getInstagramSettings } from '../api/crm.api';
-import { 
-  XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, 
-  AreaChart, Area, PieChart, Pie, Cell 
+import {
+  XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
+  AreaChart, Area, PieChart, Pie, Cell, Legend
 } from 'recharts';
-import { 
-  Users, 
-  MessageSquare, 
-  TrendingUp, 
-  Wallet, 
-  Zap,
-  ArrowUpRight,
-  Target,
-  Clock,
-  Download,
-  Activity,
-  ArrowRight,
-  CheckCircle2,
-  Sparkles,
-  AlertCircle,
-  Link2
-} from 'lucide-react';
-import { useToast } from '../context/ToastContext';
+import { Loader2, ArrowRight } from 'lucide-react';
+import type { Lead } from '../models/crm.models';
 
-const DashboardCard: React.FC<{ title: string; value: string | number; icon: any; trend: string }> = ({ title, value, icon: Icon, trend }) => {
-  let iconColor = 'text-violet-600';
-  let bgDefault = 'bg-violet-50';
-  let borderDefault = 'border-violet-100';
+/**
+ * Chart series read in the app's own palette: the accent for anything the
+ * automation did, neutrals and signals for everything else. Resolved from CSS
+ * variables so the charts follow the light/dark theme like the rest of the UI.
+ */
+interface DayBucket { key: string; day: string; leads: number }
+interface StatusSlice { name: string; value: number }
 
-  if (title.toLowerCase().includes('lead')) {
-    iconColor = 'text-blue-600';
-    bgDefault = 'bg-blue-50';
-    borderDefault = 'border-blue-100';
-  } else if (title.toLowerCase().includes('balance') || title.toLowerCase().includes('sales')) {
-    iconColor = 'text-emerald-600';
-    bgDefault = 'bg-emerald-50';
-    borderDefault = 'border-emerald-100';
-  } else if (title.toLowerCase().includes('funnel') || title.toLowerCase().includes('engagement')) {
-    iconColor = 'text-indigo-600';
-    bgDefault = 'bg-indigo-50';
-    borderDefault = 'border-indigo-100';
-  }
-
-  return (
-    <div className="bg-white border border-zinc-200/80 rounded-2xl p-5 shadow-sm hover:shadow-md transition-shadow group relative overflow-hidden">
-      <div className="flex justify-between items-start mb-4">
-        <div className={`p-2.5 rounded-xl border ${bgDefault} ${borderDefault} ${iconColor} transition-transform group-hover:scale-110`}>
-          <Icon size={20} strokeWidth={2.5} />
-        </div>
-        <div className="flex items-center gap-1 text-emerald-700 text-[11px] font-bold bg-emerald-50 px-2 py-1 rounded-md border border-emerald-100">
-          {trend} <ArrowUpRight size={12} strokeWidth={3} />
-        </div>
-      </div>
-      <div>
-        <p className="text-[11px] font-bold text-zinc-500 uppercase tracking-widest mb-1">{title}</p>
-        <h3 className="text-2xl font-extrabold text-zinc-900 tracking-tight">{value}</h3>
-      </div>
-      {/* Subtle bottom gradient line */}
-      <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-zinc-200 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-    </div>
-  );
+const seriesColor = (token: string, fallback: string) => {
+  if (typeof window === 'undefined') return fallback;
+  const value = getComputedStyle(document.documentElement).getPropertyValue(token).trim();
+  return value || fallback;
 };
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
-  const { toast } = useToast();
   const [balance, setBalance] = useState<number>(0);
-  const [leadCount, setLeadCount] = useState<number>(0);
-  const [interactionsCount, setInteractionsCount] = useState<number>(0);
-  const [activeFunnelCount, setActiveFunnelCount] = useState<number>(0);
-  const [interactionData, setInteractionData] = useState<any[]>([]);
-  const [funnelData, setFunnelData] = useState<any[]>([]);
+  const [leads, setLeads] = useState<Lead[]>([]);
+  const [interactionData, setInteractionData] = useState<DayBucket[]>([]);
+  const [statusData, setStatusData] = useState<StatusSlice[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isConnected, setIsConnected] = useState<boolean>(true);
-  const [playbookFunnel, setPlaybookFunnel] = useState({
-    started: 0, replied: 0, captured: 0, converted: 0
+  const [palette, setPalette] = useState({
+    accent: '#0b6b5b',
+    ink: '#15191b',
+    hairline: '#d3dad9',
+    inkSoft: '#5e6a6c',
+    go: '#1f6b3a',
+    warn: '#8a5a00',
+    stop: '#9b2c2c',
   });
 
   useEffect(() => {
     fetchStats();
+  }, []);
+
+  // Re-read the palette whenever the theme class on <html> changes.
+  useEffect(() => {
+    const read = () => setPalette({
+      accent: seriesColor('--viridian', '#0b6b5b'),
+      ink: seriesColor('--ink', '#15191b'),
+      hairline: seriesColor('--hairline', '#d3dad9'),
+      inkSoft: seriesColor('--ink-soft', '#5e6a6c'),
+      go: seriesColor('--signal-go', '#1f6b3a'),
+      warn: seriesColor('--signal-warn', '#8a5a00'),
+      stop: seriesColor('--signal-stop', '#9b2c2c'),
+    });
+    read();
+    const observer = new MutationObserver(read);
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+    return () => observer.disconnect();
   }, []);
 
   const fetchStats = async () => {
@@ -93,55 +72,44 @@ const Dashboard: React.FC = () => {
           return { Success: false, Data: { isConnected: false } };
         })
       ]);
-      
+
       if (igSettingsRes && igSettingsRes.Success) {
         setIsConnected(!!igSettingsRes.Data?.isConnected);
       } else {
         setIsConnected(false);
       }
 
-      const leads = leadsRes?.Data || [];
+      const leadList: Lead[] = leadsRes?.Data || [];
       setBalance(balanceRes?.Data ?? 0);
-      setLeadCount(leads.length);
-      
-      const activeLeads = leads.filter((l: any) => l.lead_status !== 'Lost');
-      setActiveFunnelCount(activeLeads.length);
-      
-      setInteractionsCount(leads.length * 3 + Math.floor(leads.length * 0.5));
-      
-      const statusCounts = leads.reduce((acc: any, lead: any) => {
+      setLeads(leadList);
+
+      const statusCounts = leadList.reduce<Record<string, number>>((acc, lead) => {
         acc[lead.lead_status] = (acc[lead.lead_status] || 0) + 1;
         return acc;
       }, {});
-      
-      const funnel = Object.entries(statusCounts).map(([name, value]) => ({ name, value }));
-      setFunnelData(funnel.length > 0 ? funnel : [{ name: 'Awaiting Instagram Connection', value: 1 }]);
+      setStatusData(Object.entries(statusCounts).map(([name, value]) => ({ name, value })));
 
-      const started = leads.length || 100; // fallback for preview
-      const replied = leads.filter((l: any) => l.lead_status !== 'New' || (l.lead_score && l.lead_score > 1)).length || 65;
-      const captured = leads.filter((l: any) => (l.tags && l.tags.length > 0) || (l.lead_score && l.lead_score >= 5)).length || 40;
-      const converted = leads.filter((l: any) => l.lead_status === 'Buyer').length || 15;
-
-      setPlaybookFunnel({ started, replied, captured, converted });
-
-      const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-      const dayMap = days.reduce((acc: any, day) => ({ ...acc, [day]: { day, msgs: Math.floor(Math.random() * 50)+10, leads: Math.floor(Math.random() * 20)+5 } }), {});
-      
-      leads.forEach((lead: any) => {
-        let dayIndex = new Date().getDay() - 1; 
-        if (dayIndex < 0) dayIndex = 6;
-        if (lead.created_on) {
-            const date = new Date(lead.created_on);
-            dayIndex = date.getDay() - 1;
-            if (dayIndex < 0) dayIndex = 6;
-        }
-        const day = days[dayIndex];
-        if (dayMap[day]) {
-           dayMap[day].leads += 1;
-           dayMap[day].msgs += 3;
-        }
+      // Leads captured per day over the last week, taken from created_on. Days
+      // with no leads stay at zero rather than being filled with sample values.
+      const days: DayBucket[] = [];
+      for (let i = 6; i >= 0; i--) {
+        const d = new Date();
+        d.setHours(0, 0, 0, 0);
+        d.setDate(d.getDate() - i);
+        days.push({
+          key: d.toISOString().slice(0, 10),
+          day: d.toLocaleDateString([], { weekday: 'short' }),
+          leads: 0,
+        });
+      }
+      const byDay = new Map(days.map(d => [d.key, d]));
+      leadList.forEach((lead) => {
+        if (!lead.created_on) return;
+        const key = new Date(lead.created_on).toISOString().slice(0, 10);
+        const bucket = byDay.get(key);
+        if (bucket) bucket.leads += 1;
       });
-      setInteractionData(days.map(day => dayMap[day]));
+      setInteractionData(days);
     } catch (error) {
       console.error('Error fetching dashboard stats:', error);
     } finally {
@@ -149,294 +117,258 @@ const Dashboard: React.FC = () => {
     }
   };
 
-  const handleGenerateReport = async () => {
-    toast.success('Report generation started. This may take a moment.');
-    // Keep existing report logic
-  };
-
   if (isLoading) {
     return (
-      <div className="flex h-[80vh] items-center justify-center text-zinc-500 font-medium">
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-8 h-8 border-4 border-violet-200 border-t-violet-600 rounded-full animate-spin"></div>
-          <span className="text-sm">Loading Workspace Data...</span>
-        </div>
+      <div className="flex h-[70vh] items-center justify-center gap-2.5 text-ink-soft">
+        <Loader2 size={16} className="animate-spin" />
+        <span className="text-[15px]">Loading your workspace</span>
       </div>
     );
   }
 
-  const overallROI = playbookFunnel.started > 0 ? ((playbookFunnel.converted / playbookFunnel.started) * 100).toFixed(1) : '0.0';
+  const activeLeads = leads.filter((l) => l.lead_status !== 'Lost');
+  const handoffLeads = leads.filter((l) => l.human_agent_active);
+  const buyers = leads.filter((l) => l.lead_status === 'Buyer');
+  const leadsThisWeek = interactionData.reduce((sum, d) => sum + d.leads, 0);
+  const statusPalette = [palette.accent, palette.go, palette.warn, palette.stop, palette.inkSoft];
 
   return (
-    <div className="max-w-7xl mx-auto pb-12 font-sans animate-in fade-in duration-500" style={{ fontFamily: '"Inter", system-ui, sans-serif' }}>
-      
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+    <div className="page">
+      <div className="page-head">
         <div>
-          <h1 className="text-2xl font-bold text-zinc-900 tracking-tight mb-2">Platform Overview</h1>
-          <p className="text-sm text-zinc-500 font-medium">Monitor your AI automation performance and lead pipeline.</p>
+          <h1 className="page-title">Dashboard</h1>
+          <p className="page-sub">What the assistant has been doing across your Instagram conversations.</p>
         </div>
-        <button 
-          onClick={handleGenerateReport} 
-          className="bg-white border border-zinc-200 hover:border-zinc-300 hover:bg-zinc-50 text-zinc-700 shadow-sm transition-all px-4 py-2.5 rounded-lg text-sm font-semibold flex items-center gap-2"
-        >
-          <Download size={16} />
-          <span>Export Analytics</span>
-        </button>
       </div>
 
-      {/* Connection Warning Banner */}
       {!isConnected && (
-        <div className="mb-8 p-5 bg-amber-50 border border-amber-200 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-4 animate-in fade-in slide-in-from-top-4 duration-300">
-          <div className="flex gap-4 items-start">
-            <div className="p-2.5 bg-amber-100 text-amber-700 rounded-xl border border-amber-200 shrink-0">
-              <AlertCircle size={20} strokeWidth={2.5} />
-            </div>
-            <div>
-              <h4 className="font-bold text-amber-900 text-sm">Instagram Connection Required</h4>
-              <p className="text-xs text-amber-750 mt-1 font-medium leading-relaxed">
-                To activate AI auto-replies, lead capturing, and comment automations, you must link your Facebook Page.
-              </p>
-            </div>
+        <div className="notice notice-warn mb-6">
+          <div>
+            <p className="notice-title">Connect Instagram to start replying</p>
+            <p className="notice-body">
+              Until your Facebook Page is linked, the assistant cannot read messages or reply to comments.
+            </p>
           </div>
-          <button 
-            onClick={() => navigate('/settings?tab=meta')} 
-            className="w-full md:w-auto px-6 py-2.5 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-bold transition-all shadow-sm flex items-center justify-center gap-2 shrink-0 cursor-pointer"
-          >
-            <Link2 size={14} /> Connect with Facebook
+          <button onClick={() => navigate('/meta-integration')} className="btn btn-primary shrink-0">
+            Connect Instagram
           </button>
         </div>
       )}
 
-      {/* KPI Row */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <DashboardCard title="Total Captured Leads" value={leadCount.toLocaleString()} icon={Users} trend="+12.5%" />
-        <DashboardCard title="Active Funnel Size" value={activeFunnelCount.toLocaleString()} icon={Target} trend="+8.1%" />
-        <DashboardCard title="AI Interactions" value={interactionsCount.toLocaleString()} icon={MessageSquare} trend="+24.8%" />
-        <DashboardCard title="Platform Wallet" value={`$${Number(balance).toFixed(2)}`} icon={Wallet} trend="+5.2%" />
+      {/* Figures sit on one surface, divided by hairlines. Each is a count this
+          workspace actually has — no projected trends, no sample percentages. */}
+      <div className="stat-row mb-6">
+        <div className="stat">
+          <span className="stat-label">Leads captured</span>
+          <span className="stat-figure">{leads.length.toLocaleString()}</span>
+          <span className="stat-note">{leadsThisWeek.toLocaleString()} in the last 7 days</span>
+        </div>
+        <div className="stat">
+          <span className="stat-label">Open conversations</span>
+          <span className="stat-figure">{activeLeads.length.toLocaleString()}</span>
+          <span className="stat-note">Everything not marked lost</span>
+        </div>
+        <div className="stat">
+          <span className="stat-label">With a person</span>
+          <span className="stat-figure">{handoffLeads.length.toLocaleString()}</span>
+          <span className="stat-note">Taken over by your team</span>
+        </div>
+        <div className="stat">
+          <span className="stat-label">Marked as buyers</span>
+          <span className="stat-figure">{buyers.length.toLocaleString()}</span>
+          <span className="stat-note">Wallet balance ${Number(balance).toFixed(2)}</span>
+        </div>
       </div>
 
-      {/* Charts Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-        
-        {/* Area Chart */}
-        <div className="lg:col-span-2 bg-white border border-zinc-200/80 rounded-2xl shadow-sm flex flex-col h-[400px] overflow-hidden">
-          <div className="p-6 pb-2 flex justify-between items-center">
+      <div className="mb-6 grid grid-cols-1 gap-5 lg:grid-cols-3">
+        <div className="surface flex h-[340px] flex-col lg:col-span-2">
+          <div className="surface-head">
             <div>
-              <h3 className="text-base font-bold text-zinc-900">Engagement Volume</h3>
-              <p className="text-[11px] font-medium text-zinc-500 uppercase tracking-wider mt-1">Last 7 Days</p>
-            </div>
-            <div className="flex gap-4">
-              <div className="flex items-center gap-1.5 text-xs font-semibold text-zinc-600">
-                <div className="w-2 h-2 rounded-full bg-violet-500"></div> AI Messages
-              </div>
-              <div className="flex items-center gap-1.5 text-xs font-semibold text-zinc-600">
-                <div className="w-2 h-2 rounded-full bg-blue-500"></div> Leads Captured
-              </div>
+              <h2>Leads captured</h2>
+              <p className="label mt-0.5">Last 7 days</p>
             </div>
           </div>
-          <div className="flex-grow w-full px-4 pb-4">
+          <div className="min-h-0 flex-grow p-4 pl-1">
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={interactionData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+              <AreaChart data={interactionData} margin={{ top: 8, right: 12, left: 4, bottom: 0 }}>
                 <defs>
-                  <linearGradient id="colorMsgs" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.15}/>
-                    <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0}/>
-                  </linearGradient>
-                  <linearGradient id="colorLeads" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.15}/>
-                    <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
+                  <linearGradient id="leadFill" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor={palette.accent} stopOpacity={0.18} />
+                    <stop offset="100%" stopColor={palette.accent} stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#f4f4f5" vertical={false} />
-                <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{fill: '#a1a1aa', fontSize: 11, fontWeight: 500}} dy={10} />
-                <YAxis axisLine={false} tickLine={false} tick={{fill: '#a1a1aa', fontSize: 11, fontWeight: 500}} />
-                <Tooltip 
-                  contentStyle={{ background: '#ffffff', border: '1px solid #e4e4e7', borderRadius: '8px', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)' }}
-                  itemStyle={{ fontWeight: 600, fontSize: '13px' }}
-                  labelStyle={{ color: '#71717a', fontSize: '11px', textTransform: 'uppercase', marginBottom: '4px' }}
+                <CartesianGrid stroke={palette.hairline} vertical={false} />
+                <XAxis
+                  dataKey="day"
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fill: palette.inkSoft, fontSize: 13 }}
+                  dy={8}
                 />
-                <Area type="monotone" dataKey="msgs" name="Messages" stroke="#8b5cf6" fill="url(#colorMsgs)" strokeWidth={2} activeDot={{r: 6, strokeWidth: 0}} />
-                <Area type="monotone" dataKey="leads" name="Leads" stroke="#3b82f6" fill="url(#colorLeads)" strokeWidth={2} activeDot={{r: 6, strokeWidth: 0}} />
+                <YAxis
+                  allowDecimals={false}
+                  axisLine={false}
+                  tickLine={false}
+                  width={34}
+                  tick={{ fill: palette.inkSoft, fontSize: 13 }}
+                />
+                <Tooltip
+                  contentStyle={{
+                    background: 'var(--surface)',
+                    border: '1px solid var(--hairline)',
+                    borderRadius: 6,
+                    color: 'var(--ink)',
+                    fontSize: 13,
+                  }}
+                  labelStyle={{ color: 'var(--ink-soft)', fontSize: 13 }}
+                />
+                <Area
+                  type="monotone"
+                  dataKey="leads"
+                  name="Leads"
+                  stroke={palette.accent}
+                  fill="url(#leadFill)"
+                  strokeWidth={2}
+                  activeDot={{ r: 4, strokeWidth: 0 }}
+                />
               </AreaChart>
             </ResponsiveContainer>
           </div>
         </div>
 
-        {/* Pie Chart */}
-        <div className="bg-white border border-zinc-200/80 rounded-2xl shadow-sm flex flex-col h-[400px] p-6">
-          <h3 className="text-base font-bold text-zinc-900 mb-1">Lead Distribution</h3>
-          <p className="text-[11px] font-medium text-zinc-500 uppercase tracking-wider mb-6">Current Status Breakdown</p>
-          
-          <div className="flex-grow flex items-center justify-center -mt-4">
-            <ResponsiveContainer width="100%" height={200}>
-              <PieChart>
-                <Pie
-                  data={funnelData}
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={65}
-                  outerRadius={85}
-                  paddingAngle={3}
-                  dataKey="value"
-                  stroke="none"
-                >
-                  {funnelData.map((_, index) => (
-                    <Cell key={`cell-${index}`} fill={['#8b5cf6', '#3b82f6', '#10b981', '#f43f5e', '#f59e0b'][index % 5]} />
-                  ))}
-                </Pie>
-                <Tooltip 
-                  contentStyle={{ background: '#ffffff', border: '1px solid #e4e4e7', borderRadius: '8px', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)' }}
-                  itemStyle={{ fontWeight: 600, fontSize: '12px' }}
-                />
-              </PieChart>
-            </ResponsiveContainer>
+        <div className="surface flex h-[340px] flex-col">
+          <div className="surface-head">
+            <h2>Pipeline</h2>
           </div>
-          
-          <div className="grid grid-cols-2 gap-3 mt-4">
-            {funnelData.slice(0, 4).map((entry, index) => (
-              <div key={entry.name} className="flex items-center gap-2">
-                <div className="w-2.5 h-2.5 rounded-full" style={{ background: ['#8b5cf6', '#3b82f6', '#10b981', '#f43f5e', '#f59e0b'][index % 5] }}></div>
-                <div className="flex flex-col">
-                  <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider truncate w-24">{entry.name}</span>
-                  <span className="text-sm font-bold text-zinc-900 leading-none mt-0.5">{entry.value}</span>
-                </div>
-              </div>
-            ))}
-          </div>
+          {statusData.length === 0 ? (
+            <div className="empty flex-grow">
+              <p className="empty-title">No leads yet</p>
+              <p className="empty-body">Statuses appear here once the assistant has handled its first conversation.</p>
+            </div>
+          ) : (
+            <div className="min-h-0 flex-grow p-2">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={statusData}
+                    cx="50%"
+                    cy="46%"
+                    innerRadius={52}
+                    outerRadius={76}
+                    paddingAngle={2}
+                    dataKey="value"
+                    stroke="none"
+                  >
+                    {statusData.map((entry, index) => (
+                      <Cell key={entry.name} fill={statusPalette[index % statusPalette.length]} />
+                    ))}
+                  </Pie>
+                  <Legend
+                    verticalAlign="bottom"
+                    iconType="circle"
+                    iconSize={8}
+                    formatter={(value) => (
+                      <span style={{ color: 'var(--ink-soft)', fontSize: 13 }}>{String(value).replace(/_/g, ' ')}</span>
+                    )}
+                  />
+                  <Tooltip
+                    contentStyle={{
+                      background: 'var(--surface)',
+                      border: '1px solid var(--hairline)',
+                      borderRadius: 6,
+                      color: 'var(--ink)',
+                      fontSize: 13,
+                    }}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+          )}
         </div>
-
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-        
-        {/* Playbook Funnel */}
-        <div className="xl:col-span-2 bg-white border border-zinc-200/80 rounded-2xl shadow-sm p-6 lg:p-8">
-          <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-8">
-            <div>
-              <h3 className="text-lg font-bold text-zinc-900">Automation Funnel Pipeline</h3>
-              <p className="text-xs text-zinc-500 font-medium mt-1">Drop-off rates across your AI conversational sequences</p>
-            </div>
-            <div className="flex items-center gap-2 text-xs font-bold text-emerald-700 bg-emerald-50 px-3 py-1.5 rounded-lg border border-emerald-100 shadow-sm">
-              <Activity size={14} className="text-emerald-500" />
-              <span>Pipeline ROI: {overallROI}%</span>
-            </div>
-          </div>
-
-          <div className="space-y-6">
-            {[
-              { step: 1, label: 'Conversation Started', value: playbookFunnel.started, color: 'bg-zinc-800' },
-              { step: 2, label: 'Lead Responded', value: playbookFunnel.replied, color: 'bg-blue-500' },
-              { step: 3, label: 'Data Captured', value: playbookFunnel.captured, color: 'bg-violet-500' },
-              { step: 4, label: 'Closed / Converted', value: playbookFunnel.converted, color: 'bg-emerald-500' }
-            ].map((item, index, arr) => {
-              const prevValue = index === 0 ? item.value : arr[index - 1].value;
-              const percentOfTotal = playbookFunnel.started > 0 ? (item.value / playbookFunnel.started) * 100 : 0;
-              const dropoff = index === 0 ? 0 : 100 - (prevValue > 0 ? (item.value / prevValue) * 100 : 0);
-
-              return (
-                <div key={item.step} className="relative">
-                  {/* Drop-off indicator between steps */}
-                  {index > 0 && (
-                    <div className="absolute -top-4 left-[15px] bottom-6 w-px bg-zinc-200 z-0">
-                      <div className="absolute top-1/2 -translate-y-1/2 left-4 text-[10px] font-bold text-rose-500 bg-rose-50 px-1.5 py-0.5 rounded border border-rose-100 whitespace-nowrap">
-                        -{dropoff.toFixed(0)}% drop
-                      </div>
-                    </div>
-                  )}
-                  
-                  <div className="relative z-10 flex flex-col sm:flex-row sm:items-center gap-4 bg-white">
-                    <div className="flex items-center justify-between w-full sm:w-48 shrink-0">
-                      <div className="flex items-center gap-3">
-                        <div className={`w-8 h-8 rounded-full ${index === 0 ? 'bg-zinc-100 text-zinc-500' : item.color + ' text-white'} flex items-center justify-center text-xs font-bold shadow-sm`}>
-                          {item.step}
-                        </div>
-                        <span className="text-sm font-bold text-zinc-800">{item.label}</span>
-                      </div>
-                    </div>
-                    
-                    <div className="flex-grow flex items-center gap-4">
-                      <div className="h-2.5 flex-grow bg-zinc-100 rounded-full overflow-hidden">
-                        <div 
-                          className={`h-full ${item.color} rounded-full transition-all duration-1000`} 
-                          style={{ width: `${percentOfTotal}%` }}
-                        ></div>
-                      </div>
-                      <div className="flex items-center justify-end w-24 shrink-0 text-right">
-                        <span className="text-sm font-extrabold text-zinc-900 mr-2">{item.value}</span>
-                        <span className="text-[10px] font-bold text-zinc-400 bg-zinc-50 px-1.5 py-0.5 rounded border border-zinc-200">
-                          {percentOfTotal.toFixed(0)}%
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+      <div className="surface">
+        <div className="surface-head">
+          <h2>Needs your attention</h2>
+          <button onClick={() => navigate('/inbox')} className="btn btn-sm">
+            Open inbox
+            <ArrowRight size={14} />
+          </button>
         </div>
 
-        {/* Action / Insights Sidebar */}
-        <div className="flex flex-col gap-6">
-          
-          {/* Health Status */}
-          <div className="bg-white border border-zinc-200/80 rounded-2xl shadow-sm p-6">
-            <h3 className="text-sm font-bold text-zinc-900 mb-4 flex items-center justify-between">
-              System Metrics
-              <span className="flex items-center gap-1.5 text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-1 rounded-md uppercase tracking-wider border border-emerald-100">
-                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
-                Healthy
-              </span>
-            </h3>
-            
-            <div className="space-y-4">
-              <div>
-                <div className="flex justify-between items-center mb-1">
-                  <span className="text-[11px] font-bold text-zinc-500 uppercase tracking-widest">API Latency</span>
-                  <span className="text-xs font-bold text-zinc-900">45ms</span>
-                </div>
-                <div className="h-1.5 bg-zinc-100 rounded-full overflow-hidden">
-                  <div className="h-full bg-blue-500 rounded-full" style={{ width: '85%' }}></div>
-                </div>
-              </div>
-              <div>
-                <div className="flex justify-between items-center mb-1">
-                  <span className="text-[11px] font-bold text-zinc-500 uppercase tracking-widest">Webhook Success</span>
-                  <span className="text-xs font-bold text-zinc-900">99.9%</span>
-                </div>
-                <div className="h-1.5 bg-zinc-100 rounded-full overflow-hidden">
-                  <div className="h-full bg-emerald-500 rounded-full" style={{ width: '99%' }}></div>
-                </div>
-              </div>
-            </div>
-          </div>
+        {(() => {
+          // Highest-scoring conversations the automation has not resolved: the
+          // shortlist of threads where stepping in is most likely to matter.
+          const attention = [...leads]
+            .filter((l) => l.lead_status !== 'Lost' && l.lead_status !== 'Buyer')
+            .sort((a, b) => Number(b.lead_score || 0) - Number(a.lead_score || 0))
+            .slice(0, 6);
 
-          {/* AI Insight Card */}
-          <div className="bg-gradient-to-br from-violet-600 to-indigo-700 rounded-2xl shadow-md p-6 text-white relative overflow-hidden flex-grow">
-            {/* Subtle glow effect */}
-            <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 blur-2xl rounded-full -mr-10 -mt-10"></div>
-            
-            <div className="relative z-10 flex flex-col h-full justify-between">
-              <div>
-                <div className="flex items-center gap-2 mb-3 opacity-90">
-                  <Sparkles size={16} className="text-violet-200" />
-                  <span className="text-xs font-bold uppercase tracking-wider text-violet-100">AI Optimization</span>
-                </div>
-                <h4 className="text-lg font-bold mb-2">Refine Agent Personality</h4>
-                <p className="text-sm font-medium text-violet-100/90 leading-relaxed">
-                  Based on recent drop-offs at Step 2, shifting your agent's tone from "Professional" to "Friendly & Casual" is projected to increase reply rates by <strong className="text-white">+18%</strong>.
+          if (attention.length === 0) {
+            return (
+              <div className="empty">
+                <p className="empty-title">Nothing waiting</p>
+                <p className="empty-body">
+                  Every open conversation is either resolved or still with the assistant.
                 </p>
               </div>
-              
-              <button className="mt-5 w-full bg-white text-violet-700 hover:bg-violet-50 transition-colors shadow-sm py-2.5 rounded-lg text-sm font-bold flex justify-center items-center gap-2">
-                Apply Recommended Tone <ArrowRight size={14} />
-              </button>
+            );
+          }
+
+          return (
+            <div className="overflow-x-auto">
+              <table className="data-table">
+                <thead>
+                  <tr>
+                    <th>Customer</th>
+                    <th>Status</th>
+                    <th>Handled by</th>
+                    <th>Last intent</th>
+                    <th className="num">Score</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {attention.map((lead) => (
+                    <tr
+                      key={lead.id}
+                      onClick={() => navigate('/inbox')}
+                      className="cursor-pointer"
+                    >
+                      <td>
+                        <div className="flex items-center gap-3">
+                          <span className="avatar-initial" style={{ width: 30, height: 30, fontSize: 13 }}>
+                            {lead.customer_name?.[0] || '?'}
+                          </span>
+                          <div className="min-w-0">
+                            <div className="truncate font-medium">{lead.customer_name}</div>
+                            <div className="truncate text-[13px] text-ink-soft">@{lead.instagram_handle}</div>
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <span className={
+                          lead.lead_status === 'Needs_Human' ? 'chip chip-stop'
+                            : lead.lead_status === 'Handoff' ? 'chip chip-ink'
+                              : 'chip'
+                        }>
+                          {String(lead.lead_status || 'New').replace(/_/g, ' ')}
+                        </span>
+                      </td>
+                      <td>
+                        <span className={lead.human_agent_active ? 'chip chip-ink' : 'chip chip-accent'}>
+                          {lead.human_agent_active ? 'Your team' : 'Assistant'}
+                        </span>
+                      </td>
+                      <td className="text-ink-soft">{lead.last_intent || '—'}</td>
+                      <td className="num">{Number(lead.lead_score || 0).toFixed(0)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
-          </div>
-
-        </div>
+          );
+        })()}
       </div>
-
     </div>
   );
 };

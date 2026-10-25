@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { MailerService } from './Mailer.service';
 import { CommonService } from './Common.service';
+import { AppUrl } from '@Helper/Common.helper';
 
 @Injectable()
 export class EmailService {
@@ -24,7 +25,7 @@ export class EmailService {
       }],
       context: {
         logo: "cid:logo",
-        domain_name: process.env.DOMAIN_NAME + "ResetPassword/" + EncryptedUserId,
+        domain_name: AppUrl(`ResetPassword/${encodeURIComponent(EncryptedUserId)}`),
         otp: ResetOTP
       },
     });

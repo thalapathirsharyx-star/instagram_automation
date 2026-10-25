@@ -1,90 +1,230 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+/* Inter is loaded from index.html (preconnect + stylesheet link), not from here. */
 @import "tailwindcss";
 
 @variant dark (&:where(.dark, .dark *));
 
 @plugin "tailwindcss-animate";
 
+/* ============================================================================
+   Flazly design system
+
+   Two voices, two colours. The product's central mechanic is the handoff — the
+   automation answers, a person takes over — so the palette encodes who is
+   acting rather than decorating: viridian is the machine, ink is you. Nothing
+   else is tinted except genuine alerts, which keeps amber and red meaningful.
+
+   Two surfaces. Porcelain is chrome you navigate; white is content you read.
+   There is no third surface, so a white panel always means "read this".
+
+   Structure comes from hairlines and rails, never from shadow or a larger
+   radius. Static surfaces cast no shadow at all; one elevation is reserved for
+   things that float above the page (modals, menus, toasts).
+   ============================================================================ */
+
 @theme {
-  --color-background: hsl(var(--background));
-  --color-foreground: hsl(var(--foreground));
-  --color-card: hsl(var(--card));
-  --color-card-foreground: hsl(var(--card-foreground));
-  --color-border: hsl(var(--border));
-  --color-primary: hsl(var(--primary));
-  --color-primary-foreground: hsl(var(--primary-foreground));
-  --color-secondary: hsl(var(--secondary));
-  --color-secondary-foreground: hsl(var(--secondary-foreground));
-  --color-muted: hsl(var(--muted));
-  --color-muted-foreground: hsl(var(--muted-foreground));
-  
-  --color-brand-purple: var(--brand-purple);
-  --color-brand-indigo: var(--brand-indigo);
-  --font-inter: "Inter", sans-serif;
-  --font-sans: "Inter", sans-serif;
-  --font-outfit: "Inter", sans-serif;
-  --font-display: "Inter", sans-serif;
+  /* Semantic surfaces, wired to the runtime tokens below. */
+  --color-background: var(--porcelain);
+  --color-foreground: var(--ink);
+  --color-card: var(--surface);
+  --color-card-foreground: var(--ink);
+  --color-popover: var(--surface);
+  --color-popover-foreground: var(--ink);
+  --color-border: var(--hairline);
+  --color-input: var(--hairline);
+  --color-ring: var(--viridian);
+  --color-primary: var(--ink);
+  --color-primary-foreground: var(--surface);
+  --color-secondary: var(--porcelain-deep);
+  --color-secondary-foreground: var(--ink);
+  --color-muted: var(--porcelain-deep);
+  --color-muted-foreground: var(--ink-soft);
+  --color-accent: var(--viridian);
+  --color-accent-foreground: var(--surface);
+  --color-destructive: var(--signal-stop);
+  --color-destructive-foreground: #ffffff;
+
+  /* Named tokens, usable as bg-ink, text-ink-soft, border-hairline, … */
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-ink-faint: var(--ink-faint);
+  --color-porcelain: var(--porcelain);
+  --color-porcelain-deep: var(--porcelain-deep);
+  --color-surface: var(--surface);
+  --color-hairline: var(--hairline);
+  --color-viridian: var(--viridian);
+  --color-viridian-soft: var(--viridian-soft);
+  --color-viridian-tint: var(--viridian-tint);
+  --color-on-accent: var(--on-accent);
+  --color-on-signal: var(--on-signal);
+  --color-signal-warn: var(--signal-warn);
+  --color-signal-stop: var(--signal-stop);
+  --color-signal-go: var(--signal-go);
+  --color-signal-warn-tint: var(--signal-warn-tint);
+  --color-signal-stop-tint: var(--signal-stop-tint);
+  --color-signal-go-tint: var(--signal-go-tint);
+
+  /* The app uses violet nowhere else, so remapping it here re-skins every
+     existing `violet-*` utility in one move instead of touching 235 sites. */
+  --color-violet-50: var(--viridian-tint);
+  --color-violet-100: var(--viridian-tint);
+  --color-violet-200: color-mix(in oklab, var(--viridian) 22%, transparent);
+  --color-violet-300: var(--viridian-soft);
+  --color-violet-400: var(--viridian-soft);
+  --color-violet-500: var(--viridian);
+  --color-violet-600: var(--viridian);
+  --color-violet-700: var(--viridian-deep);
+  --color-violet-800: var(--viridian-deep);
+  --color-violet-900: var(--viridian-deep);
+  --color-violet-950: var(--viridian-deep);
+
+  /* ---- Typography ---------------------------------------------------------
+     One family, everywhere. Inter carries headings, body, controls and figures;
+     hierarchy comes from size and weight, not from switching typefaces.
+     `--font-display`, `--font-inter` and `--font-outfit` are kept as aliases so the
+     classes that already name them (`font-display`, `font-inter`, `font-outfit`)
+     resolve to Inter instead of needing a rewrite in every file that uses them.
+     Mono survives for one job only: strings a person copies or reads character by
+     character (API keys, 2FA codes, webhook URLs), where 0/O and 1/l must differ. */
+  --font-sans: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-display: var(--font-sans);
+  --font-inter: var(--font-sans);
+  --font-outfit: var(--font-sans);
+  --font-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+
+  /* Size scale. Every step sits inside the range the product's type spec allows:
+     secondary 12–14, body 14–16, buttons/nav 13–14, section 18–22, page 24–32. */
+  --text-micro: 0.75rem;     /* 12 — the floor; captions and dense table meta */
+  --text-meta: 0.8125rem;    /* 13 — labels, timestamps, helper and validation text */
+  --text-ui: 0.875rem;       /* 14 — buttons, navigation, form controls */
+  --text-body: 0.9375rem;    /* 15 — body copy and table cells */
+  --text-lede: 1.125rem;     /* 18 — panel and card headings */
+  --text-section: 1.25rem;   /* 20 — section headings */
+  --text-page: 1.75rem;      /* 28 — page headings */
+  --text-figure: 2rem;       /* 32 — headline figures */
+
+  /* Rhythm. Tracking tightens as size grows, because Inter's default spacing is set
+     for small text and looks loose in a heading. */
+  --tracking-heading: -0.02em;
+  --tracking-section: -0.014em;
+  --tracking-ui: -0.006em;
+  --leading-heading: 1.2;
+  --leading-body: 1.55;
+  --leading-ui: 1.4;
+
+  --radius-control: 6px;
+  --radius-surface: 10px;
+  --radius: 10px;
 }
 
 @layer base {
   :root {
-    --background: 240 10% 3.9%;  /* #09090b */
-    --foreground: 0 0% 100%;     /* #FFFFFF */
+    --porcelain: #e9edec;
+    --porcelain-deep: #dfe5e3;
+    --surface: #ffffff;
+    --ink: #15191b;
+    --ink-soft: #5e6a6c;
+    --ink-faint: #7d8b89;
+    --hairline: #d3dad9;
+    --hairline-strong: #bfc8c6;
 
-    --card: 240 10% 5.9%;        /* #0f0f11 */
-    --card-foreground: 0 0% 100%;
+    --viridian: #0b6b5b;
+    --viridian-deep: #064b40;
+    --viridian-soft: #0f8a75;
+    --viridian-tint: #e6efec;
 
-    --popover: 240 10% 5.9%;
-    --popover-foreground: 0 0% 100%;
+    --signal-warn: #8a5a00;
+    --signal-warn-tint: #fbf1dd;
+    --signal-stop: #9b2c2c;
+    --signal-stop-tint: #fbeaea;
+    --signal-go: #1f6b3a;
+    --signal-go-tint: #e6f0e8;
 
-    --primary: 0 0% 100%;       /* White */
-    --primary-foreground: 240 10% 3.9%;
+    /* What sits on top of a filled accent or signal. These invert with the
+       theme, because the fills themselves lighten in the dark palette. */
+    --on-accent: #ffffff;
+    --on-signal: #ffffff;
 
-    --secondary: 240 3.7% 15.9%; /* Charcoal */
-    --secondary-foreground: 0 0% 100%;
+    /* One elevation, for things that float only. */
+    --lift: 0 16px 40px -20px rgba(10, 25, 22, 0.28), 0 2px 6px -2px rgba(10, 25, 22, 0.12);
 
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
+    /* Kept so landing-page rules that still read these keep resolving. */
+    --brand-purple: var(--viridian);
+    --brand-indigo: var(--viridian-deep);
+    --ai-gradient-start: var(--viridian);
+    --ai-gradient-end: var(--viridian-deep);
+    --ai-glow: transparent;
 
-    --accent: 240 3.7% 15.9%;
-    --accent-foreground: 0 0% 100%;
+    --background: 174 10% 92%;
+    --foreground: 195 12% 9%;
+    --card: 0 0% 100%;
+    --card-foreground: 195 12% 9%;
+    --border: 170 9% 84%;
 
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 98%;
+    color-scheme: light;
+  }
 
-    --border: 240 5.9% 15%;      /* Clean border */
-    --input: 240 5.9% 15%;
-    --ring: 240 4.8% 95.9%;
+  :root.dark {
+    --porcelain: #0e1413;
+    --porcelain-deep: #121a18;
+    --surface: #151d1b;
+    --ink: #e8edeb;
+    --ink-soft: #90a09d;
+    --ink-faint: #6b7a77;
+    --hairline: #2e3b37;
+    --hairline-strong: #3d4e49;
 
-    --radius: 16px;
-    
-    /* Dynamic Brand Variables */
-    --brand-purple: #38BDF8;
-    --brand-indigo: #3B82F6;
+    --viridian: #3fbca3;
+    --viridian-deep: #6fd6c0;
+    --viridian-soft: #2f9b85;
+    --viridian-tint: #16302b;
 
-    /* Premium AI Theme specifics */
-    --ai-gradient-start: #38BDF8;
-    --ai-gradient-end: #6366F1;
-    --ai-glow: rgba(59, 130, 246, 0.18);
+    --signal-warn: #d9a02a;
+    --signal-warn-tint: #2c2310;
+    --signal-stop: #e07070;
+    --signal-stop-tint: #2e1616;
+    --signal-go: #5fbd82;
+    --signal-go-tint: #14271a;
+
+    --on-accent: #0b1210;
+    --on-signal: #0b1210;
+
+    --lift: 0 18px 44px -20px rgba(0, 0, 0, 0.7), 0 2px 8px -2px rgba(0, 0, 0, 0.5);
+
+    --background: 174 18% 7%;
+    --foreground: 170 10% 92%;
+    --card: 174 15% 10%;
+    --card-foreground: 170 10% 92%;
+    --border: 168 12% 17%;
+
+    color-scheme: dark;
   }
 
   * {
-    @apply border-border;
+    border-color: var(--hairline);
   }
 
-  button, input, select, textarea {
-    font-family: inherit;
-  }
-
-  button {
-    cursor: pointer;
+  html {
+    -webkit-text-size-adjust: 100%;
   }
 
   body {
-    @apply bg-background text-foreground font-inter antialiased m-0 p-0 selection:bg-primary/30 selection:text-primary;
-    display: block;
+    margin: 0;
+    padding: 0;
     min-width: 100%;
     overflow-x: hidden;
+    background: var(--porcelain);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-size: var(--text-body);
+    line-height: var(--leading-body);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background: color-mix(in oklab, var(--viridian) 24%, transparent);
+    color: var(--ink);
   }
 
   #root {
@@ -94,139 +234,689 @@
     max-width: none;
     text-align: left;
   }
+
+  button,
+  input,
+  select,
+  textarea,
+  optgroup {
+    font-family: inherit;
+    font-size: inherit;
+    letter-spacing: inherit;
+  }
+
+  code,
+  kbd,
+  samp,
+  pre {
+    font-family: var(--font-mono);
+    font-size: 0.92em;
+  }
+
+  button {
+    cursor: pointer;
+  }
+
+  /* Keyboard focus stays visible everywhere; pointer clicks stay quiet. */
+  :focus-visible {
+    outline: 2px solid var(--viridian);
+    outline-offset: 2px;
+    border-radius: 3px;
+  }
+
+  h1, h2, h3, h4 {
+    font-weight: 600;
+    letter-spacing: var(--tracking-section);
+    line-height: var(--leading-heading);
+    color: var(--ink);
+  }
+
+  /* Figures line up in columns and don't jitter as they tick over. */
+  td, th, .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
 }
 
-/* Premium AI Component Utilities */
+/* ============================================================================
+   Primitives
+
+   Page markup composes these rather than re-deriving a card or a button from
+   utilities each time, which is what let twelve different card treatments grow.
+   ============================================================================ */
+
+@layer components {
+  /* --- Surfaces ------------------------------------------------------------ */
+
+  .surface {
+    background: var(--surface);
+    border: 1px solid var(--hairline);
+    border-radius: var(--radius-surface);
+  }
+
+  /* A surface whose job is to hold a region of chrome rather than content. */
+  .surface-quiet {
+    background: var(--porcelain-deep);
+    border: 1px solid var(--hairline);
+    border-radius: var(--radius-surface);
+  }
+
+  .surface-lifted {
+    background: var(--surface);
+    border: 1px solid var(--hairline);
+    border-radius: var(--radius-surface);
+    box-shadow: var(--lift);
+  }
+
+  /* Header strip inside a surface: titles a table or a panel. */
+  .surface-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--hairline);
+  }
+
+  .surface-head h2,
+  .surface-head h3 {
+    font-size: var(--text-lede);
+    font-weight: 600;
+    margin: 0;
+  }
+
+  /* --- Page furniture ------------------------------------------------------ */
+
+  .page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-bottom: 48px;
+  }
+
+  .page-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .page-title {
+    font-size: var(--text-page);
+    font-weight: 600;
+    letter-spacing: var(--tracking-heading);
+    line-height: var(--leading-heading);
+    margin: 0;
+    color: var(--ink);
+  }
+
+  .page-sub {
+    margin: 6px 0 0;
+    font-size: var(--text-body);
+    color: var(--ink-soft);
+    max-width: 68ch;
+  }
+
+  .section-title {
+    font-size: var(--text-section);
+    font-weight: 600;
+    letter-spacing: var(--tracking-section);
+    margin: 0;
+    color: var(--ink);
+  }
+
+  /* A plain label. Sentence case, never tracked-out capitals. */
+  .label {
+    font-size: var(--text-meta);
+    font-weight: 500;
+    color: var(--ink-soft);
+  }
+
+  .prose-measure {
+    max-width: 72ch;
+  }
+
+  /* --- Figures ------------------------------------------------------------- */
+
+  /* Statistics read as a row of figures on one surface, divided by hairlines,
+     rather than as four identical cards with icon chips. */
+  .stat-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    background: var(--surface);
+    border: 1px solid var(--hairline);
+    border-radius: var(--radius-surface);
+    overflow: hidden;
+  }
+
+  .stat {
+    padding: 18px 20px;
+    border-left: 1px solid var(--hairline);
+    min-width: 0;
+  }
+
+  .stat:first-child {
+    border-left: 0;
+  }
+
+  .stat-label {
+    display: block;
+    font-size: var(--text-meta);
+    font-weight: 500;
+    color: var(--ink-soft);
+    margin-bottom: 6px;
+  }
+
+  .stat-figure {
+    display: block;
+    font-size: var(--text-figure);
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: var(--tracking-heading);
+    /* Inter runs wider than the condensed face this slot used to hold; a long figure
+       must stay on one line and truncate rather than wrap inside its cell. */
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .stat-note {
+    display: block;
+    margin-top: 6px;
+    font-size: var(--text-meta);
+    color: var(--ink-faint);
+  }
+
+  @media (max-width: 640px) {
+    .stat {
+      border-left: 0;
+      border-top: 1px solid var(--hairline);
+    }
+    .stat:first-child {
+      border-top: 0;
+    }
+  }
+
+  /* --- Buttons ------------------------------------------------------------- */
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 9px 14px;
+    border-radius: var(--radius-control);
+    border: 1px solid var(--hairline);
+    background: var(--surface);
+    color: var(--ink);
+    font-size: var(--text-ui);
+    font-weight: 500;
+    line-height: var(--leading-ui);
+    letter-spacing: var(--tracking-ui);
+    white-space: nowrap;
+    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  }
+
+  .btn:hover:not(:disabled) {
+    background: var(--porcelain-deep);
+    border-color: var(--hairline-strong);
+  }
+
+  .btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  /* The human's action: ink, because in this interface ink is the person. */
+  .btn-primary {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: var(--surface);
+  }
+
+  .btn-primary:hover:not(:disabled) {
+    background: color-mix(in oklab, var(--ink) 86%, var(--surface));
+    border-color: color-mix(in oklab, var(--ink) 86%, var(--surface));
+  }
+
+  /* Reserved for actions that hand work to the automation. */
+  .btn-accent {
+    background: var(--viridian);
+    border-color: var(--viridian);
+    color: var(--on-accent);
+  }
+
+  .btn-accent:hover:not(:disabled) {
+    background: var(--viridian-deep);
+    border-color: var(--viridian-deep);
+  }
+
+  .btn-danger {
+    background: var(--signal-stop);
+    border-color: var(--signal-stop);
+    color: var(--on-signal);
+  }
+
+  .btn-danger:hover:not(:disabled) {
+    background: color-mix(in oklab, var(--signal-stop) 85%, #000);
+  }
+
+  .btn-quiet {
+    background: transparent;
+    border-color: transparent;
+    color: var(--ink-soft);
+  }
+
+  .btn-quiet:hover:not(:disabled) {
+    background: var(--porcelain-deep);
+    color: var(--ink);
+    border-color: transparent;
+  }
+
+  .btn-sm {
+    padding: 6px 10px;
+    font-size: var(--text-meta);
+  }
+
+  .btn-icon {
+    padding: 8px;
+    gap: 0;
+  }
+
+  /* --- Fields -------------------------------------------------------------- */
+
+  .field {
+    width: 100%;
+    padding: 9px 12px;
+    background: var(--surface);
+    border: 1px solid var(--hairline);
+    border-radius: var(--radius-control);
+    color: var(--ink);
+    font-size: var(--text-body);
+    outline: none;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .field::placeholder {
+    color: var(--ink-faint);
+  }
+
+  .field:focus {
+    border-color: var(--viridian);
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--viridian) 16%, transparent);
+  }
+
+  .field:disabled {
+    background: var(--porcelain-deep);
+    color: var(--ink-faint);
+    cursor: not-allowed;
+  }
+
+  .field-label {
+    display: block;
+    font-size: var(--text-meta);
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 6px;
+  }
+
+  .field-hint {
+    margin-top: 6px;
+    font-size: var(--text-meta);
+    color: var(--ink-soft);
+  }
+
+  /* --- Chips --------------------------------------------------------------- */
+
+  /* Status in words, sentence case. The border carries the state, not a fill. */
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 2px 8px;
+    border-radius: var(--radius-control);
+    border: 1px solid var(--hairline);
+    background: var(--surface);
+    color: var(--ink-soft);
+    font-size: var(--text-meta);
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .chip-accent {
+    border-color: color-mix(in oklab, var(--viridian) 34%, transparent);
+    background: var(--viridian-tint);
+    color: var(--viridian-deep);
+  }
+
+  .chip-go {
+    border-color: color-mix(in oklab, var(--signal-go) 32%, transparent);
+    background: var(--signal-go-tint);
+    color: var(--signal-go);
+  }
+
+  .chip-warn {
+    border-color: color-mix(in oklab, var(--signal-warn) 32%, transparent);
+    background: var(--signal-warn-tint);
+    color: var(--signal-warn);
+  }
+
+  .chip-stop {
+    border-color: color-mix(in oklab, var(--signal-stop) 32%, transparent);
+    background: var(--signal-stop-tint);
+    color: var(--signal-stop);
+  }
+
+  .chip-ink {
+    border-color: var(--ink);
+    background: var(--ink);
+    color: var(--surface);
+  }
+
+  /* --- Tables -------------------------------------------------------------- */
+
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+  }
+
+  .data-table thead th {
+    padding: 11px 18px;
+    background: var(--porcelain-deep);
+    border-bottom: 1px solid var(--hairline);
+    font-size: var(--text-meta);
+    font-weight: 600;
+    color: var(--ink-soft);
+    white-space: nowrap;
+  }
+
+  .data-table tbody td {
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--hairline);
+    font-size: var(--text-body);
+    color: var(--ink);
+    vertical-align: middle;
+  }
+
+  .data-table tbody tr:last-child td {
+    border-bottom: 0;
+  }
+
+  .data-table tbody tr:hover td {
+    background: var(--porcelain);
+  }
+
+  .num {
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+  }
+
+  /* --- Rails --------------------------------------------------------------- */
+
+  /* A rail says who is acting. Viridian is the automation, ink is a person.
+     This is the one place the interface raises its voice. */
+  .rail-machine {
+    border-left: 2px solid var(--viridian);
+  }
+
+  .rail-human {
+    border-left: 2px solid var(--ink);
+  }
+
+  /* --- Avatar -------------------------------------------------------------- */
+
+  .avatar-initial {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--porcelain-deep);
+    border: 1px solid var(--hairline);
+    color: var(--ink);
+    font-size: var(--text-body);
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+  /* --- Empty states -------------------------------------------------------- */
+
+  /* An empty screen is an invitation to act, so it names the next step. */
+  .empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 64px 24px;
+    text-align: center;
+  }
+
+  .empty-title {
+    font-size: var(--text-lede);
+    font-weight: 600;
+    color: var(--ink);
+    margin: 0;
+  }
+
+  .empty-body {
+    font-size: var(--text-body);
+    color: var(--ink-soft);
+    margin: 0;
+    max-width: 44ch;
+  }
+
+  /* --- Notices ------------------------------------------------------------- */
+
+  .notice {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 14px 18px;
+    border: 1px solid var(--hairline);
+    border-left: 3px solid var(--ink-soft);
+    border-radius: var(--radius-control);
+    background: var(--surface);
+  }
+
+  .notice-warn {
+    border-left-color: var(--signal-warn);
+    background: var(--signal-warn-tint);
+    border-color: color-mix(in oklab, var(--signal-warn) 26%, transparent);
+  }
+
+  .notice-stop {
+    border-left-color: var(--signal-stop);
+    background: var(--signal-stop-tint);
+    border-color: color-mix(in oklab, var(--signal-stop) 26%, transparent);
+  }
+
+  .notice-title {
+    font-weight: 600;
+    font-size: var(--text-body);
+    color: var(--ink);
+    margin: 0;
+  }
+
+  .notice-body {
+    margin: 2px 0 0;
+    font-size: var(--text-meta);
+    color: var(--ink-soft);
+  }
+
+  .notice-warn .notice-body,
+  .notice-stop .notice-body {
+    color: inherit;
+    opacity: 0.85;
+  }
+
+  /* --- Meter --------------------------------------------------------------- */
+
+  .meter {
+    height: 6px;
+    background: var(--porcelain-deep);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .meter > span {
+    display: block;
+    height: 100%;
+    background: var(--viridian);
+    border-radius: 3px;
+  }
+}
+
+/* ============================================================================
+   Legacy primitive names
+
+   Seven pages still call .w3-card / .w3-button-primary / .w3-input. They are
+   redefined here so those pages inherit the new system instead of keeping the
+   gradient-and-glow treatment they were written against.
+   ============================================================================ */
+
 .w3-card {
-  background: var(--card);
-  border-radius: 20px;
-  border: 1px solid var(--border);
-  box-shadow: 0 4px 24px -8px rgba(0, 0, 0, 0.5);
-  padding: 24px;
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-surface);
+  padding: 20px;
   position: relative;
-  overflow: hidden;
-}
-
-.w3-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
-  opacity: 0;
-  transition: opacity 0.4s ease;
-}
-
-.w3-card:hover {
-  transform: translateY(-2px);
-  border-color: rgba(139, 92, 246, 0.3);
-  box-shadow: 0 12px 32px -8px rgba(0, 0, 0, 0.6), 0 0 20px -5px var(--ai-glow);
-}
-
-.w3-card:hover::before {
-  opacity: 1;
 }
 
 .w3-button-primary {
-  background: linear-gradient(135deg, var(--ai-gradient-start), var(--ai-gradient-end));
-  color: #FFFFFF;
-  padding: 12px 24px;
-  border-radius: 12px;
-  font-weight: 600;
-  transition: all 0.3s ease;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  border: 1px solid rgba(255,255,255,0.1);
-  cursor: pointer;
-  box-shadow: 0 4px 15px -3px var(--ai-glow);
-  position: relative;
-  overflow: hidden;
-}
-
-.w3-button-primary::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-  transition: left 0.5s ease;
+  padding: 9px 14px;
+  border-radius: var(--radius-control);
+  border: 1px solid var(--ink);
+  background: var(--ink);
+  color: var(--surface);
+  font-weight: 500;
+  transition: background-color 0.15s ease;
 }
 
 .w3-button-primary:hover {
-  box-shadow: 0 8px 25px -5px var(--ai-glow);
-  transform: translateY(-1px);
-}
-
-.w3-button-primary:hover::after {
-  left: 100%;
+  background: color-mix(in oklab, var(--ink) 86%, var(--surface));
 }
 
 .w3-input {
-  background: rgba(255,255,255,0.03);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 12px 16px;
-  font-family: inherit;
-  color: var(--foreground);
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-control);
+  padding: 9px 12px;
+  color: var(--ink);
   outline: none;
-  transition: all 0.3s ease;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .w3-input:focus {
-  border-color: var(--primary);
-  background: rgba(255,255,255,0.05);
-  box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.15);
+  border-color: var(--viridian);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--viridian) 16%, transparent);
 }
 
 .w3-badge-primary {
-  background: rgba(139, 92, 246, 0.15);
-  color: #a78bfa;
-  padding: 4px 10px;
-  border-radius: 8px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  border: 1px solid rgba(139, 92, 246, 0.3);
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: var(--radius-control);
+  border: 1px solid color-mix(in oklab, var(--viridian) 34%, transparent);
+  background: var(--viridian-tint);
+  color: var(--viridian-deep);
+  font-size: var(--text-meta);
+  font-weight: 500;
 }
 
-/* Animations */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+/* Three app pages still ask for a purple glow; it resolves to nothing now. */
+.glow-purple,
+.glow-indigo {
+  box-shadow: none;
 }
 
-@keyframes pulse-glow {
-  0%, 100% { opacity: 0.5; transform: scale(1); }
-  50% { opacity: 0.8; transform: scale(1.05); }
+.gradient-text-premium {
+  color: var(--ink);
 }
 
-@keyframes float {
-  0% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
-  100% { transform: translateY(0px); }
+.premium-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: var(--hairline-strong) transparent;
 }
 
-.dashboard-page, .leads-page, .settings-page {
-  animation: fadeIn 0.5s ease-out;
+.premium-scroll::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
 }
 
-/* Premium AI SaaS Backdrop Animations & Classes */
+.premium-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.premium-scroll::-webkit-scrollbar-thumb {
+  background: var(--hairline-strong);
+  border-radius: 4px;
+}
+
+.premium-scroll::-webkit-scrollbar-thumb:hover {
+  background: var(--ink-faint);
+}
+
+/* ============================================================================
+   Landing-page utilities
+
+   The marketing site is a separate surface with its own established look, so
+   these are kept exactly as it expects them.
+   ============================================================================ */
+
+@layer utilities {
+  .glass {
+    background-color: color-mix(in oklab, var(--surface) 82%, transparent);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--hairline);
+  }
+
+  .dark .glass {
+    @apply bg-zinc-900/60 backdrop-blur-xl border border-white/10;
+  }
+
+  .gradient-text-ai {
+    @apply bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent;
+  }
+
+  .dot-grid {
+    background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+}
+
 :root {
   --grid-line-color: rgba(59, 130, 246, 0.035);
 }
+
 .dark {
   --grid-line-color: rgba(59, 130, 246, 0.06);
 }
 
 .hero-line-grid {
   background-size: 40px 40px;
-  background-image: 
+  background-image:
     linear-gradient(to right, var(--grid-line-color) 1px, transparent 1px),
     linear-gradient(to bottom, var(--grid-line-color) 1px, transparent 1px);
   animation: gridMove 60s linear infinite;
@@ -252,769 +942,612 @@
   50% { transform: translate(3%, -5%) scale(1.02); }
 }
 
-.animate-mesh-glow-1 {
-  animation: meshGlow1 25s ease-in-out infinite;
-}
-.animate-mesh-glow-2 {
-  animation: meshGlow2 30s ease-in-out infinite;
-}
-.animate-mesh-glow-3 {
-  animation: meshGlow3 22s ease-in-out infinite;
-}
+.animate-mesh-glow-1 { animation: meshGlow1 25s ease-in-out infinite; }
+.animate-mesh-glow-2 { animation: meshGlow2 30s ease-in-out infinite; }
+.animate-mesh-glow-3 { animation: meshGlow3 22s ease-in-out infinite; }
 
 @keyframes flowDash {
-  to { strokeDashoffset: -40; }
+  to { stroke-dashoffset: -1000; }
 }
+
 .animate-flow-dash {
-  stroke-dasharray: 8 16;
-  animation: flowDash 3s linear infinite;
+  animation: flowDash 30s linear infinite;
 }
 
-@layer utilities {
-  .glass {
-    @apply bg-zinc-900/60 backdrop-blur-xl border border-white/10;
-  }
+/* ============================================================================
+   App shell
 
-  .gradient-text-premium {
-    @apply bg-gradient-to-br from-white via-zinc-200 to-zinc-500 bg-clip-text text-transparent;
-  }
+   The sidebar and header are chrome: porcelain, flat, hairline-bordered. The
+   active page is marked by a viridian rail rather than a filled pill, because
+   a rail reads as position while a pill reads as a button.
+   ============================================================================ */
 
-  .gradient-text-ai {
-    @apply bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent;
-  }
-
-  .glow-indigo {
-    box-shadow: 0 0 80px 40px rgba(99, 102, 241, 0.1);
-  }
-
-  .glow-purple {
-    box-shadow: 0 0 80px 40px rgba(168, 85, 247, 0.1);
-  }
-
-  .dot-grid {
-    background-image: radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px);
-    background-size: 24px 24px;
-  }
-}
-
-.premium-scroll::-webkit-scrollbar {
-  width: 6px;
-}
-
-.premium-scroll::-webkit-scrollbar-thumb {
-  background: var(--border);
-  border-radius: 10px;
-}
-.premium-scroll::-webkit-scrollbar-thumb:hover {
-  background: #3f3f46;
-}
-
-/* CRM Layout Styles - Dark AI Theme */
 .crm-layout {
   display: flex;
-  height: 100vh;
-  width: 100vw;
-  background-color: var(--background);
-  color: var(--foreground);
-  font-family: 'Inter', sans-serif;
-  background-image: radial-gradient(circle at top center, rgba(139, 92, 246, 0.05) 0%, transparent 40%);
+  height: 100%;
+  min-height: 0;
+  width: 100%;
+  background: var(--porcelain);
+  color: var(--ink);
+  font-family: var(--font-sans);
 }
 
 .sidebar {
-  width: 250px;
-  min-width: 250px;
-  flex-shrink: 0;
-  height: 100vh;
-  margin: 0;
-  background: rgba(12, 10, 16, 0.75);
-  backdrop-filter: blur(24px) saturate(150%);
-  border-radius: 0;
-  border-right: 1px solid rgba(255, 255, 255, 0.05);
   display: flex;
   flex-direction: column;
-  padding: 32px 16px;
-  box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  width: 248px;
+  min-width: 248px;
+  flex-shrink: 0;
+  height: 100%;
+  min-height: 0;
+  padding: 0;
+  background: var(--porcelain);
+  border-right: 1px solid var(--hairline);
   z-index: 50;
-  position: relative;
-  overflow: hidden;
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: width 0.2s ease, min-width 0.2s ease;
 }
 
 .sidebar.collapsed {
-  width: 80px;
-  min-width: 80px;
-  padding: 32px 12px;
+  width: 64px;
+  min-width: 64px;
 }
 
 .sidebar.collapsed .logo-text,
 .sidebar.collapsed .nav-item span,
-.sidebar.collapsed .user-info .details,
-.sidebar.collapsed .logout-btn span,
-.sidebar.collapsed .divider {
+.sidebar.collapsed .nav-group-label {
   display: none;
-}
-
-.sidebar.collapsed .logo {
-  justify-content: center;
-  padding: 0;
 }
 
 .sidebar.collapsed .nav-item {
   justify-content: center;
-  padding: 12px;
+  padding-left: 0;
+  padding-right: 0;
 }
 
-.sidebar.collapsed .user-info {
+.sidebar.collapsed .logo-container {
   justify-content: center;
-  padding-top: 0;
+  padding: 0 8px;
 }
 
-.sidebar.collapsed .logout-btn {
-  justify-content: center;
-  padding: 8px;
-}
-
-/* Inline Toggle Button */
 .logo-container {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 100%;
-}
-
-.sidebar.collapsed .logo-container {
-  flex-direction: column;
-  gap: 12px;
-  justify-content: center;
-}
-
-.toggle-btn-inline {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  color: #71717a;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.toggle-btn-inline:hover {
-  background: rgba(255, 255, 255, 0.08);
-  color: #fff;
-  border-color: rgba(139, 92, 246, 0.3);
-}
-
-.sidebar::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: radial-gradient(circle at top left, rgba(139, 92, 246, 0.08), transparent 70%);
-  pointer-events: none;
+  gap: 8px;
+  height: 56px;
+  padding: 0 14px;
+  border-bottom: 1px solid var(--hairline);
+  flex-shrink: 0;
 }
 
 .logo {
   display: flex;
   align-items: center;
-  gap: 14px;
-  font-weight: 800;
-  font-size: 1.5rem;
-  color: #fff;
-  z-index: 10;
-  padding: 0;
+  min-width: 0;
+  color: var(--ink);
+  text-decoration: none;
 }
 
-.logo-icon {
-  background: linear-gradient(135deg, #a855f7 0%, #6366f1 100%);
-  padding: 10px;
-  border-radius: 16px;
-  color: #fff;
+.logo-text {
+  font-size: var(--text-lede);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+
+.toggle-btn-inline {
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 15px rgba(168, 85, 247, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.2);
-  transition: transform 0.3s ease;
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  color: var(--ink-soft);
+  transition: color 0.15s ease, border-color 0.15s ease;
 }
 
-.logo:hover .logo-icon {
-  transform: rotate(5deg) scale(1.05);
+.toggle-btn-inline:hover {
+  color: var(--ink);
+  border-color: var(--hairline-strong);
 }
 
 .nav-links {
-  margin-top: 40px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 1px;
   flex-grow: 1;
-  z-index: 10;
   overflow-y: auto;
-  padding: 0 4px;
+  padding: 12px 8px 16px;
+}
+
+.nav-group-label {
+  padding: 16px 10px 6px;
+  font-size: var(--text-meta);
+  font-weight: 500;
+  color: var(--ink-faint);
 }
 
 .nav-item {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px 16px;
+  gap: 10px;
+  padding: 8px 10px;
+  border-left: 2px solid transparent;
+  border-radius: 0 var(--radius-control) var(--radius-control) 0;
+  color: var(--ink-soft);
+  font-size: var(--text-ui);
+  font-weight: 500;
+  letter-spacing: var(--tracking-ui);
   text-decoration: none;
-  color: #a1a1aa;
-  border-radius: 16px;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  cursor: pointer;
-  font-weight: 600;
-  font-size: 0.9rem;
-  border: 1px solid transparent;
+  transition: background-color 0.12s ease, color 0.12s ease;
 }
 
 .nav-item svg {
-  transition: transform 0.3s ease, color 0.3s ease;
-  color: #71717a;
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  color: currentColor;
 }
 
 .nav-item:hover {
-  background: rgba(255, 255, 255, 0.05);
-  color: #fff;
-  border-color: rgba(255, 255, 255, 0.05);
-}
-
-.nav-item:hover svg {
-  transform: translateX(2px);
-  color: #fff;
+  background: var(--porcelain-deep);
+  color: var(--ink);
 }
 
 .nav-item.active {
-  background: rgba(139, 92, 246, 0.15);
-  color: #c084fc;
-  border: 1px solid rgba(139, 92, 246, 0.2);
-  box-shadow: 0 4px 15px -3px rgba(139, 92, 246, 0.2);
+  background: var(--surface);
+  border-left-color: var(--viridian);
+  color: var(--ink);
+  font-weight: 600;
 }
 
 .nav-item.active svg {
-  color: #c084fc;
-  transform: scale(1.1);
-}
-
-.sidebar-footer {
-  margin-top: auto;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 20px;
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  z-index: 10;
-  transition: all 0.3s ease;
-}
-
-.sidebar.collapsed .sidebar-footer {
-  background: transparent;
-  border: none;
-  padding: 8px 0;
-}
-
-.user-info {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  z-index: 10;
-}
-
-.logout-btn {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 8px 12px;
-  color: #a1a1aa;
-  font-weight: 600;
-  font-size: 0.9rem;
-  background: transparent;
-  border: none;
-  border-radius: 12px;
-  transition: all 0.3s ease;
-  cursor: pointer;
-  width: 100%;
-}
-
-.logout-btn svg {
-  color: #a1a1aa;
-  transition: color 0.3s ease, transform 0.3s ease;
-}
-
-.logout-btn:hover {
-  background: rgba(239, 68, 68, 0.08);
-  color: #ef4444;
-}
-
-.logout-btn:hover svg {
-  color: #ef4444;
-  transform: translateX(1px);
-}
-
-.avatar {
-  background: linear-gradient(135deg, #a855f7 0%, #6366f1 100%);
-  color: #ffffff;
-  width: 40px;
-  height: 40px;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  box-shadow: 0 4px 12px rgba(168, 85, 247, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--viridian);
 }
 
 .content-area {
-  flex-grow: 1;
   display: flex;
   flex-direction: column;
+  flex-grow: 1;
+  min-width: 0;
   padding: 0;
   overflow: hidden;
+  background: var(--porcelain);
 }
 
 .top-header {
-  background: rgba(15, 15, 20, 0.7);
-  backdrop-filter: blur(24px) saturate(150%);
-  border-radius: 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 28px;
-  margin-bottom: 0;
-  box-shadow: 0 4px 20px -10px rgba(0, 0, 0, 0.3);
-  transition: all 0.4s ease;
+  gap: 16px;
+  height: 56px;
+  flex-shrink: 0;
+  padding: 0 20px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--hairline);
 }
 
 .search-bar {
   display: flex;
   align-items: center;
-  gap: 14px;
-  background: rgba(255,255,255,0.03);
-  padding: 10px 20px;
-  border-radius: 14px;
-  width: 380px;
-  border: 1px solid rgba(255,255,255,0.05);
-  transition: all 0.3s;
+  gap: 10px;
+  width: 320px;
+  max-width: 100%;
+  padding: 7px 12px;
+  background: var(--porcelain);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-control);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .search-bar:focus-within {
-  border-color: rgba(139, 92, 246, 0.5);
-  background: rgba(255,255,255,0.05);
-  box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.1);
+  background: var(--surface);
+  border-color: var(--viridian);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--viridian) 16%, transparent);
 }
 
 .search-bar input {
+  width: 100%;
   background: none;
   border: none;
-  color: #fafafa;
   outline: none;
-  width: 100%;
-  font-family: inherit;
-  font-size: 0.9rem;
+  color: var(--ink);
+  font-size: var(--text-body);
 }
 
 .router-container {
   flex-grow: 1;
   overflow-y: auto;
   padding: 24px;
-}
-
-:root.light {
-  --background: 240 5% 98%; /* #fafafa */
-  --foreground: 240 10% 3.9%; /* #09090b */
-  --card: 0 0% 100%; /* white */
-  --card-foreground: 240 10% 3.9%;
-  --popover: 0 0% 100%;
-  --popover-foreground: 240 10% 3.9%;
-  --primary: 240 5.9% 10%; /* #18181b - Black */
-  --primary-foreground: 0 0% 100%;
-  --secondary: 240 4.8% 95.9%; /* #f4f4f5 */
-  --secondary-foreground: 240 5.9% 10%;
-  --muted: 240 4.8% 95.9%;
-  --muted-foreground: 240 3.8% 46.1%; /* #71717a */
-  --border: 240 5.9% 90%; /* #e4e4e7 */
-  --input: 240 5.9% 90%;
-  --ring: 240 5.9% 10%;
-  
-  --brand-purple: #38BDF8;
-  --brand-indigo: #3B82F6;
-
-  --ai-gradient-start: #38BDF8;
-  --ai-gradient-end: #6366F1;
-  --ai-glow: rgba(59, 130, 246, 0.08);
-}
-
-:root.light .sidebar {
-  background: #f8f9fa !important;
-  border-radius: 0 !important;
-  margin: 0 !important;
-  border: none !important;
-  border-right: 1px solid #e5e7eb !important;
-  box-shadow: none !important;
-}
-
-:root.light .content-area {
-  background: #ffffff !important;
-  border-radius: 0 !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  box-shadow: none !important;
-}
-
-:root.light .sidebar::after {
-  background: none !important;
-}
-
-:root.light .logo-text-primary {
-  color: #09090b !important;
-}
-
-:root.light img[src*="logo.png"] {
-  filter: brightness(0) invert(0) !important; /* Turns white logo black */
-  opacity: 0.9 !important;
-}
-
-:root.light .nav-item {
-  color: #71717a !important;
-  font-weight: 500 !important;
-}
-
-:root.light .nav-item:hover {
-  background: rgba(0, 0, 0, 0.04) !important;
-  color: #18181b !important;
-  border-color: transparent !important;
-}
-
-:root.light .nav-item:hover svg {
-  color: #18181b !important;
-}
-
-:root.light .nav-item.active {
-  background: #f4f4f5 !important;
-  color: #09090b !important;
-  border-color: #e4e4e7 !important;
-  box-shadow: none !important;
-  font-weight: 600 !important;
-}
-
-:root.light .nav-item.active svg {
-  color: #09090b !important;
-}
-
-:root.light .sidebar-footer {
-  background: transparent !important;
-  border-color: #e4e4e7 !important;
-}
-
-:root.light .logout-btn {
-  color: #64748b !important;
-}
-
-:root.light .logout-btn svg {
-  color: #64748b !important;
-}
-
-:root.light .logout-btn:hover {
-  background: rgba(239, 68, 68, 0.06) !important;
-  color: #ef4444 !important;
-}
-
-:root.light .logout-btn:hover svg {
-  color: #ef4444 !important;
-}
-
-:root.light .toggle-btn-inline {
-  background: rgba(0, 0, 0, 0.02) !important;
-  border-color: rgba(0, 0, 0, 0.05) !important;
-  color: #64748b !important;
-}
-
-:root.light .toggle-btn-inline:hover {
-  background: rgba(0, 0, 0, 0.05) !important;
-  color: #000 !important;
-  border-color: rgba(124, 58, 237, 0.3) !important;
-}
-
-:root.light .top-header {
-  background: #ffffff !important;
-  border: none !important;
-  border-bottom: 1px solid #e5e7eb !important;
-  box-shadow: none !important;
-  padding: 14px 28px !important;
-  border-radius: 0 !important;
-}
-
-:root.light .search-bar {
-  background: rgba(0, 0, 0, 0.02) !important;
-  border-color: rgba(0, 0, 0, 0.05) !important;
-}
-
-:root.light .search-bar:focus-within {
-  border-color: #09090b !important;
-  background: #ffffff !important;
-  box-shadow: 0 0 0 1px #09090b !important;
-}
-
-:root.light .search-bar input {
-  color: #0f172a !important;
-}
-
-:root.light .text-white:not(button):not(a):not(.w3-button-primary) {
-  color: #0f172a !important;
-}
-
-:root.light .border-white\/5 {
-  border-color: rgba(0, 0, 0, 0.06) !important;
-}
-
-:root.light .bg-white\/5 {
-  background-color: rgba(0, 0, 0, 0.03) !important;
-}
-
-:root.light .border-l {
-  border-left-color: rgba(0, 0, 0, 0.08) !important;
-}
-
-:root.light .crm-layout {
-  background-image: none !important;
-  background-color: #e5e7eb !important;
-}
-
-:root.light .w3-card {
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03) !important;
-  border-radius: 12px !important;
-  border-color: #e4e4e7 !important;
-}
-
-:root.light .w3-card:hover {
-  border-color: #d4d4d8 !important;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03) !important;
-  transform: none !important;
-}
-
-:root.light .w3-button-primary {
-  background: #09090b !important;
-  border: 1px solid #000000 !important;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
-  border-radius: 8px !important;
-}
-
-:root.light .w3-button-primary:hover {
-  background: #27272a !important;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
-}
-
-:root.light .w3-button-primary::after {
-  display: none !important;
-}
-
-:root.light .text-zinc-100 {
-  color: #0f172a !important;
-}
-
-:root.light .text-zinc-300 {
-  color: #1e293b !important;
-}
-
-:root.light .text-zinc-400 {
-  color: #475569 !important;
-}
-
-:root.light .text-zinc-500 {
-  color: #64748b !important;
-}
-
-:root.light .text-purple-400 {
-  color: #18181b !important;
-}
-
-:root.light .bg-zinc-900:not(.mockup-dark *) {
-  background-color: #ffffff !important;
-}
-
-:root.light .bg-zinc-900\/50:not(.mockup-dark *) {
-  background-color: #ffffff !important;
-  border-color: rgba(0, 0, 0, 0.08) !important;
-  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.08) !important;
-}
-
-:root.light .bg-zinc-950:not(.mockup-dark *) {
-  background-color: #ffffff !important;
-  color: #0f172a !important;
-}
-
-:root.light .bg-zinc-950\/50:not(.mockup-dark *) {
-  background-color: rgba(0, 0, 0, 0.02) !important;
-  color: #0f172a !important;
-}
-
-:root.light .bg-zinc-800:not(.mockup-dark *) {
-  background-color: rgba(0, 0, 0, 0.03) !important;
-  color: #0f172a !important;
-  border-color: rgba(0, 0, 0, 0.06) !important;
-}
-
-:root.light .bg-zinc-800:not(.mockup-dark *):hover {
-  background-color: rgba(0, 0, 0, 0.06) !important;
-  color: #0f172a !important;
-}
-
-:root.light .border-white\/10:not(.mockup-dark *) {
-  border-color: rgba(0, 0, 0, 0.08) !important;
-}
-
-:root.light .border-white\/5:not(.mockup-dark *) {
-  border-color: rgba(0, 0, 0, 0.06) !important;
-}
-
-:root.light .text-xs.text-zinc-400 {
-  color: #64748b !important;
-}
-
-:root.light :not(.dark) .text-purple-200 {
-  color: #5b21b6 !important;
-}
-
-:root.light :not(.dark) .text-purple-200\/80 {
-  color: #6d28d9 !important;
-}
-
-:root.light :not(.dark) .text-purple-300 {
-  color: #4c1d95 !important;
-}
-
-:root.light code.bg-zinc-900 {
-  background-color: rgba(0, 0, 0, 0.05) !important;
-  color: #7c3aed !important;
-}
-
-:root.light select {
-  background-color: #ffffff !important;
-  color: #0f172a !important;
-  border-color: rgba(0, 0, 0, 0.08) !important;
-}
-
-:root.light input.w3-input,
-:root.light textarea.w3-input {
-  background-color: rgba(0, 0, 0, 0.02) !important;
-  color: #0f172a !important;
-  border-color: rgba(0, 0, 0, 0.06) !important;
-}
-
-/* Gradients */
-:root.light .bg-gradient-to-br.from-purple-900.to-indigo-900 {
-  background-image: linear-gradient(to bottom right, #f5f3ff, #ede9fe) !important;
-  border-color: rgba(124, 58, 237, 0.15) !important;
-  color: #5b21b6 !important;
-}
-
-:root.light .bg-gradient-to-br.from-purple-900.to-indigo-900 .text-purple-200 {
-  color: #4c1d95 !important;
-}
-
-:root.light .bg-gradient-to-br.from-purple-900.to-indigo-900 .text-purple-100\/80 {
-  color: #5b21b6 !important;
-}
-
-:root.light .bg-gradient-to-br.from-purple-900\/40.to-indigo-900\/40 {
-  background-image: linear-gradient(to bottom right, #f5f3ff, #ede9fe) !important;
-  border-color: rgba(124, 58, 237, 0.15) !important;
-  color: #5b21b6 !important;
-}
-
-:root.light .bg-gradient-to-br.from-purple-900\/40.to-indigo-900\/40 .text-purple-200\/80 {
-  color: #5b21b6 !important;
-}
-
-:root.light .bg-gradient-to-br.from-purple-900\/40.to-indigo-900\/40 .text-purple-300 {
-  color: #4c1d95 !important;
-}
-
-:root.light .bg-gradient-to-br.from-purple-900\/40.to-indigo-900\/40 button {
-  background-color: rgba(124, 58, 237, 0.1) !important;
-  color: #7c3aed !important;
-  border-color: rgba(124, 58, 237, 0.2) !important;
-}
-
-:root.light .bg-gradient-to-br.from-purple-900\/40.to-indigo-900\/40 button:hover {
-  background-color: rgba(124, 58, 237, 0.15) !important;
-}
-
-:root.light .bg-gradient-to-br.from-zinc-900.to-zinc-950 {
-  background-image: none !important;
-  background-color: #ffffff !important;
-  color: #0f172a !important;
-  border-color: rgba(0, 0, 0, 0.06) !important;
-}
-
-:root.light .bg-zinc-900\/80 {
-  background-color: rgba(255, 255, 255, 0.75) !important;
-}
-
-:root.light .bg-zinc-950\/30 {
-  background-color: rgba(0, 0, 0, 0.01) !important;
-}
-
-:root.light :not(.dark) .text-zinc-200,
-:root.light :not(.dark).text-zinc-200 {
-  color: #1e293b !important;
-}
-
-:root.light .glass {
-  background-color: rgba(255, 255, 255, 0.8) !important;
-  border-color: rgba(0, 0, 0, 0.06) !important;
-  backdrop-filter: blur(24px) !important;
-}
-
-
-
-:root.light .logo {
-  color: #0f172a !important;
-}
-
-:root.light .logo-icon {
-  background: rgba(124, 58, 237, 0.08) !important;
-  border: 1px solid rgba(124, 58, 237, 0.15) !important;
-  box-shadow: none !important;
-}
-
-:root.light .logo-icon svg {
-  fill: #7c3aed !important;
-  stroke: #7c3aed !important;
-}
-
-:root.light .bg-zinc-800\/50 {
-  background-color: rgba(124, 58, 237, 0.05) !important;
-  color: #7c3aed !important;
-  border-color: rgba(124, 58, 237, 0.1) !important;
-}
-
-:root.light .bg-gradient-to-br.from-purple-500.to-indigo-600 {
-  color: #ffffff !important;
-}
-
-:root.light .bg-gradient-to-br.from-purple-900\/40.to-indigo-900\/40 .w3-button-primary {
-  background: #7c3aed !important;
-  color: #ffffff !important;
-}
-
-/* Additional overrides for UI elements */
-:root.light .bg-zinc-900\/60 {
-  background-color: rgba(0, 0, 0, 0.04) !important;
-  border-color: rgba(0, 0, 0, 0.08) !important;
-}
-
-:root.light .bg-purple-600 {
-  color: #ffffff !important;
-}
+  scrollbar-width: thin;
+  scrollbar-color: var(--hairline-strong) transparent;
+}
+
+.router-container::-webkit-scrollbar {
+  width: 10px;
+}
+
+.router-container::-webkit-scrollbar-thumb {
+  background: var(--hairline-strong);
+  border-radius: 5px;
+}
+
+@media (max-width: 860px) {
+  .sidebar {
+    width: 64px;
+    min-width: 64px;
+  }
+  .sidebar .logo-text,
+  .sidebar .nav-item span,
+  .sidebar .nav-group-label {
+    display: none;
+  }
+  .sidebar .nav-item {
+    justify-content: center;
+    padding-left: 0;
+    padding-right: 0;
+  }
+  .sidebar .logo-container {
+    justify-content: center;
+    padding: 0 8px;
+  }
+  .toggle-btn-inline {
+    display: none;
+  }
+  .router-container {
+    padding: 16px;
+  }
+  .top-header {
+    padding: 0 16px;
+  }
+}
+
+/* The page-entrance fades the old stylesheet applied to three routes are gone:
+   motion here answers an action, it does not announce a page. */
+
+
+/* ============================================================================
+   Palette remap, scoped to the product surfaces
+
+   The app pages carry roughly 900 hard-coded Tailwind colour utilities —
+   `bg-white`, `text-zinc-500`, `bg-purple-600`, `text-emerald-700` and so on.
+   Rather than rewrite every one of those call sites, the variables those
+   utilities resolve against are redefined here, inside the signed-in app
+   (`.crm-layout`) and the auth pages (`.auth-surface`) only.
+
+   Three things follow from that. The whole app lands on one palette in a single
+   move. The marketing site, which is rendered outside both and uses
+   the same zinc and indigo names for a different look, is untouched. And
+   because every value below points at a token that flips under `:root.dark`,
+   pages that hard-code light colours finally respond to the theme toggle —
+   `bg-white` means "the reading surface", not "the colour white".
+   ============================================================================ */
+
+.crm-layout,
+.auth-surface {
+  /* Neutral ramp: cool, slightly green, so it sits with viridian. */
+  --n-0: #ffffff;
+  --n-50: #f4f7f6;
+  --n-100: #e9edec;
+  --n-200: #d3dad9;
+  --n-300: #bfc8c6;
+  --n-400: #8b9896;
+  --n-500: #5e6a6c;
+  --n-600: #4a5557;
+  --n-700: #374042;
+  --n-800: #242b2c;
+  --n-900: #15191b;
+  --n-950: #0e1413;
+}
+
+:root.dark .crm-layout,
+:root.dark .auth-surface {
+  --n-0: #151d1b;
+  --n-50: #121a18;
+  --n-100: #18211f;
+  --n-200: #27332f;
+  --n-300: #35443f;
+  --n-400: #6b7a77;
+  --n-500: #90a09d;
+  --n-600: #a8b5b2;
+  --n-700: #c3cdcb;
+  --n-800: #dbe3e1;
+  --n-900: #e8edeb;
+  --n-950: #f2f6f5;
+}
+
+.crm-layout,
+.auth-surface {
+  /* "white" is the reading surface; "black" is ink. Both flip with the theme. */
+  --color-white: var(--n-0);
+  --color-black: var(--n-900);
+
+  /* Neutrals. The app reaches for zinc, slate and gray interchangeably. */
+  --color-zinc-50: var(--n-50);
+  --color-zinc-100: var(--n-100);
+  --color-zinc-200: var(--n-200);
+  --color-zinc-300: var(--n-300);
+  --color-zinc-400: var(--n-400);
+  --color-zinc-500: var(--n-500);
+  --color-zinc-600: var(--n-600);
+  --color-zinc-700: var(--n-700);
+  --color-zinc-800: var(--n-800);
+  --color-zinc-900: var(--n-900);
+  --color-zinc-950: var(--n-950);
+
+  --color-slate-50: var(--n-50);
+  --color-slate-100: var(--n-100);
+  --color-slate-200: var(--n-200);
+  --color-slate-300: var(--n-300);
+  --color-slate-400: var(--n-400);
+  --color-slate-500: var(--n-500);
+  --color-slate-600: var(--n-600);
+  --color-slate-700: var(--n-700);
+  --color-slate-800: var(--n-800);
+  --color-slate-900: var(--n-900);
+  --color-slate-950: var(--n-950);
+
+  --color-gray-50: var(--n-50);
+  --color-gray-100: var(--n-100);
+  --color-gray-200: var(--n-200);
+  --color-gray-300: var(--n-300);
+  --color-gray-400: var(--n-400);
+  --color-gray-500: var(--n-500);
+  --color-gray-600: var(--n-600);
+  --color-gray-700: var(--n-700);
+  --color-gray-800: var(--n-800);
+  --color-gray-900: var(--n-900);
+  --color-gray-950: var(--n-950);
+
+  --color-neutral-50: var(--n-50);
+  --color-neutral-100: var(--n-100);
+  --color-neutral-200: var(--n-200);
+  --color-neutral-400: var(--n-400);
+  --color-neutral-500: var(--n-500);
+  --color-neutral-900: var(--n-900);
+
+  /* Every accent family the app reaches for collapses onto the one hue. */
+  --color-purple-50: var(--viridian-tint);
+  --color-purple-100: var(--viridian-tint);
+  --color-purple-200: color-mix(in oklab, var(--viridian) 22%, transparent);
+  --color-purple-300: var(--viridian-soft);
+  --color-purple-400: var(--viridian-soft);
+  --color-purple-500: var(--viridian);
+  --color-purple-600: var(--viridian);
+  --color-purple-650: var(--viridian);
+  --color-purple-700: var(--viridian-deep);
+  --color-purple-800: var(--viridian-deep);
+  --color-purple-900: var(--viridian-deep);
+  --color-purple-950: var(--viridian-deep);
+
+  --color-indigo-50: var(--viridian-tint);
+  --color-indigo-100: var(--viridian-tint);
+  --color-indigo-200: color-mix(in oklab, var(--viridian) 22%, transparent);
+  --color-indigo-300: var(--viridian-soft);
+  --color-indigo-400: var(--viridian-soft);
+  --color-indigo-500: var(--viridian);
+  --color-indigo-600: var(--viridian);
+  --color-indigo-650: var(--viridian);
+  --color-indigo-700: var(--viridian-deep);
+  --color-indigo-900: var(--viridian-deep);
+
+  --color-sky-50: var(--viridian-tint);
+  --color-sky-100: var(--viridian-tint);
+  --color-sky-400: var(--viridian-soft);
+  --color-sky-500: var(--viridian);
+  --color-sky-600: var(--viridian-deep);
+
+  --color-fuchsia-500: var(--viridian);
+  --color-pink-400: var(--viridian-soft);
+  --color-pink-500: var(--viridian);
+  --color-pink-600: var(--viridian-deep);
+
+  /* Blue is decorative in this app (chart series, "Buyer" badges), so it joins
+     the accent rather than introducing a second hue to read. */
+  --color-blue-50: var(--viridian-tint);
+  --color-blue-100: var(--viridian-tint);
+  --color-blue-200: color-mix(in oklab, var(--viridian) 22%, transparent);
+  --color-blue-400: var(--viridian-soft);
+  --color-blue-500: var(--viridian-soft);
+  --color-blue-600: var(--viridian);
+  --color-blue-700: var(--viridian-deep);
+  --color-blue-800: var(--viridian-deep);
+  --color-blue-900: var(--viridian-deep);
+
+  /* Signals keep their jobs: go, warn, stop. These are the only other colours,
+     and they are reserved for state the operator must act on. */
+  --color-emerald-50: var(--signal-go-tint);
+  --color-emerald-100: var(--signal-go-tint);
+  --color-emerald-200: color-mix(in oklab, var(--signal-go) 30%, transparent);
+  --color-emerald-400: var(--signal-go);
+  --color-emerald-500: var(--signal-go);
+  --color-emerald-600: var(--signal-go);
+  --color-emerald-700: var(--signal-go);
+  --color-emerald-800: var(--signal-go);
+  --color-emerald-900: var(--signal-go);
+
+  --color-green-50: var(--signal-go-tint);
+  --color-green-100: var(--signal-go-tint);
+  --color-green-400: var(--signal-go);
+  --color-green-500: var(--signal-go);
+  --color-green-600: var(--signal-go);
+  --color-green-700: var(--signal-go);
+
+  --color-teal-500: var(--viridian);
+  --color-teal-600: var(--viridian-deep);
+
+  --color-amber-50: var(--signal-warn-tint);
+  --color-amber-100: var(--signal-warn-tint);
+  --color-amber-200: color-mix(in oklab, var(--signal-warn) 30%, transparent);
+  --color-amber-400: var(--signal-warn);
+  --color-amber-500: var(--signal-warn);
+  --color-amber-600: var(--signal-warn);
+  --color-amber-700: var(--signal-warn);
+  --color-amber-750: var(--signal-warn);
+  --color-amber-800: var(--signal-warn);
+  --color-amber-900: var(--signal-warn);
+
+  --color-yellow-50: var(--signal-warn-tint);
+  --color-yellow-400: var(--signal-warn);
+  --color-yellow-500: var(--signal-warn);
+  --color-yellow-600: var(--signal-warn);
+  --color-orange-50: var(--signal-warn-tint);
+  --color-orange-500: var(--signal-warn);
+  --color-orange-600: var(--signal-warn);
+
+  --color-rose-50: var(--signal-stop-tint);
+  --color-rose-100: var(--signal-stop-tint);
+  --color-rose-200: color-mix(in oklab, var(--signal-stop) 30%, transparent);
+  --color-rose-400: var(--signal-stop);
+  --color-rose-500: var(--signal-stop);
+  --color-rose-600: var(--signal-stop);
+  --color-rose-700: var(--signal-stop);
+  --color-rose-800: var(--signal-stop);
+  --color-rose-900: var(--signal-stop);
+
+  --color-red-50: var(--signal-stop-tint);
+  --color-red-100: var(--signal-stop-tint);
+  --color-red-400: var(--signal-stop);
+  --color-red-500: var(--signal-stop);
+  --color-red-600: var(--signal-stop);
+  --color-red-700: var(--signal-stop);
+}
+
+/* ----------------------------------------------------------------------------
+   Radius and shadow discipline inside the app
+
+   152 call sites ask for rounded-2xl or rounded-3xl and 300 ask for a shadow.
+   Rather than edit each, the app is held to two radii and no static elevation;
+   overlays opt back in with .surface-lifted, which is what actually floats.
+   ---------------------------------------------------------------------------- */
+
+.crm-layout .rounded-2xl,
+.auth-surface .rounded-2xl,
+.crm-layout .rounded-3xl,
+.auth-surface .rounded-3xl {
+  border-radius: var(--radius-surface);
+}
+
+.crm-layout .rounded-xl,
+.auth-surface .rounded-xl {
+  border-radius: var(--radius-control);
+}
+
+.crm-layout .shadow-sm,
+.auth-surface .shadow-sm,
+.crm-layout .shadow-md,
+.auth-surface .shadow-md,
+.crm-layout .shadow-lg,
+.auth-surface .shadow-lg,
+.crm-layout .shadow-xl,
+.auth-surface .shadow-xl,
+.crm-layout .shadow-2xl,
+.auth-surface .shadow-2xl,
+.crm-layout .shadow-inner,
+.auth-surface .shadow-inner {
+  box-shadow: none;
+}
+
+/* Overlays and menus are the exception: they genuinely sit above the page. */
+.crm-layout .surface-lifted,
+.auth-surface .surface-lifted,
+.crm-layout [data-elevated],
+.auth-surface [data-elevated] {
+  box-shadow: var(--lift);
+}
+
+/* Gradient fills in the app resolve to a flat accent. Keeping the utility
+   working means pages that use it still render; it just stops shouting. */
+.crm-layout [class*="bg-gradient-to"],
+.auth-surface [class*="bg-gradient-to"] {
+  background-image: none;
+}
+
+/* Input text should never come out lighter than the labels around it. */
+.crm-layout input,
+.auth-surface input,
+.crm-layout textarea,
+.auth-surface textarea,
+.crm-layout select,
+.auth-surface select {
+  color: var(--ink);
+}
+
+.crm-layout input,
+.auth-surface input::placeholder,
+.crm-layout textarea,
+.auth-surface textarea::placeholder {
+  color: var(--ink-faint);
+}
+
+/* Tables carried over from the old sticky-column helpers. */
+.sticky-th-company,
+.sticky-th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--porcelain-deep);
+  border-bottom: 1px solid var(--hairline);
+  font-size: var(--text-meta);
+  font-weight: 600;
+  color: var(--ink-soft);
+  text-align: left;
+  padding: 11px 18px;
+  white-space: nowrap;
+}
+
+.sticky-th-company,
+.sticky-td-company {
+  left: 0;
+  z-index: 3;
+}
+
+.sticky-td-company {
+  position: sticky;
+  background: var(--surface);
+  border-right: 1px solid var(--hairline);
+}
+
+.table-row-hover:hover td,
+.table-row-hover:hover .sticky-td-company {
+  background: var(--porcelain);
+}
+
+/* ============================================================================
+   Landing page section anchors
+
+   The marketing navbar is fixed at 72px, so an anchor jump used to put the
+   section's heading underneath it. `scroll-margin-top` leaves room for the bar
+   plus a little breathing space, and applies to native fragment navigation and
+   `scrollIntoView` alike.
+   ============================================================================ */
+
+#demo,
+#how-it-works,
+#features,
+#security,
+#pricing,
+#faq {
+  scroll-margin-top: 96px;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* ============================================================================
+   Marketing site and legal pages
+   Rendered outside .crm-layout and unchanged by the work above.
+   ============================================================================ */
 
 /* Scoped Landing Page Sky-to-Purple Color Theme Overrides */
 .landing-page {
@@ -1266,7 +1799,7 @@
 
 .legal-container h1 {
   font-size: 2.25rem;
-  font-weight: 800;
+  font-weight: 700;
   margin-top: 0;
   margin-bottom: 8px;
   letter-spacing: -0.025em;
@@ -1471,354 +2004,6 @@
   height: 18px !important;
 }
 
-/* Sticky Table Columns and Headers */
-.sticky-th-company {
-  position: sticky !important;
-  top: 0;
-  left: 0;
-  z-index: 30 !important;
-  background-color: #18181b !important;
-  border-right: 1px solid var(--glass-border) !important;
-  border-bottom: 1px solid var(--glass-border) !important;
-}
-
-:root.light .sticky-th-company {
-  background-color: #ffffff !important;
-  border-right: 1px solid #e4e4e7 !important;
-  border-bottom: 1px solid #e4e4e7 !important;
-}
-
-.sticky-th {
-  position: sticky !important;
-  top: 0;
-  z-index: 10 !important;
-  background-color: #18181b !important;
-  border-bottom: 1px solid var(--glass-border) !important;
-}
-
-:root.light .sticky-th {
-  background-color: #ffffff !important;
-  border-bottom: 1px solid #e4e4e7 !important;
-}
-
-.sticky-td-company {
-  position: sticky !important;
-  left: 0;
-  z-index: 20 !important;
-  background-color: #18181b !important;
-  border-right: 1px solid var(--glass-border) !important;
-}
-
-:root.light .sticky-td-company {
-  background-color: #ffffff !important;
-  border-right: 1px solid #e4e4e7 !important;
-}
-
-.table-row-hover {
-  transition: background-color 0.2s ease;
-}
-
-.table-row-hover:hover {
-  background-color: rgba(255, 255, 255, 0.02);
-}
-
-.table-row-hover:hover td {
-  background-color: #202024 !important;
-}
-
-:root.light .table-row-hover:hover td {
-  background-color: #f4f4f5 !important;
-}
-
-/* ==========================================
-   Premium Instagram-Inspired CRM Theme
-   (Scoped to crm-layout to preserve Landing Page)
-   ========================================== */
-
-.crm-layout {
-  /* Dark Mode theme colors */
-  --background: 222 47% 11% !important; /* #0F172A */
-  --foreground: 210 40% 98% !important; /* #F8FAFC */
-  --card: 217 33% 17% !important;       /* #1E293B */
-  --card-foreground: 210 40% 98% !important;
-  --border: 215 25% 27% !important;     /* #334155 */
-  --glass-border: rgba(255, 255, 255, 0.08) !important;
-  
-  /* Primary and Brand Colors */
-  --primary: 327 73% 57% !important;    /* Instagram Pink: #E440A3 */
-  --brand-purple: #8B5CF6 !important;
-  --brand-pink: #E440A3 !important;
-  --accent-blue: #4F7CFF !important;
-  --highlight-cyan: #00C2FF !important;
-  
-  /* Gradients */
-  --primary-gradient: linear-gradient(135deg, #E440A3 0%, #8B5CF6 100%) !important;
-  --instagram-gradient: linear-gradient(135deg, #F58529 0%, #E440A3 50%, #8B5CF6 100%) !important;
-  --glow-gradient: linear-gradient(135deg, rgba(228, 64, 163, 0.15), rgba(139, 92, 246, 0.15)) !important;
-  
-  /* Status Colors */
-  --success: #22C55E !important;
-  --warning: #F59E0B !important;
-  --error: #EF4444 !important;
-  --info: #3B82F6 !important;
-
-  background-color: #0f172a !important;
-  background-image: none !important;
-}
-
-/* Light Mode theme overrides */
-:root.light .crm-layout {
-  --background: 230 100% 99% !important; /* #FAFBFF */
-  --foreground: 224 71% 4% !important;   /* #111827 */
-  --card: 0 0% 100% !important;          /* #FFFFFF */
-  --card-foreground: 220 14% 20% !important; /* #4B5563 */
-  --border: 220 14% 92% !important;      /* #E5E7EB */
-  --glass-border: rgba(0, 0, 0, 0.06) !important;
-  --primary: 262 83% 58% !important;    /* Instagram Purple: #8B5CF6 */
-  
-  background-color: #fafbff !important;
-  background-image: none !important;
-}
-
-/* Scoped Content Area Backgrounds */
-.crm-layout .content-area {
-  background-color: #0f172a !important;
-}
-
-:root.light .crm-layout .content-area {
-  background-color: #f4f6fc !important; /* Secondary Background Light */
-}
-
-/* Scoped Top Header styling */
-.crm-layout .top-header {
-  background-color: #111827 !important; /* Dark Secondary Background */
-  border-bottom: 1px solid #334155 !important;
-}
-
-:root.light .crm-layout .top-header {
-  background-color: #ffffff !important;
-  border-bottom: 1px solid #e5e7eb !important;
-}
-
-/* Scoped Sidebar Styling */
-.crm-layout .sidebar {
-  background-color: #111827 !important; /* Dark Secondary Background */
-  border-right: 1px solid #334155 !important;
-}
-
-:root.light .crm-layout .sidebar {
-  background-color: #ffffff !important; /* Sidebar Background Light */
-  border-right: 1px solid #e5e7eb !important;
-}
-
-/* Scoped Sidebar Menu Nav Items */
-.crm-layout .nav-item {
-  border-radius: 12px !important; /* Button Radius */
-  color: #9ca3af !important; /* Muted Text Dark */
-  transition: all 0.2s ease !important;
-}
-
-:root.light .crm-layout .nav-item {
-  color: #4b5563 !important; /* Body Text Light */
-}
-
-/* Scoped Sidebar Active Menu Item */
-.crm-layout .nav-item.active {
-  background: rgba(139, 92, 246, 0.15) !important;
-  color: #8b5cf6 !important;
-  border: 1px solid rgba(139, 92, 246, 0.25) !important;
-}
-
-:root.light .crm-layout .nav-item.active {
-  background-color: #f5f3ff !important;
-  color: #8b5cf6 !important;
-  border: 1px solid rgba(139, 92, 246, 0.15) !important;
-}
-
-.crm-layout .nav-item.active svg {
-  color: #8b5cf6 !important;
-}
-
-/* Scoped Sidebar Hover Menu Item */
-.crm-layout .nav-item:hover {
-  background: rgba(139, 92, 246, 0.08) !important;
-  color: #8b5cf6 !important;
-}
-
-:root.light .crm-layout .nav-item:hover {
-  background-color: #faf5ff !important;
-  color: #8b5cf6 !important;
-}
-
-.crm-layout .nav-item:hover svg {
-  color: #8b5cf6 !important;
-}
-
-/* Premium Glass Card Design overrides */
-.crm-layout .glass-card,
-.crm-layout .w3-card {
-  background-color: #1e293b !important; /* Cards Dark */
-  border: 1px solid #334155 !important;   /* Border Dark */
-  border-radius: 16px !important;         /* Card Radius */
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2) !important;
-  backdrop-filter: blur(12px) !important;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
-}
-
-:root.light .crm-layout .glass-card,
-:root.light .crm-layout .w3-card {
-  background-color: #ffffff !important;   /* Cards Light */
-  border: 1px solid #eef2ff !important;   /* Border Light */
-  border-radius: 16px !important;         /* Card Radius */
-  box-shadow: 0 4px 20px rgba(17, 24, 39, 0.06) !important; /* Shadow Light */
-  backdrop-filter: none !important;
-}
-
-.crm-layout .glass-card:hover,
-.crm-layout .w3-card:hover {
-  transform: translateY(-2px) !important;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3) !important;
-  border-color: rgba(139, 92, 246, 0.4) !important;
-}
-
-:root.light .crm-layout .glass-card:hover,
-:root.light .crm-layout .w3-card:hover {
-  transform: translateY(-2px) !important;
-  box-shadow: 0 8px 30px rgba(15, 23, 42, 0.08) !important;
-  border-color: #8b5cf6 !important;
-}
-
-/* Premium Input Radius */
-.crm-layout input,
-.crm-layout select,
-.crm-layout textarea,
-.crm-layout .w3-input {
-  border-radius: 10px !important;
-}
-
-/* Premium Primary CTA buttons */
-.crm-layout .gradient-btn,
-.crm-layout .w3-button-primary,
-.crm-layout button.gradient-btn {
-  background: linear-gradient(135deg, #E440A3 0%, #8B5CF6 100%) !important;
-  color: #ffffff !important;
-  border-radius: 12px !important; /* Button Radius */
-  font-weight: 600 !important;
-  border: none !important;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
-  box-shadow: 0 4px 15px rgba(228, 64, 163, 0.2) !important;
-}
-
-.crm-layout .gradient-btn:hover,
-.crm-layout .w3-button-primary:hover,
-.crm-layout button.gradient-btn:hover {
-  transform: translateY(-1px) !important;
-  box-shadow: 0 8px 25px rgba(228, 64, 163, 0.4) !important;
-  filter: brightness(1.05) !important;
-}
-
-/* Active chat conversation cards (Inbox Sidebar list items) */
-.crm-layout .bg-purple-500\/15 {
-  background-color: rgba(139, 92, 246, 0.1) !important;
-  border-left: 4px solid #8B5CF6 !important;
-  border-radius: 12px !important;
-  border-color: rgba(139, 92, 246, 0.2) !important;
-}
-
-:root.light .crm-layout .bg-purple-500\/15 {
-  background-color: #F5F3FF !important;
-  border-left: 4px solid #8B5CF6 !important;
-  border-radius: 12px !important;
-  border-color: rgba(139, 92, 246, 0.1) !important;
-  box-shadow: 0 4px 20px rgba(17, 24, 39, 0.04) !important;
-}
-
-/* Scoped conversation lists in Inbox Sidebar */
-.crm-layout .w-\[340px\] .flex.gap-4.p-4.mx-3.my-2 {
-  background-color: #1e293b !important;
-  border: 1px solid #334155 !important;
-  border-radius: 16px !important;
-}
-
-:root.light .crm-layout .w-\[340px\] .flex.gap-4.p-4.mx-3.my-2 {
-  background-color: #FFFFFF !important;
-  border: 1px solid #EEF2FF !important;
-  border-radius: 16px !important;
-  box-shadow: 0 4px 20px rgba(17, 24, 39, 0.06) !important;
-}
-
-/* Inactive conversation hover states */
-.crm-layout .w-\[340px\] .flex.gap-4.p-4.mx-3.my-2:hover {
-  background-color: #202b3c !important;
-}
-
-:root.light .crm-layout .w-\[340px\] .flex.gap-4.p-4.mx-3.my-2:hover {
-  background-color: #F8F9FD !important;
-}
-
-/* Sticky row hover coloring alignment for table views */
-.crm-layout .table-row-hover:hover td {
-  background-color: #202024 !important;
-}
-
-:root.light .crm-layout .table-row-hover:hover td {
-  background-color: #f8f9fd !important; /* Hover Background */
-}
-
-/* Custom Scoped Chat History Background overrides */
-.crm-layout .flex-grow.p-8.overflow-y-auto.premium-scroll {
-  background-image: linear-gradient(180deg, #111827 0%, #0f172a 100%) !important;
-  background-color: transparent !important;
-}
-
-:root.light .crm-layout .flex-grow.p-8.overflow-y-auto.premium-scroll {
-  background-image: linear-gradient(180deg, #f4f6fc 0%, #f5f3ff 100%) !important;
-  background-color: transparent !important;
-}
-
-/* Scoped Inbox Header & Footer styling */
-.crm-layout .p-6.border-b,
-.crm-layout .p-6.bg-zinc-900\/80.border-t {
-  background-color: #1e293b !important;
-  border-color: #334155 !important;
-}
-
-:root.light .crm-layout .p-6.border-b,
-:root.light .crm-layout .p-6.bg-zinc-900\/80.border-t {
-  background-color: #ffffff !important;
-  border-color: #eef2ff !important;
-}
-
-/* Scoped Outbound & Inbound Chat Bubble Styling */
-.crm-layout .bg-purple-600 {
-  background: linear-gradient(135deg, #E440A3 0%, #8B5CF6 100%) !important;
-  border-color: transparent !important;
-}
-
-.crm-layout .bg-purple-600,
-.crm-layout .bg-purple-600 * {
-  color: #ffffff !important;
-}
-
-.crm-layout .bg-zinc-900 {
-  background-color: #1e293b !important;
-  border-color: #334155 !important;
-}
-
-.crm-layout .bg-zinc-900,
-.crm-layout .bg-zinc-900 * {
-  color: #f8fafc !important;
-}
-
-:root.light .crm-layout .bg-zinc-900 {
-  background-color: #ffffff !important;
-  border-color: #eef2ff !important;
-}
-
-:root.light .crm-layout .bg-zinc-900,
-:root.light .crm-layout .bg-zinc-900 * {
-  color: #111827 !important;
-}
 
 /* Premium Enterprise SaaS Visual System */
 .text-headline-gradient {
@@ -2074,7 +2259,16 @@
   background-color: rgba(0, 0, 0, 0.4) !important;
 }
 
-
-
-
-
+/* iOS Safari zooms the page when a focused control is under 16px, which shoves the
+   layout sideways. On phones the inputs go to 16px; every other size is unchanged. */
+@media (max-width: 640px) {
+  .crm-layout input:not([type="checkbox"]):not([type="radio"]),
+  .crm-layout select,
+  .crm-layout textarea,
+  .auth-surface input:not([type="checkbox"]):not([type="radio"]),
+  .auth-surface select,
+  .auth-surface textarea,
+  .field {
+    font-size: 16px;
+  }
+}

@@ -1,41 +1,40 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Lock, Sparkles, X } from 'lucide-react';
+import { Lock, X } from 'lucide-react';
 
 interface Props {
   feature: string;
   onClose?: () => void;
 }
 
+/**
+ * Shown over a feature the current plan does not include. It says which plan
+ * opens it and goes straight there, rather than selling the feature back to
+ * someone who already tried to use it.
+ */
 const UpgradeOverlay: React.FC<Props> = ({ feature, onClose }) => {
   const navigate = useNavigate();
 
   return (
-    <div className="absolute inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-black/40 rounded-2xl">
-      <div className="text-center p-8 max-w-md relative">
+    <div className="absolute inset-0 z-50 flex items-center justify-center rounded-[10px] bg-porcelain/80 backdrop-blur-[2px]">
+      <div className="surface-lifted relative max-w-sm p-6 text-center">
         {onClose && (
-          <button 
-            onClick={onClose}
-            className="absolute top-0 right-0 p-2 text-zinc-400 hover:text-white transition-colors"
-          >
-            <X size={20} />
+          <button onClick={onClose} className="btn btn-quiet btn-icon absolute right-2 top-2" aria-label="Close">
+            <X size={16} />
           </button>
         )}
-        <div className="mx-auto w-16 h-16 rounded-2xl bg-purple-500/20 border border-purple-500/30 flex items-center justify-center mb-6">
-          <Lock size={28} className="text-purple-400" />
+
+        <div className="mx-auto mb-4 flex h-9 w-9 items-center justify-center rounded-full border border-hairline bg-porcelain-deep text-ink-soft">
+          <Lock size={16} />
         </div>
-        <h3 className="text-xl font-bold text-white mb-2">
-          Upgrade to Unlock {feature}
-        </h3>
-        <p className="text-zinc-400 text-sm mb-6 leading-relaxed">
-          This feature requires a Pro plan or higher. Upgrade now to access {feature.toLowerCase()} and supercharge your Instagram automation.
+
+        <h3 className="font-display text-[17px] font-semibold text-ink">{feature} is on the Pro plan</h3>
+        <p className="mx-auto mt-1.5 max-w-[34ch] text-[15px] leading-relaxed text-ink-soft">
+          Your current plan does not include it. Compare the plans to see what changes.
         </p>
-        <button
-          onClick={() => navigate('/billing')}
-          className="px-8 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold rounded-xl hover:from-purple-500 hover:to-indigo-500 transition-all shadow-lg shadow-purple-500/25 flex items-center gap-2 mx-auto"
-        >
-          <Sparkles size={16} />
-          View Plans & Upgrade
+
+        <button onClick={() => navigate('/billing')} className="btn btn-primary mx-auto mt-5">
+          See plans
         </button>
       </div>
     </div>

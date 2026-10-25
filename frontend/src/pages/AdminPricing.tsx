@@ -50,7 +50,7 @@ const AdminPricing: React.FC = () => {
     <div className="dashboard-page" style={{ minHeight: '100%', display: 'flex', flexDirection: 'column', gap: '32px' }}>
       <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
-          <h1 style={{ margin: 0, fontSize: '1.8rem' }}>Plan & Pricing Configuration</h1>
+          <h1 className="page-title">Plan pricing</h1>
           <p style={{ margin: '8px 0 0', color: 'var(--text-dim)' }}>Manage subscription tiers, prices, and limits globally.</p>
         </div>
         <button 

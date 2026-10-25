@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Key, Eye, EyeOff, Loader2, Sparkles, ShieldCheck, CheckCircle2, AlertTriangle, Zap, Activity, Server, ArrowRightLeft, Check, CheckCircle, XCircle } from 'lucide-react';
+import { Key, Eye, EyeOff, Loader2, Sparkles, ShieldCheck, CheckCircle2, AlertTriangle, Zap, Server, ArrowRightLeft, Check, CheckCircle, XCircle } from 'lucide-react';
 import { getLLMKeys, updateLLMKeys } from '../api/admin.api';
 
 const LLMKeys: React.FC = () => {
@@ -72,7 +72,7 @@ const LLMKeys: React.FC = () => {
   const connectedCount = [keys.openai, keys.gemini, keys.groq].filter(k => k && k.trim() !== '').length;
 
   return (
-    <div className="max-w-6xl mx-auto pb-12 font-sans" style={{ fontFamily: '"Inter", system-ui, sans-serif' }}>
+    <div className="max-w-6xl mx-auto pb-12 font-sans">
       
       {/* Toast Notifications container */}
       <div className="fixed top-6 right-6 z-50 flex flex-col gap-3 pointer-events-none">
@@ -101,7 +101,7 @@ const LLMKeys: React.FC = () => {
 
       {/* Header Section */}
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-zinc-900 tracking-tight mb-2">AI Infrastructure</h1>
+        <h1 className="page-title">LLM providers</h1>
         <p className="text-sm text-zinc-500 max-w-2xl leading-relaxed">
           Manage the AI providers powering Flazly's automation, lead qualification, customer conversations, and autonomous AI agents.
         </p>
@@ -110,51 +110,44 @@ const LLMKeys: React.FC = () => {
       {/* Metrics Row */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         <div className="bg-white border border-zinc-200/80 rounded-2xl p-5 shadow-sm">
-          <div className="flex items-center gap-2 text-zinc-500 text-xs font-semibold uppercase tracking-wider mb-3">
+          <div className="flex items-center gap-2 text-zinc-500 text-xs font-semibold mb-3">
             <Server size={14} /> Connected Providers
           </div>
-          <div className="text-2xl font-bold text-zinc-900">{connectedCount} <span className="text-sm font-medium text-zinc-400">/ 3</span></div>
+          <div className="text-2xl font-semibold text-zinc-900">{connectedCount} <span className="text-sm font-medium text-zinc-400">/ 3</span></div>
         </div>
         
         <div className="bg-white border border-zinc-200/80 rounded-2xl p-5 shadow-sm">
-          <div className="flex items-center gap-2 text-zinc-500 text-xs font-semibold uppercase tracking-wider mb-3">
+          <div className="flex items-center gap-2 text-zinc-500 text-xs font-semibold mb-3">
             <Zap size={14} /> Active Engine
           </div>
-          <div className="text-2xl font-bold text-zinc-900 capitalize">
+          <div className="text-2xl font-semibold text-zinc-900 capitalize">
             {keys.active_provider === 'openai' ? 'OpenAI' : keys.active_provider === 'gemini' ? 'Gemini' : 'Groq'}
           </div>
         </div>
 
         <div className="bg-white border border-zinc-200/80 rounded-2xl p-5 shadow-sm">
-          <div className="flex items-center gap-2 text-zinc-500 text-xs font-semibold uppercase tracking-wider mb-3">
+          <div className="flex items-center gap-2 text-zinc-500 text-xs font-semibold mb-3">
             <ShieldCheck size={14} /> System Health
           </div>
-          <div className="flex items-center gap-2 text-2xl font-bold text-emerald-600">
-            <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
+          <div className="flex items-center gap-2 text-2xl font-semibold text-emerald-600">
+            <div className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
             Healthy
           </div>
         </div>
 
-        <div className="bg-white border border-zinc-200/80 rounded-2xl p-5 shadow-sm">
-          <div className="flex items-center gap-2 text-zinc-500 text-xs font-semibold uppercase tracking-wider mb-3">
-            <Activity size={14} /> Requests Today
-          </div>
-          <div className="text-2xl font-bold text-zinc-900">4,231</div>
-        </div>
       </div>
 
       {/* Active Provider Highlight */}
       <div className="bg-white border border-zinc-200/80 rounded-2xl p-6 lg:p-8 shadow-sm mb-8 relative overflow-hidden group hover:border-violet-200 transition-colors">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-violet-500/5 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none transition-opacity duration-700 opacity-50 group-hover:opacity-100"></div>
         
         <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-8 relative z-10">
           <div>
             <div className="flex items-center gap-2 mb-3">
-              <div className="px-2.5 py-1 rounded-full bg-emerald-100 border border-emerald-200 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-emerald-700">
+              <div className="px-2.5 py-1 rounded-full bg-emerald-100 border border-emerald-200 flex items-center gap-1.5 text-[13px] font-medium text-emerald-700">
                 <div className="w-1.5 h-1.5 rounded-full bg-emerald-500"></div> Active Provider
               </div>
             </div>
-            <h2 className="text-3xl font-extrabold text-zinc-900 mb-2 tracking-tight">
+            <h2 className="text-3xl font-semibold text-zinc-900 mb-2 tracking-tight">
               {keys.active_provider === 'openai' ? 'OpenAI GPT-4' : keys.active_provider === 'gemini' ? 'Google Gemini Pro' : 'Groq Llama-3'}
             </h2>
             <p className="text-sm text-zinc-500 max-w-lg leading-relaxed">
@@ -162,7 +155,7 @@ const LLMKeys: React.FC = () => {
             </p>
             
             <div className="mt-8">
-              <span className="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-3 block">Currently Powering</span>
+              <span className="text-xs font-semibold text-zinc-400 mb-3 block">Currently Powering</span>
               <div className="grid grid-cols-2 gap-y-3 gap-x-6">
                 {['AI Chat Agents', 'Instagram DM Automation', 'Lead Qualification', 'CRM Sync Workflows'].map(module => (
                   <div key={module} className="flex items-center gap-2.5 text-sm text-zinc-700 font-medium">
@@ -177,7 +170,7 @@ const LLMKeys: React.FC = () => {
           </div>
           
           <div className="bg-zinc-50 border border-zinc-200/80 rounded-xl p-5 w-full lg:w-80 shrink-0 shadow-inner">
-            <label className="block text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-3">Change Default Engine</label>
+            <label className="block text-xs font-semibold text-zinc-500 mb-3">Change Default Engine</label>
             <div className="relative mb-4">
               <select 
                 value={keys.active_provider}
@@ -191,7 +184,7 @@ const LLMKeys: React.FC = () => {
               <ArrowRightLeft size={16} className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none" />
             </div>
             
-            <label className="block text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 mt-5">Model Override (Optional)</label>
+            <label className="block text-xs font-semibold text-zinc-500 mb-2 mt-5">Model Override (Optional)</label>
             <div className="relative mb-3">
               <input
                 type="text"
@@ -202,7 +195,7 @@ const LLMKeys: React.FC = () => {
               />
             </div>
 
-            <p className="text-[11px] text-zinc-500 leading-relaxed font-medium">
+            <p className="text-[13px] text-zinc-500 leading-relaxed font-medium">
               Leave model blank to use defaults. Changes apply instantly to all production workflows.
             </p>
           </div>
@@ -210,7 +203,7 @@ const LLMKeys: React.FC = () => {
       </div>
 
       <div className="mb-6 flex items-center justify-between">
-        <h2 className="text-lg font-bold text-zinc-900">Provider Connections</h2>
+        <h2 className="text-lg font-semibold text-zinc-900">Provider Connections</h2>
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-1.5 text-xs font-semibold text-zinc-500">
             <Key size={14} className="text-zinc-400" /> Masked keys are preserved on save
@@ -237,23 +230,23 @@ const LLMKeys: React.FC = () => {
                 <Sparkles size={20} />
               </div>
               <div>
-                <h3 className="font-bold text-zinc-900">OpenAI</h3>
+                <h3 className="font-semibold text-zinc-900">OpenAI</h3>
                 <p className="text-xs font-medium text-zinc-500">GPT-4, GPT-3.5-Turbo</p>
               </div>
             </div>
             {keys.openai ? (
-              <span className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md border border-emerald-100">
+              <span className="flex items-center gap-1 text-[13px] font-medium text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md border border-emerald-100">
                 <CheckCircle size={12} /> Connected
               </span>
             ) : (
-              <span className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-rose-600 bg-rose-50 px-2 py-1 rounded-md border border-rose-100">
+              <span className="flex items-center gap-1 text-[13px] font-medium text-rose-600 bg-rose-50 px-2 py-1 rounded-md border border-rose-100">
                 <XCircle size={12} /> Missing
               </span>
             )}
           </div>
           
           <div className="flex-1">
-            <label className="block text-[11px] font-bold text-zinc-500 uppercase tracking-wider mb-2">API Secret Key</label>
+            <label className="block text-[13px] font-medium text-zinc-500 mb-2">API Secret Key</label>
             <div className="relative group-focus-within:ring-2 ring-violet-500/20 rounded-lg transition-all">
               <input
                 type={visibleFields.openai ? 'text' : 'password'}
@@ -274,7 +267,7 @@ const LLMKeys: React.FC = () => {
           
           <div className="mt-6 pt-4 border-t border-zinc-100 flex items-center justify-between text-xs font-medium">
             <span className="text-zinc-400">Last verified: Just now</span>
-            <span className={keys.active_provider === 'openai' ? "text-violet-600 font-bold" : "text-zinc-400"}>
+            <span className={keys.active_provider === 'openai' ? "text-violet-600 font-semibold" : "text-zinc-400"}>
               {keys.active_provider === 'openai' ? "Primary Engine" : "Backup Ready"}
             </span>
           </div>
@@ -288,23 +281,23 @@ const LLMKeys: React.FC = () => {
                 <ShieldCheck size={20} />
               </div>
               <div>
-                <h3 className="font-bold text-zinc-900">Google Gemini</h3>
+                <h3 className="font-semibold text-zinc-900">Google Gemini</h3>
                 <p className="text-xs font-medium text-zinc-500">Gemini 1.5 Pro / Flash</p>
               </div>
             </div>
             {keys.gemini ? (
-              <span className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md border border-emerald-100">
+              <span className="flex items-center gap-1 text-[13px] font-medium text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md border border-emerald-100">
                 <CheckCircle size={12} /> Connected
               </span>
             ) : (
-              <span className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-rose-600 bg-rose-50 px-2 py-1 rounded-md border border-rose-100">
+              <span className="flex items-center gap-1 text-[13px] font-medium text-rose-600 bg-rose-50 px-2 py-1 rounded-md border border-rose-100">
                 <XCircle size={12} /> Missing
               </span>
             )}
           </div>
           
           <div className="flex-1">
-            <label className="block text-[11px] font-bold text-zinc-500 uppercase tracking-wider mb-2">API Secret Key</label>
+            <label className="block text-[13px] font-medium text-zinc-500 mb-2">API Secret Key</label>
             <div className="relative group-focus-within:ring-2 ring-violet-500/20 rounded-lg transition-all">
               <input
                 type={visibleFields.gemini ? 'text' : 'password'}
@@ -325,7 +318,7 @@ const LLMKeys: React.FC = () => {
           
           <div className="mt-6 pt-4 border-t border-zinc-100 flex items-center justify-between text-xs font-medium">
             <span className="text-zinc-400">Last verified: Just now</span>
-            <span className={keys.active_provider === 'gemini' ? "text-violet-600 font-bold" : "text-zinc-400"}>
+            <span className={keys.active_provider === 'gemini' ? "text-violet-600 font-semibold" : "text-zinc-400"}>
               {keys.active_provider === 'gemini' ? "Primary Engine" : "Backup Ready"}
             </span>
           </div>
@@ -339,23 +332,23 @@ const LLMKeys: React.FC = () => {
                 <Zap size={20} />
               </div>
               <div>
-                <h3 className="font-bold text-zinc-900">Groq</h3>
+                <h3 className="font-semibold text-zinc-900">Groq</h3>
                 <p className="text-xs font-medium text-zinc-500">Llama-3 Ultra-fast</p>
               </div>
             </div>
             {keys.groq ? (
-              <span className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md border border-emerald-100">
+              <span className="flex items-center gap-1 text-[13px] font-medium text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md border border-emerald-100">
                 <CheckCircle size={12} /> Connected
               </span>
             ) : (
-              <span className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-rose-600 bg-rose-50 px-2 py-1 rounded-md border border-rose-100">
+              <span className="flex items-center gap-1 text-[13px] font-medium text-rose-600 bg-rose-50 px-2 py-1 rounded-md border border-rose-100">
                 <XCircle size={12} /> Missing
               </span>
             )}
           </div>
           
           <div className="flex-1">
-            <label className="block text-[11px] font-bold text-zinc-500 uppercase tracking-wider mb-2">API Secret Key</label>
+            <label className="block text-[13px] font-medium text-zinc-500 mb-2">API Secret Key</label>
             <div className="relative group-focus-within:ring-2 ring-violet-500/20 rounded-lg transition-all">
               <input
                 type={visibleFields.groq ? 'text' : 'password'}
@@ -376,7 +369,7 @@ const LLMKeys: React.FC = () => {
           
           <div className="mt-6 pt-4 border-t border-zinc-100 flex items-center justify-between text-xs font-medium">
             <span className="text-zinc-400">Last verified: Just now</span>
-            <span className={keys.active_provider === 'groq' ? "text-violet-600 font-bold" : "text-zinc-400"}>
+            <span className={keys.active_provider === 'groq' ? "text-violet-600 font-semibold" : "text-zinc-400"}>
               {keys.active_provider === 'groq' ? "Primary Engine" : "Backup Ready"}
             </span>
           </div>

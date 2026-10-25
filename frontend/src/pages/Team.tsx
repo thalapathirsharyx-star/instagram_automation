@@ -56,12 +56,12 @@ const Team: React.FC = () => {
     <div className="mx-auto w-full flex flex-col gap-8 min-h-full animate-in fade-in duration-700 pb-10">
       <div className="flex justify-between items-end">
         <div>
-          <h1 className="text-3xl font-bold text-zinc-900 mb-2 tracking-tight">Team Members</h1>
+          <h1 className="page-title">Team</h1>
           <p className="text-zinc-500 font-medium">Manage access and permissions for your workspace.</p>
         </div>
         <Link
           to="/team/add"
-          className="px-5 py-2.5 bg-zinc-900 text-white font-bold text-sm rounded-xl hover:bg-zinc-800 transition-colors shadow-sm flex items-center justify-center gap-2"
+          className="px-5 py-2.5 bg-zinc-900 text-white font-medium text-sm rounded-xl hover:bg-zinc-800 transition-colors shadow-sm flex items-center justify-center gap-2"
         >
           Add Team Member
         </Link>
@@ -72,7 +72,7 @@ const Team: React.FC = () => {
           <div className="p-2.5 bg-zinc-100 text-zinc-700 rounded-xl border border-zinc-200">
             <Users size={20} />
           </div>
-          <h3 className="text-lg font-bold text-zinc-900">Current Members ({members.length})</h3>
+          <h3 className="text-lg font-semibold text-zinc-900">Current Members ({members.length})</h3>
         </div>
 
         {isLoading ? (
@@ -82,7 +82,7 @@ const Team: React.FC = () => {
             <div className="w-16 h-16 bg-zinc-50 rounded-full flex items-center justify-center mb-4 border border-zinc-200">
               <Shield className="text-zinc-400" size={24} />
             </div>
-            <p className="text-zinc-900 font-bold text-lg">No team members found.</p>
+            <p className="text-zinc-900 font-semibold text-lg">No team members found.</p>
             <p className="text-sm text-zinc-500 mt-1">Add your first team member to collaborate.</p>
           </div>
         ) : (
@@ -90,32 +90,32 @@ const Team: React.FC = () => {
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-zinc-50/80 border-b border-zinc-200">
-                  <th className="px-6 py-4 text-xs font-bold text-zinc-500 uppercase tracking-wider w-16 text-center">S.No</th>
-                  <th className="px-6 py-4 text-xs font-bold text-zinc-500 uppercase tracking-wider">Member</th>
-                  <th className="px-6 py-4 text-xs font-bold text-zinc-500 uppercase tracking-wider">Email</th>
-                  <th className="px-6 py-4 text-xs font-bold text-zinc-500 uppercase tracking-wider">Role</th>
-                  <th className="px-6 py-4 text-xs font-bold text-zinc-500 uppercase tracking-wider text-right">Actions</th>
+                  <th className="px-6 py-4 text-xs font-medium text-zinc-500 w-16 text-center">S.No</th>
+                  <th className="px-6 py-4 text-xs font-medium text-zinc-500">Member</th>
+                  <th className="px-6 py-4 text-xs font-medium text-zinc-500">Email</th>
+                  <th className="px-6 py-4 text-xs font-medium text-zinc-500">Role</th>
+                  <th className="px-6 py-4 text-xs font-medium text-zinc-500 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-100">
                 {members.map((member, idx) => (
                   <tr key={member.id} className="hover:bg-zinc-50 transition-colors group">
-                    <td className="px-6 py-4 text-sm font-bold text-zinc-400 text-center">
+                    <td className="px-6 py-4 text-sm font-medium text-zinc-400 text-center">
                       {(idx + 1).toString().padStart(2, '0')}
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center text-purple-700 font-bold border border-purple-200 text-sm">
+                        <div className="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center text-purple-700 font-medium border border-purple-200 text-sm">
                           {member.first_name?.[0] || 'U'}
                         </div>
-                        <span className="font-bold text-zinc-900">{member.first_name} {member.last_name}</span>
+                        <span className="font-semibold text-zinc-900">{member.first_name} {member.last_name}</span>
                       </div>
                     </td>
                     <td className="px-6 py-4 text-sm font-medium text-zinc-600">
                       {member.email}
                     </td>
                     <td className="px-6 py-4">
-                      <span className={`text-[10px] uppercase font-bold tracking-wider px-2.5 py-1 rounded-md ${member.role === 'Client Admin' ? 'bg-sky-100 text-sky-700' : 'bg-zinc-100 text-zinc-600'
+                      <span className={`text-[13px] uppercase font-medium tracking-wider px-2.5 py-1 rounded-md ${member.role === 'Client Admin' ? 'bg-sky-100 text-sky-700' : 'bg-zinc-100 text-zinc-600'
                         }`}>
                         {member.role || 'Agent'}
                       </span>

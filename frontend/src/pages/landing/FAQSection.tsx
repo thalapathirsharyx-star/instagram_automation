@@ -82,7 +82,7 @@ export const FAQSection: React.FC = () => {
       <div className="max-w-3xl mx-auto px-6">
         <div className="text-center mb-16">
           <span className="text-xs font-bold uppercase tracking-widest text-[#4F39F6] dark:text-[#818CF8]">Have Questions?</span>
-          <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-zinc-900 dark:text-white mt-3 leading-tight">
+          <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-zinc-900 dark:text-white mt-3 leading-tight">
             Frequently Asked Questions
           </h2>
         </div>

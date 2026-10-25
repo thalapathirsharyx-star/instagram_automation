@@ -85,7 +85,7 @@ export const WorkflowSimulation: React.FC = () => {
           <div className="w-2.5 h-2.5 rounded-full bg-zinc-700" />
           <div className="w-2.5 h-2.5 rounded-full bg-zinc-700" />
           <div className="w-2.5 h-2.5 rounded-full bg-zinc-700" />
-          <span className="text-[10px] text-zinc-400 uppercase tracking-wider font-semibold ml-2 font-mono">
+          <span className="text-[10px] text-zinc-400 uppercase tracking-wider font-semibold ml-2">
             live_autopilot_simulation
           </span>
         </div>

@@ -18,7 +18,7 @@ export const IntegrationsFlowCanvas: React.FC<{ activeStep: number }> = ({ activ
             {activeStep === 2 && "Step 3: Webhook Pipeline"}
           </span>
         </div>
-        <span className="text-[9px] font-mono text-zinc-500 dark:text-zinc-400 bg-zinc-100 dark:bg-white/5 px-2 py-0.5 rounded border border-zinc-200/50 dark:border-white/5">
+        <span className="text-[9px] text-zinc-500 dark:text-zinc-400 bg-zinc-100 dark:bg-white/5 px-2 py-0.5 rounded border border-zinc-200/50 dark:border-white/5">
           {activeStep === 0 && "oauth.meta.api"}
           {activeStep === 1 && "flazly.ai.engine"}
           {activeStep === 2 && "webhook.delivery"}
@@ -106,7 +106,7 @@ export const IntegrationsFlowCanvas: React.FC<{ activeStep: number }> = ({ activ
 
                 <div className="flex items-center justify-center gap-3 py-1">
                   <div className="h-[1px] bg-zinc-200 dark:bg-zinc-800 flex-1" />
-                  <div className="bg-[#4F39F6]/10 border border-[#4F39F6]/20 px-3 py-1 rounded-full text-[9px] font-mono text-[#818CF8] flex items-center gap-1.5">
+                  <div className="bg-[#4F39F6]/10 border border-[#4F39F6]/20 px-3 py-1 rounded-full text-[9px] text-[#818CF8] flex items-center gap-1.5">
                     <span className="w-1.5 h-1.5 rounded-full bg-[#818CF8] animate-ping" />
                     Flazly NLP Processing
                   </div>
@@ -204,7 +204,7 @@ export const HowItWorksSection: React.FC = () => {
           {/* Left Column: 3 Steps */}
           <div className="flex flex-col text-left">
             <span className="text-xs font-bold uppercase tracking-widest text-[#4F39F6] dark:text-[#818CF8]">How It Works</span>
-            <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-zinc-900 dark:text-white mt-3 mb-6">
+            <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-zinc-900 dark:text-white mt-3 mb-6">
               3 Steps to Automated Lead Capture
             </h2>
             <p className="text-sm md:text-base text-zinc-600 dark:text-zinc-400 font-medium mb-12">
@@ -243,7 +243,7 @@ export const HowItWorksSection: React.FC = () => {
                       : "border-transparent opacity-65 hover:opacity-100"
                   }`}
                 >
-                  <div className={`w-12 h-12 rounded-2xl flex items-center justify-center font-bold font-mono shrink-0 transition-all duration-300 ${
+                  <div className={`w-12 h-12 rounded-2xl flex items-center justify-center font-bold tabular-nums shrink-0 transition-all duration-300 ${
                     activeStep === idx
                       ? "bg-[#4F39F6] text-white shadow-md shadow-[#4F39F6]/20"
                       : "bg-[#3B82F6]/10 text-[#38BDF8]"
@@ -264,7 +264,7 @@ export const HowItWorksSection: React.FC = () => {
           {/* Right Column: Interactive Platform Pipeline */}
           <div className="flex flex-col items-center justify-center">
             <IntegrationsFlowCanvas activeStep={activeStep} />
-            <span className="text-[10px] text-zinc-500 uppercase tracking-widest font-mono mt-6">
+            <span className="text-[10px] text-zinc-500 uppercase tracking-widest mt-6">
               Interactive Platform Pipeline
             </span>
           </div>
@@ -288,7 +288,7 @@ export const HowItWorksSection: React.FC = () => {
                   {item.badge}
                 </span>
                 <span className="text-xs font-bold text-zinc-800 dark:text-white block mt-3 mb-1">{item.label}</span>
-                <span className="text-[10px] text-zinc-500 dark:text-zinc-400 font-mono block truncate">{item.detail}</span>
+                <span className="text-[10px] text-zinc-500 dark:text-zinc-400 block truncate">{item.detail}</span>
               </div>
             ))}
           </div>

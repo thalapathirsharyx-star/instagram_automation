@@ -31,7 +31,7 @@ export const SocialProofSection: React.FC = () => {
       <div className="max-w-6xl mx-auto px-6">
         <div className="text-center max-w-2xl mx-auto mb-20">
           <span className="text-xs font-bold uppercase tracking-widest text-[#4F39F6] dark:text-[#818CF8]">Success Stories</span>
-          <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-zinc-900 dark:text-white mt-3 mb-4 leading-tight">
+          <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-zinc-900 dark:text-white mt-3 mb-4 leading-tight">
             Trusted by High-Growth Brands
           </h2>
         </div>
@@ -43,8 +43,8 @@ export const SocialProofSection: React.FC = () => {
               <div className="w-10 h-10 rounded-xl bg-[#38BDF8]/10 border border-[#38BDF8]/20 flex items-center justify-center mb-4 text-[#38BDF8]">
                 {metric.icon}
               </div>
-              <div className="text-3xl md:text-4xl font-extrabold text-zinc-900 dark:text-white mb-2 tracking-tight">{metric.value}</div>
-              <div className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest font-mono">{metric.label}</div>
+              <div className="text-3xl md:text-4xl font-bold text-zinc-900 dark:text-white mb-2 tracking-tight">{metric.value}</div>
+              <div className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">{metric.label}</div>
             </div>
           ))}
         </div>

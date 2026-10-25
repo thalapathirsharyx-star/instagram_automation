@@ -211,12 +211,12 @@ const Automation: React.FC = () => {
   );
 
   return (
-    <div className="max-w-7xl mx-auto pb-12 font-sans animate-in fade-in duration-500" style={{ fontFamily: '"Inter", system-ui, sans-serif' }}>
+    <div className="max-w-7xl mx-auto pb-12 font-sans animate-in fade-in duration-500">
       
       {/* Header & Tabs */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8 border-b border-zinc-200/80 pb-6">
         <div>
-          <h1 className="text-2xl font-bold text-zinc-900 tracking-tight mb-2">Automation Workflows</h1>
+          <h1 className="page-title">Automation</h1>
           <p className="text-sm text-zinc-500 font-medium max-w-xl">Configure how AI intercepts conversations, replies to comments, and manages conditional playbooks across your Instagram account.</p>
         </div>
 
@@ -242,7 +242,7 @@ const Automation: React.FC = () => {
                   <AlertCircle size={20} strokeWidth={2.5} />
                 </div>
                 <div>
-                  <h4 className="font-bold text-amber-900 text-sm">Instagram Integration Pending</h4>
+                  <h4 className="font-medium text-amber-900 text-sm">Instagram Integration Pending</h4>
                   <p className="text-xs text-amber-750 mt-1 font-medium leading-relaxed">
                     This automation playbook and trigger system cannot send replies until you link your account. Click the button to authorize access.
                   </p>
@@ -250,7 +250,7 @@ const Automation: React.FC = () => {
               </div>
               <button 
                 onClick={() => navigate('/settings?tab=meta')} 
-                className="w-full md:w-auto px-6 py-2.5 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-bold transition-all shadow-sm flex items-center justify-center gap-2 shrink-0 cursor-pointer"
+                className="w-full md:w-auto px-6 py-2.5 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-medium transition-all shadow-sm flex items-center justify-center gap-2 shrink-0 cursor-pointer"
               >
                 <Link2 size={14} /> Connect with Facebook
               </button>
@@ -264,18 +264,18 @@ const Automation: React.FC = () => {
                 <div className="bg-white border border-zinc-200/80 rounded-2xl p-6 lg:p-8 shadow-sm">
                   <div className="flex items-center justify-between mb-10 pb-6 border-b border-zinc-100">
                     <div>
-                      <h3 className="text-lg font-bold text-zinc-900 flex items-center gap-2">
+                      <h3 className="text-lg font-semibold text-zinc-900 flex items-center gap-2">
                         <Activity className="text-violet-600" size={20} /> Qualification Sequence
                       </h3>
                       <p className="text-sm text-zinc-500 mt-1 font-medium">Design the chronological steps AI uses to evaluate leads.</p>
                     </div>
                     <div className="flex items-center gap-4">
-                      <span className="flex items-center gap-1.5 text-xs font-bold text-emerald-700 bg-emerald-50 px-3 py-1.5 rounded-md border border-emerald-100">
-                        <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div> Active
+                      <span className="flex items-center gap-1.5 text-xs font-medium text-emerald-700 bg-emerald-50 px-3 py-1.5 rounded-md border border-emerald-100">
+                        <div className="w-1.5 h-1.5 rounded-full bg-emerald-500"></div> Active
                       </span>
                       <button 
                         onClick={() => setShowCanvas(true)}
-                        className="flex items-center gap-2 text-xs font-bold text-white bg-zinc-900 px-4 py-2.5 rounded-lg shadow-sm hover:bg-zinc-800 transition-colors"
+                        className="flex items-center gap-2 text-xs font-medium text-white bg-zinc-900 px-4 py-2.5 rounded-lg shadow-sm hover:bg-zinc-800 transition-colors"
                       >
                         <Workflow size={14} /> Visual Canvas
                       </button>
@@ -304,21 +304,21 @@ const Automation: React.FC = () => {
                             <div className="absolute -left-[33px] top-8 bottom-[-3rem] w-px border-l-2 border-dashed border-zinc-200 z-0"></div>
                           )}
 
-                          <div className={`absolute -left-[48px] top-3 w-8 h-8 rounded-full ${iconBg} border flex items-center justify-center font-bold text-xs shadow-sm z-10`}>
+                          <div className={`absolute -left-[48px] top-3 w-8 h-8 rounded-full ${iconBg} border flex items-center justify-center font-medium text-xs shadow-sm z-10`}>
                             {idx + 1}
                           </div>
 
                           <div className="bg-white border border-zinc-200 rounded-xl p-5 hover:border-violet-300 transition-all shadow-sm relative group">
                             <div className="flex justify-between items-start mb-3">
                               <div className="flex items-center gap-3 w-full">
-                                <span className={`text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded border ${badgeColor}`}>
+                                <span className={`text-[13px] font-medium  px-2 py-1 rounded border ${badgeColor}`}>
                                   {step.type}
                                 </span>
                                 <input 
                                   type="text"
                                   value={step.title}
                                   onChange={(e) => updateStepTitle(step.id, e.target.value)}
-                                  className="bg-transparent border-none text-zinc-900 font-bold focus:outline-none focus:ring-2 focus:ring-violet-500/20 rounded px-1.5 w-full max-w-sm text-sm"
+                                  className="bg-transparent border-none text-zinc-900 font-medium focus:outline-none focus:ring-2 focus:ring-violet-500/20 rounded px-1.5 w-full max-w-sm text-sm"
                                 />
                               </div>
                               <button onClick={() => deleteStep(step.id)} className="text-zinc-400 hover:text-rose-500 p-1 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -340,16 +340,16 @@ const Automation: React.FC = () => {
 
                   <div className="mt-12 pt-6 border-t border-zinc-100 flex flex-wrap gap-3 items-center justify-between">
                     <div className="flex gap-2">
-                      <button onClick={() => addPlaybookStep('trigger')} className="px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 rounded-md text-xs font-bold transition-colors">
+                      <button onClick={() => addPlaybookStep('trigger')} className="px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 rounded-md text-xs font-medium transition-colors">
                         + Trigger
                       </button>
-                      <button onClick={() => addPlaybookStep('condition')} className="px-3 py-1.5 bg-orange-50 hover:bg-orange-100 text-orange-700 border border-orange-200 rounded-md text-xs font-bold transition-colors">
+                      <button onClick={() => addPlaybookStep('condition')} className="px-3 py-1.5 bg-orange-50 hover:bg-orange-100 text-orange-700 border border-orange-200 rounded-md text-xs font-medium transition-colors">
                         + Condition
                       </button>
-                      <button onClick={() => addPlaybookStep('action')} className="px-3 py-1.5 bg-violet-50 hover:bg-violet-100 text-violet-700 border border-violet-200 rounded-md text-xs font-bold transition-colors">
+                      <button onClick={() => addPlaybookStep('action')} className="px-3 py-1.5 bg-violet-50 hover:bg-violet-100 text-violet-700 border border-violet-200 rounded-md text-xs font-medium transition-colors">
                         + Action
                       </button>
-                      <button onClick={() => addPlaybookStep('delay')} className="px-3 py-1.5 bg-zinc-100 hover:bg-zinc-200 text-zinc-700 border border-zinc-200 rounded-md text-xs font-bold transition-colors">
+                      <button onClick={() => addPlaybookStep('delay')} className="px-3 py-1.5 bg-zinc-100 hover:bg-zinc-200 text-zinc-700 border border-zinc-200 rounded-md text-xs font-medium transition-colors">
                         + Delay
                       </button>
                     </div>
@@ -364,32 +364,32 @@ const Automation: React.FC = () => {
                 <div className="bg-gradient-to-br from-violet-600 to-indigo-700 rounded-2xl shadow-md p-6 text-white relative overflow-hidden">
                   <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 blur-2xl rounded-full -mr-10 -mt-10"></div>
                   <div className="relative z-10">
-                    <h4 className="font-bold flex items-center gap-2 mb-3 text-white text-lg">
+                    <h4 className="font-semibold flex items-center gap-2 mb-3 text-white text-lg">
                       <Sparkles size={20} className="text-violet-200" /> Playbook Engine
                     </h4>
                     <p className="text-sm font-medium leading-relaxed text-violet-100/90 mb-5">
                       Flazly sequences allow you to map deterministic paths alongside AI generation. Control exactly what links are sent when conditions are met.
                     </p>
-                    <button className="w-full bg-white text-violet-700 hover:bg-violet-50 transition-colors shadow-sm py-2.5 rounded-lg text-sm font-bold flex justify-center items-center gap-2">
+                    <button className="w-full bg-white text-violet-700 hover:bg-violet-50 transition-colors shadow-sm py-2.5 rounded-lg text-sm font-medium flex justify-center items-center gap-2">
                       <Play size={14} /> Run Test Simulation
                     </button>
                   </div>
                 </div>
 
                 <div className="bg-white border border-zinc-200/80 rounded-2xl p-6 shadow-sm">
-                  <h4 className="text-base font-bold text-zinc-900 mb-5">Sequence Telemetry</h4>
+                  <h4 className="text-base font-semibold text-zinc-900 mb-5">Sequence Telemetry</h4>
                   <div className="space-y-1">
                     <div className="flex justify-between items-center py-2 border-b border-zinc-100">
                       <span className="text-sm font-medium text-zinc-500">Executions</span>
-                      <span className="text-sm font-bold text-zinc-900">1,482</span>
+                      <span className="text-sm font-medium text-zinc-900">1,482</span>
                     </div>
                     <div className="flex justify-between items-center py-2 border-b border-zinc-100">
                       <span className="text-sm font-medium text-zinc-500">Success Rate</span>
-                      <span className="text-sm font-bold text-emerald-600">98.4%</span>
+                      <span className="text-sm font-medium text-emerald-600">98.4%</span>
                     </div>
                     <div className="flex justify-between items-center py-2">
                       <span className="text-sm font-medium text-zinc-500">Avg. Dwell Time</span>
-                      <span className="text-sm font-bold text-zinc-900">4.5 min</span>
+                      <span className="text-sm font-medium text-zinc-900">4.5 min</span>
                     </div>
                   </div>
                 </div>
@@ -403,14 +403,14 @@ const Automation: React.FC = () => {
               <div className="lg:col-span-2 space-y-8">
                 
                 <div className="bg-white border border-zinc-200/80 rounded-2xl p-6 shadow-sm">
-                  <h3 className="text-lg font-bold text-zinc-900 mb-1 flex items-center gap-2">
+                  <h3 className="text-lg font-semibold text-zinc-900 mb-1 flex items-center gap-2">
                     <Plus size={20} className="text-violet-600" /> New Comment Trigger
                   </h3>
                   <p className="text-sm text-zinc-500 mb-6 font-medium">Map post comments directly to AI-driven DM workflows.</p>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
                     <div>
-                      <label className="text-xs font-bold text-zinc-500 uppercase tracking-wider block mb-2">Target Post</label>
+                      <label className="text-xs font-medium text-zinc-500 block mb-2">Target Post</label>
                       <select 
                         value={newPostTitle}
                         onChange={(e) => setNewPostTitle(e.target.value)}
@@ -422,7 +422,7 @@ const Automation: React.FC = () => {
                       </select>
                     </div>
                     <div>
-                      <label className="text-xs font-bold text-zinc-500 uppercase tracking-wider block mb-2">Trigger Keyword</label>
+                      <label className="text-xs font-medium text-zinc-500 block mb-2">Trigger Keyword</label>
                       <input 
                         type="text" 
                         value={newKeyword}
@@ -434,7 +434,7 @@ const Automation: React.FC = () => {
                   </div>
 
                   <div className="mb-6">
-                    <label className="text-xs font-bold text-zinc-500 uppercase tracking-wider block mb-2">Automated DM Payload</label>
+                    <label className="text-xs font-medium text-zinc-500 block mb-2">Automated DM Payload</label>
                     <textarea 
                       value={newReplyMessage}
                       onChange={(e) => setNewReplyMessage(e.target.value)}
@@ -453,7 +453,7 @@ const Automation: React.FC = () => {
 
                 <div className="bg-white border border-zinc-200/80 rounded-2xl shadow-sm overflow-hidden">
                   <div className="p-6 border-b border-zinc-100">
-                    <h3 className="text-base font-bold text-zinc-900 flex items-center gap-2">
+                    <h3 className="text-base font-semibold text-zinc-900 flex items-center gap-2">
                       <MessageSquare size={18} className="text-violet-600" /> Active Mappings
                     </h3>
                   </div>
@@ -465,15 +465,15 @@ const Automation: React.FC = () => {
                       <div key={trigger.id} className="p-6 hover:bg-zinc-50 transition-colors flex flex-col md:flex-row md:items-center justify-between gap-4">
                         <div className="space-y-2 max-w-xl">
                           <div className="flex items-center gap-3">
-                            <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-1 bg-violet-100 text-violet-700 rounded border border-violet-200">
+                            <span className="text-[13px] font-medium px-2 py-1 bg-violet-100 text-violet-700 rounded border border-violet-200">
                               IF: {trigger.keyword}
                             </span>
-                            <span className="text-[11px] font-semibold text-zinc-500">
+                            <span className="text-[13px] font-semibold text-zinc-500">
                               Target: {trigger.postTitle}
                             </span>
                           </div>
                           <p className="text-sm text-zinc-700 font-medium truncate">
-                            <span className="text-zinc-400 font-bold mr-1">THEN:</span> {trigger.replyMessage}
+                            <span className="text-zinc-400 font-semibold mr-1">THEN:</span> {trigger.replyMessage}
                           </p>
                         </div>
                         
@@ -494,7 +494,7 @@ const Automation: React.FC = () => {
 
               <div className="space-y-6">
                 <div className="bg-violet-50 border border-violet-100 rounded-2xl p-6">
-                  <h4 className="font-bold flex items-center gap-2 mb-2 text-violet-900">
+                  <h4 className="font-semibold flex items-center gap-2 mb-2 text-violet-900">
                     <Zap size={18} className="text-violet-600" /> Conversion Strategy
                   </h4>
                   <p className="text-sm font-medium text-violet-800/80 leading-relaxed">
@@ -512,8 +512,8 @@ const Automation: React.FC = () => {
                 <div className="bg-white border border-zinc-200/80 rounded-2xl p-6 shadow-sm">
                   <div className="flex justify-between items-start mb-6">
                     <div>
-                      <h3 className="text-lg font-bold text-zinc-900 mb-1">Onboarding Payload</h3>
-                      <p className="text-sm text-zinc-500 font-medium">The first message sent to net-new inbound conversations.</p>
+                      <h3 className="text-lg font-semibold text-zinc-900 mb-1">Onboarding Payload</h3>
+                      <p className="page-sub">The first message sent to net-new inbound conversations.</p>
                     </div>
                   </div>
 
@@ -525,7 +525,7 @@ const Automation: React.FC = () => {
                       rows={5}
                       className="w-full bg-zinc-50 border border-zinc-200 p-4 rounded-xl text-sm font-medium text-zinc-900 outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 transition-all resize-none"
                     />
-                    <div className="absolute bottom-3 right-4 text-[10px] font-bold text-zinc-400 bg-white px-2 py-0.5 rounded border border-zinc-200">
+                    <div className="absolute bottom-3 right-4 text-[13px] font-medium text-zinc-400 bg-white px-2 py-0.5 rounded border border-zinc-200">
                       {welcomeMessage.length} CHARS
                     </div>
                   </div>
@@ -538,12 +538,12 @@ const Automation: React.FC = () => {
                 </div>
 
                 <div className="bg-white border border-zinc-200/80 rounded-2xl p-6 shadow-sm">
-                  <h3 className="text-lg font-bold text-zinc-900 mb-6">Global Hand-off Rules</h3>
+                  <h3 className="text-lg font-semibold text-zinc-900 mb-6">Global Hand-off Rules</h3>
                   <div className="space-y-6">
                     <div className="flex justify-between items-center">
                       <div>
-                        <div className="font-bold text-zinc-900 text-sm">Artificial Typing Delay</div>
-                        <p className="text-[11px] text-zinc-500 font-medium">Inject latency to simulate human response times.</p>
+                        <div className="font-medium text-zinc-900 text-sm">Artificial Typing Delay</div>
+                        <p className="text-[13px] text-zinc-500 font-medium">Inject latency to simulate human response times.</p>
                       </div>
                       <select className="bg-zinc-50 border border-zinc-200 px-3 py-2 rounded-lg text-sm font-semibold text-zinc-900 outline-none">
                         <option>Instant (0s)</option>
@@ -557,8 +557,8 @@ const Automation: React.FC = () => {
 
               <div className="space-y-6">
                 <div className="bg-white border border-zinc-200/80 rounded-2xl p-6 shadow-sm h-[500px] flex flex-col">
-                  <h4 className="text-sm font-bold text-zinc-900 mb-6 flex justify-between items-center">
-                    Simulated Output <span className="text-[10px] bg-zinc-100 text-zinc-500 px-2 py-1 rounded">PREVIEW</span>
+                  <h4 className="text-sm font-medium text-zinc-900 mb-6 flex justify-between items-center">
+                    Simulated Output <span className="text-[13px] bg-zinc-100 text-zinc-500 px-2 py-1 rounded">PREVIEW</span>
                   </h4>
                   
                   <div className="flex-grow flex flex-col gap-4 overflow-y-auto pr-2">
@@ -566,14 +566,14 @@ const Automation: React.FC = () => {
                       <div className="bg-zinc-100 text-zinc-800 px-4 py-2.5 rounded-2xl rounded-bl-sm text-[13px] font-medium max-w-[85%]">
                         Hey! I saw your post.
                       </div>
-                      <span className="text-[10px] text-zinc-400 mt-1 ml-1 font-medium">Customer • 12:01 PM</span>
+                      <span className="text-[13px] text-zinc-400 mt-1 ml-1 font-medium">Customer • 12:01 PM</span>
                     </div>
                     
                     <div className="flex flex-col items-end w-full mt-2">
                       <div className="bg-blue-500 text-white px-4 py-2.5 rounded-2xl rounded-br-sm text-[13px] font-medium max-w-[85%] shadow-sm whitespace-pre-wrap">
                         {welcomeMessage || 'Your message will render exactly like this.'}
                       </div>
-                      <span className="text-[10px] text-zinc-400 mt-1 mr-1 font-medium">AI Agent • 12:01 PM</span>
+                      <span className="text-[13px] text-zinc-400 mt-1 mr-1 font-medium">AI Agent • 12:01 PM</span>
                     </div>
                   </div>
                 </div>
@@ -592,16 +592,16 @@ const Automation: React.FC = () => {
                     <Bot size={20} />
                   </div>
                   <div>
-                    <h3 className="font-bold text-zinc-900">AI Routing Engine</h3>
-                    <p className="text-[11px] text-zinc-500 font-medium">Core inference settings</p>
+                    <h3 className="font-semibold text-zinc-900">AI Routing Engine</h3>
+                    <p className="text-[13px] text-zinc-500 font-medium">Core inference settings</p>
                   </div>
                 </div>
                 
                 <div className="space-y-5 flex-grow">
                   <div className="flex items-center justify-between">
                     <div>
-                      <h4 className="text-sm font-bold text-zinc-800">Auto-Reply Enable</h4>
-                      <p className="text-[11px] text-zinc-500">Allow AI to answer unmapped queries</p>
+                      <h4 className="text-sm font-medium text-zinc-800">Auto-Reply Enable</h4>
+                      <p className="text-[13px] text-zinc-500">Allow AI to answer unmapped queries</p>
                     </div>
                     <label className="relative inline-flex items-center cursor-pointer">
                       <input type="checkbox" className="sr-only peer" checked={autoReplyEnabled} onChange={(e) => setAutoReplyEnabled(e.target.checked)} />
@@ -610,8 +610,8 @@ const Automation: React.FC = () => {
                   </div>
                   <div className="flex items-center justify-between">
                     <div>
-                      <h4 className="text-sm font-bold text-zinc-800">Escalation Alerts</h4>
-                      <p className="text-[11px] text-zinc-500">Ping dashboard when AI stops</p>
+                      <h4 className="text-sm font-medium text-zinc-800">Escalation Alerts</h4>
+                      <p className="text-[13px] text-zinc-500">Ping dashboard when AI stops</p>
                     </div>
                     <label className="relative inline-flex items-center cursor-pointer">
                       <input type="checkbox" className="sr-only peer" checked={humanHandoffAlerts} onChange={(e) => setHumanHandoffAlerts(e.target.checked)} />
@@ -628,14 +628,14 @@ const Automation: React.FC = () => {
                     <Repeat size={20} />
                   </div>
                   <div>
-                    <h3 className="font-bold text-zinc-900">Retention Drip</h3>
-                    <p className="text-[11px] text-zinc-500 font-medium">Automatic unread follow-ups</p>
+                    <h3 className="font-semibold text-zinc-900">Retention Drip</h3>
+                    <p className="text-[13px] text-zinc-500 font-medium">Automatic unread follow-ups</p>
                   </div>
                 </div>
 
                 <div className="space-y-4 flex-grow">
                   <div className="flex items-center justify-between border-b border-zinc-100 pb-4">
-                    <span className="text-sm font-bold text-zinc-800">Enable Drip Campaign</span>
+                    <span className="text-sm font-medium text-zinc-800">Enable Drip Campaign</span>
                     <label className="relative inline-flex items-center cursor-pointer">
                       <input type="checkbox" className="sr-only peer" checked={autoFollowUp} onChange={(e) => setAutoFollowUp(e.target.checked)} />
                       <div className="w-9 h-5 bg-zinc-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-zinc-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-500"></div>
@@ -661,14 +661,14 @@ const Automation: React.FC = () => {
                     <Heart size={20} />
                   </div>
                   <div>
-                    <h3 className="font-bold text-zinc-900">Story Mentions</h3>
-                    <p className="text-[11px] text-zinc-500 font-medium">Engage brand advocates</p>
+                    <h3 className="font-semibold text-zinc-900">Story Mentions</h3>
+                    <p className="text-[13px] text-zinc-500 font-medium">Engage brand advocates</p>
                   </div>
                 </div>
 
                 <div className="space-y-4 flex-grow">
                   <div className="flex items-center justify-between border-b border-zinc-100 pb-4">
-                    <span className="text-sm font-bold text-zinc-800">Auto-Reply to Mentions</span>
+                    <span className="text-sm font-medium text-zinc-800">Auto-Reply to Mentions</span>
                     <label className="relative inline-flex items-center cursor-pointer">
                       <input type="checkbox" className="sr-only peer" checked={storyMentionEnabled} onChange={(e) => setStoryMentionEnabled(e.target.checked)} />
                       <div className="w-9 h-5 bg-zinc-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-zinc-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-500"></div>
@@ -685,8 +685,8 @@ const Automation: React.FC = () => {
                     <Moon size={20} />
                   </div>
                   <div>
-                    <h3 className="font-bold text-zinc-900">Away Operations</h3>
-                    <p className="text-[11px] text-zinc-500 font-medium">Manage expectations during downtime</p>
+                    <h3 className="font-semibold text-zinc-900">Away Operations</h3>
+                    <p className="text-[13px] text-zinc-500 font-medium">Manage expectations during downtime</p>
                   </div>
                 </div>
 

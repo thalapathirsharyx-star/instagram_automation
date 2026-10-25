@@ -18,6 +18,7 @@ import { SecurityAlertService } from './SecurityAlert.service';
 import { EmailService } from '../Email.service';
 import axios from 'axios';
 import { GRAPH_VERSION } from '../Instagram.service';
+import { AppUrl } from '@Helper/Common.helper';
 
 const GRAPH_BASE = `https://graph.facebook.com/${GRAPH_VERSION}`;
 
@@ -730,8 +731,7 @@ export class AuthService {
     if (!newUser.is_verified) {
       // Sign a JWT token that expires in 24 hours
       const verifyToken = this._JwtService.sign({ email: newUser.email, user_id: newUser.id }, { expiresIn: '24h' });
-      const baseUrl = process.env.DOMAIN_NAME ? process.env.DOMAIN_NAME.replace('8000', '5173').replace('8001', '5173') : 'http://localhost:5173/';
-      const verifyUrl = `${baseUrl}verify-email?token=${verifyToken}`;
+      const verifyUrl = AppUrl(`verify-email?token=${verifyToken}`);
 
       // Print verification URL to console for easy development testing
       console.log('\n--------------------------------------------');
@@ -840,8 +840,7 @@ export class AuthService {
     }
 
     const verifyToken = this._JwtService.sign({ email: UserData.email, user_id: UserData.id }, { expiresIn: '24h' });
-    const baseUrl = process.env.DOMAIN_NAME ? process.env.DOMAIN_NAME.replace('8000', '5173').replace('8001', '5173') : 'http://localhost:5173/';
-    const verifyUrl = `${baseUrl}verify-email?token=${verifyToken}`;
+    const verifyUrl = AppUrl(`verify-email?token=${verifyToken}`);
 
     // Print verification URL to console for easy development testing
     console.log('\n--------------------------------------------');

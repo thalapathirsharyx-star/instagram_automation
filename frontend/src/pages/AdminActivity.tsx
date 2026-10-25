@@ -142,13 +142,13 @@ const AdminActivity: React.FC = () => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto pb-12 font-sans animate-in fade-in duration-500" style={{ fontFamily: '"Inter", system-ui, sans-serif' }}>
+    <div className="max-w-7xl mx-auto pb-12 font-sans animate-in fade-in duration-500">
       
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8 border-b border-zinc-200/80 pb-6">
         <div>
-          <h1 className="text-2xl font-bold text-zinc-900 tracking-tight mb-2">Platform Activity</h1>
-          <p className="text-sm text-zinc-500 font-medium">Real-time audit trail of SaaS signups, upgrades, and API warnings.</p>
+          <h1 className="page-title">Activity log</h1>
+          <p className="page-sub">Real-time audit trail of SaaS signups, upgrades, and API warnings.</p>
         </div>
         
         <div className="flex items-center gap-2 bg-zinc-50 p-1.5 rounded-xl border border-zinc-200 shadow-sm shrink-0 overflow-x-auto">
@@ -156,7 +156,7 @@ const AdminActivity: React.FC = () => {
             <button
               key={btn.key}
               onClick={() => setFilter(btn.key)}
-              className={`px-4 py-2 rounded-lg text-xs font-bold transition-all whitespace-nowrap ${
+              className={`px-4 py-2 rounded-lg text-xs font-medium transition-all whitespace-nowrap ${
                 filter === btn.key 
                   ? 'bg-zinc-900 text-white shadow-sm' 
                   : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100'
@@ -175,8 +175,8 @@ const AdminActivity: React.FC = () => {
             <UserPlus size={20} />
           </div>
           <div>
-            <div className="text-2xl font-extrabold text-emerald-900 tracking-tight">{activities.filter(a => a.type === 'new_client').length}</div>
-            <div className="text-[11px] font-bold text-emerald-700 uppercase tracking-widest mt-0.5">Total Signups</div>
+            <div className="text-2xl font-semibold text-emerald-900 tracking-tight">{activities.filter(a => a.type === 'new_client').length}</div>
+            <div className="text-[13px] font-medium text-emerald-700 mt-0.5">Total Signups</div>
           </div>
         </div>
         <div className="bg-violet-50 border border-violet-200 rounded-2xl p-6 flex items-center gap-4 shadow-sm hover:shadow-md transition-shadow">
@@ -184,8 +184,8 @@ const AdminActivity: React.FC = () => {
             <CreditCard size={20} />
           </div>
           <div>
-            <div className="text-2xl font-extrabold text-violet-900 tracking-tight">{activities.filter(a => a.type === 'plan_upgrade').length}</div>
-            <div className="text-[11px] font-bold text-violet-700 uppercase tracking-widest mt-0.5">Plan Upgrades</div>
+            <div className="text-2xl font-semibold text-violet-900 tracking-tight">{activities.filter(a => a.type === 'plan_upgrade').length}</div>
+            <div className="text-[13px] font-medium text-violet-700 mt-0.5">Plan Upgrades</div>
           </div>
         </div>
         <div className="bg-amber-50 border border-amber-200 rounded-2xl p-6 flex items-center gap-4 shadow-sm hover:shadow-md transition-shadow">
@@ -193,8 +193,8 @@ const AdminActivity: React.FC = () => {
             <AlertTriangle size={20} />
           </div>
           <div>
-            <div className="text-2xl font-extrabold text-amber-900 tracking-tight">{activities.filter(a => a.type === 'high_usage').length}</div>
-            <div className="text-[11px] font-bold text-amber-700 uppercase tracking-widest mt-0.5">Usage Alerts</div>
+            <div className="text-2xl font-semibold text-amber-900 tracking-tight">{activities.filter(a => a.type === 'high_usage').length}</div>
+            <div className="text-[13px] font-medium text-amber-700 mt-0.5">Usage Alerts</div>
           </div>
         </div>
       </div>
@@ -204,9 +204,9 @@ const AdminActivity: React.FC = () => {
         <div className="px-6 py-4 border-b border-zinc-100 bg-zinc-50 flex justify-between items-center">
           <div className="flex items-center gap-2">
             <Activity size={18} className="text-blue-600" />
-            <h3 className="text-sm font-bold text-zinc-900">Event Audit Trail</h3>
+            <h3 className="text-sm font-medium text-zinc-900">Event Audit Trail</h3>
           </div>
-          <span className="text-xs font-bold text-zinc-500 bg-zinc-200 px-2 py-0.5 rounded-full">{filteredActivities.length} events</span>
+          <span className="text-xs font-medium text-zinc-500 bg-zinc-200 px-2 py-0.5 rounded-full">{filteredActivities.length} events</span>
         </div>
         
         <div className="divide-y divide-zinc-100">
@@ -215,8 +215,8 @@ const AdminActivity: React.FC = () => {
               <div className="w-16 h-16 bg-zinc-50 rounded-2xl flex items-center justify-center mb-4 border border-zinc-200 shadow-sm">
                 <ListFilter size={24} className="text-zinc-400" />
               </div>
-              <h3 className="text-base font-bold text-zinc-900 mb-1">No events found</h3>
-              <p className="text-sm text-zinc-500 font-medium">Try changing the filter settings.</p>
+              <h3 className="text-base font-semibold text-zinc-900 mb-1">No events found</h3>
+              <p className="page-sub">Try changing the filter settings.</p>
             </div>
           ) : (
             <>
@@ -227,8 +227,8 @@ const AdminActivity: React.FC = () => {
                   </div>
                   <div className="flex-grow min-w-0 pt-0.5">
                     <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-1 sm:gap-4 mb-1">
-                      <span className="font-bold text-zinc-900 text-sm sm:text-base leading-tight">{item.title}</span>
-                      <span className="flex items-center gap-1.5 text-[11px] font-bold text-zinc-400 uppercase tracking-widest shrink-0">
+                      <span className="font-medium text-zinc-900 text-sm sm:text-base leading-tight">{item.title}</span>
+                      <span className="flex items-center gap-1.5 text-[13px] font-medium text-zinc-400 shrink-0">
                         <Clock size={12} /> {formatTime(item.timestamp)}
                       </span>
                     </div>
@@ -247,14 +247,14 @@ const AdminActivity: React.FC = () => {
                     <button
                       onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                       disabled={currentPage === 1}
-                      className="px-4 py-2 border border-zinc-200 rounded-lg text-xs font-bold text-zinc-600 bg-white hover:bg-zinc-50 disabled:opacity-50 disabled:hover:bg-white shadow-sm transition-colors"
+                      className="px-4 py-2 border border-zinc-200 rounded-lg text-xs font-medium text-zinc-600 bg-white hover:bg-zinc-50 disabled:opacity-50 disabled:hover:bg-white shadow-sm transition-colors"
                     >
                       Previous
                     </button>
                     <button
                       onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                       disabled={currentPage === totalPages}
-                      className="px-4 py-2 border border-zinc-200 rounded-lg text-xs font-bold text-zinc-600 bg-white hover:bg-zinc-50 disabled:opacity-50 disabled:hover:bg-white shadow-sm transition-colors"
+                      className="px-4 py-2 border border-zinc-200 rounded-lg text-xs font-medium text-zinc-600 bg-white hover:bg-zinc-50 disabled:opacity-50 disabled:hover:bg-white shadow-sm transition-colors"
                     >
                       Next
                     </button>

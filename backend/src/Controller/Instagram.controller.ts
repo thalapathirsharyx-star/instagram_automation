@@ -137,7 +137,7 @@ export class InstagramController extends AuthBaseController {
     console.log(`[DATA DELETION] Completed for Meta user ${payload.user_id}: ${result.confirmation_code}`);
 
     return {
-      url: `${process.env.DOMAIN_NAME || 'https://flazly.in'}/data-deletion`,
+      url: `${(process.env.DOMAIN_NAME || 'https://flazly.in').replace(/\/+$/, '')}/data-deletion`,
       confirmation_code: result.confirmation_code
     };
   }

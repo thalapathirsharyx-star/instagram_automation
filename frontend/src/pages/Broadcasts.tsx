@@ -237,7 +237,7 @@ const Broadcasts: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col gap-4 md:flex-row md:justify-between md:items-end">
         <div>
-          <h1 className="text-3xl font-bold text-zinc-100 mb-2">Broadcasts</h1>
+          <h1 className="page-title">Broadcasts</h1>
           <p className="text-zinc-400 font-medium">Send bulk messages to your leads and contacts.</p>
         </div>
         <button
@@ -256,11 +256,11 @@ const Broadcasts: React.FC = () => {
             <div className="p-2.5 bg-purple-500/10 text-purple-400 rounded-xl border border-purple-500/20">
               <Radio size={20} />
             </div>
-            <h3 className="text-lg font-bold text-zinc-100">Create Broadcast</h3>
+            <h3 className="text-lg font-semibold text-zinc-100">Create Broadcast</h3>
           </div>
 
           {error && (
-            <div className="mb-6 p-3 bg-rose-500/10 border border-rose-500/20 rounded-xl text-xs text-rose-400 font-bold flex gap-2 items-start">
+            <div className="mb-6 p-3 bg-rose-500/10 border border-rose-500/20 rounded-xl text-xs text-rose-400 font-medium flex gap-2 items-start">
               <AlertTriangle size={14} className="shrink-0 mt-0.5" />
               {error}
             </div>
@@ -269,7 +269,7 @@ const Broadcasts: React.FC = () => {
           <form onSubmit={handleCreate} className="space-y-6">
             <div className="grid md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-xs font-bold text-zinc-500 mb-1.5 uppercase tracking-wider">Campaign Name</label>
+                <label className="block text-xs font-medium text-zinc-500 mb-1.5">Campaign Name</label>
                 <input
                   required
                   type="text"
@@ -282,7 +282,7 @@ const Broadcasts: React.FC = () => {
 
               {/* Audience Filters */}
               <div>
-                <label className="block text-xs font-bold text-zinc-500 mb-1.5 uppercase tracking-wider">
+                <label className="block text-xs font-medium text-zinc-500 mb-1.5">
                   <Filter size={12} className="inline mr-1" /> Target Audience
                 </label>
                 <div className="flex flex-wrap gap-2">
@@ -291,7 +291,7 @@ const Broadcasts: React.FC = () => {
                       key={status}
                       type="button"
                       onClick={() => toggleLeadStatus(status)}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all border ${
+                      className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all border ${
                         form.filters.lead_status.includes(status)
                           ? 'bg-purple-500/20 text-purple-300 border-purple-500/30'
                           : 'bg-zinc-900 text-zinc-500 border-white/5 hover:border-zinc-700'
@@ -309,7 +309,7 @@ const Broadcasts: React.FC = () => {
                       }));
                       setAudienceCount(null);
                     }}
-                    className="px-3 py-1.5 rounded-lg text-xs font-bold bg-zinc-900 text-zinc-500 border border-white/5 hover:text-zinc-300 transition-all"
+                    className="px-3 py-1.5 rounded-lg text-xs font-medium bg-zinc-900 text-zinc-500 border border-white/5 hover:text-zinc-300 transition-all"
                   >
                     All Leads
                   </button>
@@ -319,7 +319,7 @@ const Broadcasts: React.FC = () => {
 
             {/* Message */}
             <div>
-              <label className="block text-xs font-bold text-zinc-500 mb-1.5 uppercase tracking-wider">Message Content</label>
+              <label className="block text-xs font-medium text-zinc-500 mb-1.5">Message Content</label>
               <textarea
                 required
                 rows={4}
@@ -328,7 +328,7 @@ const Broadcasts: React.FC = () => {
                 className="w-full bg-zinc-900 border border-white/5 rounded-xl px-4 py-3 text-sm text-zinc-100 focus:border-purple-500/50 outline-none transition-colors resize-none"
                 placeholder="Write your broadcast message here..."
               />
-              <div className="mt-1.5 text-right text-[10px] font-bold text-zinc-600 uppercase tracking-wider">
+              <div className="mt-1.5 text-right text-[13px] font-medium text-zinc-600">
                 {form.message.length} characters
               </div>
             </div>
@@ -340,13 +340,13 @@ const Broadcasts: React.FC = () => {
                   type="button"
                   onClick={handlePreviewAudience}
                   disabled={isCountLoading}
-                  className="px-4 py-2 bg-zinc-800 border border-white/10 rounded-xl text-sm font-bold text-zinc-300 hover:bg-zinc-700 transition-colors flex items-center gap-2"
+                  className="px-4 py-2 bg-zinc-800 border border-white/10 rounded-xl text-sm font-medium text-zinc-300 hover:bg-zinc-700 transition-colors flex items-center gap-2"
                 >
                   {isCountLoading ? <Loader2 size={14} className="animate-spin" /> : <Eye size={14} />}
                   Preview Audience
                 </button>
                 {audienceCount !== null && (
-                  <div className="flex items-center gap-1.5 text-sm font-bold text-purple-400">
+                  <div className="flex items-center gap-1.5 text-sm font-medium text-purple-400">
                     <Users size={14} />
                     {audienceCount} {audienceCount === 1 ? 'lead' : 'leads'} matched
                   </div>
@@ -377,7 +377,7 @@ const Broadcasts: React.FC = () => {
             <div className="w-20 h-20 bg-zinc-900 rounded-2xl flex items-center justify-center mb-5 border border-white/5">
               <Radio className="text-zinc-600" size={32} />
             </div>
-            <h3 className="text-lg font-bold text-zinc-300 mb-2">No Broadcasts Yet</h3>
+            <h3 className="text-lg font-semibold text-zinc-300 mb-2">No Broadcasts Yet</h3>
             <p className="text-sm text-zinc-500 max-w-sm">
               Create your first broadcast to send bulk messages to your Instagram leads. Filter by lead status, tags, and more.
             </p>
@@ -398,8 +398,8 @@ const Broadcasts: React.FC = () => {
                   {/* Left Info */}
                   <div className="flex-grow space-y-3">
                     <div className="flex items-center gap-3">
-                      <h3 className="text-lg font-bold text-zinc-100">{bc.name}</h3>
-                      <span className={`text-[10px] uppercase font-bold tracking-wider px-2.5 py-1 rounded-md border flex items-center gap-1.5 ${cfg.color}`}>
+                      <h3 className="text-lg font-semibold text-zinc-100">{bc.name}</h3>
+                      <span className={`text-[13px] uppercase font-medium tracking-wider px-2.5 py-1 rounded-md border flex items-center gap-1.5 ${cfg.color}`}>
                         {cfg.icon} {cfg.label}
                       </span>
                     </div>
@@ -408,9 +408,9 @@ const Broadcasts: React.FC = () => {
                     {/* Filters Display */}
                     {bc.filters?.lead_status?.length > 0 && (
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider">Audience:</span>
+                        <span className="text-[13px] font-medium text-zinc-500">Audience:</span>
                         {bc.filters.lead_status.map((s: string) => (
-                          <span key={s} className="text-[10px] font-bold px-2 py-0.5 bg-purple-500/10 text-purple-400 rounded-md border border-purple-500/20">
+                          <span key={s} className="text-[13px] font-medium px-2 py-0.5 bg-purple-500/10 text-purple-400 rounded-md border border-purple-500/20">
                             {s}
                           </span>
                         ))}
@@ -424,16 +424,16 @@ const Broadcasts: React.FC = () => {
                     {(bc.broadcast_status === 'completed' || bc.broadcast_status === 'sending') && (
                       <div className="flex items-center gap-6 pr-6 border-r border-white/5">
                         <div className="text-center">
-                          <div className="text-lg font-black text-zinc-100">{bc.sent_count}</div>
-                          <div className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider">Sent</div>
+                          <div className="text-lg font-semibold text-zinc-100">{bc.sent_count}</div>
+                          <div className="text-[13px] font-medium text-zinc-500">Sent</div>
                         </div>
                         <div className="text-center">
-                          <div className="text-lg font-black text-rose-400">{bc.failed_count}</div>
-                          <div className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider">Failed</div>
+                          <div className="text-lg font-semibold text-rose-400">{bc.failed_count}</div>
+                          <div className="text-[13px] font-medium text-zinc-500">Failed</div>
                         </div>
                         <div className="text-center">
-                          <div className="text-lg font-black text-purple-400">{bc.total_recipients}</div>
-                          <div className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider">Total</div>
+                          <div className="text-lg font-semibold text-purple-400">{bc.total_recipients}</div>
+                          <div className="text-[13px] font-medium text-zinc-500">Total</div>
                         </div>
                       </div>
                     )}
@@ -447,7 +447,7 @@ const Broadcasts: React.FC = () => {
                             style={{ width: `${progress}%` }}
                           />
                         </div>
-                        <div className="text-[10px] font-bold text-zinc-500 mt-1 text-center">{progress}%</div>
+                        <div className="text-[13px] font-medium text-zinc-500 mt-1 text-center">{progress}%</div>
                       </div>
                     )}
 
@@ -457,7 +457,7 @@ const Broadcasts: React.FC = () => {
                         <button
                           onClick={() => handleSend(bc.id)}
                           disabled={isSending === bc.id}
-                          className="px-4 py-2 bg-emerald-500 text-white font-bold text-xs rounded-xl hover:bg-emerald-600 transition-colors flex items-center gap-2 shadow-lg shadow-emerald-500/20 disabled:opacity-50"
+                          className="px-4 py-2 bg-emerald-500 text-white font-medium text-xs rounded-xl hover:bg-emerald-600 transition-colors flex items-center gap-2 shadow-lg shadow-emerald-500/20 disabled:opacity-50"
                         >
                           {isSending === bc.id ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />}
                           Send Now
@@ -485,7 +485,7 @@ const Broadcasts: React.FC = () => {
       <div className="grid lg:grid-cols-3 gap-6">
         <div className="w3-card bg-gradient-to-br from-purple-900 to-indigo-900 border border-purple-500/20 text-white overflow-hidden relative">
           <div className="relative z-10">
-            <h4 className="font-bold flex items-center gap-2 mb-4 text-purple-200">
+            <h4 className="font-semibold flex items-center gap-2 mb-4 text-purple-200">
               <Sparkles size={18} /> Broadcast Tips
             </h4>
             <ul className="space-y-2 text-sm font-medium text-purple-100/80">
@@ -499,23 +499,23 @@ const Broadcasts: React.FC = () => {
         </div>
 
         <div className="w3-card border border-white/5 lg:col-span-2">
-          <h4 className="text-lg font-bold text-zinc-100 mb-6">Broadcast Analytics</h4>
+          <h4 className="text-lg font-semibold text-zinc-100 mb-6">Broadcast Analytics</h4>
           <div className="grid grid-cols-3 gap-6">
             <div className="p-5 bg-zinc-900/50 rounded-2xl border border-white/5 text-center">
-              <div className="text-2xl font-black text-zinc-100">{broadcasts.length}</div>
-              <div className="text-xs text-zinc-500 font-bold uppercase tracking-wider mt-1">Total Campaigns</div>
+              <div className="text-2xl font-semibold text-zinc-100">{broadcasts.length}</div>
+              <div className="text-xs text-zinc-500 font-medium mt-1">Total Campaigns</div>
             </div>
             <div className="p-5 bg-zinc-900/50 rounded-2xl border border-white/5 text-center">
-              <div className="text-2xl font-black text-emerald-400">
+              <div className="text-2xl font-semibold text-emerald-400">
                 {broadcasts.reduce((sum, b) => sum + (b.sent_count || 0), 0)}
               </div>
-              <div className="text-xs text-zinc-500 font-bold uppercase tracking-wider mt-1">Messages Sent</div>
+              <div className="text-xs text-zinc-500 font-medium mt-1">Messages Sent</div>
             </div>
             <div className="p-5 bg-zinc-900/50 rounded-2xl border border-white/5 text-center">
-              <div className="text-2xl font-black text-purple-400">
+              <div className="text-2xl font-semibold text-purple-400">
                 {broadcasts.reduce((sum, b) => sum + (b.total_recipients || 0), 0)}
               </div>
-              <div className="text-xs text-zinc-500 font-bold uppercase tracking-wider mt-1">Total Recipients</div>
+              <div className="text-xs text-zinc-500 font-medium mt-1">Total Recipients</div>
             </div>
           </div>
         </div>
@@ -527,7 +527,7 @@ const Broadcasts: React.FC = () => {
           <div className="w3-card max-w-md w-full border border-purple-500/20 bg-zinc-950 p-6 shadow-2xl animate-in zoom-in-95 duration-200">
             <div className="flex items-center gap-3 text-amber-400 mb-4">
               <AlertTriangle size={24} />
-              <h3 className="text-lg font-black text-zinc-100">{confirmConfig.title}</h3>
+              <h3 className="text-lg font-semibold text-zinc-100">{confirmConfig.title}</h3>
             </div>
             <p className="text-sm text-zinc-400 font-medium mb-6">{confirmConfig.message}</p>
             <div className="flex justify-end gap-3 pt-4 border-t border-white/5">
@@ -535,7 +535,7 @@ const Broadcasts: React.FC = () => {
                 type="button"
                 onClick={() => setConfirmConfig(prev => ({ ...prev, isOpen: false }))}
                 disabled={confirmConfig.isLoading}
-                className="px-5 py-2 bg-zinc-900 hover:bg-zinc-800 border border-white/5 rounded-xl text-sm font-bold text-zinc-400 transition-colors disabled:opacity-50"
+                className="px-5 py-2 bg-zinc-900 hover:bg-zinc-800 border border-white/5 rounded-xl text-sm font-medium text-zinc-400 transition-colors disabled:opacity-50"
               >
                 Cancel
               </button>
@@ -543,7 +543,7 @@ const Broadcasts: React.FC = () => {
                 type="button"
                 onClick={confirmConfig.onConfirm}
                 disabled={confirmConfig.isLoading}
-                className="px-6 py-2 bg-purple-650 hover:bg-purple-700 text-white font-bold text-sm rounded-xl shadow-lg shadow-purple-650/20 transition-all flex items-center gap-2 disabled:opacity-50"
+                className="px-6 py-2 bg-purple-650 hover:bg-purple-700 text-white font-medium text-sm rounded-xl shadow-lg shadow-purple-650/20 transition-all flex items-center gap-2 disabled:opacity-50"
               >
                 {confirmConfig.isLoading && <Loader2 size={14} className="animate-spin" />}
                 Confirm
@@ -559,14 +559,14 @@ const Broadcasts: React.FC = () => {
           <div className="w3-card max-w-md w-full border border-rose-500/20 bg-zinc-950 p-6 shadow-2xl animate-in zoom-in-95 duration-200">
             <div className="flex items-center gap-3 text-rose-450 mb-4">
               <AlertTriangle size={24} />
-              <h3 className="text-lg font-black text-zinc-100">{alertConfig.title}</h3>
+              <h3 className="text-lg font-semibold text-zinc-100">{alertConfig.title}</h3>
             </div>
             <p className="text-sm text-zinc-400 font-medium mb-6">{alertConfig.message}</p>
             <div className="flex justify-end pt-4 border-t border-white/5">
               <button
                 type="button"
                 onClick={() => setAlertConfig(prev => ({ ...prev, isOpen: false }))}
-                className="px-6 py-2 bg-zinc-900 hover:bg-zinc-800 border border-white/5 rounded-xl text-sm font-bold text-zinc-350 transition-colors"
+                className="px-6 py-2 bg-zinc-900 hover:bg-zinc-800 border border-white/5 rounded-xl text-sm font-medium text-zinc-350 transition-colors"
               >
                 OK
               </button>

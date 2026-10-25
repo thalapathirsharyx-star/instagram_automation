@@ -205,97 +205,58 @@ const Signup: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen w-full flex overflow-x-hidden bg-zinc-50 font-inter relative">
-      {/* Background Mesh Gradients & Grid */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden select-none z-0">
-        <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-purple-500/5 blur-[120px] animate-pulse" style={{ animationDuration: '10s' }} />
-        <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] rounded-full bg-indigo-500/5 blur-[120px] animate-pulse" style={{ animationDuration: '15s' }} />
-      </div>
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none" />
-
-      <div className="w-full max-w-6xl mx-auto flex flex-col lg:flex-row items-center justify-center gap-12 lg:gap-32 relative z-10 p-4 lg:p-6 min-h-screen">
+    <div className="auth-surface min-h-screen w-full flex overflow-x-hidden bg-porcelain relative">
+      <div className="w-full max-w-6xl mx-auto flex flex-col lg:flex-row items-center justify-center gap-12 lg:gap-24 relative z-10 p-4 lg:p-6 min-h-screen">
         <div className="hidden lg:flex flex-col justify-center text-left w-full max-w-md shrink-0">
           {/* Logo */}
           <Link to="/" className="mb-6 lg:mb-8 flex items-center gap-2.5 group cursor-pointer w-fit">
             <img src="/Light Theme.png" alt="Flazly Logo" className="w-10 h-10 lg:w-12 lg:h-12 object-contain transition-transform duration-300 group-hover:scale-105" />
-            <span className="text-2xl lg:text-3xl font-extrabold text-zinc-900 tracking-tight group-hover:text-purple-600 transition-colors">Flazly</span>
+            <span className="font-display text-[26px] font-semibold text-ink tracking-tight">Flazly</span>
           </Link>
 
-          <h2 className="text-3xl lg:text-4xl font-extrabold text-zinc-900 mb-4 leading-[1.1] tracking-tight">
-            Turn conversations into <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-indigo-600">revenue</span>.
+          <h2 className="font-display text-[34px] lg:text-[40px] font-semibold text-ink mb-4 leading-[1.08] tracking-tight">
+            Start answering in minutes.
           </h2>
-          
-          <ul className="space-y-3 mb-6 text-sm lg:text-base">
+          <p className="prose-measure text-[17px] leading-relaxed text-ink-soft mb-8">
+            Connect your Instagram account, tell Flazly about your products, and it starts
+            handling DMs, story replies and comments while you get on with the rest.
+          </p>
+
+          {/* What happens to a message, in order. The rail colour marks who is
+              acting at each step — the same language the inbox uses. */}
+          <ol className="mb-8 flex flex-col gap-3">
             {[
-              'Respond to Instagram DMs instantly',
-              'Capture qualified leads automatically',
-              'Sync customer data to your CRM'
-            ].map((text, i) => (
-              <li key={i} className="flex items-center gap-3 text-zinc-600 font-semibold">
-                <div className="w-5 h-5 rounded-full bg-purple-100 flex items-center justify-center shrink-0">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" className="text-purple-600" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                </div>
-                {text}
+              { icon: MessageCircle, actor: 'rail-human', title: 'Someone sends a DM', note: 'A customer asks about a product' },
+              { icon: Bot, actor: 'rail-machine', title: 'Flazly answers', note: 'From your brain base and catalogue' },
+              { icon: Database, actor: 'rail-machine', title: 'The lead is scored', note: 'Ready for you to pick up' },
+            ].map(({ icon: Icon, actor, title, note }) => (
+              <li
+                key={title}
+                className={`${actor} flex items-center gap-3 border-y border-r border-hairline bg-surface px-4 py-3`}
+              >
+                <Icon size={16} className="shrink-0 text-ink-soft" />
+                <span>
+                  <span className="block text-[15px] font-medium text-ink">{title}</span>
+                  <span className="block text-[13px] text-ink-soft">{note}</span>
+                </span>
               </li>
             ))}
-          </ul>
+          </ol>
 
-          {/* Mini Workflow UI Mockup */}
-          <div className="bg-white rounded-2xl border border-zinc-200/80 shadow-[0_8px_30px_rgb(0,0,0,0.04)] p-4 lg:p-5 relative overflow-hidden group mb-6 lg:mb-8">
-            <div className="absolute inset-0 bg-gradient-to-br from-purple-500/[0.02] to-transparent pointer-events-none" />
-            <div className="flex flex-col gap-2 relative z-10">
-              
-              <div className="flex items-center gap-3 p-2.5 bg-zinc-50/50 border border-zinc-100 rounded-xl transition-all duration-300 hover:bg-white hover:border-zinc-200 hover:shadow-sm">
-                <div className="w-7 h-7 rounded-lg bg-pink-50 flex items-center justify-center text-pink-600 shrink-0 border border-pink-100">
-                  <MessageCircle size={14} />
-                </div>
-                <div>
-                  <p className="text-xs font-bold text-zinc-900 leading-none mb-0.5">Instagram DM</p>
-                  <p className="text-[9px] text-zinc-500 font-medium leading-none">Customer asks a question</p>
-                </div>
-              </div>
-
-              <div className="w-px h-2 bg-zinc-200 ml-6" />
-
-              <div className="flex items-center gap-3 p-2.5 bg-zinc-50/50 border border-zinc-100 rounded-xl transition-all duration-300 hover:bg-white hover:border-zinc-200 hover:shadow-sm">
-                <div className="w-7 h-7 rounded-lg bg-purple-50 flex items-center justify-center text-purple-600 shrink-0 border border-purple-100">
-                  <Bot size={14} />
-                </div>
-                <div>
-                  <p className="text-xs font-bold text-zinc-900 leading-none mb-0.5">AI Agent Reply</p>
-                  <p className="text-[9px] text-zinc-500 font-medium leading-none">Instant intelligent response</p>
-                </div>
-              </div>
-
-              <div className="w-px h-2 bg-zinc-200 ml-6" />
-
-              <div className="flex items-center gap-3 p-2.5 bg-zinc-50/50 border border-zinc-100 rounded-xl transition-all duration-300 hover:bg-white hover:border-zinc-200 hover:shadow-sm">
-                <div className="w-7 h-7 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-600 shrink-0 border border-indigo-100">
-                  <Database size={14} />
-                </div>
-                <div>
-                  <p className="text-xs font-bold text-zinc-900 leading-none mb-0.5">Lead Qualified & Synced</p>
-                  <p className="text-[9px] text-zinc-500 font-medium leading-none">Data sent to CRM securely</p>
-                </div>
-              </div>
-
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <Shield size={14} className="text-zinc-400" />
-            <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Powered by the Meta Graph API</span>
+          <div className="flex items-center gap-2 text-ink-faint">
+            <Shield size={14} />
+            <span className="text-[13px]">Built on the Meta Graph API</span>
           </div>
 
         </div>
 
       <div className="w-full max-w-md flex flex-col items-center justify-center z-20 shrink-0 py-4 lg:py-8">
-        <div className="w-full bg-white rounded-3xl p-6 lg:p-8 shadow-2xl shadow-zinc-200/50 border border-zinc-200 relative my-auto">
+        <div className="surface w-full p-6 lg:p-8 relative my-auto">
           <div className="mb-6 lg:mb-8 text-center">
             <Link to="/" className="bg-transparent flex items-center justify-center mx-auto mb-2 group w-fit cursor-pointer">
               <img src="/Light Theme.png" alt="Flazly Logo" className="w-10 h-10 lg:w-12 lg:h-12 object-contain transition-transform duration-300 group-hover:scale-110" />
             </Link>
-            <h1 className="text-2xl lg:text-3xl font-extrabold tracking-tight text-zinc-900 mb-1">Create Account</h1>
+            <h1 className="font-display text-[26px] font-semibold tracking-tight text-ink">Create your account</h1>
             <p className="text-sm lg:text-base text-zinc-500 font-semibold">Join us today and start growing</p>
           </div>
 
@@ -311,7 +272,7 @@ const Signup: React.FC = () => {
 
           <form onSubmit={handleSignup} className="space-y-4">
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-zinc-700 ml-1 mb-1.5 block" htmlFor="firstName">Full Name</label>
+              <label className="text-xs font-medium text-zinc-700 ml-1 mb-1.5 block" htmlFor="firstName">Full Name</label>
               <div className="relative group">
                 <User size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 group-focus-within:text-purple-600 transition-colors z-10" />
                 <input
@@ -327,7 +288,7 @@ const Signup: React.FC = () => {
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-zinc-700 ml-1 mb-1.5 block" htmlFor="companyName">Company Name</label>
+              <label className="text-xs font-medium text-zinc-700 ml-1 mb-1.5 block" htmlFor="companyName">Company Name</label>
               <div className="relative group">
                 <Building2 size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 group-focus-within:text-purple-600 transition-colors z-10" />
                 <input
@@ -343,7 +304,7 @@ const Signup: React.FC = () => {
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-zinc-700 ml-1 mb-1.5 block" htmlFor="email">Email Address</label>
+              <label className="text-xs font-medium text-zinc-700 ml-1 mb-1.5 block" htmlFor="email">Email Address</label>
               <div className="relative group">
                 <Mail size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 group-focus-within:text-purple-600 transition-colors z-10" />
                 <input
@@ -359,7 +320,7 @@ const Signup: React.FC = () => {
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-zinc-700 ml-1 mb-1.5 block" htmlFor="password">Password</label>
+              <label className="text-xs font-medium text-zinc-700 ml-1 mb-1.5 block" htmlFor="password">Password</label>
               <div className="relative group">
                 <Lock size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 group-focus-within:text-purple-600 transition-colors z-10" />
                 <input
@@ -382,7 +343,7 @@ const Signup: React.FC = () => {
               </div>
             </div>
 
-            <button type="submit" className="w-full mt-2 bg-zinc-950 hover:bg-black rounded-xl py-2.5 font-bold text-sm shadow-md hover:shadow-lg transition-all duration-200 flex items-center justify-center gap-3 disabled:opacity-70 group border border-zinc-950" disabled={isLoading}>
+            <button type="submit" className="w-full mt-2 bg-zinc-950 hover:bg-black rounded-xl py-2.5 font-medium text-sm shadow-md hover:shadow-lg transition-all duration-200 flex items-center justify-center gap-3 disabled:opacity-70 group border border-zinc-950" disabled={isLoading}>
               {isLoading ? (
                 <>
                   <Loader2 size={20} className="animate-spin text-white" />
@@ -402,8 +363,8 @@ const Signup: React.FC = () => {
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-zinc-200"></div>
             </div>
-            <div className="relative flex justify-center text-[10px] font-bold uppercase">
-              <span className="bg-white px-3 text-zinc-400">Or continue with</span>
+            <div className="relative flex justify-center text-[13px] font-medium">
+              <span className="bg-white px-3 text-zinc-500">or continue with</span>
             </div>
           </div>
 
@@ -417,7 +378,7 @@ const Signup: React.FC = () => {
               aria-label="Continue with Facebook"
               onClick={handleFacebookSignIn}
               disabled={isFacebookLoading}
-              className="w-full py-3 px-4 bg-[#1877F2] hover:bg-[#166fe5] text-white rounded-xl font-bold text-base transition-all duration-200 flex items-center justify-center gap-2.5 shadow-sm cursor-pointer disabled:opacity-75"
+              className="w-full py-3 px-4 bg-[#1877F2] hover:bg-[#166fe5] text-white rounded-xl font-semibold text-base transition-all duration-200 flex items-center justify-center gap-2.5 shadow-sm cursor-pointer disabled:opacity-75"
             >
               {isFacebookLoading ? (
                 <Loader2 size={20} className="animate-spin text-white" />
@@ -434,7 +395,7 @@ const Signup: React.FC = () => {
               type="button"
               onClick={() => handleGoogleSignIn()}
               disabled={isGoogleLoading}
-              className="w-full py-2.5 px-3 bg-white border border-zinc-200 hover:bg-zinc-50 hover:border-zinc-300 text-zinc-700 rounded-xl font-bold text-sm transition-all duration-200 flex items-center justify-center gap-2 shadow-sm cursor-pointer disabled:opacity-75"
+              className="w-full py-2.5 px-3 bg-white border border-zinc-200 hover:bg-zinc-50 hover:border-zinc-300 text-zinc-700 rounded-xl font-medium text-sm transition-all duration-200 flex items-center justify-center gap-2 shadow-sm cursor-pointer disabled:opacity-75"
             >
               <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none">
                 <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
@@ -449,7 +410,7 @@ const Signup: React.FC = () => {
           <div className="text-center mt-6 pt-6 border-t border-zinc-100">
             <p className="text-zinc-500 font-medium text-xs lg:text-sm">
               Already have an account?{' '}
-              <Link to="/login" className="text-purple-600 font-extrabold hover:text-purple-500 transition-colors">
+              <Link to="/login" className="text-purple-600 font-semibold hover:text-purple-500 transition-colors">
                 Sign in here
               </Link>
             </p>
@@ -457,7 +418,7 @@ const Signup: React.FC = () => {
         </div>
 
         {/* Trust Badges */}
-        <div className="mt-4 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-[9px] font-bold text-zinc-400 uppercase tracking-wider w-full px-2">
+        <div className="mt-4 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-[13px] font-medium text-zinc-400 w-full px-2">
           <span className="flex items-center gap-1.5"><Lock size={12} className="text-zinc-400" /> Secure OAuth</span>
           <span className="flex items-center gap-1.5"><Shield size={12} className="text-zinc-400" /> Meta Compliant</span>
           <span className="flex items-center gap-1.5"><CheckCircle2 size={12} className="text-zinc-400" /> Enterprise Security</span>

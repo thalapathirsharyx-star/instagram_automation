@@ -17,7 +17,6 @@ import {
   Sparkles,
   AlertCircle,
   Lock,
-  ChevronRight,
   Eye,
   EyeOff
 } from 'lucide-react';
@@ -32,7 +31,7 @@ const SettingsCard: React.FC<{ icon: any, title: string, subtitle: string, child
         <Icon size={22} strokeWidth={2.5}/>
       </div>
       <div>
-        <h3 className="text-lg font-bold text-zinc-900">{title}</h3>
+        <h3 className="text-lg font-semibold text-zinc-900">{title}</h3>
         <p className="text-[13px] text-zinc-500 font-medium mt-1 leading-relaxed">{subtitle}</p>
       </div>
     </div>
@@ -341,38 +340,38 @@ const Settings: React.FC = () => {
   ];
 
   return (
-    <div className="max-w-7xl mx-auto pb-12 font-sans animate-in fade-in duration-500" style={{ fontFamily: '"Inter", system-ui, sans-serif' }}>
+    <div className="max-w-7xl mx-auto pb-12 font-sans animate-in fade-in duration-500">
       
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8 border-b border-zinc-200/80 pb-6">
         <div>
-          <h1 className="text-2xl font-bold text-zinc-900 tracking-tight mb-2">Platform Settings</h1>
-          <p className="text-sm text-zinc-500 font-medium">Manage your personal profile, security preferences, and core system integrations.</p>
+          <h1 className="page-title">Settings</h1>
+          <p className="page-sub">Manage your personal profile, security preferences, and core system integrations.</p>
         </div>
       </div>
 
       <div className="flex flex-col md:flex-row gap-8 min-h-[600px]">
         
         {/* LEFT SIDEBAR NAVIGATION */}
-        <div className="w-full md:w-64 shrink-0 flex flex-col gap-1.5">
+        <div className="w-full md:w-60 shrink-0 flex flex-col">
           {tabs.map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
+            // The same rail the main navigation uses: a rail reads as position,
+            // where a filled pill reads as a button waiting to be pressed.
             return (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as TabType)}
-                className={`w-full flex items-center justify-between px-4 py-3 rounded-lg font-bold text-sm transition-all duration-200 border ${
-                  isActive 
-                    ? 'bg-zinc-900 text-white border-zinc-800 shadow-sm'
-                    : 'bg-transparent text-zinc-600 border-transparent hover:bg-zinc-50 hover:text-zinc-900'
+                aria-current={isActive}
+                className={`flex w-full items-center gap-3 border-l-2 px-3.5 py-2.5 text-left text-[15px] transition-colors ${
+                  isActive
+                    ? 'border-viridian bg-surface font-semibold text-ink'
+                    : 'border-transparent font-medium text-ink-soft hover:bg-porcelain-deep hover:text-ink'
                 }`}
               >
-                <div className="flex items-center gap-3">
-                  <Icon size={16} className={isActive ? "text-zinc-300" : "text-zinc-400"} />
-                  {tab.label}
-                </div>
-                {isActive && <ChevronRight size={14} className="text-zinc-500" />}
+                <Icon size={17} className={isActive ? 'text-viridian' : 'text-ink-faint'} />
+                {tab.label}
               </button>
             );
           })}
@@ -391,11 +390,11 @@ const Settings: React.FC = () => {
                 {isEditingProfile ? (
                   <div className="space-y-4">
                     <div className="flex gap-4 items-center mb-2">
-                      <div className="w-12 h-12 bg-zinc-100 text-zinc-600 rounded-full flex items-center justify-center border border-zinc-200 font-bold text-lg shadow-sm uppercase shrink-0">
+                      <div className="w-12 h-12 bg-zinc-100 text-zinc-600 rounded-full flex items-center justify-center border border-zinc-200 font-semibold text-lg shadow-sm uppercase shrink-0">
                         {profileEmail[0]?.toUpperCase() || 'A'}
                       </div>
                       <div className="flex-grow">
-                        <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest ml-1">Email Address</label>
+                        <label className="text-[13px] font-medium text-zinc-500 ml-1">Email Address</label>
                         <input 
                           type="email"
                           value={profileEmail}
@@ -426,11 +425,11 @@ const Settings: React.FC = () => {
                 ) : (
                   <>
                     <div className="flex gap-4 items-center mb-2">
-                      <div className="w-12 h-12 bg-zinc-100 text-zinc-600 rounded-full flex items-center justify-center border border-zinc-200 font-bold text-lg shadow-sm uppercase shrink-0">
+                      <div className="w-12 h-12 bg-zinc-100 text-zinc-600 rounded-full flex items-center justify-center border border-zinc-200 font-semibold text-lg shadow-sm uppercase shrink-0">
                         {user?.email?.[0] || 'A'}
                       </div>
                       <div>
-                        <div className="font-bold text-zinc-900 text-base">{user?.email || 'app.flazly@gmail.com'}</div>
+                        <div className="font-semibold text-zinc-900 text-base">{user?.email || 'app.flazly@gmail.com'}</div>
                         <div className="text-xs text-zinc-500 font-medium mt-0.5">{user?.role || 'Administrator Access'}</div>
                       </div>
                     </div>
@@ -458,14 +457,14 @@ const Settings: React.FC = () => {
                       onChange={(e) => setIsGoogleRegistered(e.target.checked)}
                       className="w-4 h-4 rounded border-emerald-300 text-emerald-600 focus:ring-emerald-500/50 cursor-pointer"
                     />
-                    <label htmlFor="googleAuth" className="text-xs font-bold text-emerald-800 cursor-pointer select-none">
+                    <label htmlFor="googleAuth" className="text-xs font-medium text-emerald-800 cursor-pointer select-none">
                       I registered using Google (Skip current password validation)
                     </label>
                   </div>
 
                   {!isGoogleRegistered && (
                     <div>
-                      <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest ml-1">Current Password</label>
+                      <label className="text-[13px] font-medium text-zinc-500 ml-1">Current Password</label>
                       <div className="relative mt-1">
                         <input 
                           type={showCurrentPassword ? "text" : "password"}
@@ -487,7 +486,7 @@ const Settings: React.FC = () => {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest ml-1">New Password</label>
+                      <label className="text-[13px] font-medium text-zinc-500 ml-1">New Password</label>
                       <div className="relative mt-1">
                         <input 
                           type={showNewPassword ? "text" : "password"}
@@ -506,7 +505,7 @@ const Settings: React.FC = () => {
                       </div>
                     </div>
                     <div>
-                      <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest ml-1">Confirm New Password</label>
+                      <label className="text-[13px] font-medium text-zinc-500 ml-1">Confirm New Password</label>
                       <div className="relative mt-1">
                         <input 
                           type={showConfirmPassword ? "text" : "password"}
@@ -553,14 +552,14 @@ const Settings: React.FC = () => {
                         </div>
                       )}
                       <div className="text-center w-full max-w-sm mt-2">
-                        <span className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest block mb-1">Manual Setup Key</span>
+                        <span className="text-[13px] text-zinc-500 font-medium block mb-1">Manual Setup Key</span>
                         <code className="text-xs text-zinc-700 font-mono bg-white px-3 py-2 rounded-lg border border-zinc-200 block select-all">{secret}</code>
                       </div>
                     </div>
 
                     {recoveryCodes.length > 0 && (
                       <div className="p-6 bg-rose-50 rounded-xl border border-rose-100">
-                        <span className="text-[11px] text-rose-700 font-bold uppercase tracking-widest block mb-3 flex items-center gap-1.5">
+                        <span className="text-[13px] text-rose-700 font-medium block mb-3 flex items-center gap-1.5">
                           <AlertCircle size={14}/> Save Backup Codes
                         </span>
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
@@ -572,7 +571,7 @@ const Settings: React.FC = () => {
                     )}
 
                     <div className="space-y-2 max-w-xs mx-auto">
-                      <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest ml-1 text-center block">Enter 6-Digit Code</label>
+                      <label className="text-[13px] font-medium text-zinc-500 ml-1 text-center block">Enter 6-Digit Code</label>
                       <input 
                         type="text"
                         placeholder="000 000"
@@ -601,7 +600,7 @@ const Settings: React.FC = () => {
                   </div>
                 ) : user?.twoFactorEnabled ? (
                   <div className="space-y-6">
-                    <div className="flex items-center gap-2 text-emerald-700 font-bold text-[11px] uppercase tracking-widest bg-emerald-50 px-3 py-1.5 rounded-lg w-fit border border-emerald-200">
+                    <div className="flex items-center gap-2 text-emerald-700 font-medium text-[13px] bg-emerald-50 px-3 py-1.5 rounded-lg w-fit border border-emerald-200">
                       <CheckCircle2 size={14} className="text-emerald-500" />
                       2FA Active
                     </div>
@@ -617,7 +616,7 @@ const Settings: React.FC = () => {
                   </div>
                 ) : (
                   <div className="space-y-6">
-                    <div className="flex items-center gap-2 text-zinc-600 font-bold text-[11px] uppercase tracking-widest bg-zinc-100 px-3 py-1.5 rounded-lg w-fit border border-zinc-200">
+                    <div className="flex items-center gap-2 text-zinc-600 font-medium text-[13px] bg-zinc-100 px-3 py-1.5 rounded-lg w-fit border border-zinc-200">
                       <AlertCircle size={14} className="text-zinc-500" />
                       2FA Inactive
                     </div>
@@ -640,7 +639,7 @@ const Settings: React.FC = () => {
                     <AlertCircle size={20} strokeWidth={2.5}/>
                   </div>
                   <div>
-                    <h3 className="text-lg font-bold text-rose-900">Danger Zone</h3>
+                    <h3 className="text-lg font-semibold text-rose-900">Danger Zone</h3>
                     <p className="text-[13px] text-rose-700 font-medium mt-1 leading-relaxed">Irreversible account and data management actions.</p>
                   </div>
                 </div>
@@ -650,7 +649,7 @@ const Settings: React.FC = () => {
                   </p>
                   <button 
                     onClick={() => setConfirmPurge(true)}
-                    className="px-6 py-2.5 bg-white text-rose-600 border border-rose-200 rounded-lg font-bold hover:bg-rose-600 hover:text-white transition-colors text-sm shadow-sm"
+                    className="px-6 py-2.5 bg-white text-rose-600 border border-rose-200 rounded-lg font-medium hover:bg-rose-600 hover:text-white transition-colors text-sm shadow-sm"
                   >
                     Delete Account & Purge Data
                   </button>
@@ -667,11 +666,11 @@ const Settings: React.FC = () => {
                 subtitle="Configure payload destinations and API endpoints."
               >
                 <div className="space-y-4">
-                  <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest ml-1">Inbound Webhook URL</label>
+                  <label className="text-[13px] font-medium text-zinc-500 ml-1">Inbound Webhook URL</label>
                   <div className="bg-zinc-50 p-4 rounded-xl border border-zinc-200 text-sm font-mono text-zinc-700 truncate shadow-inner select-all">
                     {`${window.location.origin}/api/v1/Instagram/Webhook`}
                   </div>
-                  <button className="flex items-center gap-2 px-4 py-2 bg-white border border-zinc-200 rounded-lg text-xs font-bold text-zinc-700 hover:bg-zinc-50 transition-colors shadow-sm mt-2">
+                  <button className="flex items-center gap-2 px-4 py-2 bg-white border border-zinc-200 rounded-lg text-xs font-medium text-zinc-700 hover:bg-zinc-50 transition-colors shadow-sm mt-2">
                     <Zap size={14} className="text-amber-500" /> Dispatch Test Event
                   </button>
                 </div>
@@ -689,8 +688,8 @@ const Settings: React.FC = () => {
             
             <div className="px-6 py-5 border-b border-zinc-100 flex justify-between items-center bg-zinc-50/50">
               <div>
-                <h2 className="text-lg font-bold text-zinc-900">Required Meta Configuration</h2>
-                <p className="text-xs text-zinc-500 font-medium mt-1">Please ensure these steps are completed before linking.</p>
+                <h2 className="text-lg font-semibold text-zinc-900">Required Meta Configuration</h2>
+                <p className="page-sub">Please ensure these steps are completed before linking.</p>
               </div>
               <button 
                 onClick={() => setShowGuide(false)}
@@ -703,11 +702,11 @@ const Settings: React.FC = () => {
             <div className="p-6 md:p-8 space-y-8">
               
               <div className="flex gap-4 items-start">
-                <div className="w-10 h-10 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center shrink-0 border border-blue-100 shadow-sm font-bold">
+                <div className="w-10 h-10 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center shrink-0 border border-blue-100 shadow-sm font-semibold">
                   1
                 </div>
                 <div className="pt-1">
-                  <h4 className="font-bold text-zinc-900 text-sm mb-1">Switch to Professional Account</h4>
+                  <h4 className="font-medium text-zinc-900 text-sm mb-1">Switch to Professional Account</h4>
                   <p className="text-sm text-zinc-500 font-medium leading-relaxed">
                     Open the Instagram App &gt; Settings &gt; Account Type. Make sure you are switched to a <strong className="text-zinc-700">Business</strong> or <strong className="text-zinc-700">Creator</strong> account.
                   </p>
@@ -715,11 +714,11 @@ const Settings: React.FC = () => {
               </div>
 
               <div className="flex gap-4 items-start">
-                <div className="w-10 h-10 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center shrink-0 border border-blue-100 shadow-sm font-bold">
+                <div className="w-10 h-10 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center shrink-0 border border-blue-100 shadow-sm font-semibold">
                   2
                 </div>
                 <div className="pt-1">
-                  <h4 className="font-bold text-zinc-900 text-sm mb-1">Link to a Facebook Page</h4>
+                  <h4 className="font-medium text-zinc-900 text-sm mb-1">Link to a Facebook Page</h4>
                   <p className="text-sm text-zinc-500 font-medium leading-relaxed">
                     On your Instagram profile, click Edit Profile &gt; Public Business Information &gt; Page. Select or create a Facebook Page to link.
                   </p>
@@ -727,13 +726,13 @@ const Settings: React.FC = () => {
               </div>
 
               <div className="flex gap-4 items-start">
-                <div className="w-10 h-10 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center shrink-0 border border-blue-100 shadow-sm font-bold">
+                <div className="w-10 h-10 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center shrink-0 border border-blue-100 shadow-sm font-semibold">
                   3
                 </div>
                 <div className="pt-1">
-                  <h4 className="font-bold text-zinc-900 text-sm mb-1">Allow Message Access</h4>
+                  <h4 className="font-medium text-zinc-900 text-sm mb-1">Allow Message Access</h4>
                   <p className="text-sm text-zinc-500 font-medium leading-relaxed">
-                    In Instagram Settings &gt; Privacy &gt; Messages. Scroll to the bottom and turn <strong className="text-emerald-600 font-bold uppercase text-[10px] bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200 ml-1">On</strong> the "Allow Access to Messages" toggle.
+                    In Instagram Settings &gt; Privacy &gt; Messages. Scroll to the bottom and turn <strong className="text-emerald-600 font-medium uppercase text-[13px] bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200 ml-1">On</strong> the "Allow Access to Messages" toggle.
                   </p>
                 </div>
               </div>
@@ -743,14 +742,14 @@ const Settings: React.FC = () => {
             <div className="px-6 py-4 bg-zinc-50 border-t border-zinc-200 flex flex-col sm:flex-row gap-3">
               <button 
                 onClick={handleConnect}
-                className="flex-1 px-4 py-2.5 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700 transition-colors shadow-sm flex items-center justify-center gap-2 text-sm"
+                className="flex-1 px-4 py-2.5 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors shadow-sm flex items-center justify-center gap-2 text-sm"
               >
                 <CheckCircle2 size={18} />
                 <span>I've Completed These Steps</span>
               </button>
               <button 
                  onClick={() => setShowGuide(false)}
-                 className="flex-1 sm:flex-none px-4 py-2.5 bg-white border border-zinc-300 text-zinc-700 rounded-lg font-bold hover:bg-zinc-50 transition-colors shadow-sm text-sm"
+                 className="flex-1 sm:flex-none px-4 py-2.5 bg-white border border-zinc-300 text-zinc-700 rounded-lg font-medium hover:bg-zinc-50 transition-colors shadow-sm text-sm"
               >
                 Cancel
               </button>

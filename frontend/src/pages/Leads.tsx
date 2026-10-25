@@ -1,17 +1,39 @@
 import React, { useState, useEffect } from 'react';
 import { getLeads } from '../api/crm.api';
 import type { Lead } from '../models/crm.models';
-import { Search, Filter, ExternalLink, Calendar, MessageCircle, MoreHorizontal, Download, X, Sparkles, Tag, BrainCircuit } from 'lucide-react';
+import { Search, ExternalLink, Loader2, X, RefreshCw } from 'lucide-react';
+
+const STATUS_FILTERS = ['All', 'New', 'Hot', 'Handoff', 'Buyer', 'Lost'] as const;
+
+const statusChipClass = (status?: string) => {
+  switch (status) {
+    case 'Buyer': return 'chip chip-go';
+    case 'Hot': return 'chip chip-accent';
+    case 'Needs_Human': return 'chip chip-stop';
+    case 'Handoff': return 'chip chip-ink';
+    case 'Lost': return 'chip';
+    default: return 'chip';
+  }
+};
 
 const Leads: React.FC = () => {
   const [leads, setLeads] = useState<Lead[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState<typeof STATUS_FILTERS[number]>('All');
   const [isLoading, setIsLoading] = useState(true);
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
 
   useEffect(() => {
     fetchLeads();
   }, []);
+
+  // Escape closes the detail panel, so the keyboard alone gets you back out.
+  useEffect(() => {
+    if (!selectedLead) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setSelectedLead(null); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [selectedLead]);
 
   const fetchLeads = async () => {
     try {
@@ -25,231 +47,235 @@ const Leads: React.FC = () => {
     }
   };
 
-  const filteredLeads = leads.filter(lead => 
-    lead.customer_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    lead.instagram_handle.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredLeads = leads.filter(lead => {
+    const matchesSearch =
+      lead.customer_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      lead.instagram_handle.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStatus = statusFilter === 'All' || lead.lead_status === statusFilter;
+    return matchesSearch && matchesStatus;
+  });
 
   return (
-    <div className="max-w-7xl mx-auto pb-12 font-sans animate-in fade-in duration-500" style={{ fontFamily: '"Inter", system-ui, sans-serif' }}>
-      
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8 border-b border-zinc-200/80 pb-6">
+    <div className="page">
+      <div className="page-head">
         <div>
-          <h1 className="text-2xl font-bold text-zinc-900 tracking-tight mb-2">Lead Intelligence</h1>
-          <p className="text-sm text-zinc-500 font-medium">Manage and track your AI-discovered Instagram pipeline.</p>
+          <h1 className="page-title">Leads</h1>
+          <p className="page-sub">Everyone the assistant has talked to, scored by how close they are to buying.</p>
         </div>
-        
-        <div className="flex flex-col sm:flex-row gap-3">
-          <div className="relative group">
-            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 group-focus-within:text-violet-500 transition-colors" />
-            <input 
-              type="text" 
-              placeholder="Search leads..." 
+
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="relative">
+            <Search size={15} className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-ink-faint" />
+            <input
+              type="search"
+              placeholder="Search name or handle"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full sm:w-64 bg-white border border-zinc-200 rounded-lg pl-9 pr-4 py-2.5 text-sm font-medium text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 transition-all shadow-sm"
+              className="field w-full pl-8 sm:w-64"
+              aria-label="Search leads"
             />
           </div>
-          <button onClick={fetchLeads} className="flex items-center justify-center gap-2 px-4 py-2.5 bg-white border border-zinc-200 rounded-lg text-zinc-700 font-semibold hover:bg-zinc-50 hover:border-zinc-300 transition-all shadow-sm">
-            <Filter size={16} />
-            <span>Filter</span>
-          </button>
-          <button className="flex items-center justify-center gap-2 px-4 py-2.5 bg-zinc-900 text-white rounded-lg font-semibold hover:bg-zinc-800 transition-all shadow-sm">
-            <Download size={16} />
-            <span className="hidden sm:inline">Export</span>
+          <button onClick={fetchLeads} className="btn" disabled={isLoading}>
+            <RefreshCw size={15} className={isLoading ? 'animate-spin' : undefined} />
+            Refresh
           </button>
         </div>
       </div>
 
-      {/* Main Table Card */}
-      <div className="bg-white border border-zinc-200/80 rounded-2xl shadow-sm overflow-hidden flex flex-col relative">
-        <div className="overflow-x-auto flex-grow">
-          <table className="w-full text-left border-collapse whitespace-nowrap">
+      {/* Filters are the content's own statuses, so they double as a legend. */}
+      <div className="mb-4 flex flex-wrap items-center gap-1.5">
+        {STATUS_FILTERS.map(status => {
+          const count = status === 'All' ? leads.length : leads.filter(l => l.lead_status === status).length;
+          const isActive = statusFilter === status;
+          return (
+            <button
+              key={status}
+              onClick={() => setStatusFilter(status)}
+              aria-pressed={isActive}
+              className={`rounded-[6px] border px-2.5 py-1 text-[13px] transition-colors ${
+                isActive
+                  ? 'border-ink bg-ink text-surface'
+                  : 'border-hairline bg-surface text-ink-soft hover:border-[color:var(--hairline-strong)] hover:text-ink'
+              }`}
+            >
+              {status} <span className={isActive ? 'opacity-70' : 'text-ink-faint'}>{count}</span>
+            </button>
+          );
+        })}
+      </div>
+
+      <div className="surface overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="data-table">
             <thead>
-              <tr className="bg-zinc-50/50 border-b border-zinc-200/80">
-                <th className="px-6 py-4 text-[11px] font-bold text-zinc-500 uppercase tracking-wider">Customer Profile</th>
-                <th className="px-6 py-4 text-[11px] font-bold text-zinc-500 uppercase tracking-wider">Pipeline Status</th>
-                <th className="px-6 py-4 text-[11px] font-bold text-zinc-500 uppercase tracking-wider">AI Score</th>
-                <th className="px-6 py-4 text-[11px] font-bold text-zinc-500 uppercase tracking-wider">Detected Intent</th>
-                <th className="px-6 py-4 text-[11px] font-bold text-zinc-500 uppercase tracking-wider text-right">Actions</th>
+              <tr>
+                <th>Customer</th>
+                <th>Status</th>
+                <th>Handled by</th>
+                <th>Last intent</th>
+                <th className="num">Score</th>
+                <th />
               </tr>
             </thead>
-            <tbody className="divide-y divide-zinc-100">
+            <tbody>
               {isLoading ? (
                 <tr>
-                  <td colSpan={5} className="py-24">
-                    <div className="flex flex-col items-center justify-center gap-4 text-zinc-500">
-                      <div className="w-8 h-8 border-4 border-violet-200 border-t-violet-600 rounded-full animate-spin"></div>
-                      <span className="text-sm font-medium">Syncing CRM Data...</span>
+                  <td colSpan={6}>
+                    <div className="flex items-center justify-center gap-2.5 py-16 text-ink-soft">
+                      <Loader2 size={16} className="animate-spin" />
+                      <span>Loading leads</span>
                     </div>
                   </td>
                 </tr>
               ) : filteredLeads.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="py-24 text-center">
-                    <div className="flex flex-col items-center justify-center">
-                      <div className="w-16 h-16 bg-zinc-50 rounded-2xl flex items-center justify-center mb-4 border border-zinc-100">
-                        <Search size={24} className="text-zinc-400" />
-                      </div>
-                      <h3 className="text-base font-bold text-zinc-900 mb-1">No leads found</h3>
-                      <p className="text-sm text-zinc-500 font-medium">Connect your Instagram account or adjust search filters.</p>
+                  <td colSpan={6}>
+                    <div className="empty">
+                      <p className="empty-title">
+                        {leads.length === 0 ? 'No leads yet' : 'Nothing matches that'}
+                      </p>
+                      <p className="empty-body">
+                        {leads.length === 0
+                          ? 'Leads appear here as soon as someone messages your Instagram account.'
+                          : 'Clear the search or pick a different status.'}
+                      </p>
                     </div>
                   </td>
                 </tr>
               ) : filteredLeads.map((lead) => (
-                <tr key={lead.id} className="hover:bg-zinc-50 transition-colors duration-200 group cursor-pointer" onClick={() => setSelectedLead(lead)}>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 rounded-full bg-violet-100 flex items-center justify-center text-violet-700 font-bold text-sm border border-violet-200 shadow-sm shrink-0">
-                        {lead.customer_name[0]}
-                      </div>
-                      <div className="flex flex-col">
-                        <span className="font-bold text-zinc-900 group-hover:text-violet-600 transition-colors">{lead.customer_name}</span>
-                        <span className="text-xs text-zinc-500 font-medium mt-0.5">@{lead.instagram_handle}</span>
+                <tr
+                  key={lead.id}
+                  className="cursor-pointer"
+                  onClick={() => setSelectedLead(lead)}
+                >
+                  <td>
+                    <div className="flex items-center gap-3">
+                      <span className="avatar-initial">{lead.customer_name[0]}</span>
+                      <div className="min-w-0">
+                        <div className="truncate font-medium">{lead.customer_name}</div>
+                        <div className="truncate text-[13px] text-ink-soft">@{lead.instagram_handle}</div>
                       </div>
                     </div>
                   </td>
-                  <td className="px-6 py-4">
-                    <span className={`px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider border
-                      ${lead.lead_status === 'Hot' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 
-                        lead.lead_status === 'Buyer' ? 'bg-blue-50 text-blue-700 border-blue-200' :
-                        lead.lead_status === 'Lost' ? 'bg-rose-50 text-rose-700 border-rose-200' :
-                        'bg-zinc-100 text-zinc-600 border-zinc-200'}`}>
-                      {lead.lead_status}
+                  <td>
+                    <span className={statusChipClass(lead.lead_status)}>
+                      {String(lead.lead_status || 'New').replace(/_/g, ' ')}
                     </span>
                   </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-3 w-32">
-                      <div className="h-2 w-full bg-zinc-100 rounded-full overflow-hidden">
-                        <div 
-                          className="h-full bg-violet-500 rounded-full transition-all duration-1000" 
-                          style={{ width: `${Math.min(Number(lead.lead_score || 0) * 10, 100)}%` }}
-                        />
-                      </div>
-                      <span className="text-xs font-bold text-zinc-700">{Number(lead.lead_score || 0).toFixed(0)}</span>
+                  <td>
+                    <span className={lead.human_agent_active ? 'chip chip-ink' : 'chip chip-accent'}>
+                      {lead.human_agent_active ? 'Your team' : 'Assistant'}
+                    </span>
+                  </td>
+                  <td className="max-w-[220px] truncate text-ink-soft">{lead.last_intent || '—'}</td>
+                  <td className="num">
+                    <div className="flex items-center justify-end gap-2.5">
+                      <span className="meter w-16 shrink-0">
+                        <span style={{ width: `${Math.min(Number(lead.lead_score || 0) * 10, 100)}%` }} />
+                      </span>
+                      <span className="w-4 text-right font-medium">{Number(lead.lead_score || 0).toFixed(0)}</span>
                     </div>
                   </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-2 text-zinc-600 font-medium text-sm">
-                      <MessageCircle size={14} className="text-zinc-400" />
-                      <span className="truncate max-w-[150px]">{lead.last_intent || 'General Inquiry'}</span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <button 
-                        onClick={(e) => { e.stopPropagation(); setSelectedLead(lead); }}
-                        className="p-2 bg-white border border-zinc-200 rounded-lg text-zinc-500 hover:text-violet-600 hover:border-violet-200 hover:bg-violet-50 transition-all shadow-sm" title="View Intelligence"
-                      >
-                        <ExternalLink size={16} />
-                      </button>
-                      <button 
-                        onClick={(e) => e.stopPropagation()}
-                        className="p-2 bg-white border border-zinc-200 rounded-lg text-zinc-500 hover:text-zinc-900 hover:bg-zinc-50 transition-all shadow-sm"
-                      >
-                        <MoreHorizontal size={16} />
-                      </button>
-                    </div>
+                  <td className="w-10 text-right">
+                    <span className="text-ink-faint"><ExternalLink size={15} /></span>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
-        
-        {/* Pagination/Footer (Mocked for structure) */}
+
         {!isLoading && filteredLeads.length > 0 && (
-          <div className="px-6 py-4 border-t border-zinc-100 bg-zinc-50/50 flex justify-between items-center text-xs font-medium text-zinc-500">
-            <span>Showing {filteredLeads.length} leads</span>
-            <div className="flex gap-2">
-              <button className="px-3 py-1.5 border border-zinc-200 rounded-md bg-white hover:bg-zinc-50 disabled:opacity-50">Previous</button>
-              <button className="px-3 py-1.5 border border-zinc-200 rounded-md bg-white hover:bg-zinc-50 disabled:opacity-50">Next</button>
-            </div>
+          <div className="border-t border-hairline px-4 py-2.5 text-[13px] text-ink-soft">
+            {filteredLeads.length === leads.length
+              ? `${leads.length} ${leads.length === 1 ? 'lead' : 'leads'}`
+              : `${filteredLeads.length} of ${leads.length} leads`}
           </div>
         )}
       </div>
 
-      {/* Slide-over or Modal for Lead Intelligence */}
       {selectedLead && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-zinc-900/40 backdrop-blur-sm animate-in fade-in duration-200" onClick={() => setSelectedLead(null)}>
-          <div className="w-full max-w-2xl bg-white border border-zinc-200 rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300" onClick={e => e.stopPropagation()}>
-            
-            {/* Modal Header */}
-            <div className="px-6 py-5 border-b border-zinc-100 flex justify-between items-center bg-zinc-50/50">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-violet-100 flex items-center justify-center text-violet-700 font-bold text-xl border border-violet-200 shadow-sm shrink-0">
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-ink/45 p-4"
+          onClick={() => setSelectedLead(null)}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="lead-name"
+            className="surface-lifted w-full max-w-xl overflow-hidden"
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="flex items-start justify-between gap-4 border-b border-hairline p-5">
+              <div className="flex items-center gap-3">
+                <span className="avatar-initial" style={{ width: 42, height: 42, fontSize: 17 }}>
                   {selectedLead.customer_name[0]}
-                </div>
+                </span>
                 <div>
-                  <h2 className="text-lg font-bold text-zinc-900">{selectedLead.customer_name}</h2>
-                  <p className="text-xs text-zinc-500 font-medium">@{selectedLead.instagram_handle}</p>
+                  <h2 id="lead-name" className="font-display text-[20px] font-semibold text-ink">
+                    {selectedLead.customer_name}
+                  </h2>
+                  <p className="text-[13px] text-ink-soft">@{selectedLead.instagram_handle}</p>
                 </div>
               </div>
-              <button 
-                onClick={() => setSelectedLead(null)}
-                className="p-2 text-zinc-400 hover:text-zinc-600 hover:bg-zinc-100 rounded-full transition-colors"
-              >
-                <X size={20} />
+              <button onClick={() => setSelectedLead(null)} className="btn btn-quiet btn-icon" aria-label="Close">
+                <X size={16} />
               </button>
             </div>
-            
-            <div className="p-6 md:p-8 space-y-8 overflow-y-auto max-h-[70vh]">
-              
-              {/* Stats Row */}
-              <div className="grid grid-cols-2 gap-4">
-                <div className="p-5 rounded-2xl bg-zinc-50 border border-zinc-100 flex flex-col justify-center">
-                  <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-1 flex items-center gap-1.5"><BrainCircuit size={12}/> AI Health Score</p>
-                  <p className="text-3xl font-extrabold text-zinc-900 tracking-tight">{Number(selectedLead.lead_score || 0).toFixed(0)}<span className="text-sm text-zinc-400 font-medium ml-1">/ 10</span></p>
+
+            <div className="max-h-[66vh] overflow-y-auto p-5">
+              <div className="stat-row mb-5">
+                <div className="stat">
+                  <span className="stat-label">Score</span>
+                  <span className="stat-figure">
+                    {Number(selectedLead.lead_score || 0).toFixed(0)}
+                    <span className="text-[17px] font-normal text-ink-faint"> / 10</span>
+                  </span>
                 </div>
-                <div className="p-5 rounded-2xl bg-violet-50 border border-violet-100 flex flex-col justify-center">
-                  <p className="text-[10px] font-bold text-violet-600 uppercase tracking-widest mb-1 flex items-center gap-1.5"><Sparkles size={12}/> Detected Intent</p>
-                  <p className="text-xl font-bold text-violet-900 capitalize truncate">{selectedLead.last_intent || 'General Enquiry'}</p>
+                <div className="stat">
+                  <span className="stat-label">Status</span>
+                  <span className="mt-1 block">
+                    <span className={statusChipClass(selectedLead.lead_status)}>
+                      {String(selectedLead.lead_status || 'New').replace(/_/g, ' ')}
+                    </span>
+                  </span>
+                </div>
+                <div className="stat">
+                  <span className="stat-label">Last intent</span>
+                  <span className="mt-1.5 block text-[15px] text-ink">{selectedLead.last_intent || '—'}</span>
                 </div>
               </div>
 
-              {/* Summary Section */}
-              <div className="space-y-3">
-                <h3 className="text-xs font-bold text-zinc-900 uppercase tracking-wider">Conversation Summary</h3>
-                <div className="p-5 rounded-xl bg-white border border-zinc-200 text-zinc-700 leading-relaxed font-medium text-sm shadow-sm">
-                  {selectedLead.conversation_summary || "The AI is currently analyzing this conversation. A detailed semantic summary will appear after more interactions are recorded."}
-                </div>
-              </div>
+              <h3 className="section-title mb-2 text-[17px]">What they talked about</h3>
+              <p className="prose-measure mb-6 text-[15px] leading-relaxed text-ink-soft">
+                {selectedLead.conversation_summary ||
+                  'No summary yet. The assistant writes one once the conversation has a few messages in it.'}
+              </p>
 
-              {/* Tags */}
               {selectedLead.tags && selectedLead.tags.length > 0 && (
-                <div className="space-y-3">
-                  <h3 className="text-xs font-bold text-zinc-900 uppercase tracking-wider flex items-center gap-1.5"><Tag size={14} className="text-zinc-400"/> CRM Tags</h3>
-                  <div className="flex flex-wrap gap-2">
+                <>
+                  <h3 className="section-title mb-2 text-[17px]">Tags</h3>
+                  <div className="flex flex-wrap gap-1.5">
                     {selectedLead.tags.map((tag, idx) => (
-                      <span key={idx} className="px-2.5 py-1 bg-zinc-100 text-zinc-700 text-[11px] font-bold uppercase tracking-wider rounded border border-zinc-200">
-                        {tag}
-                      </span>
+                      <span key={idx} className="chip">{tag}</span>
                     ))}
                   </div>
-                </div>
+                </>
               )}
             </div>
 
-            {/* Modal Footer */}
-            <div className="px-6 py-4 bg-zinc-50 border-t border-zinc-200 flex flex-col sm:flex-row justify-between items-center gap-4">
-              <div className="flex items-center gap-2 text-zinc-500 text-xs font-medium">
-                <Calendar size={14} />
-                <span>Last engaged: {new Date(selectedLead.last_message_time || Date.now()).toLocaleDateString()}</span>
-              </div>
-              <div className="flex gap-3 w-full sm:w-auto">
-                <button 
-                  onClick={() => setSelectedLead(null)}
-                  className="flex-1 sm:flex-none px-4 py-2 bg-white border border-zinc-300 rounded-lg text-zinc-700 font-bold hover:bg-zinc-50 transition-all shadow-sm text-sm"
+            <div className="flex flex-wrap items-center justify-between gap-3 border-t border-hairline p-4">
+              <span className="text-[13px] text-ink-soft">
+                Last message {new Date(selectedLead.last_message_time || Date.now()).toLocaleDateString()}
+              </span>
+              <div className="flex gap-2">
+                <button onClick={() => setSelectedLead(null)} className="btn">Close</button>
+                <button
+                  onClick={() => window.open(`https://instagram.com/${selectedLead.instagram_handle}`, '_blank', 'noopener')}
+                  className="btn btn-primary"
                 >
-                  Close
-                </button>
-                <button 
-                  onClick={() => window.open(`https://instagram.com/direct/t/${selectedLead.instagram_handle}`, '_blank')}
-                  className="flex-1 sm:flex-none px-4 py-2 bg-zinc-900 rounded-lg text-white font-bold hover:bg-zinc-800 transition-all flex items-center justify-center gap-2 shadow-sm text-sm"
-                >
-                  <ExternalLink size={16} />
-                  Open in Instagram
+                  <ExternalLink size={15} />
+                  Open on Instagram
                 </button>
               </div>
             </div>

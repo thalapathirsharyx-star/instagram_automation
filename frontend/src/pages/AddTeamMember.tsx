@@ -42,7 +42,7 @@ const AddTeamMember: React.FC = () => {
             <Link to="/team" className="p-2 -ml-2 text-zinc-500 hover:text-zinc-900 transition-colors rounded-lg hover:bg-zinc-100">
               <ArrowLeft size={20} />
             </Link>
-            <h1 className="text-3xl font-bold text-zinc-900">Add Team Member</h1>
+            <h1 className="page-title">Add a teammate</h1>
           </div>
           <p className="text-zinc-500 font-medium">Invite a new user to your workspace.</p>
         </div>
@@ -54,11 +54,11 @@ const AddTeamMember: React.FC = () => {
             <div className="p-2.5 bg-zinc-100 text-zinc-700 rounded-xl border border-zinc-200">
               <UserPlus size={20} />
             </div>
-            <h3 className="text-lg font-bold text-zinc-900">Member Details</h3>
+            <h3 className="text-lg font-semibold text-zinc-900">Member Details</h3>
           </div>
 
           {error && (
-            <div className="mb-6 p-3 bg-red-50 border border-red-200 rounded-xl text-xs text-red-600 font-bold flex gap-2 items-start">
+            <div className="mb-6 p-3 bg-red-50 border border-red-200 rounded-xl text-xs text-red-600 font-medium flex gap-2 items-start">
               <ShieldAlert size={14} className="shrink-0 mt-0.5" />
               {error}
             </div>
@@ -66,7 +66,7 @@ const AddTeamMember: React.FC = () => {
 
           <form onSubmit={handleInvite} className="space-y-5">
             <div>
-              <label className="block text-xs font-bold text-zinc-500 mb-1.5 uppercase tracking-wider">First Name</label>
+              <label className="block text-xs font-medium text-zinc-500 mb-1.5">First Name</label>
               <input 
                 required
                 type="text" 
@@ -77,7 +77,7 @@ const AddTeamMember: React.FC = () => {
               />
             </div>
             <div>
-              <label className="block text-xs font-bold text-zinc-500 mb-1.5 uppercase tracking-wider">Last Name</label>
+              <label className="block text-xs font-medium text-zinc-500 mb-1.5">Last Name</label>
               <input 
                 type="text" 
                 value={formData.last_name}
@@ -87,7 +87,7 @@ const AddTeamMember: React.FC = () => {
               />
             </div>
             <div>
-              <label className="block text-xs font-bold text-zinc-500 mb-1.5 uppercase tracking-wider">Email Address</label>
+              <label className="block text-xs font-medium text-zinc-500 mb-1.5">Email Address</label>
               <input 
                 required
                 type="email" 
@@ -98,7 +98,7 @@ const AddTeamMember: React.FC = () => {
               />
             </div>
             <div>
-              <label className="block text-xs font-bold text-zinc-500 mb-1.5 uppercase tracking-wider">Temporary Password</label>
+              <label className="block text-xs font-medium text-zinc-500 mb-1.5">Temporary Password</label>
               <div className="relative">
                 <input 
                   required
@@ -122,7 +122,7 @@ const AddTeamMember: React.FC = () => {
             <button 
               type="submit" 
               disabled={isInviting}
-              className="w-full mt-6 py-3 bg-zinc-900 text-white font-bold text-sm rounded-xl hover:bg-zinc-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm flex items-center justify-center gap-2"
+              className="w-full mt-6 py-3 bg-zinc-900 text-white font-medium text-sm rounded-xl hover:bg-zinc-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm flex items-center justify-center gap-2"
             >
               {isInviting ? 'Adding...' : 'Add Team Member'}
             </button>

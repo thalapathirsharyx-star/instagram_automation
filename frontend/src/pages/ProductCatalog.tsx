@@ -253,7 +253,7 @@ const ProductCatalog: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between sm:items-end gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-zinc-100 mb-2">Product Catalog</h1>
+          <h1 className="page-title">Product catalogue</h1>
           <p className="text-zinc-400 font-medium">Manage your products, live stock, and variants. Your AI automatically queries this catalog in real-time to answer user requests in Instagram DMs.</p>
         </div>
         <button 
@@ -277,7 +277,7 @@ const ProductCatalog: React.FC = () => {
             className="w-full bg-zinc-950 border border-white/5 rounded-xl pl-11 pr-4 py-2.5 text-sm text-zinc-100 focus:outline-none focus:border-purple-500/50 transition-all font-medium"
           />
         </div>
-        <div className="flex items-center gap-4 text-xs font-bold text-zinc-400">
+        <div className="flex items-center gap-4 text-xs font-medium text-zinc-400">
           <span>TOTAL PRODUCTS: {products.length}</span>
           <span className="text-zinc-600">|</span>
           <span>OUT OF STOCK: {products.filter(p => p.stock_quantity === 0).length}</span>
@@ -297,7 +297,7 @@ const ProductCatalog: React.FC = () => {
                 <ShoppingBag size={48} className="text-purple-500/50" />
               </div>
               <div className="max-w-md">
-                <h3 className="text-2xl font-bold text-zinc-100 mb-3">No products found</h3>
+                <h3 className="text-2xl font-semibold text-zinc-100 mb-3">No products found</h3>
                 <p className="text-zinc-400 font-medium leading-relaxed mb-10">
                   {searchQuery ? "No products match your search query." : "You haven't added any products to your catalog yet. Click the button above to add your first product."}
                 </p>
@@ -344,22 +344,22 @@ const ProductCatalog: React.FC = () => {
                         ) : (
                           <div className="flex flex-col items-center gap-2 text-zinc-600">
                             <Image size={32} />
-                            <span className="text-[10px] font-bold uppercase tracking-wider">No Image</span>
+                            <span className="text-[13px] font-medium">No Image</span>
                           </div>
                         )}
                         
                         {/* Status Stock Badge */}
                         <div className="absolute top-3 right-3">
                           {outOfStock ? (
-                            <span className="text-[9px] font-extrabold text-rose-400 bg-rose-950/80 border border-rose-500/30 px-2.5 py-1 rounded-md uppercase tracking-wider">
+                            <span className="text-[13px] font-semibold text-rose-400 bg-rose-950/80 border border-rose-500/30 px-2.5 py-1 rounded-md">
                               Out of Stock
                             </span>
                           ) : lowStock ? (
-                            <span className="text-[9px] font-extrabold text-amber-400 bg-amber-950/80 border border-amber-500/30 px-2.5 py-1 rounded-md uppercase tracking-wider">
+                            <span className="text-[13px] font-semibold text-amber-400 bg-amber-950/80 border border-amber-500/30 px-2.5 py-1 rounded-md">
                               Low Stock ({product.stock_quantity})
                             </span>
                           ) : (
-                            <span className="text-[9px] font-extrabold text-emerald-400 bg-emerald-950/80 border border-emerald-500/30 px-2.5 py-1 rounded-md uppercase tracking-wider">
+                            <span className="text-[13px] font-semibold text-emerald-400 bg-emerald-950/80 border border-emerald-500/30 px-2.5 py-1 rounded-md">
                               In Stock ({product.stock_quantity})
                             </span>
                           )}
@@ -368,16 +368,16 @@ const ProductCatalog: React.FC = () => {
 
                       {/* SKU and Price */}
                       <div className="flex justify-between items-center mb-2">
-                        <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest flex items-center gap-1.5">
+                        <span className="text-[13px] font-medium text-zinc-500 flex items-center gap-1.5">
                           <Package size={10} /> SKU: {product.sku || 'N/A'}
                         </span>
-                        <span className="text-base font-extrabold text-zinc-100 flex items-center gap-0.5">
+                        <span className="text-base font-semibold text-zinc-100 flex items-center gap-0.5">
                           <DollarSign size={14} className="text-purple-400" />
                           {product.price}
                         </span>
                       </div>
                       
-                      <h3 className="text-lg font-bold text-zinc-100 mb-2 group-hover:text-purple-400 transition-colors line-clamp-1">
+                      <h3 className="text-lg font-semibold text-zinc-100 mb-2 group-hover:text-purple-400 transition-colors line-clamp-1">
                         {product.name}
                       </h3>
                       
@@ -392,9 +392,9 @@ const ProductCatalog: React.FC = () => {
                         <div className="flex flex-col gap-2 pt-2 border-t border-white/5 mb-4">
                           {parsedVariants.sizes.length > 0 && (
                             <div className="flex items-center gap-2 flex-wrap">
-                              <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Sizes:</span>
+                              <span className="text-[13px] font-medium text-zinc-500">Sizes:</span>
                               {parsedVariants.sizes.map((s, idx) => (
-                                <span key={idx} className="text-[9px] font-bold bg-zinc-800 text-zinc-300 border border-white/5 px-2 py-0.5 rounded">
+                                <span key={idx} className="text-[13px] font-medium bg-zinc-800 text-zinc-300 border border-white/5 px-2 py-0.5 rounded">
                                   {s}
                                 </span>
                               ))}
@@ -402,9 +402,9 @@ const ProductCatalog: React.FC = () => {
                           )}
                           {parsedVariants.colors.length > 0 && (
                             <div className="flex items-center gap-2 flex-wrap">
-                              <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Colors:</span>
+                              <span className="text-[13px] font-medium text-zinc-500">Colors:</span>
                               {parsedVariants.colors.map((c, idx) => (
-                                <span key={idx} className="text-[9px] font-bold bg-zinc-800 text-zinc-300 border border-white/5 px-2 py-0.5 rounded">
+                                <span key={idx} className="text-[13px] font-medium bg-zinc-800 text-zinc-300 border border-white/5 px-2 py-0.5 rounded">
                                   {c}
                                 </span>
                               ))}
@@ -415,7 +415,7 @@ const ProductCatalog: React.FC = () => {
                     </div>
 
                     <div className="pt-4 border-t border-white/5 flex justify-between items-center mt-auto">
-                      <div className="flex items-center gap-1 text-[9px] font-bold text-purple-400 bg-purple-500/10 border border-purple-500/20 px-2.5 py-1 rounded-full">
+                      <div className="flex items-center gap-1 text-[13px] font-medium text-purple-400 bg-purple-500/10 border border-purple-500/20 px-2.5 py-1 rounded-full">
                         <Tag size={10} /> AI INVENTORY SYNCED
                       </div>
                       <div className="flex items-center gap-2">
@@ -448,7 +448,7 @@ const ProductCatalog: React.FC = () => {
             {/* Modal Header */}
             <div className="p-6 border-b border-white/5 flex justify-between items-center">
               <div>
-                <h3 className="text-xl font-bold text-white">
+                <h3 className="text-xl font-semibold text-white">
                   {editingProduct ? 'Edit Product' : 'Add New Product'}
                 </h3>
                 <p className="text-xs text-zinc-400 font-medium mt-1">
@@ -467,7 +467,7 @@ const ProductCatalog: React.FC = () => {
             <form onSubmit={handleSaveProduct} className="p-6 space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="flex flex-col gap-2">
-                  <label className="text-xs font-bold text-zinc-300 uppercase tracking-wider">Product Name *</label>
+                  <label className="text-xs font-medium text-zinc-300">Product Name *</label>
                   <input
                     type="text"
                     required
@@ -480,11 +480,11 @@ const ProductCatalog: React.FC = () => {
 
                 <div className="flex flex-col gap-2">
                   <div className="flex justify-between items-center">
-                    <label className="text-xs font-bold text-zinc-300 uppercase tracking-wider">SKU (Stock Keeping Unit)</label>
+                    <label className="text-xs font-medium text-zinc-300">SKU (Stock Keeping Unit)</label>
                     <button
                       type="button"
                       onClick={generateRandomSku}
-                      className="text-[10px] text-purple-400 hover:text-purple-300 font-bold uppercase tracking-wider cursor-pointer"
+                      className="text-[13px] text-purple-400 hover:text-purple-300 font-medium cursor-pointer"
                     >
                       Auto-Generate
                     </button>
@@ -501,7 +501,7 @@ const ProductCatalog: React.FC = () => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="flex flex-col gap-2">
-                  <label className="text-xs font-bold text-zinc-300 uppercase tracking-wider">Price ($) *</label>
+                  <label className="text-xs font-medium text-zinc-300">Price ($) *</label>
                   <input
                     type="number"
                     step="0.01"
@@ -514,7 +514,7 @@ const ProductCatalog: React.FC = () => {
                 </div>
 
                 <div className="flex flex-col gap-2">
-                  <label className="text-xs font-bold text-zinc-300 uppercase tracking-wider">
+                  <label className="text-xs font-medium text-zinc-300">
                     Stock Quantity {variantsList.length > 0 && '(Sum of variants)'}
                   </label>
                   <input
@@ -529,7 +529,7 @@ const ProductCatalog: React.FC = () => {
               </div>
 
               <div className="flex flex-col gap-2">
-                <label className="text-xs font-bold text-zinc-300 uppercase tracking-wider">Description</label>
+                <label className="text-xs font-medium text-zinc-300">Description</label>
                 <textarea
                   rows={3}
                   placeholder="Describe the product details (e.g. material, fit, features) for the AI assistant..."
@@ -543,16 +543,16 @@ const ProductCatalog: React.FC = () => {
               <div className="bg-zinc-950/50 border border-white/10 p-5 rounded-2xl space-y-4">
                 <div className="flex justify-between items-center">
                   <div>
-                    <h4 className="text-sm font-bold text-zinc-100 uppercase tracking-wider flex items-center gap-2">
+                    <h4 className="text-sm font-medium text-zinc-100 flex items-center gap-2">
                       <Layers size={16} className="text-purple-600 dark:text-purple-400" />
                       Product Variants
                     </h4>
-                    <p className="text-[11px] text-zinc-400 font-medium mt-0.5">Add specific combinations of size, color, and stock quantity.</p>
+                    <p className="text-[13px] text-zinc-400 font-medium mt-0.5">Add specific combinations of size, color, and stock quantity.</p>
                   </div>
                   <button
                     type="button"
                     onClick={addVariantRow}
-                    className="text-xs font-bold flex items-center gap-1 bg-purple-500/10 border border-purple-500/20 text-purple-600 dark:text-purple-400 hover:bg-purple-500/20 px-3.5 py-2 rounded-xl cursor-pointer transition-all"
+                    className="text-xs font-medium flex items-center gap-1 bg-purple-500/10 border border-purple-500/20 text-purple-600 dark:text-purple-400 hover:bg-purple-500/20 px-3.5 py-2 rounded-xl cursor-pointer transition-all"
                   >
                     <Plus size={14} /> Add Row
                   </button>
@@ -561,7 +561,7 @@ const ProductCatalog: React.FC = () => {
                 {variantsList.length > 0 ? (
                   <div className="space-y-3.5 max-h-72 overflow-y-auto premium-scroll pr-1">
                     {/* Header Row */}
-                    <div className="flex items-center gap-3 px-3 text-[10px] font-bold text-zinc-500 uppercase tracking-wider">
+                    <div className="flex items-center gap-3 px-3 text-[13px] font-medium text-zinc-500">
                       <div className="flex-[2] min-w-[100px] pl-1">Size</div>
                       <div className="flex-[2] min-w-[100px] pl-1">Color</div>
                       <div className="w-24 text-center">Stock</div>
@@ -612,13 +612,13 @@ const ProductCatalog: React.FC = () => {
                   </div>
                 ) : (
                   <div className="text-center py-8 border border-dashed border-white/10 rounded-2xl bg-zinc-950/20">
-                    <p className="text-xs text-zinc-500 font-medium">No variants added. This product will have a single global stock quantity.</p>
+                    <p className="page-sub">No variants added. This product will have a single global stock quantity.</p>
                   </div>
                 )}
               </div>
 
               <div className="flex flex-col gap-2">
-                <label className="text-xs font-bold text-zinc-300 uppercase tracking-wider">Product Image URL</label>
+                <label className="text-xs font-medium text-zinc-300">Product Image URL</label>
                 <input
                   type="text"
                   placeholder="e.g. https://example.com/images/jacket.jpg"
@@ -632,7 +632,7 @@ const ProductCatalog: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-6 py-3 bg-zinc-800 text-zinc-300 rounded-xl font-bold hover:bg-zinc-700 hover:text-white transition-all cursor-pointer text-sm"
+                  className="px-6 py-3 bg-zinc-800 text-zinc-300 rounded-xl font-medium hover:bg-zinc-700 hover:text-white transition-all cursor-pointer text-sm"
                 >
                   Cancel
                 </button>

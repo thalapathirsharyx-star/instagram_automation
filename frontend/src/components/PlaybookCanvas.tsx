@@ -25,11 +25,11 @@ const TriggerNode = ({ data, isConnectable }: any) => (
   <div className="bg-white dark:bg-zinc-900 border-2 border-sky-400/50 rounded-xl shadow-lg w-72">
     <div className="bg-sky-500/10 px-4 py-2 rounded-t-lg border-b border-sky-500/20 flex items-center gap-2">
       <Play size={14} className="text-sky-500" />
-      <span className="text-xs font-bold text-sky-600 dark:text-sky-400 uppercase tracking-wider">Trigger</span>
+      <span className="text-xs font-medium text-sky-600 dark:text-sky-400">Trigger</span>
     </div>
     <div className="p-4 flex flex-col gap-3">
       <input 
-        className="w-full bg-transparent border-none focus:outline-none text-sm font-bold text-slate-800 dark:text-zinc-200 p-0"
+        className="w-full bg-transparent border-none focus:outline-none text-sm font-medium text-slate-800 dark:text-zinc-200 p-0"
         value={data.title}
         onChange={(e) => data.onChange(data.id, 'title', e.target.value)}
         placeholder="Trigger Name..."
@@ -50,11 +50,11 @@ const ActionNode = ({ data, isConnectable }: any) => (
     <InputHandle />
     <div className="bg-purple-500/10 px-4 py-2 rounded-t-lg border-b border-purple-500/20 flex items-center gap-2">
       <Zap size={14} className="text-purple-500" />
-      <span className="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider">Action</span>
+      <span className="text-xs font-medium text-purple-600 dark:text-purple-400">Action</span>
     </div>
     <div className="p-4 flex flex-col gap-3">
       <input 
-        className="w-full bg-transparent border-none focus:outline-none text-sm font-bold text-slate-800 dark:text-zinc-200 p-0"
+        className="w-full bg-transparent border-none focus:outline-none text-sm font-medium text-slate-800 dark:text-zinc-200 p-0"
         value={data.title}
         onChange={(e) => data.onChange(data.id, 'title', e.target.value)}
         placeholder="Action Name..."
@@ -75,11 +75,11 @@ const ConditionNode = ({ data, isConnectable }: any) => (
     <InputHandle />
     <div className="bg-amber-500/10 px-4 py-2 rounded-t-lg border-b border-amber-500/20 flex items-center gap-2">
       <HelpCircle size={14} className="text-amber-500" />
-      <span className="text-xs font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider">Condition</span>
+      <span className="text-xs font-medium text-amber-600 dark:text-amber-400">Condition</span>
     </div>
     <div className="p-4 flex flex-col gap-3">
       <input 
-        className="w-full bg-transparent border-none focus:outline-none text-sm font-bold text-slate-800 dark:text-zinc-200 p-0"
+        className="w-full bg-transparent border-none focus:outline-none text-sm font-medium text-slate-800 dark:text-zinc-200 p-0"
         value={data.title}
         onChange={(e) => data.onChange(data.id, 'title', e.target.value)}
         placeholder="Condition Name..."
@@ -100,11 +100,11 @@ const DelayNode = ({ data, isConnectable }: any) => (
     <InputHandle />
     <div className="bg-slate-500/10 px-4 py-2 rounded-t-lg border-b border-slate-500/20 flex items-center gap-2">
       <Clock size={14} className="text-slate-500" />
-      <span className="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider">Delay</span>
+      <span className="text-xs font-medium text-slate-600 dark:text-slate-400">Delay</span>
     </div>
     <div className="p-4 flex flex-col gap-3">
       <input 
-        className="w-full bg-transparent border-none focus:outline-none text-sm font-bold text-slate-800 dark:text-zinc-200 p-0"
+        className="w-full bg-transparent border-none focus:outline-none text-sm font-medium text-slate-800 dark:text-zinc-200 p-0"
         value={data.title}
         onChange={(e) => data.onChange(data.id, 'title', e.target.value)}
         placeholder="Delay Name..."
@@ -237,7 +237,7 @@ export default function PlaybookCanvas({ initialSteps, onClose, onSave }: Playbo
             <X size={20} className="text-slate-500 dark:text-zinc-400" />
           </button>
           <div>
-            <h2 className="text-lg font-bold text-slate-800 dark:text-zinc-100 flex items-center gap-2">
+            <h2 className="text-lg font-semibold text-slate-800 dark:text-zinc-100 flex items-center gap-2">
               <Activity size={18} className="text-purple-500" /> Visual Playbook Builder
             </h2>
             <p className="text-xs text-slate-500 dark:text-zinc-400">Drag & drop nodes to map your automation</p>

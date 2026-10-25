@@ -81,48 +81,52 @@ const Toaster: React.FC<{ ContainerPosition?: 'top-right' | 'bottom-right' }> = 
       ? 'top-6 right-6 flex-col-reverse'
       : 'bottom-6 right-6 flex-col';
 
+  // The rail carries the outcome, so the toast needs no coloured fill behind
+  // the text it is there to let you read.
+  const railClass: Record<Toast['type'], string> = {
+    success: 'bg-signal-go',
+    error: 'bg-signal-stop',
+    warning: 'bg-signal-warn',
+    info: 'bg-viridian',
+  };
+
   return (
-    <div className={`fixed z-[99999] flex gap-3 max-w-sm w-full pointer-events-none ${positionClasses}`}>
+    <div
+      className={`fixed z-[99999] flex gap-2.5 max-w-sm w-full pointer-events-none ${positionClasses}`}
+      role="status"
+      aria-live="polite"
+    >
       <AnimatePresence mode="popLayout">
         {toasts.map((t) => (
           <motion.div
             key={t.id}
             layout
-            initial={{ opacity: 0, y: 50, scale: 0.9 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.85, transition: { duration: 0.15 } }}
-            transition={{ type: 'spring', stiffness: 350, damping: 25 }}
-            className="w-full pointer-events-auto bg-white/90 dark:bg-zinc-950/90 border border-slate-200/60 dark:border-white/10 backdrop-blur-xl rounded-2xl p-4 shadow-[0_10px_30px_rgba(0,0,0,0.08)] dark:shadow-[0_15px_40px_rgba(0,0,0,0.4)] flex items-start gap-3 relative overflow-hidden"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 8, transition: { duration: 0.12 } }}
+            transition={{ duration: 0.18, ease: 'easeOut' }}
+            className="surface-lifted pointer-events-auto relative flex w-full items-start gap-3 overflow-hidden p-3.5 pl-4"
           >
-            {/* Ambient accent background glow */}
-            <div className={`absolute top-0 left-0 w-1.5 h-full ${
-              t.type === 'success' ? 'bg-emerald-500' :
-              t.type === 'error' ? 'bg-rose-500' :
-              t.type === 'warning' ? 'bg-amber-500' :
-              'bg-sky-500'
-            }`} />
+            <div className={`absolute left-0 top-0 h-full w-[3px] ${railClass[t.type]}`} />
 
-            <div className="flex-shrink-0 mt-0.5">
-              {t.type === 'success' && <CheckCircle2 className="h-5 w-5 text-emerald-500" />}
-              {t.type === 'error' && <AlertCircle className="h-5 w-5 text-rose-500" />}
-              {t.type === 'warning' && <AlertTriangle className="h-5 w-5 text-amber-500" />}
-              {t.type === 'info' && <Info className="h-5 w-5 text-sky-500" />}
+            <div className="mt-0.5 flex-shrink-0">
+              {t.type === 'success' && <CheckCircle2 className="h-[18px] w-[18px] text-signal-go" />}
+              {t.type === 'error' && <AlertCircle className="h-[18px] w-[18px] text-signal-stop" />}
+              {t.type === 'warning' && <AlertTriangle className="h-[18px] w-[18px] text-signal-warn" />}
+              {t.type === 'info' && <Info className="h-[18px] w-[18px] text-viridian" />}
             </div>
 
-            <div className="flex-grow pr-4">
-              <h4 className="font-bold text-sm text-slate-800 dark:text-zinc-100 leading-tight">
-                {t.message}
-              </h4>
+            <div className="flex-grow pr-5">
+              <h4 className="text-[15px] font-medium leading-snug text-ink">{t.message}</h4>
               {t.description && (
-                <p className="text-xs text-slate-500 dark:text-zinc-400 mt-1 font-medium leading-normal">
-                  {t.description}
-                </p>
+                <p className="mt-1 text-[13px] leading-normal text-ink-soft">{t.description}</p>
               )}
             </div>
 
             <button
               onClick={() => dismiss(t.id)}
-              className="absolute top-3 right-3 text-slate-400 hover:text-slate-600 dark:text-zinc-500 dark:hover:text-zinc-300 transition-colors p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-zinc-800"
+              className="absolute right-2 top-2 rounded-[6px] p-1 text-ink-faint transition-colors hover:bg-porcelain-deep hover:text-ink"
+              aria-label="Dismiss"
             >
               <X size={14} />
             </button>

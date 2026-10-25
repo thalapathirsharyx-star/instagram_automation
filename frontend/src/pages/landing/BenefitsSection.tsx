@@ -46,7 +46,7 @@ export const BenefitsSection: React.FC = () => {
       <div className="max-w-6xl mx-auto px-6">
         <div className="text-center max-w-2xl mx-auto mb-16">
           <span className="text-xs font-bold uppercase tracking-widest text-[#4F39F6] dark:text-[#818CF8]">Business Outcomes</span>
-          <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-zinc-900 dark:text-white mt-3 mb-4 leading-tight">
+          <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-zinc-900 dark:text-white mt-3 mb-4 leading-tight">
             Capture Leads On Autopilot, 24/7
           </h2>
           <p className="text-sm md:text-base text-zinc-600 dark:text-zinc-400 font-medium">

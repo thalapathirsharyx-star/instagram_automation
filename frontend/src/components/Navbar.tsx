@@ -2,19 +2,25 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
+import { SECTION_IDS, useSectionLink } from '../lib/sectionNav';
+
+/**
+ * Every entry points at a section that exists on the landing page. `Setup` and
+ * `Spam Shield` used to sit here pointing at `#setup` and `#noise-filter`,
+ * neither of which was ever on the page.
+ */
+const navLinks = [
+  { label: 'How It Works', id: SECTION_IDS.howItWorks },
+  { label: 'Features', id: SECTION_IDS.features },
+  { label: 'Security', id: SECTION_IDS.security },
+  { label: 'Pricing', id: SECTION_IDS.pricing },
+  { label: 'FAQ', id: SECTION_IDS.faq },
+];
 
 const Navbar: React.FC = () => {
   const navigate = useNavigate();
+  const goToSection = useSectionLink();
   const [mobileOpen, setMobileOpen] = useState(false);
-
-  const navLinks = [
-    { label: 'How It Works', href: '/#how-it-works' },
-    { label: 'Setup', href: '/#setup' },
-    { label: 'Features', href: '/#features' },
-    { label: 'Spam Shield', href: '/#noise-filter' },
-    { label: 'Pricing', href: '/#pricing' },
-    { label: 'FAQ', href: '/#faq' },
-  ];
 
   const handleLoginNav = () => {
     const hostname = window.location.hostname;
@@ -35,7 +41,7 @@ const Navbar: React.FC = () => {
   };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 glass border-b border-border">
+    <nav className="marketing-chrome fixed top-0 left-0 right-0 z-50 glass border-b border-border">
       <div className="max-w-6xl mx-auto px-6 h-[72px] flex items-center justify-between">
         <Link to="/" className="flex items-center group gap-1">
           <img src="/Dark theme.png" alt="Flazly Logo" className="hidden dark:block w-11 h-11 object-contain transition-transform duration-300 group-hover:scale-105" />
@@ -47,7 +53,12 @@ const Navbar: React.FC = () => {
 
         <div className="hidden md:flex items-center gap-8">
           {navLinks.map((link) => (
-            <a key={link.label} href={link.href} className="text-sm font-medium text-zinc-550 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white transition-colors">
+            <a
+              key={link.label}
+              href={`/#${link.id}`}
+              onClick={(e) => goToSection(e, link.id)}
+              className="text-sm font-medium text-zinc-550 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white transition-colors"
+            >
               {link.label}
             </a>
           ))}
@@ -85,9 +96,9 @@ const Navbar: React.FC = () => {
               {navLinks.map((link) => (
                 <a
                   key={link.label}
-                  href={link.href}
+                  href={`/#${link.id}`}
                   className="text-base font-semibold text-zinc-800 dark:text-zinc-355"
-                  onClick={() => setMobileOpen(false)}
+                  onClick={(e) => { goToSection(e, link.id); setMobileOpen(false); }}
                 >
                   {link.label}
                 </a>

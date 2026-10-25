@@ -16,7 +16,7 @@ export const CapabilitiesSection: React.FC = () => {
           </div>
           <div className="flex items-center justify-between bg-white dark:bg-[#090b11]/80 p-2.5 rounded-xl border border-zinc-150 dark:border-white/5 shadow-sm">
             <div className="flex items-center gap-2 min-w-0">
-              <div className="w-7 h-7 rounded-full bg-indigo-500/10 text-indigo-500 border border-indigo-500/20 flex items-center justify-center text-[10px] font-extrabold shrink-0">JD</div>
+              <div className="w-7 h-7 rounded-full bg-indigo-500/10 text-indigo-500 border border-indigo-500/20 flex items-center justify-center text-[10px] font-bold shrink-0">JD</div>
               <div className="flex flex-col min-w-0">
                 <span className="text-[10px] font-bold text-zinc-900 dark:text-white truncate">John Doe</span>
                 <span className="text-[8px] text-zinc-500 dark:text-zinc-400 truncate">"Price list please?"</span>
@@ -169,7 +169,7 @@ export const CapabilitiesSection: React.FC = () => {
               <span className="text-[10px] font-bold text-zinc-900 dark:text-white truncate">Summer Launch</span>
               <span className="text-[8px] text-zinc-500 dark:text-zinc-400">1,240 recipients</span>
             </div>
-            <div className="text-[11px] font-extrabold text-indigo-500 shrink-0">92%</div>
+            <div className="text-[11px] font-bold text-indigo-500 shrink-0">92%</div>
           </div>
         </div>
       )
@@ -177,11 +177,11 @@ export const CapabilitiesSection: React.FC = () => {
   ];
 
   return (
-    <section className="py-28 border-t border-zinc-200/80 dark:border-white/5 bg-zinc-100/10 dark:bg-[#121826]/10 relative overflow-hidden">
+    <section id="features" className="py-28 border-t border-zinc-200/80 dark:border-white/5 bg-zinc-100/10 dark:bg-[#121826]/10 relative overflow-hidden">
       <div className="max-w-6xl mx-auto px-6">
         <div className="text-center max-w-2xl mx-auto mb-20">
           <span className="text-xs font-bold uppercase tracking-widest text-[#4F39F6] dark:text-[#818CF8]">Core Capabilities</span>
-          <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-zinc-900 dark:text-white mt-3 mb-4">
+          <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-zinc-900 dark:text-white mt-3 mb-4">
             Designed to Generate More Business Leads
           </h2>
           <p className="text-sm md:text-base text-zinc-600 dark:text-zinc-400 font-medium">

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { getLeads, getMessages, sendMessage, claimConversation, releaseConversation } from '../api/crm.api';
 import type { Lead, Message, ConversationHandoffResult } from '../models/crm.models';
-import { Send, MessageSquare, Bot, Hand, CheckCircle2, Loader2, UserCheck } from 'lucide-react';
+import { Send, Loader2, Search } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
 import { io } from 'socket.io-client';
 
@@ -9,6 +9,11 @@ import { io } from 'socket.io-client';
 const extractApiMessage = (err: unknown, fallback: string): string => {
   const message = (err as { response?: { data?: { Message?: string } } })?.response?.data?.Message;
   return message || fallback;
+};
+
+const formatTime = (value: string) => {
+  const d = new Date(value);
+  return isNaN(d.getTime()) ? 'Just now' : d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 };
 
 const Inbox: React.FC = () => {
@@ -21,7 +26,8 @@ const Inbox: React.FC = () => {
   const [isTogglingMode, setIsTogglingMode] = useState(false);
   const [outsideWindow, setOutsideWindow] = useState(false);
   const [messageText, setMessageText] = useState('');
-  const [socketStatus, setSocketStatus] = useState<'Connecting...' | 'Connected 🟢' | 'Disconnected 🔴'>('Connecting...');
+  const [threadQuery, setThreadQuery] = useState('');
+  const [isConnected, setIsConnected] = useState(false);
   const chatHistoryRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -30,7 +36,7 @@ const Inbox: React.FC = () => {
     // Set up WebSocket connection dynamically from API base URL
     const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || (import.meta.env.DEV ? 'http://localhost:8001/api/v1' : '/api/v1');
     const socketUrl = import.meta.env.VITE_SOCKET_URL || apiBaseUrl.replace('/api/v1', '');
-    
+
     const socket = io(socketUrl, {
       transports: ['websocket', 'polling'],
       reconnectionAttempts: 5,
@@ -40,16 +46,16 @@ const Inbox: React.FC = () => {
 
     socket.on('connect', () => {
       console.log('Connected to WebSocket server:', socket.id);
-      setSocketStatus('Connected 🟢');
+      setIsConnected(true);
     });
 
     socket.on('connect_error', (err) => {
       console.error('WebSocket connection error:', err.message);
-      setSocketStatus('Disconnected 🔴');
+      setIsConnected(false);
     });
 
     socket.on('disconnect', () => {
-      setSocketStatus('Disconnected 🔴');
+      setIsConnected(false);
     });
 
     socket.on('new_message', (data: any) => {
@@ -129,9 +135,9 @@ const Inbox: React.FC = () => {
         if (res.Success || res.Data) {
           applyLeadUpdate({ ...selectedLead, human_agent_active: false, assigned_agent_id: null });
           setOutsideWindow(false);
-          toast.success('Conversation handed back to the AI.');
+          toast.success('Handed back to the assistant.');
         } else {
-          toast.error(res.Message || 'Could not release the conversation.');
+          toast.error(res.Message || 'Could not hand the conversation back.');
         }
       } else {
         const res = await claimConversation(selectedLead.id);
@@ -144,13 +150,13 @@ const Inbox: React.FC = () => {
             lead_status: 'Handoff'
           });
           setOutsideWindow(!!data?.outside_standard_window);
-          toast.success('You have taken over this conversation. The AI will not reply.');
+          toast.success('You have this conversation. The assistant will not reply.');
         } else {
           toast.error(res.Message || 'Could not take over the conversation.');
         }
       }
     } catch (err) {
-      toast.error(extractApiMessage(err, 'Could not change conversation mode.'));
+      toast.error(extractApiMessage(err, 'Could not change who is handling this conversation.'));
     } finally {
       setIsTogglingMode(false);
     }
@@ -166,7 +172,7 @@ const Inbox: React.FC = () => {
     try {
       const res = await sendMessage(selectedLead.id, messageText);
       setMessageText('');
-      
+
       // Update the UI immediately with the newly sent message
       if (res?.Data) {
         setMessages(prev => [...prev, res.Data]);
@@ -181,184 +187,223 @@ const Inbox: React.FC = () => {
     }
   };
 
+  const visibleLeads = leads.filter(lead =>
+    lead.customer_name.toLowerCase().includes(threadQuery.toLowerCase()) ||
+    lead.instagram_handle.toLowerCase().includes(threadQuery.toLowerCase())
+  );
+
   return (
-    <div className="flex flex-col h-[calc(100vh-100px)] animate-in fade-in duration-500 pb-6 max-w-7xl mx-auto" style={{ fontFamily: '"Inter", system-ui, sans-serif' }}>
-      <div className="flex justify-between items-end mb-6">
+    <div className="flex h-[calc(100vh-104px)] flex-col">
+      <div className="page-head mb-4 shrink-0">
         <div>
-          <h1 className="text-2xl font-bold text-zinc-900 tracking-tight mb-1">Inbox</h1>
-          <p className="text-sm text-zinc-500 font-medium">Monitor and manage your AI-driven conversations.</p>
+          <h1 className="page-title">Inbox</h1>
+          <p className="page-sub">
+            Every conversation the assistant is handling. Take one over and it stops replying.
+          </p>
         </div>
+        <span className={isConnected ? 'chip chip-go' : 'chip chip-warn'}>
+          {isConnected ? 'Live' : 'Reconnecting'}
+        </span>
       </div>
 
-      <div className="flex bg-white border border-zinc-200/80 rounded-2xl shadow-sm overflow-hidden flex-grow min-h-0">
-        {/* Lead Sidebar */}
-        <div className="w-[320px] shrink-0 border-r border-zinc-200 flex flex-col bg-zinc-50/30">
-          <div className="p-5 border-b border-zinc-100 bg-white">
-            <h2 className="text-sm font-bold text-zinc-900 uppercase tracking-wider">Active Threads</h2>
+      <div className="surface flex min-h-0 flex-grow overflow-hidden">
+        {/* Thread list */}
+        <div className="flex w-[300px] shrink-0 flex-col border-r border-hairline bg-porcelain">
+          <div className="border-b border-hairline p-2.5">
+            <div className="relative">
+              <Search size={15} className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-ink-faint" />
+              <input
+                type="search"
+                value={threadQuery}
+                onChange={(e) => setThreadQuery(e.target.value)}
+                placeholder="Search conversations"
+                className="field pl-8"
+                aria-label="Search conversations"
+              />
+            </div>
           </div>
-          <div className="flex-grow overflow-y-auto">
-            {leads.map((lead) => (
-              <div
-                key={lead.id}
-                className={`flex gap-3 p-4 cursor-pointer transition-all duration-200 relative group border-b border-zinc-100
-                  ${selectedLead?.id === lead.id ? 'bg-violet-50/50' : 'hover:bg-zinc-50'}`}
-                onClick={() => handleSelectLead(lead)}
-              >
-                {selectedLead?.id === lead.id && (
-                  <div className="absolute left-0 top-0 bottom-0 w-1 bg-violet-600 rounded-r-md"></div>
-                )}
-                <div className="w-10 h-10 rounded-full bg-violet-100 flex items-center justify-center text-violet-700 font-bold text-sm border border-violet-200 shadow-sm shrink-0">
-                  {lead.customer_name[0]}
-                </div>
-                <div className="flex-grow min-w-0">
-                  <div className="flex justify-between items-start mb-0.5">
-                    <span className={`font-bold text-sm truncate pr-2 ${selectedLead?.id === lead.id ? 'text-violet-900' : 'text-zinc-900'}`}>
-                      {lead.customer_name}
-                    </span>
-                    <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider border shrink-0
-                      ${lead.lead_status === 'Buyer' ? 'bg-blue-50 text-blue-700 border-blue-200' :
-                        lead.lead_status === 'Needs_Human' ? 'bg-rose-50 text-rose-700 border-rose-200' :
-                          'bg-zinc-100 text-zinc-600 border-zinc-200'}`}>
-                      {lead.lead_status}
-                    </span>
-                  </div>
-                  <div className="text-xs text-zinc-500 font-medium truncate">@{lead.instagram_handle}</div>
-                </div>
+
+          <div className="premium-scroll flex-grow overflow-y-auto">
+            {visibleLeads.length === 0 ? (
+              <div className="empty px-5 py-10">
+                <p className="empty-title">{leads.length === 0 ? 'No conversations yet' : 'No matches'}</p>
+                <p className="empty-body">
+                  {leads.length === 0
+                    ? 'Threads appear the moment someone messages your account.'
+                    : 'Try a different name or handle.'}
+                </p>
               </div>
-            ))}
+            ) : visibleLeads.map((lead) => {
+              const isSelected = selectedLead?.id === lead.id;
+              // The rail names who holds the thread: ink for a person on your
+              // team, the accent for the assistant.
+              const railClass = lead.human_agent_active ? 'rail-human' : 'rail-machine';
+              return (
+                <button
+                  key={lead.id}
+                  onClick={() => handleSelectLead(lead)}
+                  aria-current={isSelected}
+                  className={`flex w-full gap-2.5 border-b border-hairline p-3 text-left transition-colors ${railClass} ${
+                    isSelected ? 'bg-surface' : 'hover:bg-porcelain-deep'
+                  }`}
+                >
+                  <span className="avatar-initial" style={{ width: 32, height: 32, fontSize: 13 }}>
+                    {lead.customer_name[0]}
+                  </span>
+                  <span className="min-w-0 flex-grow">
+                    <span className="flex items-baseline justify-between gap-2">
+                      <span className={`truncate text-[15px] ${isSelected ? 'font-semibold text-ink' : 'font-medium text-ink'}`}>
+                        {lead.customer_name}
+                      </span>
+                      {lead.lead_status === 'Needs_Human' && (
+                        <span className="shrink-0 text-[13px] text-signal-stop">Needs you</span>
+                      )}
+                    </span>
+                    <span className="block truncate text-[13px] text-ink-soft">@{lead.instagram_handle}</span>
+                  </span>
+                </button>
+              );
+            })}
           </div>
         </div>
 
-        {/* Chat Area */}
-        <div className="flex-grow min-w-0 flex flex-col bg-zinc-50/50 relative">
+        {/* Conversation */}
+        <div className="flex min-w-0 flex-grow flex-col">
           {selectedLead ? (
             <>
-              {/* Chat Header */}
-              <div className="px-6 py-4 border-b border-zinc-200 bg-white flex justify-between items-center z-10 shadow-[0_4px_20px_-10px_rgba(0,0,0,0.05)]">
-                <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-full bg-violet-100 flex items-center justify-center text-violet-700 font-bold text-sm border border-violet-200 shadow-sm">
-                    {selectedLead.customer_name[0]}
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-zinc-900 leading-tight">{selectedLead.customer_name}</h3>
-                    <p className="text-xs text-zinc-500 font-medium">@{selectedLead.instagram_handle}</p>
+              <div className="flex shrink-0 items-center justify-between gap-4 border-b border-hairline px-5 py-3">
+                <div className="flex min-w-0 items-center gap-3">
+                  <span className="avatar-initial">{selectedLead.customer_name[0]}</span>
+                  <div className="min-w-0">
+                    <h2 className="truncate font-display text-[17px] font-semibold leading-tight text-ink">
+                      {selectedLead.customer_name}
+                    </h2>
+                    <p className="truncate text-[13px] text-ink-soft">@{selectedLead.instagram_handle}</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-3">
-                  <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest hidden sm:block">Agent Status:</span>
+
+                <div className="flex shrink-0 items-center gap-3">
+                  <span className={isManualMode ? 'chip chip-ink' : 'chip chip-accent'}>
+                    {isManualMode ? 'You are replying' : 'Assistant is replying'}
+                  </span>
                   <button
                     onClick={handleToggleManualMode}
                     disabled={isTogglingMode}
-                    title={isManualMode
-                      ? 'Hand this conversation back to the AI'
-                      : 'Take over this conversation as a human agent. The AI will stop replying.'}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all shadow-sm border disabled:opacity-60 ${isManualMode
-                      ? 'bg-rose-50 text-rose-700 border-rose-200 hover:bg-rose-100'
-                      : 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100'
-                      }`}
+                    className={isManualMode ? 'btn' : 'btn btn-primary'}
                   >
-                    {isTogglingMode
-                      ? <Loader2 size={14} className="animate-spin" />
-                      : isManualMode ? <Hand size={14} /> : <CheckCircle2 size={14} />}
-                    {isManualMode ? 'Human Agent Active' : 'AI Mode Active'}
+                    {isTogglingMode && <Loader2 size={14} className="animate-spin" />}
+                    {isManualMode ? 'Hand back to assistant' : 'Take over'}
                   </button>
                 </div>
               </div>
 
-              {isManualMode && (
-                <div className="px-6 sm:px-8 py-2.5 bg-rose-50/70 border-b border-rose-200/70 flex items-center gap-2">
-                  <UserCheck size={14} className="text-rose-600 shrink-0" />
-                  <p className="text-[11px] font-semibold text-rose-800 leading-snug">
-                    You have taken over this conversation — automated replies are paused.
-                    {outsideWindow && ' The 24-hour window has closed, so your reply will be sent with the Human Agent tag.'}
-                  </p>
+              {isManualMode && outsideWindow && (
+                <div className="shrink-0 border-b border-hairline bg-signal-warn-tint px-5 py-2 text-[13px] text-signal-warn">
+                  The 24-hour reply window has closed. Your message will be sent with the human agent tag.
                 </div>
               )}
 
-              {/* Chat History */}
-              <div className="flex-grow p-6 sm:p-8 overflow-y-auto flex flex-col gap-6" ref={chatHistoryRef}>
-                <div className="text-center py-4">
-                  <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest bg-zinc-200/50 px-3 py-1 rounded-full">Beginning of Conversation</span>
-                </div>
-                {messages.map((msg) => (
-                  <div key={msg.id} className={`max-w-[85%] lg:max-w-[75%] flex flex-col ${msg.direction === 'Outbound' ? 'self-end items-end' : 'self-start items-start'} mb-2`}>
+              {/* Message history. Each message carries a rail in its actor's
+                  colour, so who said what is legible without reading labels. */}
+              <div
+                className="premium-scroll flex flex-grow flex-col gap-5 overflow-y-auto bg-porcelain px-5 py-6 sm:px-8"
+                ref={chatHistoryRef}
+              >
+                {messages.length === 0 && (
+                  <p className="py-8 text-center text-[13px] text-ink-faint">No messages in this conversation yet.</p>
+                )}
 
-                    {/* Name and Timestamp Above Bubble */}
-                    <div className={`flex items-center gap-2 mb-1.5 px-1 ${msg.direction === 'Outbound' ? 'flex-row-reverse' : 'flex-row'}`}>
-                      <span className="text-xs font-medium text-zinc-600">
-                        {msg.direction === 'Outbound' ? 'Flazly Assistant' : selectedLead?.customer_name || selectedLead?.instagram_handle || 'Customer'}
-                      </span>
-                      <span className="text-[10px] font-medium text-zinc-400">
-                        {(() => {
-                          const d = new Date(msg.created_on);
-                          return isNaN(d.getTime()) ? 'Just now' : d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                        })()}
-                      </span>
-                      {msg.direction === 'Outbound' && !isManualMode && (
-                        <Bot size={12} className="text-violet-400 ml-1" />
-                      )}
-                    </div>
+                {messages.map((msg) => {
+                  const isOutbound = msg.direction === 'Outbound';
+                  // Outbound traffic is the assistant unless a person has the
+                  // thread, in which case it is the person on your team.
+                  const fromHuman = isOutbound && isManualMode;
+                  const author = !isOutbound
+                    ? (selectedLead?.customer_name || selectedLead?.instagram_handle || 'Customer')
+                    : fromHuman ? 'You' : 'Assistant';
 
-                    {/* Chat Bubble */}
-                    <div className={`px-5 py-3.5 rounded-2xl text-[15px] font-normal leading-relaxed ${msg.direction === 'Outbound'
-                      ? 'bg-[#F3E8FF] border border-[#E9D5FF] text-zinc-800 rounded-tr-sm'
-                      : 'bg-white border border-zinc-100 shadow-sm text-zinc-800 rounded-tl-sm'
-                      }`}>
-                      {msg.message_text?.startsWith('[IMAGE]') ? (
-                        <img src={msg.message_text.replace('[IMAGE] ', '')} alt="Shared image" className="rounded-xl max-w-full h-auto" />
-                      ) : (
-                        <p className="whitespace-pre-wrap">
-                          {msg.message_text}
-                        </p>
-                      )}
-                    </div>
-
-
-                    {msg.ai_notes && (
-                      <div className="mt-2 text-[11px] text-zinc-500 bg-white p-3 rounded-xl border border-zinc-200 shadow-sm self-start">
-                        <span className="text-violet-600 font-bold block mb-1 uppercase tracking-wider text-[9px] flex items-center gap-1">
-                          <Bot size={10} /> AI Action: {msg.action_taken}
-                        </span>
-                        <p className="font-medium leading-relaxed italic">{msg.ai_notes}</p>
+                  return (
+                    <div
+                      key={msg.id}
+                      className={`flex max-w-[78%] flex-col gap-1.5 ${isOutbound ? 'self-end items-end' : 'self-start'}`}
+                    >
+                      <div className={`flex items-baseline gap-2 text-[13px] ${isOutbound ? 'flex-row-reverse' : ''}`}>
+                        <span className="font-medium text-ink">{author}</span>
+                        <span className="text-ink-faint">{formatTime(msg.created_on)}</span>
                       </div>
-                    )}
-                  </div>
-                ))}
+
+                      <div
+                        className={`bg-surface px-4 py-3 text-[15px] leading-relaxed text-ink ${
+                          isOutbound
+                            ? `${fromHuman ? 'rail-human' : 'rail-machine'} rounded-l-[10px] rounded-r-[2px] border-y border-r border-hairline`
+                            : 'rounded-r-[10px] rounded-l-[2px] border-y border-l border-hairline border-l-[2px] border-l-[color:var(--hairline-strong)]'
+                        }`}
+                      >
+                        {msg.message_text?.startsWith('[IMAGE]') ? (
+                          <img
+                            src={msg.message_text.replace('[IMAGE] ', '')}
+                            alt="Shared by the customer"
+                            className="max-w-full rounded-[6px]"
+                          />
+                        ) : (
+                          <p className="whitespace-pre-wrap">{msg.message_text}</p>
+                        )}
+                      </div>
+
+                      {msg.ai_notes && (
+                        <div className="rail-machine max-w-[52ch] self-start border-y border-r border-hairline bg-porcelain-deep px-3 py-2">
+                          <p className="text-[13px] font-medium text-viridian">
+                            Assistant: {String(msg.action_taken || 'note').replace(/_/g, ' ')}
+                          </p>
+                          <p className="mt-0.5 text-[13px] leading-relaxed text-ink-soft">{msg.ai_notes}</p>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
 
-              {/* Chat Input */}
-              <div className="p-4 bg-white border-t border-zinc-200">
-                <div className={`flex gap-3 bg-zinc-50 p-2 rounded-xl border transition-all duration-200 shadow-inner ${isManualMode ? 'border-zinc-300 focus-within:border-violet-500 focus-within:bg-white focus-within:shadow-[0_0_0_4px_rgba(139,92,246,0.1)]' : 'border-zinc-200 opacity-80'
-                  }`}>
-                  <input
-                    type="text"
-                    placeholder={isManualMode ? "Type a message to " + selectedLead.customer_name + "..." : "AI is actively managing this conversation..."}
-                    disabled={!isManualMode}
-                    value={messageText}
-                    onChange={(e) => setMessageText(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-                    className={`flex-grow px-3 py-2 bg-transparent text-sm font-medium outline-none ${isManualMode ? 'text-zinc-900 placeholder-zinc-400' : 'text-zinc-400'}`}
-                  />
-                  <button
-                    onClick={handleSendMessage}
-                    disabled={!isManualMode || !messageText.trim()}
-                    className={`w-10 h-10 rounded-lg flex items-center justify-center transition-all ${isManualMode && messageText.trim()
-                      ? 'bg-violet-600 text-white shadow-sm hover:bg-violet-700'
-                      : 'bg-zinc-200 text-zinc-400 cursor-not-allowed'
-                      }`}
-                  >
-                    <Send size={16} />
-                  </button>
-                </div>
+              {/* Composer. Locked while the assistant holds the thread, and it
+                  says why rather than appearing broken. */}
+              <div className="shrink-0 border-t border-hairline p-3">
+                {isManualMode ? (
+                  <div className="flex items-end gap-2">
+                    <input
+                      type="text"
+                      placeholder={`Message ${selectedLead.customer_name}`}
+                      value={messageText}
+                      onChange={(e) => setMessageText(e.target.value)}
+                      onKeyDown={(e) => { if (e.key === 'Enter') handleSendMessage(); }}
+                      className="field"
+                      aria-label="Your reply"
+                      autoFocus
+                    />
+                    <button
+                      onClick={handleSendMessage}
+                      disabled={!messageText.trim()}
+                      className="btn btn-primary shrink-0"
+                    >
+                      <Send size={15} />
+                      Send
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex flex-wrap items-center justify-between gap-3 px-1 py-1">
+                    <p className="text-[13px] text-ink-soft">
+                      The assistant is replying to this conversation. Take it over to write yourself.
+                    </p>
+                    <button onClick={handleToggleManualMode} disabled={isTogglingMode} className="btn btn-sm">
+                      {isTogglingMode && <Loader2 size={13} className="animate-spin" />}
+                      Take over
+                    </button>
+                  </div>
+                )}
               </div>
             </>
           ) : (
-            <div className="flex-grow flex flex-col items-center justify-center text-center p-12 bg-zinc-50/50">
-              <div className="w-16 h-16 rounded-2xl bg-white flex items-center justify-center mb-4 border border-zinc-200 shadow-sm">
-                <MessageSquare size={24} className="text-zinc-300" />
-              </div>
-              <h3 className="text-lg font-bold text-zinc-900 mb-1">Select a Thread</h3>
-              <p className="text-sm font-medium text-zinc-500">Review AI interactions or jump in to manage the conversation manually.</p>
+            <div className="empty flex-grow bg-porcelain">
+              <p className="empty-title">Pick a conversation</p>
+              <p className="empty-body">Choose a thread on the left to read it and step in if it needs you.</p>
             </div>
           )}
         </div>

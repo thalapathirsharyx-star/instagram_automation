@@ -81,13 +81,13 @@ const AdminRevenue: React.FC = () => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto pb-12 font-sans animate-in fade-in duration-500" style={{ fontFamily: '"Inter", system-ui, sans-serif' }}>
+    <div className="max-w-7xl mx-auto pb-12 font-sans animate-in fade-in duration-500">
       
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8 border-b border-zinc-200/80 pb-6">
         <div>
-          <h1 className="text-2xl font-bold text-zinc-900 tracking-tight mb-2">Revenue & Analytics</h1>
-          <p className="text-sm text-zinc-500 font-medium">Track your platform's financial health, subscription distribution, and MRR growth.</p>
+          <h1 className="page-title">Revenue</h1>
+          <p className="page-sub">Track your platform's financial health, subscription distribution, and MRR growth.</p>
         </div>
         <div className="flex items-center gap-3">
           <button className="flex items-center justify-center gap-2 px-4 py-2.5 bg-white border border-zinc-200 rounded-lg text-zinc-700 font-semibold hover:bg-zinc-50 hover:border-zinc-300 transition-all shadow-sm">
@@ -109,13 +109,13 @@ const AdminRevenue: React.FC = () => {
               <div className={`p-3 rounded-xl ${card.iconBg} ${card.iconColor} border ${card.border}`}>
                 <card.icon size={20} />
               </div>
-              <div className={`flex items-center gap-1 text-[11px] font-bold px-2 py-1 rounded-md ${card.up ? 'bg-emerald-50 text-emerald-700 border border-emerald-100' : 'bg-rose-50 text-rose-700 border border-rose-100'}`}>
+              <div className={`flex items-center gap-1 text-[13px] font-medium px-2 py-1 rounded-md ${card.up ? 'bg-emerald-50 text-emerald-700 border border-emerald-100' : 'bg-rose-50 text-rose-700 border border-rose-100'}`}>
                 {card.trend} {card.up ? <ArrowUpRight size={12} /> : <ArrowDownRight size={12} />}
               </div>
             </div>
             <div>
-              <p className="text-[11px] font-bold text-zinc-500 uppercase tracking-widest mb-1">{card.title}</p>
-              <h3 className="text-3xl font-extrabold text-zinc-900 tracking-tight">{card.value}</h3>
+              <p className="text-[13px] font-medium text-zinc-500 mb-1">{card.title}</p>
+              <h3 className="text-3xl font-semibold text-zinc-900 tracking-tight">{card.value}</h3>
             </div>
           </div>
         ))}
@@ -127,7 +127,7 @@ const AdminRevenue: React.FC = () => {
         {/* Plan Distribution */}
         <div className="bg-white border border-zinc-200/80 rounded-2xl p-6 md:p-8 shadow-sm flex flex-col">
           <div className="flex justify-between items-center mb-8">
-            <h3 className="text-lg font-bold text-zinc-900 flex items-center gap-2">
+            <h3 className="text-lg font-semibold text-zinc-900 flex items-center gap-2">
               <PieChart size={20} className="text-violet-600" /> Plan Distribution
             </h3>
           </div>
@@ -142,11 +142,11 @@ const AdminRevenue: React.FC = () => {
                   <div className="flex justify-between items-center mb-2">
                     <div className="flex items-center gap-2">
                       <div className={`w-2.5 h-2.5 rounded-full ${bgColor}`}></div>
-                      <span className="text-sm font-bold text-zinc-900">{plan} Tier</span>
+                      <span className="text-sm font-medium text-zinc-900">{plan} Tier</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="text-xs font-bold text-zinc-500">{count} accounts</span>
-                      <span className="text-xs font-bold text-zinc-400 bg-zinc-100 px-2 py-0.5 rounded-md">{percentage}%</span>
+                      <span className="text-xs font-medium text-zinc-500">{count} accounts</span>
+                      <span className="text-xs font-medium text-zinc-400 bg-zinc-100 px-2 py-0.5 rounded-md">{percentage}%</span>
                     </div>
                   </div>
                   <div className="h-2.5 w-full bg-zinc-100 rounded-full overflow-hidden">
@@ -161,7 +161,7 @@ const AdminRevenue: React.FC = () => {
         {/* Revenue Per Plan */}
         <div className="bg-white border border-zinc-200/80 rounded-2xl p-6 md:p-8 shadow-sm flex flex-col">
           <div className="flex justify-between items-center mb-8">
-            <h3 className="text-lg font-bold text-zinc-900 flex items-center gap-2">
+            <h3 className="text-lg font-semibold text-zinc-900 flex items-center gap-2">
               <IndianRupee size={20} className="text-emerald-600" /> Revenue Architecture
             </h3>
           </div>
@@ -182,13 +182,13 @@ const AdminRevenue: React.FC = () => {
                       <CreditCard size={20} />
                     </div>
                     <div>
-                      <div className="font-bold text-sm text-zinc-900">{plan} Plan</div>
+                      <div className="font-medium text-sm text-zinc-900">{plan} Plan</div>
                       <div className="text-xs text-zinc-500 font-medium mt-0.5">{count} {count === 1 ? 'tenant' : 'tenants'} × ₹{price.toLocaleString()}</div>
                     </div>
                   </div>
                   <div className="text-right">
-                    <div className="font-extrabold text-base text-zinc-900">₹{revenue.toLocaleString()}</div>
-                    <div className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mt-0.5">/ month</div>
+                    <div className="font-semibold text-base text-zinc-900">₹{revenue.toLocaleString()}</div>
+                    <div className="text-[13px] font-medium text-zinc-400 mt-0.5">/ month</div>
                   </div>
                 </div>
               );
@@ -196,8 +196,8 @@ const AdminRevenue: React.FC = () => {
           </div>
           
           <div className="mt-6 p-4 bg-emerald-50 rounded-xl border border-emerald-200 flex justify-between items-center shadow-inner">
-            <span className="font-bold text-emerald-800 uppercase tracking-widest text-xs">Total Validated MRR</span>
-            <span className="font-extrabold text-xl text-emerald-700 tracking-tight">₹{mrr.toLocaleString()}</span>
+            <span className="font-medium text-emerald-800 text-xs">Total Validated MRR</span>
+            <span className="font-semibold text-xl text-emerald-700 tracking-tight">₹{mrr.toLocaleString()}</span>
           </div>
         </div>
       </div>
@@ -205,10 +205,10 @@ const AdminRevenue: React.FC = () => {
       {/* Paying Customers Grid */}
       <div className="bg-white border border-zinc-200/80 rounded-2xl p-6 md:p-8 shadow-sm">
         <div className="flex justify-between items-center mb-6 border-b border-zinc-100 pb-4">
-          <h3 className="text-lg font-bold text-zinc-900 flex items-center gap-2">
+          <h3 className="text-lg font-semibold text-zinc-900 flex items-center gap-2">
             <Users size={20} className="text-blue-600" /> Active Subscriptions
           </h3>
-          <span className="px-3 py-1 bg-blue-50 text-blue-700 text-xs font-bold rounded-lg border border-blue-200">
+          <span className="px-3 py-1 bg-blue-50 text-blue-700 text-xs font-medium rounded-lg border border-blue-200">
             {paidClients} Paying Tenants
           </span>
         </div>
@@ -221,14 +221,14 @@ const AdminRevenue: React.FC = () => {
 
             return (
               <div key={client.id} className="p-4 bg-white border border-zinc-200 rounded-xl flex items-center gap-4 hover:border-zinc-300 hover:shadow-sm transition-all">
-                <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold text-sm border ${bgLight} ${tColor} ${bLight} shrink-0`}>
+                <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-medium text-sm border ${bgLight} ${tColor} ${bLight} shrink-0`}>
                   {client.name?.charAt(0)?.toUpperCase() || '?'}
                 </div>
                 <div className="flex-grow min-w-0">
-                  <div className="font-bold text-sm text-zinc-900 truncate">{client.name}</div>
+                  <div className="font-medium text-sm text-zinc-900 truncate">{client.name}</div>
                   <div className="text-xs text-zinc-500 font-medium truncate">{client.email}</div>
                 </div>
-                <div className={`px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider border shrink-0 ${bgLight} ${tColor} ${bLight}`}>
+                <div className={`px-2 py-1 rounded-md text-[13px] font-medium  border shrink-0 ${bgLight} ${tColor} ${bLight}`}>
                   {client.plan}
                 </div>
               </div>
@@ -240,8 +240,8 @@ const AdminRevenue: React.FC = () => {
               <div className="w-16 h-16 bg-zinc-50 rounded-2xl flex items-center justify-center mb-4 border border-zinc-200 shadow-sm">
                 <Activity size={24} className="text-zinc-400" />
               </div>
-              <h3 className="text-base font-bold text-zinc-900 mb-1">No paying customers yet</h3>
-              <p className="text-sm text-zinc-500 font-medium">Your MRR starts tracking once users upgrade their free accounts.</p>
+              <h3 className="text-base font-semibold text-zinc-900 mb-1">No paying customers yet</h3>
+              <p className="page-sub">Your MRR starts tracking once users upgrade their free accounts.</p>
             </div>
           )}
         </div>

@@ -49,7 +49,7 @@ const UploadDocument: React.FC = () => {
           >
             <ArrowLeft size={18} /> Back to Brain Base
           </button>
-          <h1 className="text-3xl font-bold text-zinc-100 mb-2">Upload Document</h1>
+          <h1 className="page-title">Upload a document</h1>
           <p className="text-zinc-400 font-medium">Upload a PDF or TXT file to extract knowledge facts.</p>
         </div>
       </div>
@@ -70,14 +70,14 @@ const UploadDocument: React.FC = () => {
           {isSaving ? (
             <div className="flex flex-col items-center gap-6">
               <Loader2 size={48} className="animate-spin text-purple-500" />
-              <p className="font-bold text-zinc-100 text-lg">Analyzing content...</p>
+              <p className="font-semibold text-zinc-100 text-lg">Analyzing content...</p>
             </div>
           ) : (
             <>
               <div className="w-20 h-20 bg-purple-500/10 rounded-3xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform shadow-[0_0_20px_rgba(168,85,247,0.2)]">
                 <UploadCloud size={40} className="text-purple-400" />
               </div>
-              <h4 className="text-xl font-bold text-zinc-100 mb-2">Drop your file here</h4>
+              <h4 className="text-xl font-semibold text-zinc-100 mb-2">Drop your file here</h4>
               <p className="text-zinc-400 font-medium max-w-sm mx-auto">Supports PDF and TXT. AI will process the text into searchable knowledge.</p>
             </>
           )}

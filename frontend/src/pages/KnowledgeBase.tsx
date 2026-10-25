@@ -207,26 +207,26 @@ const KnowledgeBase: React.FC = () => {
   );
 
   return (
-    <div className="max-w-7xl mx-auto pb-12 font-sans animate-in fade-in duration-500" style={{ fontFamily: '"Inter", system-ui, sans-serif' }}>
+    <div className="max-w-7xl mx-auto pb-12 font-sans animate-in fade-in duration-500">
       
       {/* Header & Global Actions */}
       <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-zinc-900 tracking-tight mb-2">Brain Base</h1>
+          <h1 className="page-title">Brain base</h1>
           <p className="text-sm text-zinc-500 font-medium max-w-xl">Upload documents, FAQs, and business context. The AI uses this data to answer customer questions automatically.</p>
         </div>
 
         <div className="flex flex-wrap items-center gap-3 shrink-0">
           <button 
             onClick={() => setActiveModal('upload')}
-            className="flex items-center gap-2 px-4 py-2 bg-white border border-zinc-200 rounded-lg text-zinc-700 font-bold hover:border-zinc-300 hover:bg-zinc-50 transition-all shadow-sm text-sm"
+            className="flex items-center gap-2 px-4 py-2 bg-white border border-zinc-200 rounded-lg text-zinc-700 font-medium hover:border-zinc-300 hover:bg-zinc-50 transition-all shadow-sm text-sm"
           >
             <UploadCloud size={16} className="text-violet-600" />
             <span className="hidden sm:inline">Upload PDF</span>
           </button>
           <button 
             onClick={() => setActiveModal('faq')}
-            className="flex items-center gap-2 px-4 py-2 bg-white border border-zinc-200 rounded-lg text-zinc-700 font-bold hover:border-zinc-300 hover:bg-zinc-50 transition-all shadow-sm text-sm"
+            className="flex items-center gap-2 px-4 py-2 bg-white border border-zinc-200 rounded-lg text-zinc-700 font-medium hover:border-zinc-300 hover:bg-zinc-50 transition-all shadow-sm text-sm"
           >
             <HelpCircle size={16} className="text-blue-600" />
             <span className="hidden sm:inline">Add FAQ</span>
@@ -266,7 +266,7 @@ const KnowledgeBase: React.FC = () => {
                   <BrainCircuit size={40} className="text-violet-500" />
                </div>
                <div className="max-w-md mx-auto">
-                 <h3 className="text-xl font-bold text-zinc-900 mb-2">No knowledge base items yet</h3>
+                 <h3 className="text-xl font-semibold text-zinc-900 mb-2">No knowledge base items yet</h3>
                  <p className="text-sm text-zinc-500 leading-relaxed font-medium">
                    {activeTab === 'all' && "Your AI agent is currently un-trained. Click one of the buttons above to upload PDFs, store FAQs, or write business facts."}
                    {activeTab === 'documents' && "You haven't uploaded any documents. Upload PDFs to let the AI learn your business instantly."}
@@ -304,12 +304,12 @@ const KnowledgeBase: React.FC = () => {
                            isDoc ? <File size={18} strokeWidth={2.5}/> :
                            <FileText size={18} strokeWidth={2.5}/>}
                         </div>
-                        <span className="text-[10px] font-bold text-zinc-500 bg-zinc-50 border border-zinc-200 px-2.5 py-1 rounded-md uppercase tracking-wider">
+                        <span className="text-[13px] font-medium text-zinc-500 bg-zinc-50 border border-zinc-200 px-2.5 py-1 rounded-md">
                           {item.category}
                         </span>
                       </div>
                       
-                      <h3 className="text-base font-bold text-zinc-900 mb-2 group-hover:text-violet-700 transition-colors line-clamp-2">
+                      <h3 className="text-base font-semibold text-zinc-900 mb-2 group-hover:text-violet-700 transition-colors line-clamp-2">
                         {isFaq ? formatFaqTitle(item.title) : item.title}
                       </h3>
                       
@@ -319,7 +319,7 @@ const KnowledgeBase: React.FC = () => {
                     </div>
 
                     <div className="mt-4 pt-4 border-t border-zinc-100 flex justify-between items-center shrink-0">
-                      <div className="flex items-center gap-1.5 text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-100 px-2.5 py-1 rounded-md">
+                      <div className="flex items-center gap-1.5 text-[13px] font-medium text-emerald-700 bg-emerald-50 border border-emerald-100 px-2.5 py-1 rounded-md">
                         <Sparkles size={12} className="text-emerald-500" /> AI TRAINED
                       </div>
                       <div className="flex items-center gap-1">
@@ -361,7 +361,7 @@ const KnowledgeBase: React.FC = () => {
                 {activeModal === 'fact' && <div className="p-2 bg-zinc-200 text-zinc-700 rounded-lg"><FileText size={18} /></div>}
                 
                 <div>
-                  <h2 className="text-lg font-bold text-zinc-900">
+                  <h2 className="text-lg font-semibold text-zinc-900">
                     {activeModal === 'upload' ? 'Upload Document' : 
                      activeModal === 'faq' ? (editingId ? 'Edit FAQ' : 'Add FAQ') : 
                      (editingId ? 'Edit Business Fact' : 'Add Business Fact')}
@@ -384,15 +384,15 @@ const KnowledgeBase: React.FC = () => {
                   {isSaving ? (
                     <div className="flex flex-col items-center gap-4">
                       <Loader2 size={32} className="animate-spin text-violet-500" />
-                      <p className="font-bold text-zinc-900">Analyzing content...</p>
+                      <p className="font-semibold text-zinc-900">Analyzing content...</p>
                     </div>
                   ) : (
                     <>
                       <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mx-auto mb-4 border border-zinc-200 shadow-sm group-hover:scale-105 transition-transform">
                         <UploadCloud size={24} className="text-violet-500" />
                       </div>
-                      <h4 className="text-base font-bold text-zinc-900 mb-1">Click or drag file here</h4>
-                      <p className="text-xs text-zinc-500 font-medium">Supports PDF and TXT. Max 10MB.</p>
+                      <h4 className="text-base font-semibold text-zinc-900 mb-1">Click or drag file here</h4>
+                      <p className="page-sub">Supports PDF and TXT. Max 10MB.</p>
                     </>
                   )}
                 </div>
@@ -401,7 +401,7 @@ const KnowledgeBase: React.FC = () => {
               {activeModal === 'faq' && (
                 <div className="space-y-4">
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest ml-1">Question</label>
+                    <label className="text-[13px] font-medium text-zinc-500 ml-1">Question</label>
                     <input 
                       type="text" 
                       placeholder="e.g. Do you ship internationally?" 
@@ -411,7 +411,7 @@ const KnowledgeBase: React.FC = () => {
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest ml-1">Answer</label>
+                    <label className="text-[13px] font-medium text-zinc-500 ml-1">Answer</label>
                     <textarea 
                       placeholder="Yes, we ship to over 50 countries..." 
                       value={newAnswer}
@@ -427,7 +427,7 @@ const KnowledgeBase: React.FC = () => {
                 <div className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-1.5">
-                      <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest ml-1">Title</label>
+                      <label className="text-[13px] font-medium text-zinc-500 ml-1">Title</label>
                       <input 
                         type="text" 
                         placeholder="e.g. Return Policy" 
@@ -437,7 +437,7 @@ const KnowledgeBase: React.FC = () => {
                       />
                     </div>
                     <div className="space-y-1.5">
-                      <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest ml-1">Category</label>
+                      <label className="text-[13px] font-medium text-zinc-500 ml-1">Category</label>
                       <select 
                         value={category}
                         onChange={(e) => setCategory(e.target.value)}
@@ -452,7 +452,7 @@ const KnowledgeBase: React.FC = () => {
                     </div>
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest ml-1">Fact Details</label>
+                    <label className="text-[13px] font-medium text-zinc-500 ml-1">Fact Details</label>
                     <textarea 
                       placeholder="Paste business details here..." 
                       value={newContent}
@@ -467,11 +467,11 @@ const KnowledgeBase: React.FC = () => {
 
             {activeModal !== 'upload' && (
               <div className="px-6 py-4 bg-zinc-50 border-t border-zinc-200 flex justify-end gap-3">
-                <button onClick={closeModal} className="px-5 py-2.5 bg-white border border-zinc-200 text-zinc-700 rounded-lg font-bold hover:bg-zinc-50 hover:border-zinc-300 transition-colors shadow-sm text-sm">Cancel</button>
+                <button onClick={closeModal} className="px-5 py-2.5 bg-white border border-zinc-200 text-zinc-700 rounded-lg font-medium hover:bg-zinc-50 hover:border-zinc-300 transition-colors shadow-sm text-sm">Cancel</button>
                 <button 
                   onClick={activeModal === 'faq' ? handleAddFaq : handleAddFact} 
                   disabled={isSaving || (activeModal === 'faq' ? (!newQuestion || !newAnswer) : (!newTitle || !newContent))} 
-                  className="px-6 py-2.5 bg-violet-600 text-white rounded-lg font-bold hover:bg-violet-700 transition-colors shadow-sm text-sm flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-6 py-2.5 bg-violet-600 text-white rounded-lg font-medium hover:bg-violet-700 transition-colors shadow-sm text-sm flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isSaving ? <Loader2 size={16} className="animate-spin" /> : 'Save Entry'}
                 </button>

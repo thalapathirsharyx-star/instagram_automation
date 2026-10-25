@@ -1,7 +1,27 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { SECTION_IDS, useSectionLink } from '../lib/sectionNav';
 
 const Footer: React.FC = () => {
+  const goToSection = useSectionLink();
+
+  // Each column holds links to sections that exist. `Meta OAuth Setup` and
+  // `Spam Shield` previously pointed at `#setup` and `#noise-filter`, which
+  // were never on the page; the first is the security section, and the second
+  // described a feature the product does not have.
+  const productLinks = [
+    { label: 'Features', id: SECTION_IDS.features },
+    { label: 'How It Works', id: SECTION_IDS.howItWorks },
+    { label: 'Pricing Plans', id: SECTION_IDS.pricing },
+    { label: 'FAQ', id: SECTION_IDS.faq },
+  ];
+
+  const platformLinks = [
+    { label: 'Interactive Demo', id: SECTION_IDS.demo },
+    { label: 'Meta OAuth Setup', id: SECTION_IDS.security },
+    { label: 'Security & Compliance', id: SECTION_IDS.security },
+  ];
+
   return (
     <footer className="site-footer dark border-t border-white/5 bg-[#07080C] pt-20 pb-12 px-6 relative z-10">
       <div className="max-w-6xl mx-auto">
@@ -38,10 +58,17 @@ const Footer: React.FC = () => {
           <div>
             <h4 className="text-white text-xs font-bold uppercase tracking-wider mb-6">Product</h4>
             <ul className="space-y-4 text-xs font-medium text-zinc-500">
-              <li><a href="/#features" className="hover:text-brand-purple transition-colors">Features</a></li>
-              <li><a href="/#how-it-works" className="hover:text-brand-purple transition-colors">How It Works</a></li>
-              <li><a href="/#pricing" className="hover:text-brand-purple transition-colors">Pricing Plans</a></li>
-              <li><a href="/#faq" className="hover:text-brand-purple transition-colors">FAQ</a></li>
+              {productLinks.map((link) => (
+                <li key={link.label}>
+                  <a
+                    href={`/#${link.id}`}
+                    onClick={(e) => goToSection(e, link.id)}
+                    className="hover:text-brand-purple transition-colors"
+                  >
+                    {link.label}
+                  </a>
+                </li>
+              ))}
             </ul>
           </div>
 
@@ -49,10 +76,17 @@ const Footer: React.FC = () => {
           <div>
             <h4 className="text-white text-xs font-bold uppercase tracking-wider mb-6">Platform</h4>
             <ul className="space-y-4 text-xs font-medium text-zinc-500">
-              <li><a href="/#demo" className="hover:text-brand-purple transition-colors">Interactive Demo</a></li>
-              <li><a href="/#setup" className="hover:text-brand-purple transition-colors">Meta OAuth Setup</a></li>
-              <li><a href="/#noise-filter" className="hover:text-brand-purple transition-colors">Spam Shield</a></li>
-              <li><a href="/privacy" className="hover:text-brand-purple transition-colors">Meta Compliance</a></li>
+              {platformLinks.map((link) => (
+                <li key={link.label}>
+                  <a
+                    href={`/#${link.id}`}
+                    onClick={(e) => goToSection(e, link.id)}
+                    className="hover:text-brand-purple transition-colors"
+                  >
+                    {link.label}
+                  </a>
+                </li>
+              ))}
             </ul>
           </div>
 

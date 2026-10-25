@@ -83,7 +83,7 @@ const SuperAdminDashboard: React.FC = () => {
     <div className="dashboard-page" style={{ minHeight: '100%', display: 'flex', flexDirection: 'column', gap: '32px' }}>
       <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
-          <h1 style={{ margin: 0, fontSize: '1.8rem' }}>Platform Overview</h1>
+          <h1 className="page-title">Platform overview</h1>
           <p style={{ margin: '8px 0 0', color: 'var(--text-dim)' }}>Global metrics across all tenants and clients.</p>
         </div>
         <div style={{ display: 'flex', gap: '12px' }}>
@@ -139,7 +139,7 @@ const SuperAdminDashboard: React.FC = () => {
                 <div>
                   <div style={{ fontWeight: 600 }}>{client.name}</div>
                   <div style={{ fontSize: '0.75rem', color: 'var(--text-dim)', marginTop: '2px' }}>
-                    <span className={`px-1.5 py-0.5 rounded text-[8px] uppercase font-bold mr-2 ${client.plan !== 'Free' ? 'bg-purple-500/10 text-purple-400 border border-purple-500/20' : 'bg-zinc-800 text-zinc-400'}`}>
+                    <span className={`px-1.5 py-0.5 rounded text-[12px] font-medium mr-2 ${client.plan !== 'Free' ? 'bg-purple-500/10 text-purple-400 border border-purple-500/20' : 'bg-zinc-800 text-zinc-400'}`}>
                       {client.plan || 'Free'}
                     </span>
                     {client.email}

@@ -30,7 +30,7 @@ export const ROICalculator: React.FC = () => {
             <div className="flex flex-col gap-3">
               <div className="flex justify-between items-center text-sm font-semibold">
                 <span className="text-zinc-300">Monthly Instagram DMs</span>
-                <span className="text-[#38BDF8] font-mono font-bold text-base">{dms.toLocaleString()}</span>
+                <span className="text-[#38BDF8] tabular-nums font-bold text-base">{dms.toLocaleString()}</span>
               </div>
               <input
                 type="range"
@@ -42,7 +42,7 @@ export const ROICalculator: React.FC = () => {
                 onChange={(e) => setDms(Number(e.target.value))}
                 className="w-full h-1.5 bg-[#121826] border border-white/5 rounded-lg appearance-none cursor-pointer accent-[#38BDF8]"
               />
-              <div className="flex justify-between text-[10px] text-zinc-500 font-mono">
+              <div className="flex justify-between text-[10px] text-zinc-500 tabular-nums">
                 <span>500</span>
                 <span>20,000+</span>
               </div>
@@ -52,7 +52,7 @@ export const ROICalculator: React.FC = () => {
             <div className="flex flex-col gap-3">
               <div className="flex justify-between items-center text-sm font-semibold">
                 <span className="text-zinc-300">Current Conversion Rate</span>
-                <span className="text-[#38BDF8] font-mono font-bold text-base">{conversionRate}%</span>
+                <span className="text-[#38BDF8] tabular-nums font-bold text-base">{conversionRate}%</span>
               </div>
               <input
                 type="range"
@@ -64,7 +64,7 @@ export const ROICalculator: React.FC = () => {
                 onChange={(e) => setConversionRate(Number(e.target.value))}
                 className="w-full h-1.5 bg-[#121826] border border-white/5 rounded-lg appearance-none cursor-pointer accent-[#38BDF8]"
               />
-              <div className="flex justify-between text-[10px] text-zinc-500 font-mono">
+              <div className="flex justify-between text-[10px] text-zinc-500 tabular-nums">
                 <span>1%</span>
                 <span>25%</span>
               </div>
@@ -74,7 +74,7 @@ export const ROICalculator: React.FC = () => {
             <div className="flex flex-col gap-3">
               <div className="flex justify-between items-center text-sm font-semibold">
                 <span className="text-zinc-300">Average Customer Value (LTV)</span>
-                <span className="text-[#38BDF8] font-mono font-bold text-base">${dealValue}</span>
+                <span className="text-[#38BDF8] tabular-nums font-bold text-base">${dealValue}</span>
               </div>
               <input
                 type="range"
@@ -86,7 +86,7 @@ export const ROICalculator: React.FC = () => {
                 onChange={(e) => setDealValue(Number(e.target.value))}
                 className="w-full h-1.5 bg-[#121826] border border-white/5 rounded-lg appearance-none cursor-pointer accent-[#38BDF8]"
               />
-              <div className="flex justify-between text-[10px] text-zinc-500 font-mono">
+              <div className="flex justify-between text-[10px] text-zinc-500 tabular-nums">
                 <span>$20</span>
                 <span>$1,500</span>
               </div>
@@ -102,7 +102,7 @@ export const ROICalculator: React.FC = () => {
 
           <div>
             <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Recovered Lost Conversions</span>
-            <div className="text-5xl md:text-6xl font-black roi-recovered-revenue mt-4 mb-3 tracking-tight font-sans text-white">
+            <div className="text-5xl md:text-6xl font-bold roi-recovered-revenue mt-4 mb-3 tracking-tight font-sans text-white">
               ${Math.round(monthlyRevenue).toLocaleString()}
             </div>
             <span className="text-xs font-semibold text-zinc-400">Recovered Revenue / Month</span>
@@ -113,11 +113,11 @@ export const ROICalculator: React.FC = () => {
           <div className="grid grid-cols-2 gap-4 text-left">
             <div className="bg-black/20 p-4 rounded-2xl border border-white/5">
               <span className="text-[9px] text-zinc-400 uppercase tracking-wider block mb-1">Additional Leads</span>
-              <span className="text-lg font-bold text-white font-mono">{Math.round(qualifiedLeads).toLocaleString()} /mo</span>
+              <span className="text-lg font-bold text-white tabular-nums">{Math.round(qualifiedLeads).toLocaleString()} /mo</span>
             </div>
             <div className="bg-black/20 p-4 rounded-2xl border border-white/5">
               <span className="text-[9px] text-zinc-400 uppercase tracking-wider block mb-1">Estimated Annual Growth</span>
-              <span className="text-lg font-bold text-[#38BDF8] font-mono">${Math.round(annualRevenue).toLocaleString()} /yr</span>
+              <span className="text-lg font-bold text-[#38BDF8] tabular-nums">${Math.round(annualRevenue).toLocaleString()} /yr</span>
             </div>
           </div>
 
@@ -127,7 +127,7 @@ export const ROICalculator: React.FC = () => {
 
           <Link
             to="/signup"
-            className="btn-premium-cta mt-8 w-full py-4 text-sm font-extrabold flex items-center justify-center gap-2 group"
+            className="btn-premium-cta mt-8 w-full py-4 text-sm font-bold flex items-center justify-center gap-2 group"
           >
             Stop Leaving Money On The Table
             <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
@@ -144,7 +144,7 @@ export const ROICalculatorSection: React.FC = () => {
       <div className="max-w-6xl mx-auto px-6">
         <div className="text-center max-w-2xl mx-auto mb-16">
           <span className="text-xs font-bold uppercase tracking-widest text-[#4F39F6] dark:text-[#818CF8]">ROI Calculator</span>
-          <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-4 text-zinc-900 dark:text-white mt-3">
+          <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-4 text-zinc-900 dark:text-white mt-3">
             Calculate Your Recovered Revenue
           </h2>
           <p className="text-sm md:text-base text-zinc-600 dark:text-zinc-400 font-medium">

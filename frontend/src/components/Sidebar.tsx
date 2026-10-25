@@ -1,147 +1,120 @@
 import React, { useState } from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Users, MessageSquare, MessageCircle, Settings, Book, Zap, Sparkles, ChevronLeft, ChevronRight, CreditCard, Radio, Activity, DollarSign, Key, Lock, IndianRupee, ClipboardList, ShoppingBag, Shield } from 'lucide-react';
+import { NavLink } from 'react-router-dom';
+import { LayoutDashboard, Users, MessageSquare, MessageCircle, Settings, Book, Zap, Sparkles, ChevronLeft, ChevronRight, CreditCard, Activity, DollarSign, Key, Lock, IndianRupee, ClipboardList, Shield } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+
+const navItemClass = ({ isActive }: { isActive: boolean }) => `nav-item ${isActive ? 'active' : ''}`;
+
+/** A plan-gated entry keeps its lock in the row rather than inside the label text. */
+const LockedHint: React.FC<{ locked: boolean }> = ({ locked }) =>
+  locked ? <Lock size={13} className="ml-auto text-ink-faint shrink-0" aria-label="Requires a Pro plan" /> : null;
 
 const Sidebar: React.FC = () => {
   const { user } = useAuth();
-  const location = useLocation();
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   const hasProPlan = ['Pro', 'Business', 'Advanced'].includes(user?.company?.plan);
-  const isMetaActive = location.pathname === '/settings' && location.search.includes('tab=meta');
-  const isSettingsActive = location.pathname === '/settings' && !location.search.includes('tab=meta');
+  const isSuperAdmin = user?.roleCode === 'SUPER_ADMIN';
 
   return (
     <aside className={`sidebar ${isCollapsed ? 'collapsed' : ''}`}>
       <div className="logo-container">
         <div className="logo gap-2">
-          <img src="/Dark theme.png" alt="Flazly Logo" className="hidden dark:block w-11 h-11 object-contain transition-transform duration-300 hover:scale-105" />
-          <img src="/Light Theme.png" alt="Flazly Logo" className="block dark:hidden w-11 h-11 object-contain transition-transform duration-300 hover:scale-105" />
-          <span className="logo-text text-lg font-extrabold tracking-tight uppercase font-inter">
-            <span className="logo-text-primary text-zinc-900 dark:text-white">Flaz</span><span className="text-logo-gradient">ly</span>
-          </span>
+          <img src="/Dark theme.png" alt="" className="hidden dark:block w-7 h-7 object-contain" />
+          <img src="/Light Theme.png" alt="" className="block dark:hidden w-7 h-7 object-contain" />
+          <span className="logo-text">Flazly</span>
         </div>
-        <button 
-          onClick={() => setIsCollapsed(!isCollapsed)} 
+        <button
+          onClick={() => setIsCollapsed(!isCollapsed)}
           className="toggle-btn-inline"
-          aria-label="Toggle Sidebar"
+          aria-label={isCollapsed ? 'Expand navigation' : 'Collapse navigation'}
+          aria-expanded={!isCollapsed}
         >
           {isCollapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
         </button>
       </div>
 
-      <nav className="nav-links premium-scroll">
-        {user?.roleCode === 'SUPER_ADMIN' ? (
+      <nav className="nav-links premium-scroll" aria-label="Main">
+        {isSuperAdmin ? (
           <>
-            {/* Super Admin Group */}
-            {!isCollapsed && <div className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest px-4 mt-4 mb-1">Overview</div>}
-            <NavLink to="/admin/dashboard" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-              <LayoutDashboard size={20} />
-              <span>Dashboard</span>
+            <div className="nav-group-label">Overview</div>
+            <NavLink to="/admin/dashboard" className={navItemClass}>
+              <LayoutDashboard /> <span>Dashboard</span>
             </NavLink>
-            <NavLink to="/admin/revenue" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-              <IndianRupee size={20} />
-              <span>Revenue</span>
+            <NavLink to="/admin/revenue" className={navItemClass}>
+              <IndianRupee /> <span>Revenue</span>
             </NavLink>
-            <NavLink to="/admin/activity" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-              <ClipboardList size={20} />
-              <span>Activity Log</span>
+            <NavLink to="/admin/activity" className={navItemClass}>
+              <ClipboardList /> <span>Activity log</span>
             </NavLink>
 
-            {!isCollapsed && <div className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest px-4 mt-4 mb-1">Management</div>}
-            <NavLink to="/admin/clients" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-              <Users size={20} />
-              <span>Clients</span>
+            <div className="nav-group-label">Management</div>
+            <NavLink to="/admin/clients" className={navItemClass}>
+              <Users /> <span>Clients</span>
             </NavLink>
-            <NavLink to="/admin/usage" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-              <Activity size={20} />
-              <span>API Usage</span>
+            <NavLink to="/admin/usage" className={navItemClass}>
+              <Activity /> <span>API usage</span>
             </NavLink>
-            <NavLink to="/admin/pricing" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-              <DollarSign size={20} />
-              <span>Plan Pricing</span>
+            <NavLink to="/admin/pricing" className={navItemClass}>
+              <DollarSign /> <span>Plan pricing</span>
             </NavLink>
-            <NavLink to="/admin/llm-keys" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-              <Key size={20} />
-              <span>LLM API Keys</span>
+            <NavLink to="/admin/llm-keys" className={navItemClass}>
+              <Key /> <span>LLM API keys</span>
             </NavLink>
-            <NavLink to="/settings" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-              <Settings size={20} />
-              <span>Settings</span>
+            <NavLink to="/settings" className={navItemClass}>
+              <Settings /> <span>Settings</span>
             </NavLink>
           </>
         ) : (
           <>
-            {/* General Group */}
-            {!isCollapsed && <div className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest px-4 mt-2 mb-1">General</div>}
-            <NavLink to="/dashboard" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-              <LayoutDashboard size={20} />
-              <span>Dashboard</span>
+            <div className="nav-group-label">Conversations</div>
+            <NavLink to="/dashboard" className={navItemClass}>
+              <LayoutDashboard /> <span>Dashboard</span>
             </NavLink>
-            <NavLink to="/leads" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-              <Users size={20} />
-              <span>Leads</span>
+            <NavLink to="/inbox" className={navItemClass}>
+              <MessageSquare /> <span>Inbox</span>
             </NavLink>
-            <NavLink to="/inbox" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-              <MessageSquare size={20} />
-              <span>Inbox</span>
+            <NavLink to="/comments-manager" className={navItemClass}>
+              <MessageCircle /> <span>Comments</span>
             </NavLink>
-            <NavLink to="/comments-manager" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-              <MessageCircle size={20} />
-              <span>Comments Manager</span>
-            </NavLink>
-            <NavLink to="/meta-integration" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-              <Shield size={20} />
-              <span>Meta Integration</span>
-            </NavLink>
-            <NavLink to="/settings" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-              <Settings size={20} />
-              <span>Settings</span>
+            <NavLink to="/leads" className={navItemClass}>
+              <Users /> <span>Leads</span>
             </NavLink>
 
-            {/* Automation Group */}
-            {!isCollapsed && <div className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest px-4 mt-4 mb-1">Automation</div>}
-            <NavLink to="/knowledge" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-              <Book size={20} />
-              <span>Brain Base</span>
+            <div className="nav-group-label">Automation</div>
+            <NavLink to="/knowledge" className={navItemClass}>
+              <Book /> <span>Brain base</span>
             </NavLink>
-            {/* <NavLink to="/catalog" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-              <ShoppingBag size={20} />
-              <span>Product Catalog</span>
-            </NavLink> */}
-            <NavLink to="/automation" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-              <Zap size={20} />
-              <span>Automation</span>
+            <NavLink to="/automation" className={navItemClass}>
+              <Zap /> <span>Automation</span>
             </NavLink>
-            {/* <NavLink to="/broadcasts" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-              <Radio size={20} />
-              <span>Broadcasts {!hasProPlan && <Lock size={12} className="inline ml-1 text-zinc-400" />}</span>
-            </NavLink> */}
+            {user?.roleCode === 'CLIENT_ADMIN' && (
+              <NavLink to="/ai-settings" className={navItemClass}>
+                <Sparkles /> <span>AI persona</span>
+                <LockedHint locked={!hasProPlan} />
+              </NavLink>
+            )}
+
+            <div className="nav-group-label">Account</div>
+            <NavLink to="/meta-integration" className={navItemClass}>
+              <Shield /> <span>Instagram connection</span>
+            </NavLink>
             {user?.roleCode === 'CLIENT_ADMIN' && (
               <>
-                <NavLink to="/ai-settings" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-                  <Sparkles size={20} />
-                  <span>AI Persona {!hasProPlan && <Lock size={12} className="inline ml-1 text-zinc-400" />}</span>
+                <NavLink to="/team" className={navItemClass}>
+                  <Users /> <span>Team</span>
                 </NavLink>
-
-                {/* Admin Group */}
-                {!isCollapsed && <div className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest px-4 mt-4 mb-1">Admin</div>}
-                <NavLink to="/team" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-                  <Users size={20} />
-                  <span>Team</span>
-                </NavLink>
-                <NavLink to="/billing" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-                  <CreditCard size={20} />
-                  <span>Billing</span>
+                <NavLink to="/billing" className={navItemClass}>
+                  <CreditCard /> <span>Billing</span>
                 </NavLink>
               </>
             )}
+            <NavLink to="/settings" className={navItemClass}>
+              <Settings /> <span>Settings</span>
+            </NavLink>
           </>
         )}
       </nav>
-
-
     </aside>
   );
 };

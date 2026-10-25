@@ -10,6 +10,21 @@ export const CurrentUser = createParamDecorator((data, req) => {
   }
 });
 
+/**
+ * Builds a link into the frontend app for emails and Meta callbacks.
+ * DOMAIN_NAME is set with a trailing slash in some environments and without
+ * one in others, and every caller used to concatenate it assuming one or the
+ * other; this joins the two halves with exactly one slash. Locally DOMAIN_NAME
+ * names the API port, so it is mapped to the Vite dev server as before.
+ */
+export const AppUrl = (path: string) => {
+  const base = (process.env.DOMAIN_NAME || 'http://localhost:5173')
+    .replace('8000', '5173')
+    .replace('8001', '5173')
+    .replace(/\/+$/, '');
+  return `${base}/${path.replace(/^\/+/, '')}`;
+};
+
 export const RandomValue = (min: any, max: any) => {
   return Math.floor(
     Math.random() * (max - min) + min
