@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Loader2, ShieldCheck } from 'lucide-react';
+import { AlertCircle, ArrowLeft, ArrowRight, Eye, EyeOff, KeyRound, Loader2, Lock, ShieldCheck } from 'lucide-react';
 import api from '../lib/axios';
+import AuthLayout, { AuthHeading } from '../components/AuthLayout';
+import { authErrorMessage } from '../lib/authErrors';
 
 /**
  * Step two of the reset. The email links here as `/ResetPassword/<id>`, where
@@ -17,6 +19,7 @@ const ResetPassword: React.FC = () => {
   const [confirm, setConfirm] = useState('');
   const [status, setStatus] = useState<'idle' | 'saving' | 'done'>('idle');
   const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,55 +56,44 @@ const ResetPassword: React.FC = () => {
       }
     } catch (err) {
       setStatus('idle');
-      const message = (err as { response?: { data?: { Message?: string } } })?.response?.data?.Message;
-      setError(message || 'That code did not work. Request a new one and try again.');
+      setError(authErrorMessage(err, 'That code did not work. Request a new one and try again.'));
     }
   };
 
   return (
-    <div className="auth-surface min-h-screen w-full flex items-center justify-center bg-porcelain p-6">
-      <div className="surface w-full max-w-md p-8">
-        <Link to="/" className="mx-auto mb-6 flex w-fit items-center justify-center">
-          <img src="/Light Theme.png" alt="Flazly" className="h-10 w-10 object-contain" />
-        </Link>
+    <AuthLayout
+      title="A new password, and you're back in."
+      description="Use the six-digit code from the reset email. Your conversations, leads and automations stay exactly as you left them."
+    >
+      {!userId ? (
+        <div>
+          <AuthHeading title="This link is incomplete" subtitle="Open the link straight from the reset email, or request a new one." />
+          <Link to="/forgot-password" className="btn btn-primary btn-lg btn-block">Request a new code</Link>
+        </div>
+      ) : status === 'done' ? (
+        <div role="status">
+          <span className="icon-tile tone-mint mb-6 h-12 w-12 rounded-full"><ShieldCheck size={22} /></span>
+          <AuthHeading title="Password changed" subtitle="Your password has been updated. Sign in with your new password." />
+          <button onClick={() => navigate('/login')} className="btn btn-primary btn-lg btn-block group">
+            <span>Sign in</span>
+            <ArrowRight size={18} className="transition-transform duration-200 group-hover:translate-x-0.5" />
+          </button>
+        </div>
+      ) : (
+        <>
+          <AuthHeading title="Choose a new password" subtitle="Enter the six-digit code from the email, then your new password." />
 
-        {!userId ? (
-          <div className="text-center">
-            <h1 className="font-display text-[26px] font-semibold text-ink">This link is incomplete</h1>
-            <p className="mx-auto mt-1.5 max-w-[36ch] text-[15px] leading-relaxed text-ink-soft">
-              Open the link straight from the reset email, or request a new one.
-            </p>
-            <Link to="/forgot-password" className="btn btn-primary mt-6 w-full">Request a new code</Link>
-          </div>
-        ) : status === 'done' ? (
-          <div className="text-center">
-            <ShieldCheck className="mx-auto mb-5 h-7 w-7 text-signal-go" />
-            <h1 className="font-display text-[26px] font-semibold text-ink">Password changed</h1>
-            <p className="mx-auto mt-1.5 max-w-[36ch] text-[15px] leading-relaxed text-ink-soft">
-              Sign in with your new password.
-            </p>
-            <button onClick={() => navigate('/login')} className="btn btn-primary mt-6 w-full">
-              Sign in
-            </button>
-          </div>
-        ) : (
-          <>
-            <div className="mb-6 text-center">
-              <h1 className="font-display text-[26px] font-semibold text-ink">Choose a new password</h1>
-              <p className="mx-auto mt-1.5 max-w-[36ch] text-[15px] leading-relaxed text-ink-soft">
-                Enter the six-digit code from the email, then your new password.
-              </p>
+          {error && (
+            <div role="alert" className="notice notice-stop mb-5 block">
+              <p className="notice-title flex items-start gap-2 text-[14px]"><AlertCircle size={16} className="mt-0.5 shrink-0" />{error}</p>
             </div>
+          )}
 
-            {error && (
-              <div className="notice notice-stop mb-5">
-                <p className="notice-body">{error}</p>
-              </div>
-            )}
-
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label className="field-label" htmlFor="reset-otp">Code</label>
+          <form onSubmit={handleSubmit} noValidate className="space-y-4">
+            <div>
+              <label className="field-label" htmlFor="reset-otp">Reset code</label>
+              <div className="field-icon">
+                <KeyRound size={16} />
                 <input
                   id="reset-otp"
                   inputMode="numeric"
@@ -115,54 +107,66 @@ const ResetPassword: React.FC = () => {
                   autoFocus
                 />
               </div>
-              <div>
-                <label className="field-label" htmlFor="reset-password">New password</label>
+            </div>
+            <div>
+              <label className="field-label" htmlFor="reset-password">New password</label>
+              <div className="field-icon">
+                <Lock size={16} />
                 <input
                   id="reset-password"
-                  type="password"
+                  type={showPassword ? 'text' : 'password'}
                   autoComplete="new-password"
-                  className="field"
+                  className="field pr-11"
+                  placeholder="At least 6 characters"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
                 />
-                <p className="field-hint">At least 6 characters.</p>
+                <button
+                  type="button"
+                  className="btn btn-ghost btn-icon btn-sm absolute right-1.5 top-1/2 z-10 -translate-y-1/2"
+                  aria-label={showPassword ? 'Hide passwords' : 'Show passwords'}
+                  aria-pressed={showPassword}
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
               </div>
-              <div>
-                <label className="field-label" htmlFor="reset-confirm">Confirm new password</label>
+            </div>
+            <div>
+              <label className="field-label" htmlFor="reset-confirm">Confirm new password</label>
+              <div className="field-icon">
+                <Lock size={16} />
                 <input
                   id="reset-confirm"
-                  type="password"
+                  type={showPassword ? 'text' : 'password'}
                   autoComplete="new-password"
                   className="field"
+                  placeholder="Type it again"
                   value={confirm}
                   onChange={(e) => setConfirm(e.target.value)}
                   required
                 />
               </div>
+            </div>
 
-              <button type="submit" disabled={status === 'saving'} className="btn btn-primary w-full">
-                {status === 'saving' && <Loader2 size={15} className="animate-spin" />}
-                Change password
-              </button>
-            </form>
+            <button type="submit" disabled={status === 'saving'} aria-busy={status === 'saving' || undefined} className="btn btn-primary btn-lg btn-block !mt-6">
+              {status === 'saving' ? <><Loader2 size={18} className="animate-spin" /><span>Saving…</span></> : 'Change password'}
+            </button>
+          </form>
 
-            <p className="mt-4 text-center text-[13px] text-ink-soft">
-              No code?{' '}
-              <Link to="/forgot-password" className="text-ink underline underline-offset-2">Send a new one</Link>
-            </p>
-          </>
-        )}
+          <p className="mt-5 text-center text-[14px] text-ink-soft">
+            No code?{' '}
+            <Link to="/forgot-password" className="auth-link">Send a new one</Link>
+          </p>
+        </>
+      )}
 
-        <Link
-          to="/login"
-          className="mt-6 flex items-center justify-center gap-1.5 text-[13px] text-ink-soft transition-colors hover:text-ink"
-        >
-          <ArrowLeft size={14} />
-          Back to sign in
-        </Link>
-      </div>
-    </div>
+      <Link to="/login" className="auth-back mx-auto mt-8 flex w-fit">
+        <ArrowLeft size={15} aria-hidden="true" />
+        Back to sign in
+      </Link>
+    </AuthLayout>
   );
 };
 

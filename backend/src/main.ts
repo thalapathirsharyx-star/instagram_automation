@@ -35,7 +35,8 @@ async function bootstrap() {
           "https://app.flazly.com",
           "https://www.flazly.com"
         ];
-        const isAllowed = allowedOrigins.includes(origin) || origin.endsWith('.vercel.app');
+        const isLocalhost = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin);
+        const isAllowed = isLocalhost || allowedOrigins.includes(origin) || origin.endsWith('.vercel.app');
         if (isAllowed) {
           callback(null, true);
         } else {

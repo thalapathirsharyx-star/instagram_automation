@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { ShieldCheck, ShieldAlert, Loader2, ArrowRight } from 'lucide-react';
 import api from '../lib/axios';
+import AuthLayout, { AuthHeading } from '../components/AuthLayout';
+import { authErrorMessage } from '../lib/authErrors';
 
 const VerifyEmail: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -29,7 +31,7 @@ const VerifyEmail: React.FC = () => {
         }
       } catch (err: any) {
         setStatus('error');
-        setErrorMessage(err.response?.data?.Message || 'Verification link has expired or is invalid.');
+        setErrorMessage(authErrorMessage(err, 'Verification link has expired or is invalid.'));
       }
     };
 
@@ -38,46 +40,40 @@ const VerifyEmail: React.FC = () => {
   }, [token]);
 
   return (
-    <div className="auth-surface min-h-screen w-full flex items-center justify-center bg-porcelain p-6">
-      <div className="surface w-full max-w-md p-8 text-center">
-        <span className="font-display text-[20px] font-semibold tracking-tight text-ink">Flazly</span>
-
+    <AuthLayout
+      title="One click, and your workspace is ready."
+      description="Confirming your email keeps your account secure and lets us send you usage alerts and password resets."
+    >
+      <div aria-live="polite">
         {status === 'loading' && (
-          <div className="flex flex-col items-center py-8">
-            <Loader2 className="mb-5 h-6 w-6 animate-spin text-ink-soft" />
-            <h1 className="font-display text-[20px] font-semibold text-ink">Checking your link</h1>
-            <p className="mt-1 text-[15px] text-ink-soft">This takes a moment.</p>
+          <div>
+            <span className="icon-tile mb-6 h-12 w-12 rounded-full"><Loader2 size={22} className="animate-spin" /></span>
+            <AuthHeading title="Checking your link" subtitle="This takes a moment." />
           </div>
         )}
 
         {status === 'success' && (
-          <div className="flex flex-col items-center py-6">
-            <ShieldCheck className="mb-5 h-7 w-7 text-signal-go" />
-            <h1 className="font-display text-[26px] font-semibold text-ink">Email confirmed</h1>
-            <p className="mx-auto mt-1.5 max-w-[34ch] text-[15px] leading-relaxed text-ink-soft">
-              Your account is active. Sign in to connect Instagram and start replying.
-            </p>
-            <button onClick={() => navigate('/login')} className="btn btn-primary mt-6 w-full">
-              Sign in
-              <ArrowRight className="h-4 w-4" />
+          <div>
+            <span className="icon-tile tone-mint mb-6 h-12 w-12 rounded-full"><ShieldCheck size={22} /></span>
+            <AuthHeading title="Email confirmed" subtitle="Your account is active. Sign in to connect Instagram and start replying." />
+            <button onClick={() => navigate('/login')} className="btn btn-primary btn-lg btn-block group">
+              <span>Sign in</span>
+              <ArrowRight size={18} className="transition-transform duration-200 group-hover:translate-x-0.5" />
             </button>
           </div>
         )}
 
         {status === 'error' && (
-          <div className="flex flex-col items-center py-6">
-            <ShieldAlert className="mb-5 h-7 w-7 text-signal-stop" />
-            <h1 className="font-display text-[26px] font-semibold text-ink">This link did not work</h1>
-            <p className="mx-auto mt-1.5 max-w-[34ch] text-[15px] leading-relaxed text-ink-soft">
-              {errorMessage} Sign up again and we will send a new link.
-            </p>
-            <button onClick={() => navigate('/signup')} className="btn mt-6 w-full">
+          <div>
+            <span className="icon-tile tone-rose mb-6 h-12 w-12 rounded-full"><ShieldAlert size={22} /></span>
+            <AuthHeading title="This link did not work" subtitle={<>{errorMessage} Sign up again and we will send a new link.</>} />
+            <button onClick={() => navigate('/signup')} className="btn btn-lg btn-block">
               Back to sign up
             </button>
           </div>
         )}
       </div>
-    </div>
+    </AuthLayout>
   );
 };
 
