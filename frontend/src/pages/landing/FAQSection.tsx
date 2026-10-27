@@ -78,11 +78,13 @@ export const FAQSection: React.FC = () => {
   ];
 
   return (
-    <section id="faq" className="py-28 border-t border-zinc-200/80 dark:border-white/5 bg-[#fafafa] dark:bg-[#09090b] relative">
-      <div className="max-w-3xl mx-auto px-6">
+    <section id="faq" className="py-16 md:py-24 relative px-4 sm:px-6">
+      {/* Questions sit on a pale rounded panel, as in the reference. */}
+      <div className="lp-soft-panel max-w-4xl mx-auto px-5 py-14 sm:px-10 md:py-20">
+      <div className="max-w-3xl mx-auto">
         <div className="text-center mb-16">
-          <span className="text-xs font-bold uppercase tracking-widest text-[#4F39F6] dark:text-[#818CF8]">Have Questions?</span>
-          <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-zinc-900 dark:text-white mt-3 leading-tight">
+          <span className="lp-eyebrow">Have Questions?</span>
+          <h2 className="lp-title text-3xl md:text-5xl font-bold tracking-tight text-zinc-900 dark:text-white mt-3 leading-tight">
             Frequently Asked Questions
           </h2>
         </div>
@@ -92,6 +94,7 @@ export const FAQSection: React.FC = () => {
             <FAQItemComponent key={i} question={faq.q} answer={faq.a} />
           ))}
         </div>
+      </div>
       </div>
     </section>
   );

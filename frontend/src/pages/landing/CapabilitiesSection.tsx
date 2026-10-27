@@ -180,8 +180,8 @@ export const CapabilitiesSection: React.FC = () => {
     <section id="features" className="py-28 border-t border-zinc-200/80 dark:border-white/5 bg-zinc-100/10 dark:bg-[#121826]/10 relative overflow-hidden">
       <div className="max-w-6xl mx-auto px-6">
         <div className="text-center max-w-2xl mx-auto mb-20">
-          <span className="text-xs font-bold uppercase tracking-widest text-[#4F39F6] dark:text-[#818CF8]">Core Capabilities</span>
-          <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-zinc-900 dark:text-white mt-3 mb-4">
+          <span className="lp-eyebrow is-teal">Core Capabilities</span>
+          <h2 className="lp-title text-3xl md:text-5xl font-bold tracking-tight text-zinc-900 dark:text-white mt-3 mb-4">
             Designed to Generate More Business Leads
           </h2>
           <p className="text-sm md:text-base text-zinc-600 dark:text-zinc-400 font-medium">

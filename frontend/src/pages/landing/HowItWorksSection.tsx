@@ -203,8 +203,8 @@ export const HowItWorksSection: React.FC = () => {
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           {/* Left Column: 3 Steps */}
           <div className="flex flex-col text-left">
-            <span className="text-xs font-bold uppercase tracking-widest text-[#4F39F6] dark:text-[#818CF8]">How It Works</span>
-            <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-zinc-900 dark:text-white mt-3 mb-6">
+            <span className="lp-eyebrow is-violet">How It Works</span>
+            <h2 className="lp-title text-3xl md:text-5xl font-bold tracking-tight text-zinc-900 dark:text-white mt-3 mb-6">
               3 Steps to Automated Lead Capture
             </h2>
             <p className="text-sm md:text-base text-zinc-600 dark:text-zinc-400 font-medium mb-12">

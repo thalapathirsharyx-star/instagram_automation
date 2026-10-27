@@ -33,13 +33,13 @@ export const ProductShowcase: React.FC = () => {
     <section id="demo" className="w-full max-w-6xl mx-auto px-6 py-16 flex flex-col gap-6 mockup-dark scroll-mt-20">
       
       <div className="text-center max-w-2xl mx-auto mb-2">
-        <span className="text-xs font-bold uppercase tracking-widest text-[#4F39F6] dark:text-[#818CF8]">
+        <span className="lp-eyebrow">
           Interactive Dashboard Preview
         </span>
-        <h2 className="text-2xl sm:text-4xl font-bold tracking-tight text-zinc-900 dark:text-white mt-2 mb-3">
+        <h2 className="lp-title text-2xl sm:text-4xl font-bold tracking-tight text-zinc-900 dark:text-white mt-2 mb-3">
           Explore The Full Flazly Platform
         </h2>
-        <p className="text-sm text-zinc-500 dark:text-zinc-400 font-medium">
+        <p className="text-base text-[#535479] leading-relaxed">
           Toggle through live modules to see how Flazly handles conversations, builds automations, and tracks revenue.
         </p>
       </div>
@@ -48,7 +48,7 @@ export const ProductShowcase: React.FC = () => {
       <div 
         role="tablist" 
         aria-label="Product Modules"
-        className="flex flex-wrap items-center justify-center gap-2 p-1.5 bg-[#121826]/80 border border-white/5 rounded-2xl backdrop-blur-lg self-center"
+        className="flex flex-wrap items-center justify-center gap-1 p-1.5 bg-[#F3F5FB] rounded-[28px] sm:rounded-full self-center"
       >
         {tabs.map((tab) => {
           const isSelected = activeTab === tab.id;
@@ -60,10 +60,10 @@ export const ProductShowcase: React.FC = () => {
               id={`tab-${tab.id}`}
               aria-controls={`panel-${tab.id}`}
               onClick={() => setActiveTab(tab.id)}
-              className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
+              className={`px-4 py-2.5 rounded-full text-[13px] font-semibold transition-colors flex items-center gap-2 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1463FF] ${
                 isSelected
-                  ? 'bg-[#3B82F6] text-white shadow-md shadow-[#3B82F6]/20 border border-white/10'
-                  : 'text-zinc-400 hover:text-zinc-200 border border-transparent'
+                  ? 'bg-white text-[#0E0B3D] shadow-[0_1px_2px_rgba(113,116,152,0.12),0_6px_14px_rgba(113,116,152,0.14)]'
+                  : 'text-[#535479] hover:text-[#0E0B3D]'
               }`}
             >
               {tab.icon}

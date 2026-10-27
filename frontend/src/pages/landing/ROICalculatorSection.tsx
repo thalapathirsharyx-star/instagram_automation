@@ -143,8 +143,8 @@ export const ROICalculatorSection: React.FC = () => {
     <section className="py-28 relative border-t border-zinc-200/80 dark:border-white/5 bg-zinc-100/10 dark:bg-[#121826]/10">
       <div className="max-w-6xl mx-auto px-6">
         <div className="text-center max-w-2xl mx-auto mb-16">
-          <span className="text-xs font-bold uppercase tracking-widest text-[#4F39F6] dark:text-[#818CF8]">ROI Calculator</span>
-          <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-4 text-zinc-900 dark:text-white mt-3">
+          <span className="lp-eyebrow">ROI Calculator</span>
+          <h2 className="lp-title text-3xl md:text-5xl font-bold tracking-tight mb-4 text-zinc-900 dark:text-white mt-3">
             Calculate Your Recovered Revenue
           </h2>
           <p className="text-sm md:text-base text-zinc-600 dark:text-zinc-400 font-medium">

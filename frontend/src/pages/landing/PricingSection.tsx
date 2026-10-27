@@ -63,8 +63,8 @@ export const PricingSection: React.FC = () => {
     <section id="pricing" className="py-28 border-t border-zinc-200/80 dark:border-white/5 bg-zinc-100/10 dark:bg-[#121826]/10 relative">
       <div className="max-w-6xl mx-auto px-6">
         <div className="text-center max-w-2xl mx-auto mb-16">
-          <span className="text-xs font-bold uppercase tracking-widest text-[#4F39F6] dark:text-[#818CF8]">Pricing Plans</span>
-          <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-zinc-900 dark:text-white mt-3 mb-4 leading-tight">
+          <span className="lp-eyebrow is-violet">Pricing Plans</span>
+          <h2 className="lp-title text-3xl md:text-5xl font-bold tracking-tight text-zinc-900 dark:text-white mt-3 mb-4 leading-tight">
             Simple, Transparent Pricing
           </h2>
           <p className="text-sm md:text-base text-zinc-600 dark:text-zinc-400 font-medium leading-relaxed">
@@ -121,10 +121,8 @@ export const PricingSection: React.FC = () => {
 
                   <button
                     onClick={() => navigate('/signup')}
-                    className={`w-full py-4 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                      tier.popular
-                        ? 'btn-premium-cta font-bold'
-                        : 'bg-zinc-100 dark:bg-white/5 border border-zinc-200 dark:border-white/10 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200/50 dark:hover:bg-white/10'
+                    className={`w-full py-3.5 text-sm cursor-pointer ${
+                      tier.popular ? 'btn-premium-cta' : 'lp-btn-secondary'
                     }`}
                   >
                     {tier.btn}

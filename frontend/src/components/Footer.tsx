@@ -23,21 +23,21 @@ const Footer: React.FC = () => {
   ];
 
   return (
-    <footer className="site-footer dark border-t border-white/5 bg-[#07080C] pt-20 pb-12 px-6 relative z-10">
+    <footer className="site-footer pt-16 md:pt-20 pb-10 px-6 relative z-10">
       <div className="max-w-6xl mx-auto">
         <div className="grid grid-cols-2 md:grid-cols-5 gap-10 mb-16">
           <div className="col-span-2">
             <Link to="/" className="flex items-center gap-2.5 mb-6 group">
               <img
-                src="/Dark theme.png"
+                src="/Light Theme.png"
                 alt="Flazly Logo"
                 className="w-9 h-9 object-contain transition-transform duration-300 group-hover:scale-105"
               />
-              <span className="text-lg font-bold tracking-tight text-white uppercase font-inter logo-text">
+              <span className="lp-wordmark logo-text text-xl">
                 Flaz<span className="text-logo-gradient">ly</span>
               </span>
             </Link>
-            <p className="text-zinc-500 text-xs leading-relaxed max-w-sm mb-6">
+            <p className="text-sm leading-relaxed max-w-sm mb-6">
               The modern Instagram DM API and CRM for digital creators, scaling agencies, and high-growth e-commerce brands. Automatically route inquiries and scale your conversions.
             </p>
             <div className="flex items-center gap-3">
@@ -56,14 +56,14 @@ const Footer: React.FC = () => {
 
           {/* Product Column */}
           <div>
-            <h4 className="text-white text-xs font-bold uppercase tracking-wider mb-6">Product</h4>
-            <ul className="space-y-4 text-xs font-medium text-zinc-500">
+            <h4 className="text-[15px] font-semibold mb-5">Product</h4>
+            <ul className="space-y-3 text-sm">
               {productLinks.map((link) => (
                 <li key={link.label}>
                   <a
                     href={`/#${link.id}`}
                     onClick={(e) => goToSection(e, link.id)}
-                    className="hover:text-brand-purple transition-colors"
+                    className="transition-colors"
                   >
                     {link.label}
                   </a>
@@ -74,14 +74,14 @@ const Footer: React.FC = () => {
 
           {/* Developers Column */}
           <div>
-            <h4 className="text-white text-xs font-bold uppercase tracking-wider mb-6">Platform</h4>
-            <ul className="space-y-4 text-xs font-medium text-zinc-500">
+            <h4 className="text-[15px] font-semibold mb-5">Platform</h4>
+            <ul className="space-y-3 text-sm">
               {platformLinks.map((link) => (
                 <li key={link.label}>
                   <a
                     href={`/#${link.id}`}
                     onClick={(e) => goToSection(e, link.id)}
-                    className="hover:text-brand-purple transition-colors"
+                    className="transition-colors"
                   >
                     {link.label}
                   </a>
@@ -92,17 +92,17 @@ const Footer: React.FC = () => {
 
           {/* Legal Column */}
           <div>
-            <h4 className="text-white text-xs font-bold uppercase tracking-wider mb-6">Legal</h4>
-            <ul className="space-y-4 text-xs font-medium text-zinc-500">
-              <li><Link to="/privacy" onClick={() => window.scrollTo(0, 0)} className="hover:text-brand-purple transition-colors">Privacy Policy</Link></li>
-              <li><Link to="/terms" onClick={() => window.scrollTo(0, 0)} className="hover:text-brand-purple transition-colors">Terms of Service</Link></li>
-              <li><Link to="/data-deletion" onClick={() => window.scrollTo(0, 0)} className="hover:text-brand-purple transition-colors">Data Deletion</Link></li>
+            <h4 className="text-[15px] font-semibold mb-5">Legal</h4>
+            <ul className="space-y-3 text-sm">
+              <li><Link to="/privacy" onClick={() => window.scrollTo(0, 0)} className="transition-colors">Privacy Policy</Link></li>
+              <li><Link to="/terms" onClick={() => window.scrollTo(0, 0)} className="transition-colors">Terms of Service</Link></li>
+              <li><Link to="/data-deletion" onClick={() => window.scrollTo(0, 0)} className="transition-colors">Data Deletion</Link></li>
             </ul>
           </div>
 
         </div>
 
-        <div className="pt-8 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4 text-zinc-600 text-[10px] font-bold">
+        <div className="rounded-2xl bg-[#F7F9FC] px-6 py-5 flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left text-[13px] text-[#535479]">
           <span>© 2026 Flazly Inc. All rights reserved.</span>
           <span>Built with ❤ for professional Instagram automation.</span>
         </div>

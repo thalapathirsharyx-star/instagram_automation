@@ -61,7 +61,7 @@ export const WorkflowSimulation: React.FC = () => {
       badge: "Sale Closed",
       detail: "Pipeline updated: +$499 Revenue",
       glow: "from-[#6366F1] to-[#38BDF8]",
-      color: "text-emerald-400 bg-emerald-500/10 border-emerald-500/20"
+      color: "text-emerald-700 bg-emerald-500/10 border-emerald-500/20"
     }
   ];
 
@@ -80,16 +80,16 @@ export const WorkflowSimulation: React.FC = () => {
       <div className="absolute bottom-0 left-0 w-64 h-64 bg-[#6366F1]/5 blur-[80px] rounded-full pointer-events-none" />
 
       {/* Header bar */}
-      <div className="flex items-center justify-between pb-6 border-b border-white/5 mb-8">
+      <div className="flex flex-wrap items-center justify-between gap-3 pb-6 border-b border-white/5 mb-8">
         <div className="flex items-center gap-2">
-          <div className="w-2.5 h-2.5 rounded-full bg-zinc-700" />
-          <div className="w-2.5 h-2.5 rounded-full bg-zinc-700" />
-          <div className="w-2.5 h-2.5 rounded-full bg-zinc-700" />
-          <span className="text-[10px] text-zinc-400 uppercase tracking-wider font-semibold ml-2">
+          <div className="w-2.5 h-2.5 rounded-full bg-[#FF6B8A]" />
+          <div className="w-2.5 h-2.5 rounded-full bg-[#FFD166]" />
+          <div className="w-2.5 h-2.5 rounded-full bg-[#4CD38A]" />
+          <span className="text-xs text-[#535479] uppercase tracking-wide font-semibold ml-2">
             live_autopilot_simulation
           </span>
         </div>
-        <div className="text-[10px] text-[#38BDF8] bg-[#38BDF8]/10 px-2.5 py-1 rounded border border-[#38BDF8]/20 flex items-center gap-1 select-none font-bold">
+        <div className="text-xs text-[#0F4FD6] bg-[#EEF4FF] px-3 py-1 rounded-full border border-[#1463FF]/20 flex items-center gap-1.5 select-none font-semibold">
           <span className="w-1.5 h-1.5 rounded-full bg-[#38BDF8] animate-pulse" /> Autopilot Active
         </div>
       </div>
@@ -105,21 +105,21 @@ export const WorkflowSimulation: React.FC = () => {
               key={idx}
               type="button"
               onClick={() => setActiveStep(idx)}
-              className={`flex flex-col p-4 rounded-2xl border transition-all duration-300 cursor-pointer text-left h-full ${
+              className={`flex flex-col p-4 rounded-2xl border transition-all duration-300 cursor-pointer text-left h-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1463FF] ${
                 isSelected
-                  ? `bg-[#121826] border-[#38BDF8] shadow-lg shadow-[#38BDF8]/10 scale-[1.02]`
+                  ? "bg-white border-[#1463FF] shadow-[0_10px_24px_-10px_rgba(20,99,255,0.35)] ring-4 ring-[#1463FF]/10"
                   : isPassed
-                    ? "bg-[#121826]/30 border-white/10 opacity-70"
-                    : "bg-transparent border-white/5 opacity-50 hover:opacity-80"
+                    ? "bg-white border-[#E2E6F0]"
+                    : "bg-[#F7F9FC] border-transparent hover:border-[#E2E6F0]"
               }`}
             >
-              <div className="flex items-center justify-between mb-3 w-full">
-                <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider ${
-                  isSelected ? "bg-[#38BDF8] text-white" : "bg-white/5 text-zinc-400"
+              <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1 mb-3 w-full">
+                <span className={`whitespace-nowrap text-[11px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wide ${
+                  isSelected ? "bg-[#1463FF] text-[#FFFFFF]" : isPassed ? "bg-[#E6F3EC] text-[#1F6B3A]" : "bg-[#EBEEF6] text-[#535479]"
                 }`}>
                   Step {idx + 1}
                 </span>
-                <span className={`text-[8px] font-bold ${isSelected ? "text-[#38BDF8]" : "text-zinc-400"}`}>
+                <span className={`whitespace-nowrap text-[11px] font-semibold ${isSelected ? "text-[#1463FF]" : "text-[#535479]"}`}>
                   {step.badge}
                 </span>
               </div>
@@ -128,11 +128,11 @@ export const WorkflowSimulation: React.FC = () => {
                 {step.icon}
               </div>
 
-              <span className="text-xs font-bold text-white mb-1 group-hover:text-[#38BDF8] transition-colors block">
+              <span className="text-sm font-semibold text-[#0E0B3D] mb-1 block">
                 {step.title}
               </span>
 
-              <p className="text-[10px] text-zinc-400 leading-normal font-medium mt-auto">
+              <p className="text-[12.5px] text-[#535479] leading-snug mt-auto">
                 {step.detail}
               </p>
             </button>
@@ -141,19 +141,19 @@ export const WorkflowSimulation: React.FC = () => {
       </div>
 
       {/* Console details of currently active step */}
-      <div className="mt-8 bg-black/40 border border-white/5 p-4 rounded-xl text-left font-mono relative">
-        <div className="text-[9px] text-zinc-400 uppercase tracking-widest mb-2 flex items-center justify-between">
+      <div className="mockup-dark mt-8 bg-[#0E0B3D] p-5 rounded-2xl text-left font-mono relative">
+        <div className="text-[11px] text-[#A9ABC9] uppercase tracking-widest mb-3 flex items-center justify-between">
           <span>Simulation Logs</span>
-          <span className="text-[#38BDF8] font-bold">Step {activeStep + 1} / 6</span>
+          <span className="text-[#8FB4FF] font-bold">Step {activeStep + 1} / 6</span>
         </div>
-        <div className="text-xs space-y-1 text-zinc-300">
+        <div className="text-[13px] leading-relaxed space-y-1 text-[#C9CBE3]">
           <p className="text-white font-semibold">
             &gt; Initializing pipeline flow node: {steps[activeStep].title.toUpperCase()}
           </p>
-          <p className="text-zinc-400">
+          <p className="text-[#A9ABC9]">
             [STATUS] Node connected. Status: SUCCESS. Latency: 0.120s
           </p>
-          <p className="text-[#38BDF8] font-medium">
+          <p className="text-[#8FB4FF] font-medium">
             [DATA] {steps[activeStep].detail}
           </p>
         </div>
