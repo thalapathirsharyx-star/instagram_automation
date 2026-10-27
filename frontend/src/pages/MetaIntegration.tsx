@@ -7,12 +7,10 @@ import {
   Link2, 
   RefreshCw, 
   Info, 
-  Check, 
-  Sparkles,
-  Zap,
-  ArrowUpRight
+  Loader2
 } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
+import { ConfirmModal } from '../components/ConfirmModal';
 import { connectInstagram, getInstagramSettings, disconnectInstagram } from '../api/crm.api';
 
 const MetaIntegration: React.FC = () => {
@@ -23,6 +21,8 @@ const MetaIntegration: React.FC = () => {
   const [showGuide, setShowGuide] = useState(false);
   const [connectionDetails, setConnectionDetails] = useState<{ name: string, id: string } | null>(null);
   const [connectionWarnings, setConnectionWarnings] = useState<string[]>([]);
+  const [confirmDisconnect, setConfirmDisconnect] = useState(false);
+  const [isDisconnecting, setIsDisconnecting] = useState(false);
 
   useEffect(() => {
     setIsLoadingStatus(true);
@@ -146,6 +146,7 @@ const MetaIntegration: React.FC = () => {
   };
 
   const handleDisconnect = async () => {
+    setIsDisconnecting(true);
     try {
       await disconnectInstagram();
       setIsConnected(false);
@@ -153,200 +154,175 @@ const MetaIntegration: React.FC = () => {
       toast.success('Account disconnected successfully.');
     } catch (e) {
       toast.error('Failed to disconnect account.');
+    } finally {
+      setIsDisconnecting(false);
+      setConfirmDisconnect(false);
     }
   };
 
+  // Escape closes the setup guide, as it does every other dialog.
+  useEffect(() => {
+    if (!showGuide) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setShowGuide(false); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [showGuide]);
+
+  const steps = [
+    {
+      title: 'Switch to a professional account',
+      body: <>Instagram app → Settings → Account type. Choose <strong className="font-medium text-ink">Business</strong> or <strong className="font-medium text-ink">Creator</strong>.</>,
+    },
+    {
+      title: 'Link a Facebook Page',
+      body: <>On your profile: Edit profile → Public business information → Page. Select or create a Page to link.</>,
+    },
+    {
+      title: 'Allow access to messages',
+      body: <>Instagram Settings → Privacy → Messages. At the bottom, turn on <strong className="font-medium text-ink">Allow access to messages</strong>.</>,
+    },
+  ];
+
   return (
-    <div className="max-w-5xl mx-auto pb-12 font-sans animate-in fade-in duration-500">
-      
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8 border-b border-zinc-200/80 dark:border-zinc-800 pb-6">
+    <div className="page">
+      <div className="page-head">
         <div>
-          <h1 className="page-title flex items-center gap-3">
-            <div className="p-2 bg-violet-100 dark:bg-violet-950/60 text-violet-600 dark:text-violet-400 rounded-xl">
-              <Shield size={22} strokeWidth={2.5} />
-            </div>
-            Meta Integration
-          </h1>
-          <p className="text-sm text-zinc-500 dark:text-zinc-400 font-medium">
-            Connect and manage your Facebook Page and Instagram Professional account for automated AI DM responses and comment workflows.
+          <h1 className="page-title">Instagram connection</h1>
+          <p className="page-sub">
+            Connect your Facebook Page and Instagram professional account so the assistant can answer DMs and comments.
           </p>
         </div>
       </div>
 
-      {/* Main Card */}
-      <div className="bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800 rounded-2xl shadow-sm p-6 md:p-8 space-y-6">
-        
+      <section className="surface page-narrow overflow-hidden">
+        <div className="surface-head">
+          <h2><span className="icon-tile is-sm"><Shield size={16} /></span>Meta account</h2>
+          {!isLoadingStatus && (
+            isConnected
+              ? <span className="chip chip-dot chip-go">Connected</span>
+              : <span className="chip chip-dot">Not connected</span>
+          )}
+        </div>
+
         {isLoadingStatus ? (
-          <div className="flex items-center gap-3 p-6 bg-zinc-50 dark:bg-zinc-800/50 rounded-xl border border-zinc-200 dark:border-zinc-700 text-zinc-500 dark:text-zinc-400 font-medium text-xs">
-            <div className="animate-spin w-5 h-5 border-2 border-violet-500 border-t-transparent rounded-full" />
-            Validating Connection State...
+          <div className="surface-body flex items-center gap-3 text-[14px] text-ink-soft" role="status">
+            <Loader2 size={18} className="animate-spin text-ink-faint" />
+            Checking the connection…
           </div>
         ) : isConnected ? (
-          <div className="space-y-6">
-            <div className="flex items-center gap-2 text-emerald-700 dark:text-emerald-400 font-medium text-[13px] bg-emerald-50 dark:bg-emerald-950/50 px-3 py-1.5 rounded-lg w-fit border border-emerald-200 dark:border-emerald-800">
-              <div className="w-2 h-2 rounded-full bg-emerald-500" />
-              Live Connection Established
-            </div>
-
-            <div className="p-5 bg-zinc-50 dark:bg-zinc-800/50 rounded-xl border border-zinc-200 dark:border-zinc-700 shadow-sm flex items-center justify-between gap-4">
-              <div className="flex items-center gap-4">
-                <div className="w-14 h-14 bg-white dark:bg-zinc-700 rounded-xl border border-zinc-200 dark:border-zinc-600 shadow-sm flex items-center justify-center text-zinc-500 dark:text-zinc-300">
-                  <Smartphone size={28} />
-                </div>
-                <div>
-                  <div className="text-base font-semibold text-zinc-900 dark:text-zinc-100">{connectionDetails?.name}</div>
-                  <div className="text-xs text-zinc-500 dark:text-zinc-400 font-mono mt-1">
-                    Meta Business ID: <span className="text-zinc-800 dark:text-zinc-200 font-semibold">{connectionDetails?.id}</span>
-                  </div>
+          <>
+            <div className="surface-body space-y-5">
+              <div className="flex items-center gap-4 rounded-[10px] border border-hairline bg-porcelain p-4">
+                <span className="icon-tile is-neutral h-12 w-12"><Smartphone size={22} /></span>
+                <div className="min-w-0">
+                  <p className="truncate text-[16px] font-semibold text-ink">{connectionDetails?.name}</p>
+                  <p className="mt-0.5 text-[13px] text-ink-soft">
+                    Meta Business ID <code className="select-all text-ink">{connectionDetails?.id}</code>
+                  </p>
                 </div>
               </div>
-              <span className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 bg-violet-50 dark:bg-violet-950/50 text-violet-600 dark:text-violet-400 border border-violet-200 dark:border-violet-800 text-xs font-semibold rounded-lg">
-                <Check size={14} /> Active
-              </span>
+
+              {connectionWarnings.length > 0 && (
+                <div className="notice notice-warn block">
+                  <p className="notice-title flex items-center gap-2">
+                    <Info size={16} className="text-signal-warn" /> Connection is incomplete
+                  </p>
+                  <ul className="notice-body mt-2 list-disc space-y-1 pl-5">
+                    {connectionWarnings.map((w, i) => <li key={i}>{w}</li>)}
+                  </ul>
+                  <p className="notice-body mt-2">
+                    Reconnect and approve every permission Facebook asks for, otherwise real-time
+                    DM and comment automation will not receive events.
+                  </p>
+                </div>
+              )}
             </div>
 
-            {connectionWarnings.length > 0 && (
-              <div className="p-4 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/50 rounded-xl">
-                <h3 className="text-sm font-medium text-amber-900 dark:text-amber-200 flex items-center gap-2 mb-2">
-                  <Info size={16} className="text-amber-600 dark:text-amber-400" />
-                  Connection is incomplete
-                </h3>
-                <ul className="list-disc pl-5 space-y-1">
-                  {connectionWarnings.map((w, i) => (
-                    <li key={i} className="text-xs text-amber-800 dark:text-amber-300 leading-relaxed font-medium">{w}</li>
-                  ))}
-                </ul>
-                <p className="text-xs text-amber-800 dark:text-amber-300 font-medium mt-3">
-                  Reconnect and approve every permission Facebook asks for, otherwise real-time
-                  DM and comment automation will not receive events.
-                </p>
-              </div>
-            )}
-
-            <div className="pt-2 flex flex-wrap items-center justify-between gap-4 border-t border-zinc-100 dark:border-zinc-800">
-              <button 
-                onClick={handleDisconnect}
-                className="px-5 py-2.5 bg-white dark:bg-zinc-800 text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 border border-zinc-200 dark:border-zinc-700 hover:border-rose-200 dark:hover:border-rose-800 rounded-lg font-semibold transition-colors text-sm shadow-sm flex items-center gap-2 cursor-pointer"
-              >
-                <X size={16} /> Revoke Meta Access
+            <div className="surface-foot">
+              <button onClick={() => setShowGuide(true)} className="btn btn-ghost btn-sm">
+                <Info size={15} /> Setup guide
               </button>
-
-              <button
-                onClick={() => setShowGuide(true)}
-                className="text-xs text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200 flex items-center gap-1 font-medium transition-colors cursor-pointer"
-              >
-                <Info size={14} /> View Configuration Guide
+              <button onClick={() => setConfirmDisconnect(true)} className="btn btn-danger-soft btn-sm">
+                <X size={15} /> Revoke Meta access
               </button>
             </div>
-          </div>
+          </>
         ) : (
-          <div className="space-y-6">
-            <div className="p-4 bg-blue-50/70 dark:bg-blue-950/30 border border-blue-200/80 dark:border-blue-800/50 rounded-xl">
-              <h3 className="text-sm font-medium text-blue-900 dark:text-blue-200 flex items-center gap-2 mb-1">
-                <Sparkles size={16} className="text-blue-600 dark:text-blue-400" /> Connect Your Instagram Account
-              </h3>
-              <p className="text-xs text-blue-700 dark:text-blue-300 leading-relaxed font-medium">
-                Link your Instagram Professional account to grant Flazly access to read and respond to direct messages and comments in real-time.
+          <>
+            <div className="surface-body">
+              <p className="text-[15px] text-ink">Connect your Instagram professional account</p>
+              <p className="mt-1 text-[14px] text-ink-soft">
+                Flazly gets permission to read and reply to direct messages and comments in real time.
+                You can revoke it here at any time.
               </p>
             </div>
-
-            <div className="flex flex-col sm:flex-row gap-3 pt-2">
-              <button 
+            <div className="surface-foot">
+              <button onClick={() => setShowGuide(true)} className="btn btn-sm">
+                <Info size={15} /> Setup guide
+              </button>
+              <button
                 onClick={handleConnect}
                 disabled={isConnecting}
-                className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition-colors shadow-sm disabled:opacity-70 cursor-pointer"
+                aria-busy={isConnecting || undefined}
+                className="btn btn-primary"
               >
-                {isConnecting ? <RefreshCw className="animate-spin" size={18} /> : <Link2 size={18} />}
-                <span>{isConnecting ? 'Authenticating...' : 'Connect with Facebook'}</span>
-              </button>
-              <button 
-                onClick={() => setShowGuide(true)}
-                className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-3 bg-white dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-700 rounded-xl font-semibold hover:bg-zinc-50 dark:hover:bg-zinc-700 transition-colors shadow-sm cursor-pointer"
-              >
-                <Info size={16} className="text-zinc-400"/> Setup Guide
+                {isConnecting ? <RefreshCw className="animate-spin" size={16} /> : <Link2 size={16} />}
+                {isConnecting ? 'Connecting…' : 'Connect with Facebook'}
               </button>
             </div>
-          </div>
+          </>
         )}
-      </div>
+      </section>
 
-      {/* Guide Modal */}
       {showGuide && (
-        <div className="fixed inset-0 bg-zinc-900/40 backdrop-blur-sm flex items-center justify-center z-[100] p-4 sm:p-6 animate-in fade-in duration-200">
-          <div className="bg-white dark:bg-zinc-900 border dark:border-zinc-800 max-w-xl w-full rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
-            
-            <div className="px-6 py-5 border-b border-zinc-100 dark:border-zinc-800 flex justify-between items-center bg-zinc-50/50 dark:bg-zinc-800/50">
+        <div className="modal-backdrop" onClick={(e) => { if (e.target === e.currentTarget) setShowGuide(false); }}>
+          <div role="dialog" aria-modal="true" aria-labelledby="meta-guide-title" className="modal">
+            <div className="modal-head">
               <div>
-                <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">Required Meta Configuration</h2>
-                <p className="text-xs text-zinc-500 dark:text-zinc-400 font-medium mt-1">Please ensure these steps are completed before linking.</p>
+                <h2 id="meta-guide-title">Before you connect</h2>
+                <p className="mt-1 text-[14px] text-ink-soft">Complete these steps in Instagram first.</p>
               </div>
-              <button 
-                onClick={() => setShowGuide(false)}
-                className="p-2 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-full transition-colors cursor-pointer"
-              >
-                <X size={20} />
+              <button onClick={() => setShowGuide(false)} className="btn btn-ghost btn-icon btn-sm" aria-label="Close">
+                <X size={18} />
               </button>
             </div>
 
-            <div className="p-6 md:p-8 space-y-6">
-              
-              <div className="flex gap-4 items-start">
-                <div className="w-8 h-8 bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 rounded-full flex items-center justify-center shrink-0 border border-blue-100 dark:border-blue-900 font-medium text-xs">
-                  1
-                </div>
-                <div className="pt-0.5">
-                  <h4 className="font-medium text-zinc-900 dark:text-zinc-100 text-sm mb-1">Switch to Professional Account</h4>
-                  <p className="text-xs text-zinc-500 dark:text-zinc-400 font-medium leading-relaxed">
-                    Open the Instagram App &gt; Settings &gt; Account Type. Make sure you are switched to a <strong className="text-zinc-700 dark:text-zinc-300">Business</strong> or <strong className="text-zinc-700 dark:text-zinc-300">Creator</strong> account.
-                  </p>
-                </div>
-              </div>
+            <ol className="modal-body space-y-5">
+              {steps.map((step, i) => (
+                <li key={step.title} className="flex gap-4">
+                  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-viridian-tint text-[13px] font-semibold text-viridian">
+                    {i + 1}
+                  </span>
+                  <div className="min-w-0">
+                    <p className="text-[14px] font-medium text-ink">{step.title}</p>
+                    <p className="mt-0.5 text-[14px] leading-relaxed text-ink-soft">{step.body}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
 
-              <div className="flex gap-4 items-start">
-                <div className="w-8 h-8 bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 rounded-full flex items-center justify-center shrink-0 border border-blue-100 dark:border-blue-900 font-medium text-xs">
-                  2
-                </div>
-                <div className="pt-0.5">
-                  <h4 className="font-medium text-zinc-900 dark:text-zinc-100 text-sm mb-1">Link to a Facebook Page</h4>
-                  <p className="text-xs text-zinc-500 dark:text-zinc-400 font-medium leading-relaxed">
-                    On your Instagram profile, click Edit Profile &gt; Public Business Information &gt; Page. Select or create a Facebook Page to link.
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex gap-4 items-start">
-                <div className="w-8 h-8 bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 rounded-full flex items-center justify-center shrink-0 border border-blue-100 dark:border-blue-900 font-medium text-xs">
-                  3
-                </div>
-                <div className="pt-0.5">
-                  <h4 className="font-medium text-zinc-900 dark:text-zinc-100 text-sm mb-1">Allow Message Access</h4>
-                  <p className="text-xs text-zinc-500 dark:text-zinc-400 font-medium leading-relaxed">
-                    In Instagram Settings &gt; Privacy &gt; Messages. Scroll to the bottom and turn <strong className="text-emerald-600 font-medium uppercase text-[13px] bg-emerald-50 dark:bg-emerald-950 px-1.5 py-0.5 rounded border border-emerald-200 dark:border-emerald-800 ml-1">On</strong> the "Allow Access to Messages" toggle.
-                  </p>
-                </div>
-              </div>
-
-            </div>
-
-            <div className="px-6 py-4 bg-zinc-50 dark:bg-zinc-800/50 border-t border-zinc-200 dark:border-zinc-800 flex flex-col sm:flex-row gap-3">
-              <button 
-                onClick={handleConnect}
-                className="flex-1 px-4 py-2.5 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors shadow-sm flex items-center justify-center gap-2 text-sm cursor-pointer"
-              >
-                <CheckCircle2 size={18} />
-                <span>I've Completed These Steps</span>
-              </button>
-              <button 
-                 onClick={() => setShowGuide(false)}
-                 className="flex-1 sm:flex-none px-4 py-2.5 bg-white dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 text-zinc-700 dark:text-zinc-200 rounded-lg font-medium hover:bg-zinc-50 dark:hover:bg-zinc-700 transition-colors shadow-sm text-sm cursor-pointer"
-              >
-                Cancel
+            <div className="modal-foot">
+              <button onClick={() => setShowGuide(false)} className="btn">Cancel</button>
+              <button onClick={handleConnect} disabled={isConnecting} aria-busy={isConnecting || undefined} className="btn btn-primary">
+                {isConnecting ? <Loader2 size={16} className="animate-spin" /> : <CheckCircle2 size={16} />}
+                I've done these steps
               </button>
             </div>
           </div>
         </div>
       )}
+
+      <ConfirmModal
+        isOpen={confirmDisconnect}
+        title="Revoke Meta access?"
+        message="Flazly stops receiving your Instagram messages and comments, and every automation pauses until you connect again."
+        confirmText="Revoke access"
+        cancelText="Keep connected"
+        type="danger"
+        isLoading={isDisconnecting}
+        onConfirm={handleDisconnect}
+        onCancel={() => setConfirmDisconnect(false)}
+      />
     </div>
   );
 };

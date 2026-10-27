@@ -38,78 +38,78 @@ const Sidebar: React.FC = () => {
         {isSuperAdmin ? (
           <>
             <div className="nav-group-label">Overview</div>
-            <NavLink to="/admin/dashboard" className={navItemClass}>
+            <NavLink to="/admin/dashboard" className={navItemClass} title="Dashboard">
               <LayoutDashboard /> <span>Dashboard</span>
             </NavLink>
-            <NavLink to="/admin/revenue" className={navItemClass}>
+            <NavLink to="/admin/revenue" className={navItemClass} title="Revenue">
               <IndianRupee /> <span>Revenue</span>
             </NavLink>
-            <NavLink to="/admin/activity" className={navItemClass}>
+            <NavLink to="/admin/activity" className={navItemClass} title="Activity log">
               <ClipboardList /> <span>Activity log</span>
             </NavLink>
 
             <div className="nav-group-label">Management</div>
-            <NavLink to="/admin/clients" className={navItemClass}>
+            <NavLink to="/admin/clients" className={navItemClass} title="Clients">
               <Users /> <span>Clients</span>
             </NavLink>
-            <NavLink to="/admin/usage" className={navItemClass}>
+            <NavLink to="/admin/usage" className={navItemClass} title="API usage">
               <Activity /> <span>API usage</span>
             </NavLink>
-            <NavLink to="/admin/pricing" className={navItemClass}>
+            <NavLink to="/admin/pricing" className={navItemClass} title="Plan pricing">
               <DollarSign /> <span>Plan pricing</span>
             </NavLink>
-            <NavLink to="/admin/llm-keys" className={navItemClass}>
+            <NavLink to="/admin/llm-keys" className={navItemClass} title="LLM API keys">
               <Key /> <span>LLM API keys</span>
             </NavLink>
-            <NavLink to="/settings" className={navItemClass}>
+            <NavLink to="/settings" className={navItemClass} title="Settings">
               <Settings /> <span>Settings</span>
             </NavLink>
           </>
         ) : (
           <>
             <div className="nav-group-label">Conversations</div>
-            <NavLink to="/dashboard" className={navItemClass}>
+            <NavLink to="/dashboard" className={navItemClass} title="Dashboard">
               <LayoutDashboard /> <span>Dashboard</span>
             </NavLink>
-            <NavLink to="/inbox" className={navItemClass}>
+            <NavLink to="/inbox" className={navItemClass} title="Inbox">
               <MessageSquare /> <span>Inbox</span>
             </NavLink>
-            <NavLink to="/comments-manager" className={navItemClass}>
+            <NavLink to="/comments-manager" className={navItemClass} title="Comments">
               <MessageCircle /> <span>Comments</span>
             </NavLink>
-            <NavLink to="/leads" className={navItemClass}>
+            <NavLink to="/leads" className={navItemClass} title="Leads">
               <Users /> <span>Leads</span>
             </NavLink>
 
             <div className="nav-group-label">Automation</div>
-            <NavLink to="/knowledge" className={navItemClass}>
+            <NavLink to="/knowledge" className={navItemClass} title="Brain base">
               <Book /> <span>Brain base</span>
             </NavLink>
-            <NavLink to="/automation" className={navItemClass}>
+            <NavLink to="/automation" className={navItemClass} title="Automation">
               <Zap /> <span>Automation</span>
             </NavLink>
             {user?.roleCode === 'CLIENT_ADMIN' && (
-              <NavLink to="/ai-settings" className={navItemClass}>
+              <NavLink to="/ai-settings" className={navItemClass} title="AI persona">
                 <Sparkles /> <span>AI persona</span>
                 <LockedHint locked={!hasProPlan} />
               </NavLink>
             )}
 
             <div className="nav-group-label">Account</div>
-            <NavLink to="/meta-integration" className={navItemClass}>
+            <NavLink to="/meta-integration" className={navItemClass} title="Instagram connection">
               <Shield /> <span>Instagram connection</span>
             </NavLink>
             {user?.roleCode === 'CLIENT_ADMIN' && (
               <>
-                <NavLink to="/team" className={navItemClass}>
+                <NavLink to="/team" className={navItemClass} title="Team">
                   <Users /> <span>Team</span>
                 </NavLink>
-                <NavLink to="/billing" className={navItemClass}>
+                <NavLink to="/billing" className={navItemClass} title="Billing">
                   <CreditCard /> <span>Billing</span>
                 </NavLink>
               </>
             )}
-            <NavLink to="/settings" className={navItemClass}>
+            <NavLink to="/settings" className={navItemClass} title="Settings">
               <Settings /> <span>Settings</span>
             </NavLink>
           </>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { IndianRupee, TrendingUp, Users, CreditCard, PieChart, ArrowUpRight, ArrowDownRight, Activity } from 'lucide-react';
+import { IndianRupee, TrendingUp, Users, CreditCard, PieChart, ArrowUpRight, Activity, Download, Loader2 } from 'lucide-react';
 import api from '../lib/axios';
 
 const PLAN_PRICES: Record<string, number> = {
@@ -41,210 +41,153 @@ const AdminRevenue: React.FC = () => {
   const paidClients = clients.filter(c => c.plan && c.plan !== 'Free').length;
   const conversionRate = clients.length > 0 ? Math.round((paidClients / clients.length) * 100) : 0;
 
-  const planColors: Record<string, string> = {
-    Free: 'bg-zinc-500',
-    Pro: 'bg-violet-500',
-    Business: 'bg-blue-500',
-    Advanced: 'bg-emerald-500',
-  };
+  const planChip = (plan: string) => (plan && plan !== 'Free' ? 'chip chip-accent' : 'chip');
 
-  const planTextColors: Record<string, string> = {
-    Free: 'text-zinc-600',
-    Pro: 'text-violet-600',
-    Business: 'text-blue-600',
-    Advanced: 'text-emerald-600',
-  };
-
-  const planBgLight: Record<string, string> = {
-    Free: 'bg-zinc-50',
-    Pro: 'bg-violet-50',
-    Business: 'bg-blue-50',
-    Advanced: 'bg-emerald-50',
-  };
-
-  const planBorderLight: Record<string, string> = {
-    Free: 'border-zinc-200',
-    Pro: 'border-violet-200',
-    Business: 'border-blue-200',
-    Advanced: 'border-emerald-200',
+  // Downloads the revenue table this page is built from: one row per tenant.
+  const exportCsv = () => {
+    const escape = (v: unknown) => `"${String(v ?? '').replace(/"/g, '""')}"`;
+    const rows = [
+      ['Company', 'Email', 'Plan', 'Monthly price (INR)'],
+      ...clients.map(c => [c.name, c.email, c.plan || 'Free', PLAN_PRICES[c.plan || 'Free'] || 0]),
+    ];
+    const blob = new Blob([rows.map(r => r.map(escape).join(',')).join('\n')], { type: 'text/csv;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `flazly-revenue-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
   };
 
   if (isLoading) {
     return (
-      <div className="flex h-64 items-center justify-center text-zinc-500 font-medium">
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-8 h-8 border-4 border-emerald-200 border-t-emerald-600 rounded-full animate-spin"></div>
-          <span className="text-sm">Calculating Financials...</span>
+      <div className="page">
+        <div className="surface empty">
+          <Loader2 size={22} className="animate-spin text-ink-faint" />
+          <p className="empty-body">Calculating revenue…</p>
         </div>
       </div>
     );
   }
 
+  const kpis = [
+    { title: 'Monthly recurring revenue', value: `₹${mrr.toLocaleString()}`, icon: IndianRupee, trend: '+18%' },
+    { title: 'Annual run rate', value: `₹${arr.toLocaleString()}`, icon: TrendingUp, trend: '+18%' },
+    { title: 'Paid customers', value: paidClients, icon: CreditCard, trend: `${conversionRate}% conv.` },
+    { title: 'Total accounts', value: clients.length, icon: Users, trend: '+12%' },
+  ];
+
   return (
-    <div className="max-w-7xl mx-auto pb-12 font-sans animate-in fade-in duration-500">
-      
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8 border-b border-zinc-200/80 pb-6">
+    <div className="page">
+      <div className="page-head">
         <div>
           <h1 className="page-title">Revenue</h1>
           <p className="page-sub">Track your platform's financial health, subscription distribution, and MRR growth.</p>
         </div>
-        <div className="flex items-center gap-3">
-          <button className="flex items-center justify-center gap-2 px-4 py-2.5 bg-white border border-zinc-200 rounded-lg text-zinc-700 font-semibold hover:bg-zinc-50 hover:border-zinc-300 transition-all shadow-sm">
-            <span>Export CSV</span>
-          </button>
-        </div>
+        <button onClick={exportCsv} disabled={clients.length === 0} className="btn">
+          <Download size={16} /> Export CSV
+        </button>
       </div>
 
-      {/* Revenue KPI Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        {[
-          { title: 'Monthly Recurring', value: `₹${mrr.toLocaleString()}`, icon: IndianRupee, iconColor: 'text-emerald-600', iconBg: 'bg-emerald-50', border: 'border-emerald-100', trend: '+18%', up: true },
-          { title: 'Annual Run Rate', value: `₹${arr.toLocaleString()}`, icon: TrendingUp, iconColor: 'text-violet-600', iconBg: 'bg-violet-50', border: 'border-violet-100', trend: '+18%', up: true },
-          { title: 'Paid Customers', value: paidClients, icon: CreditCard, iconColor: 'text-blue-600', iconBg: 'bg-blue-50', border: 'border-blue-100', trend: `${conversionRate}% conv.`, up: true },
-          { title: 'Total Accounts', value: clients.length, icon: Users, iconColor: 'text-amber-600', iconBg: 'bg-amber-50', border: 'border-amber-100', trend: '+12%', up: true },
-        ].map((card, i) => (
-          <div key={i} className="bg-white border border-zinc-200/80 rounded-2xl p-6 shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
-            <div className="flex justify-between items-start mb-4">
-              <div className={`p-3 rounded-xl ${card.iconBg} ${card.iconColor} border ${card.border}`}>
-                <card.icon size={20} />
+      <div className="stack">
+        <div className="metric-grid">
+          {kpis.map((card, i) => (
+            <div key={card.title} className={`metric ${['tone-mint', 'tone-blue', 'tone-lavender', 'tone-peach'][i]}`}>
+              <div className="metric-head">
+                <span className="icon-tile is-sm"><card.icon size={16} /></span>
+                <span className="metric-trend">{card.trend} <ArrowUpRight size={13} /></span>
               </div>
-              <div className={`flex items-center gap-1 text-[13px] font-medium px-2 py-1 rounded-md ${card.up ? 'bg-emerald-50 text-emerald-700 border border-emerald-100' : 'bg-rose-50 text-rose-700 border border-rose-100'}`}>
-                {card.trend} {card.up ? <ArrowUpRight size={12} /> : <ArrowDownRight size={12} />}
-              </div>
+              <span className="metric-label">{card.title}</span>
+              <span className="metric-figure">{card.value}</span>
             </div>
-            <div>
-              <p className="text-[13px] font-medium text-zinc-500 mb-1">{card.title}</p>
-              <h3 className="text-3xl font-semibold text-zinc-900 tracking-tight">{card.value}</h3>
+          ))}
+        </div>
+
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+          <section className="surface overflow-hidden">
+            <div className="surface-head">
+              <h2><span className="icon-tile is-sm"><PieChart size={16} /></span>Plan distribution</h2>
             </div>
-          </div>
-        ))}
-      </div>
+            <div className="surface-body space-y-5">
+              {Object.entries(planCounts).length === 0 && <p className="text-[14px] text-ink-soft">No accounts yet.</p>}
+              {Object.entries(planCounts).map(([plan, count]) => {
+                const percentage = clients.length > 0 ? Math.round((count / clients.length) * 100) : 0;
+                return (
+                  <div key={plan}>
+                    <div className="mb-2 flex items-center justify-between gap-3">
+                      <span className="text-[14px] font-medium text-ink">{plan}</span>
+                      <span className="text-[13px] tabular-nums text-ink-soft">
+                        {count} {count === 1 ? 'account' : 'accounts'} · {percentage}%
+                      </span>
+                    </div>
+                    <div className="meter" role="progressbar" aria-label={`${plan} share`} aria-valuenow={percentage} aria-valuemin={0} aria-valuemax={100}>
+                      <span style={{ width: `${percentage}%` }} className={plan === 'Free' ? '!bg-ink-faint' : ''} />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
 
-      {/* Distribution & Revenue Breakdown */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-        
-        {/* Plan Distribution */}
-        <div className="bg-white border border-zinc-200/80 rounded-2xl p-6 md:p-8 shadow-sm flex flex-col">
-          <div className="flex justify-between items-center mb-8">
-            <h3 className="text-lg font-semibold text-zinc-900 flex items-center gap-2">
-              <PieChart size={20} className="text-violet-600" /> Plan Distribution
-            </h3>
-          </div>
-          
-          <div className="flex flex-col gap-6 flex-grow justify-center">
-            {Object.entries(planCounts).map(([plan, count]) => {
-              const percentage = clients.length > 0 ? Math.round((count / clients.length) * 100) : 0;
-              const bgColor = planColors[plan] || 'bg-zinc-500';
-              
-              return (
-                <div key={plan} className="w-full">
-                  <div className="flex justify-between items-center mb-2">
-                    <div className="flex items-center gap-2">
-                      <div className={`w-2.5 h-2.5 rounded-full ${bgColor}`}></div>
-                      <span className="text-sm font-medium text-zinc-900">{plan} Tier</span>
+          <section className="surface flex flex-col overflow-hidden">
+            <div className="surface-head">
+              <h2><span className="icon-tile is-sm is-go"><IndianRupee size={16} /></span>Revenue by plan</h2>
+            </div>
+            <ul className="flex-grow divide-y divide-hairline">
+              {Object.entries(planCounts).map(([plan, count]) => {
+                const price = PLAN_PRICES[plan] || 0;
+                return (
+                  <li key={plan} className="flex items-center justify-between gap-4 px-5 py-3.5">
+                    <div className="flex items-center gap-3">
+                      <span className="icon-tile is-neutral"><CreditCard size={17} /></span>
+                      <div>
+                        <p className="text-[14px] font-medium text-ink">{plan} plan</p>
+                        <p className="text-[13px] tabular-nums text-ink-soft">
+                          {count} {count === 1 ? 'tenant' : 'tenants'} × ₹{price.toLocaleString()}
+                        </p>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs font-medium text-zinc-500">{count} accounts</span>
-                      <span className="text-xs font-medium text-zinc-400 bg-zinc-100 px-2 py-0.5 rounded-md">{percentage}%</span>
-                    </div>
-                  </div>
-                  <div className="h-2.5 w-full bg-zinc-100 rounded-full overflow-hidden">
-                    <div className={`h-full rounded-full transition-all duration-1000 ${bgColor}`} style={{ width: `${percentage}%` }}></div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+                    <p className="text-right text-[15px] font-semibold tabular-nums text-ink">
+                      ₹{(price * count).toLocaleString()}<span className="text-[13px] font-normal text-ink-soft"> /mo</span>
+                    </p>
+                  </li>
+                );
+              })}
+            </ul>
+            <div className="surface-foot">
+              <span className="text-[14px] font-medium text-ink">Total MRR</span>
+              <span className="text-[20px] font-bold tabular-nums text-signal-go">₹{mrr.toLocaleString()}</span>
+            </div>
+          </section>
         </div>
 
-        {/* Revenue Per Plan */}
-        <div className="bg-white border border-zinc-200/80 rounded-2xl p-6 md:p-8 shadow-sm flex flex-col">
-          <div className="flex justify-between items-center mb-8">
-            <h3 className="text-lg font-semibold text-zinc-900 flex items-center gap-2">
-              <IndianRupee size={20} className="text-emerald-600" /> Revenue Architecture
-            </h3>
+        <section className="surface overflow-hidden">
+          <div className="surface-head">
+            <h2><span className="icon-tile is-sm"><Users size={16} /></span>Active subscriptions</h2>
+            <span className="chip chip-accent">{paidClients} paying</span>
           </div>
-          
-          <div className="flex flex-col gap-4 flex-grow">
-            {Object.entries(planCounts).map(([plan, count]) => {
-              const price = PLAN_PRICES[plan] || 0;
-              const revenue = price * count;
-              
-              const tColor = planTextColors[plan] || 'text-zinc-600';
-              const bgLight = planBgLight[plan] || 'bg-zinc-50';
-              const bLight = planBorderLight[plan] || 'border-zinc-200';
 
-              return (
-                <div key={plan} className="flex justify-between items-center p-4 bg-zinc-50/50 rounded-xl border border-zinc-100 hover:bg-zinc-50 transition-colors group">
-                  <div className="flex items-center gap-4">
-                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center border ${bgLight} ${tColor} ${bLight} shadow-sm group-hover:scale-105 transition-transform`}>
-                      <CreditCard size={20} />
-                    </div>
-                    <div>
-                      <div className="font-medium text-sm text-zinc-900">{plan} Plan</div>
-                      <div className="text-xs text-zinc-500 font-medium mt-0.5">{count} {count === 1 ? 'tenant' : 'tenants'} × ₹{price.toLocaleString()}</div>
-                    </div>
+          {paidClients === 0 ? (
+            <div className="empty py-12">
+              <span className="empty-mark"><Activity /></span>
+              <p className="empty-title">No paying customers yet</p>
+              <p className="empty-body">MRR starts tracking once a workspace upgrades from Free.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 gap-3 p-5 md:grid-cols-2 lg:grid-cols-3">
+              {clients.filter(c => c.plan && c.plan !== 'Free').map((client) => (
+                <div key={client.id} className="flex items-center gap-3 rounded-[10px] border border-hairline p-3.5">
+                  <span className="avatar-initial">{client.name?.charAt(0)?.toUpperCase() || '?'}</span>
+                  <div className="min-w-0 flex-grow">
+                    <p className="truncate text-[14px] font-medium text-ink">{client.name}</p>
+                    <p className="truncate text-[13px] text-ink-soft">{client.email}</p>
                   </div>
-                  <div className="text-right">
-                    <div className="font-semibold text-base text-zinc-900">₹{revenue.toLocaleString()}</div>
-                    <div className="text-[13px] font-medium text-zinc-400 mt-0.5">/ month</div>
-                  </div>
+                  <span className={`${planChip(client.plan)} shrink-0`}>{client.plan}</span>
                 </div>
-              );
-            })}
-          </div>
-          
-          <div className="mt-6 p-4 bg-emerald-50 rounded-xl border border-emerald-200 flex justify-between items-center shadow-inner">
-            <span className="font-medium text-emerald-800 text-xs">Total Validated MRR</span>
-            <span className="font-semibold text-xl text-emerald-700 tracking-tight">₹{mrr.toLocaleString()}</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Paying Customers Grid */}
-      <div className="bg-white border border-zinc-200/80 rounded-2xl p-6 md:p-8 shadow-sm">
-        <div className="flex justify-between items-center mb-6 border-b border-zinc-100 pb-4">
-          <h3 className="text-lg font-semibold text-zinc-900 flex items-center gap-2">
-            <Users size={20} className="text-blue-600" /> Active Subscriptions
-          </h3>
-          <span className="px-3 py-1 bg-blue-50 text-blue-700 text-xs font-medium rounded-lg border border-blue-200">
-            {paidClients} Paying Tenants
-          </span>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {clients.filter(c => c.plan && c.plan !== 'Free').map((client) => {
-            const tColor = planTextColors[client.plan] || 'text-zinc-600';
-            const bgLight = planBgLight[client.plan] || 'bg-zinc-50';
-            const bLight = planBorderLight[client.plan] || 'border-zinc-200';
-
-            return (
-              <div key={client.id} className="p-4 bg-white border border-zinc-200 rounded-xl flex items-center gap-4 hover:border-zinc-300 hover:shadow-sm transition-all">
-                <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-medium text-sm border ${bgLight} ${tColor} ${bLight} shrink-0`}>
-                  {client.name?.charAt(0)?.toUpperCase() || '?'}
-                </div>
-                <div className="flex-grow min-w-0">
-                  <div className="font-medium text-sm text-zinc-900 truncate">{client.name}</div>
-                  <div className="text-xs text-zinc-500 font-medium truncate">{client.email}</div>
-                </div>
-                <div className={`px-2 py-1 rounded-md text-[13px] font-medium  border shrink-0 ${bgLight} ${tColor} ${bLight}`}>
-                  {client.plan}
-                </div>
-              </div>
-            );
-          })}
-          
-          {paidClients === 0 && (
-            <div className="col-span-full py-16 text-center flex flex-col items-center justify-center">
-              <div className="w-16 h-16 bg-zinc-50 rounded-2xl flex items-center justify-center mb-4 border border-zinc-200 shadow-sm">
-                <Activity size={24} className="text-zinc-400" />
-              </div>
-              <h3 className="text-base font-semibold text-zinc-900 mb-1">No paying customers yet</h3>
-              <p className="page-sub">Your MRR starts tracking once users upgrade their free accounts.</p>
+              ))}
             </div>
           )}
-        </div>
+        </section>
       </div>
     </div>
   );

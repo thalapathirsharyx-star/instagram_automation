@@ -1,21 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Building2, 
-  Users, 
-  MessageSquare, 
-  Calendar, 
-  MapPin, 
-  ShieldCheck, 
+import {
+  Building2,
+  Calendar,
+  MapPin,
+  ShieldCheck,
   ShieldAlert,
   Search,
-  Filter,
-  MoreVertical,
-  ArrowRight
+  Loader2,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 import api from '../lib/axios';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '../context/ToastContext';
+import { ConfirmModal } from '../components/ConfirmModal';
 
 
 interface CompanyAdminData {
@@ -34,14 +33,10 @@ interface CompanyAdminData {
 }
 
 const StatusBadge: React.FC<{ status: boolean }> = ({ status }) => (
-  <div className={`px-2.5 py-1 rounded-full text-[0.7rem] font-semibold  flex items-center gap-1.5 ${
-    status 
-      ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20' 
-      : 'bg-rose-500/10 text-rose-500 border border-rose-500/20'
-  }`}>
+  <span className={status ? 'chip chip-go' : 'chip chip-stop'}>
     {status ? <ShieldCheck size={12} /> : <ShieldAlert size={12} />}
     {status ? 'Active' : 'Suspended'}
-  </div>
+  </span>
 );
 
 const ClientManagement: React.FC = () => {
@@ -50,6 +45,7 @@ const ClientManagement: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
+  const [confirmSuspend, setConfirmSuspend] = useState<CompanyAdminData | null>(null);
   
   const { login } = useAuth();
   const navigate = useNavigate();
@@ -126,136 +122,145 @@ const ClientManagement: React.FC = () => {
     currentPage * itemsPerPage
   );
 
+  // Suspending locks a paying tenant out of their workspace, so it asks first;
+  // reactivating restores access and goes straight through.
+  const requestToggleStatus = (client: CompanyAdminData) => {
+    if (client.status) setConfirmSuspend(client);
+    else handleToggleStatus(client.id);
+  };
+
+  const pageStart = filteredClients.length > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0;
+  const pageEnd = Math.min(currentPage * itemsPerPage, filteredClients.length);
+
   return (
-    <div className="dashboard-page" style={{ height: '100%', display: 'flex', flexDirection: 'column', gap: '32px' }}>
-      <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+    <div className="page">
+      <div className="page-head">
         <div>
           <h1 className="page-title">Clients</h1>
-          <p style={{ margin: '8px 0 0', color: 'var(--text-dim)' }}>Monitor and manage all company tenants on the platform.</p>
+          <p className="page-sub">Monitor and manage all company tenants on the platform.</p>
         </div>
-        <div style={{ display: 'flex', gap: '12px' }}>
-          <div className="glass-card" style={{ padding: '8px 16px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <Search size={18} color="var(--text-dim)" />
-            <input 
-              type="text" 
-              placeholder="Search clients..." 
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              style={{ background: 'transparent', border: 'none', color: 'var(--text)', outline: 'none', fontSize: '0.9rem' }}
-            />
-          </div>
-          {/* <button onClick={() => window.open('/signup', '_blank')} className="gradient-btn" style={{ padding: '10px 20px', borderRadius: '12px', fontSize: '0.9rem', fontWeight: 600, cursor: 'pointer' }}>
-            Register New Client
-          </button> */}
+        <div className="field-icon w-full sm:w-72">
+          <Search size={15} />
+          <input
+            type="search"
+            placeholder="Search name or email"
+            aria-label="Search clients"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="field"
+          />
         </div>
+        {/* <button onClick={() => window.open('/signup', '_blank')} className="btn btn-primary">
+          Register New Client
+        </button> */}
       </div>
 
-      <div className="glass-card overflow-hidden" style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-        <div style={{ padding: '20px 24px', borderBottom: '1px solid var(--glass-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(255,255,255,0.02)' }}>
-          <div style={{ display: 'flex', gap: '24px', alignItems: 'center' }}>
-            <h3 style={{ margin: 0, fontSize: '1.1rem' }}>All Clients</h3>
-            <div style={{ fontSize: '0.8rem', color: 'var(--text-dim)', fontWeight: 500 }}>
-              Showing {filteredClients.length} tenants
-            </div>
-          </div>
-          <button style={{ background: 'transparent', border: 'none', color: 'var(--text-dim)', cursor: 'pointer' }}>
-            <Filter size={18} />
-          </button>
+      <section className="surface overflow-hidden">
+        <div className="surface-head">
+          <h2>
+            All clients
+            {!isLoading && <span className="chip">{filteredClients.length}</span>}
+          </h2>
         </div>
 
-        <div style={{ overflowX: 'auto', overflowY: 'auto', flex: 1 }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+        <div className="table-wrap">
+          <table className="data-table min-w-[960px]">
             <thead>
-              <tr style={{ borderBottom: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.01)' }}>
-                <th className="sticky-th-company" style={{ padding: '12px 20px', fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-dim)', textTransform: 'uppercase' }}>Company</th>
-                <th className="sticky-th" style={{ padding: '12px 20px', fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-dim)', textTransform: 'uppercase' }}>Details</th>
-                <th className="sticky-th" style={{ padding: '12px 20px', fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-dim)', textTransform: 'uppercase' }}>Plan & Usage</th>
-                <th className="sticky-th" style={{ padding: '12px 20px', fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-dim)', textTransform: 'uppercase' }}>Stats</th>
-                <th className="sticky-th" style={{ padding: '12px 20px', fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-dim)', textTransform: 'uppercase' }}>Status</th>
-                <th className="sticky-th" style={{ padding: '12px 20px', fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-dim)', textTransform: 'uppercase', textAlign: 'right' }}>Actions</th>
+              <tr>
+                <th>Company</th>
+                <th>Details</th>
+                <th>Plan and usage</th>
+                <th>Activity</th>
+                <th>Status</th>
+                <th className="text-right">Actions</th>
               </tr>
             </thead>
             <tbody>
               {isLoading ? (
                 <tr>
-                  <td colSpan={5} style={{ padding: '40px', textAlign: 'center', color: 'var(--text-dim)' }}>Loading platform clients...</td>
+                  <td colSpan={6}>
+                    <div className="flex items-center justify-center gap-2.5 py-14 text-ink-soft">
+                      <Loader2 size={16} className="animate-spin" /> Loading clients…
+                    </div>
+                  </td>
+                </tr>
+              ) : paginatedClients.length === 0 ? (
+                <tr>
+                  <td colSpan={6}>
+                    <div className="empty py-12">
+                      <p className="empty-title">{clients.length === 0 ? 'No clients yet' : 'No clients match'}</p>
+                      <p className="empty-body">
+                        {clients.length === 0 ? 'Workspaces appear here when businesses sign up.' : 'Try a different name or email.'}
+                      </p>
+                    </div>
+                  </td>
                 </tr>
               ) : paginatedClients.map((client) => (
-                <tr key={client.id} className="table-row-hover" style={{ borderBottom: '1px solid var(--glass-border)' }}>
-                  <td className="sticky-td-company" style={{ padding: '12px 20px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                      <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: 'var(--primary-gradient)', display: 'flex', alignItems: 'center', justifySelf: 'center', justifyContent: 'center', color: 'white' }}>
-                        <Building2 size={20} />
-                      </div>
-                      <div>
-                        <div style={{ fontWeight: 600, fontSize: '0.95rem' }}>{client.name}</div>
-                        <div style={{ fontSize: '0.8rem', color: 'var(--text-dim)' }}>{client.email}</div>
+                <tr key={client.id}>
+                  <td>
+                    <div className="flex items-center gap-3">
+                      <span className="icon-tile is-neutral"><Building2 size={18} /></span>
+                      <div className="min-w-0">
+                        <div className="truncate font-medium text-ink">{client.name}</div>
+                        <div className="truncate text-[13px] text-ink-soft">{client.email}</div>
                       </div>
                     </div>
                   </td>
-                  <td style={{ padding: '12px 20px' }}>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                      <div style={{ fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                        <MapPin size={14} color="var(--text-dim)" /> {client.country?.name || 'Global'}
+                  <td>
+                    <div className="space-y-1 text-[13px]">
+                      <div className="flex items-center gap-1.5 text-ink">
+                        <MapPin size={13} className="text-ink-faint" /> {client.country?.name || 'Global'}
                       </div>
-                      <div style={{ fontSize: '0.8rem', color: 'var(--text-dim)', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                        <Calendar size={14} /> Registered: {new Date(client.created_on).toLocaleDateString()}
+                      <div className="flex items-center gap-1.5 text-ink-soft">
+                        <Calendar size={13} className="text-ink-faint" /> Joined {new Date(client.created_on).toLocaleDateString()}
                       </div>
                     </div>
                   </td>
-                  <td style={{ padding: '12px 20px' }}>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <span className={`px-2 py-0.5 rounded text-[13px] font-medium uppercase ${client.plan !== 'Free' ? 'bg-purple-500/10 text-purple-400 border border-purple-500/20' : 'bg-zinc-800 text-zinc-400 border border-zinc-700'}`}>
+                  <td>
+                    <div className="space-y-1">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className={client.plan && client.plan !== 'Free' ? 'chip chip-accent' : 'chip'}>
                           {client.plan || 'Free'}
                         </span>
                         {client.plan_expires_at && (
-                          <span style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>
-                            Expires: {new Date(client.plan_expires_at).toLocaleDateString()}
+                          <span className="text-[13px] text-ink-soft">
+                            until {new Date(client.plan_expires_at).toLocaleDateString()}
                           </span>
                         )}
                       </div>
-                      <div style={{ fontSize: '0.8rem', color: 'var(--text-dim)', marginTop: '4px' }}>
-                        AI Usage: <strong style={{ color: 'var(--text)' }}>{client.monthly_ai_usage || 0}</strong> msgs
+                      <div className="text-[13px] text-ink-soft">
+                        <span className="font-medium tabular-nums text-ink">{(client.monthly_ai_usage || 0).toLocaleString()}</span> AI messages
                       </div>
                     </div>
                   </td>
-                  <td style={{ padding: '12px 20px' }}>
-                    <div style={{ display: 'flex', gap: '16px' }}>
-                      <div style={{ textAlign: 'center' }}>
-                        <div style={{ fontSize: '0.9rem', fontWeight: 700 }}>{client.userCount}</div>
-                        <div style={{ fontSize: '0.65rem', textTransform: 'uppercase', color: 'var(--text-dim)' }}>Users</div>
+                  <td>
+                    <dl className="flex gap-5 tabular-nums">
+                      <div>
+                        <dd className="text-[15px] font-semibold text-ink">{client.userCount}</dd>
+                        <dt className="text-[12px] text-ink-soft">users</dt>
                       </div>
-                      <div style={{ textAlign: 'center' }}>
-                        <div style={{ fontSize: '0.9rem', fontWeight: 700 }}>{client.leadCount}</div>
-                        <div style={{ fontSize: '0.65rem', textTransform: 'uppercase', color: 'var(--text-dim)' }}>Leads</div>
+                      <div>
+                        <dd className="text-[15px] font-semibold text-ink">{client.leadCount}</dd>
+                        <dt className="text-[12px] text-ink-soft">leads</dt>
                       </div>
-                    </div>
+                    </dl>
                   </td>
-                  <td style={{ padding: '12px 20px' }}>
+                  <td>
                     <StatusBadge status={client.status} />
                   </td>
-                  <td style={{ padding: '12px 20px', textAlign: 'right' }}>
-                    <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px' }}>
-                      <button 
-                        onClick={() => handleToggleStatus(client.id)}
-                        className="glass-card" 
-                        style={{ padding: '8px 12px', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer', border: '1px solid var(--glass-border)' }}
+                  <td className="text-right">
+                    <div className="flex justify-end gap-2">
+                      <button
+                        onClick={() => requestToggleStatus(client)}
+                        className={`btn btn-sm ${client.status ? 'btn-danger-soft' : ''}`}
                       >
                         {client.status ? 'Suspend' : 'Activate'}
                       </button>
-                      {/* 
-                      <button 
-                        onClick={() => handleImpersonate(client.id)}
-                        className="glass-card" 
-                        style={{ padding: '8px 12px', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer', border: '1px solid var(--glass-border)', color: 'rgba(168,85,247,1)', display: 'flex', alignItems: 'center', gap: '6px' }}
-                      >
+                      {/*
+                      <button onClick={() => handleImpersonate(client.id)} className="btn btn-sm">
                         Impersonate <ArrowRight size={14} />
                       </button>
                       */}
-                      <button className="glass-card" style={{ padding: '8px', cursor: 'pointer' }}>
-                        <MoreVertical size={16} />
-                      </button>
                     </div>
                   </td>
                 </tr>
@@ -264,52 +269,28 @@ const ClientManagement: React.FC = () => {
           </table>
         </div>
 
-        {/* Pagination Controls */}
-        <div style={{ 
-          padding: '16px 24px', 
-          borderTop: '1px solid var(--glass-border)', 
-          display: 'flex', 
-          justifyContent: 'space-between', 
-          alignItems: 'center', 
-          background: 'rgba(255,255,255,0.01)',
-          flexShrink: 0
-        }}>
-          <div style={{ fontSize: '0.85rem', color: 'var(--text-dim)' }}>
-            Showing <strong style={{ color: 'var(--text)' }}>{filteredClients.length > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0}</strong> to{' '}
-            <strong style={{ color: 'var(--text)' }}>{Math.min(currentPage * itemsPerPage, filteredClients.length)}</strong> of{' '}
-            <strong style={{ color: 'var(--text)' }}>{filteredClients.length}</strong> clients
-          </div>
-          
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <nav className="surface-foot" aria-label="Pagination">
+          <p className="text-[13px] text-ink-soft">
+            Showing <span className="font-medium text-ink">{pageStart}</span>–<span className="font-medium text-ink">{pageEnd}</span> of{' '}
+            <span className="font-medium text-ink">{filteredClients.length}</span> clients
+          </p>
+
+          <div className="flex items-center gap-1">
             <button
               onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
               disabled={currentPage === 1 || totalPages <= 1}
-              className="glass-card"
-              style={{
-                padding: '6px 12px',
-                fontSize: '0.8rem',
-                fontWeight: 600,
-                cursor: (currentPage === 1 || totalPages <= 1) ? 'not-allowed' : 'pointer',
-                opacity: (currentPage === 1 || totalPages <= 1) ? 0.4 : 1,
-                border: '1px solid var(--glass-border)'
-              }}
+              className="btn btn-ghost btn-icon btn-sm"
+              aria-label="Previous page"
             >
-              Previous
+              <ChevronLeft size={16} />
             </button>
-            
+
             {Array.from({ length: Math.max(totalPages, 1) }, (_, i) => i + 1).map(pageNum => (
               <button
                 key={pageNum}
                 onClick={() => setCurrentPage(pageNum)}
-                className={currentPage === pageNum ? 'gradient-btn' : 'glass-card'}
-                style={{
-                  padding: '6px 12px',
-                  fontSize: '0.8rem',
-                  fontWeight: 600,
-                  cursor: 'pointer',
-                  borderRadius: '8px',
-                  border: currentPage === pageNum ? 'none' : '1px solid var(--glass-border)'
-                }}
+                aria-current={currentPage === pageNum ? 'page' : undefined}
+                className={`btn btn-icon btn-sm ${currentPage === pageNum ? 'btn-primary' : 'btn-ghost'}`}
               >
                 {pageNum}
               </button>
@@ -318,21 +299,28 @@ const ClientManagement: React.FC = () => {
             <button
               onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
               disabled={currentPage === totalPages || totalPages <= 1}
-              className="glass-card"
-              style={{
-                padding: '6px 12px',
-                fontSize: '0.8rem',
-                fontWeight: 600,
-                cursor: (currentPage === totalPages || totalPages <= 1) ? 'not-allowed' : 'pointer',
-                opacity: (currentPage === totalPages || totalPages <= 1) ? 0.4 : 1,
-                border: '1px solid var(--glass-border)'
-              }}
+              className="btn btn-ghost btn-icon btn-sm"
+              aria-label="Next page"
             >
-              Next
+              <ChevronRight size={16} />
             </button>
           </div>
-        </div>
-      </div>
+        </nav>
+      </section>
+
+      <ConfirmModal
+        isOpen={confirmSuspend !== null}
+        title={`Suspend ${confirmSuspend?.name ?? 'this client'}?`}
+        message="Everyone in this workspace loses access and its automations stop replying until you activate it again."
+        confirmText="Suspend"
+        cancelText="Cancel"
+        type="danger"
+        onConfirm={async () => {
+          if (confirmSuspend) await handleToggleStatus(confirmSuspend.id);
+          setConfirmSuspend(null);
+        }}
+        onCancel={() => setConfirmSuspend(null)}
+      />
     </div>
   );
 };

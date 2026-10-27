@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Book, Plus, Trash2, Sparkles, FileText, UploadCloud, Loader2, MessageSquareQuote, HelpCircle, File, BrainCircuit, X, Edit2 } from 'lucide-react';
+import { Plus, Trash2, FileText, UploadCloud, Loader2, MessageSquareQuote, HelpCircle, File, BrainCircuit, X, Edit2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import api from '../lib/axios';
 import { useToast } from '../context/ToastContext';
@@ -134,10 +134,25 @@ const KnowledgeBase: React.FC = () => {
     }
   };
 
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file) return;
+    if (file) uploadFile(file);
+  };
 
+  // The upload zone says "drag", so it has to accept a drop, not only a click.
+  const handleFileDrop = (e: React.DragEvent<HTMLElement>) => {
+    e.preventDefault();
+    if (isSaving) return;
+    const file = e.dataTransfer.files?.[0];
+    if (!file) return;
+    if (!/\.(pdf|txt)$/i.test(file.name)) {
+      toast.error('Unsupported file', 'Upload a PDF or TXT file.');
+      return;
+    }
+    uploadFile(file);
+  };
+
+  const uploadFile = async (file: File) => {
     const formData = new FormData();
     formData.append('file', file);
 
@@ -193,255 +208,249 @@ const KnowledgeBase: React.FC = () => {
     return true;
   });
 
-  const TabButton = ({ id, label, icon: Icon }: { id: any, label: string, icon: any }) => (
-    <button 
-      onClick={() => setActiveTab(id)}
-      className={`px-5 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 flex items-center gap-2 ${
-        activeTab === id 
-          ? 'bg-zinc-900 text-white shadow-md' 
-          : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100'
-      }`}
-    >
-      <Icon size={16} /> <span className="hidden sm:inline">{label}</span>
-    </button>
-  );
+  const tabs: { id: typeof activeTab; label: string; icon: React.ElementType; count: number }[] = [
+    { id: 'all', label: 'All assets', icon: BrainCircuit, count: items.length },
+    { id: 'documents', label: 'Documents', icon: File, count: items.filter(i => i.category === 'Document').length },
+    { id: 'faqs', label: 'FAQs', icon: MessageSquareQuote, count: items.filter(i => i.category === 'FAQ').length },
+    { id: 'facts', label: 'Facts', icon: FileText, count: items.filter(i => i.category !== 'Document' && i.category !== 'FAQ').length },
+  ];
+
+  // Escape closes the editor, as it does every other dialog in the app.
+  useEffect(() => {
+    if (activeModal === 'none') return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape' && !isSaving) closeModal(); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [activeModal, isSaving]);
+
+  const modalTitle =
+    activeModal === 'upload' ? 'Upload document'
+      : activeModal === 'faq' ? (editingId ? 'Edit FAQ' : 'Add FAQ')
+        : (editingId ? 'Edit business fact' : 'Add business fact');
+  const modalIcon = activeModal === 'upload' ? UploadCloud : activeModal === 'faq' ? HelpCircle : FileText;
+  const ModalIcon = modalIcon;
 
   return (
-    <div className="max-w-7xl mx-auto pb-12 font-sans animate-in fade-in duration-500">
-      
-      {/* Header & Global Actions */}
-      <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 mb-8">
+    <div className="page">
+      <div className="page-head">
         <div>
           <h1 className="page-title">Brain base</h1>
-          <p className="text-sm text-zinc-500 font-medium max-w-xl">Upload documents, FAQs, and business context. The AI uses this data to answer customer questions automatically.</p>
+          <p className="page-sub">Upload documents, FAQs, and business context. The AI uses this data to answer customer questions automatically.</p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3 shrink-0">
-          <button 
-            onClick={() => setActiveModal('upload')}
-            className="flex items-center gap-2 px-4 py-2 bg-white border border-zinc-200 rounded-lg text-zinc-700 font-medium hover:border-zinc-300 hover:bg-zinc-50 transition-all shadow-sm text-sm"
-          >
-            <UploadCloud size={16} className="text-violet-600" />
-            <span className="hidden sm:inline">Upload PDF</span>
+        <div className="page-actions">
+          <button onClick={() => setActiveModal('upload')} className="btn">
+            <UploadCloud size={16} /> Upload PDF
           </button>
-          <button 
-            onClick={() => setActiveModal('faq')}
-            className="flex items-center gap-2 px-4 py-2 bg-white border border-zinc-200 rounded-lg text-zinc-700 font-medium hover:border-zinc-300 hover:bg-zinc-50 transition-all shadow-sm text-sm"
-          >
-            <HelpCircle size={16} className="text-blue-600" />
-            <span className="hidden sm:inline">Add FAQ</span>
+          <button onClick={() => setActiveModal('faq')} className="btn">
+            <HelpCircle size={16} /> Add FAQ
           </button>
-          <button 
-            onClick={() => setActiveModal('fact')}
-            className="bg-zinc-900 text-white hover:bg-zinc-800 transition-colors px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2 shadow-sm"
-          >
-            <Plus size={16} />
-            <span className="hidden sm:inline">Add Fact</span>
+          <button onClick={() => setActiveModal('fact')} className="btn btn-primary">
+            <Plus size={16} /> Add fact
           </button>
         </div>
       </div>
 
-      {/* Tabs */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-6 border-b border-zinc-200 pb-4">
-        <div className="flex items-center gap-2 w-full overflow-x-auto">
-          <TabButton id="all" label="All Assets" icon={BrainCircuit} />
-          <TabButton id="documents" label="Documents" icon={File} />
-          <TabButton id="faqs" label="FAQs" icon={MessageSquareQuote} />
-          <TabButton id="facts" label="Facts" icon={FileText} />
-        </div>
+      <div className="tabs mb-6" role="tablist" aria-label="Knowledge type">
+        {tabs.map(({ id, label, icon: Icon, count }) => (
+          <button
+            key={id}
+            role="tab"
+            aria-selected={activeTab === id}
+            onClick={() => setActiveTab(id)}
+          >
+            <Icon size={16} /> {label}
+            {!isLoading && <span className="chip px-1.5 py-0 text-[12px]">{count}</span>}
+          </button>
+        ))}
       </div>
 
       {isLoading ? (
-        <div className="flex h-64 items-center justify-center text-zinc-500 font-medium">
-          <div className="flex flex-col items-center gap-4">
-            <div className="w-8 h-8 border-4 border-violet-200 border-t-violet-600 rounded-full animate-spin"></div>
-            <span className="text-sm">Syncing Knowledge Base...</span>
-          </div>
+        <div className="surface empty">
+          <Loader2 size={22} className="animate-spin text-ink-faint" />
+          <p className="empty-body">Loading your brain base…</p>
+        </div>
+      ) : filteredItems.length === 0 ? (
+        <div className="surface empty">
+          <span className="empty-mark"><BrainCircuit /></span>
+          <p className="empty-title">
+            {activeTab === 'all' ? 'No knowledge yet' : `No ${tabs.find(t => t.id === activeTab)?.label.toLowerCase()} yet`}
+          </p>
+          <p className="empty-body">
+            {activeTab === 'all' && "Your AI agent hasn't been trained yet. Upload PDFs, store FAQs, or write business facts."}
+            {activeTab === 'documents' && "You haven't uploaded any documents. Upload PDFs to let the AI learn your business instantly."}
+            {activeTab === 'faqs' && "You haven't added any FAQs. Define specific question and answer pairs for the AI to memorize."}
+            {activeTab === 'facts' && "You haven't added any business facts. Store pricing, policies, or general data here."}
+          </p>
+          <button
+            onClick={() => setActiveModal(activeTab === 'documents' ? 'upload' : activeTab === 'faqs' ? 'faq' : 'fact')}
+            className="btn btn-primary"
+          >
+            <Plus size={16} />
+            {activeTab === 'documents' ? 'Upload a document' : activeTab === 'faqs' ? 'Add an FAQ' : 'Add a fact'}
+          </button>
         </div>
       ) : (
-        <div className="space-y-6">
-          {filteredItems.length === 0 ? (
-            <div className="bg-white border border-zinc-200 border-dashed rounded-3xl p-12 flex flex-col items-center justify-center text-center shadow-sm">
-               <div className="w-20 h-20 bg-violet-50 rounded-2xl flex items-center justify-center mb-6 border border-violet-100 shadow-inner">
-                  <BrainCircuit size={40} className="text-violet-500" />
-               </div>
-               <div className="max-w-md mx-auto">
-                 <h3 className="text-xl font-semibold text-zinc-900 mb-2">No knowledge base items yet</h3>
-                 <p className="text-sm text-zinc-500 leading-relaxed font-medium">
-                   {activeTab === 'all' && "Your AI agent is currently un-trained. Click one of the buttons above to upload PDFs, store FAQs, or write business facts."}
-                   {activeTab === 'documents' && "You haven't uploaded any documents. Upload PDFs to let the AI learn your business instantly."}
-                   {activeTab === 'faqs' && "You haven't added any FAQs. Define specific Question & Answer pairs for the AI to memorize."}
-                   {activeTab === 'facts' && "You haven't added any business facts. Store pricing, policies, or general data here."}
-                 </p>
-               </div>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-              {filteredItems.map((item) => {
-                const isFaq = item.category === 'FAQ';
-                const isDoc = item.category === 'Document';
-                
-                let iconColor = 'text-blue-600';
-                let iconBg = 'bg-blue-50 border-blue-100';
-                
-                if (isFaq) {
-                  iconColor = 'text-orange-600';
-                  iconBg = 'bg-orange-50 border-orange-100';
-                } else if (isDoc) {
-                  iconColor = 'text-violet-600';
-                  iconBg = 'bg-violet-50 border-violet-100';
-                }
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
+          {filteredItems.map((item) => {
+            const isFaq = item.category === 'FAQ';
+            const isDoc = item.category === 'Document';
+            const Icon = isFaq ? MessageSquareQuote : isDoc ? File : FileText;
+            const title = isFaq ? formatFaqTitle(item.title) : item.title;
 
-                return (
-                  <div 
-                    key={item.id} 
-                    className="bg-white border border-zinc-200/80 rounded-2xl p-6 hover:shadow-md hover:border-zinc-300 transition-all duration-300 flex flex-col h-[280px] group relative"
-                  >
-                    <div className="flex-grow overflow-hidden">
-                      <div className="flex justify-between items-start mb-5">
-                        <div className={`p-2.5 rounded-xl border ${iconBg} ${iconColor} transition-transform group-hover:scale-105`}>
-                          {isFaq ? <MessageSquareQuote size={18} strokeWidth={2.5}/> : 
-                           isDoc ? <File size={18} strokeWidth={2.5}/> :
-                           <FileText size={18} strokeWidth={2.5}/>}
-                        </div>
-                        <span className="text-[13px] font-medium text-zinc-500 bg-zinc-50 border border-zinc-200 px-2.5 py-1 rounded-md">
-                          {item.category}
-                        </span>
-                      </div>
-                      
-                      <h3 className="text-base font-semibold text-zinc-900 mb-2 group-hover:text-violet-700 transition-colors line-clamp-2">
-                        {isFaq ? formatFaqTitle(item.title) : item.title}
-                      </h3>
-                      
-                      <p className="text-[13px] text-zinc-500 leading-relaxed font-medium line-clamp-4">
-                        {isFaq ? formatFaqContent(item.content) : item.content}
-                      </p>
-                    </div>
+            return (
+              <article key={item.id} className="surface flex flex-col p-5">
+                <div className="mb-4 flex items-start justify-between gap-3">
+                  <span className={`icon-tile is-sm ${isFaq ? 'tone-peach' : isDoc ? 'tone-blue' : 'tone-lavender'}`}>
+                    <Icon size={16} />
+                  </span>
+                  <span className="chip">{item.category}</span>
+                </div>
 
-                    <div className="mt-4 pt-4 border-t border-zinc-100 flex justify-between items-center shrink-0">
-                      <div className="flex items-center gap-1.5 text-[13px] font-medium text-emerald-700 bg-emerald-50 border border-emerald-100 px-2.5 py-1 rounded-md">
-                        <Sparkles size={12} className="text-emerald-500" /> AI TRAINED
-                      </div>
-                      <div className="flex items-center gap-1">
-                        {item.category !== 'Document' && (
-                          <button 
-                            onClick={() => handleEditItem(item)}
-                            className="p-1.5 text-zinc-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors cursor-pointer opacity-0 group-hover:opacity-100"
-                            title="Edit"
-                          >
-                            <Edit2 size={16} />
-                          </button>
-                        )}
-                        <button 
-                          onClick={() => setConfirmDeleteId(item.id)}
-                          className="p-1.5 text-zinc-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer opacity-0 group-hover:opacity-100"
-                          title="Delete"
-                        >
-                          <Trash2 size={16} />
-                        </button>
-                      </div>
-                    </div>
+                <h3 className="mb-1.5 line-clamp-2 text-[15px] font-semibold text-ink">{title}</h3>
+                <p className="line-clamp-4 flex-grow text-[14px] leading-relaxed text-ink-soft">
+                  {isFaq ? formatFaqContent(item.content) : item.content}
+                </p>
+
+                <div className="mt-4 flex items-center justify-between border-t border-hairline pt-3">
+                  <span className="chip chip-dot chip-go">Trained</span>
+                  <div className="flex items-center gap-1">
+                    {!isDoc && (
+                      <button
+                        onClick={() => handleEditItem(item)}
+                        className="btn btn-ghost btn-icon btn-sm"
+                        aria-label={`Edit ${title}`}
+                        title="Edit"
+                      >
+                        <Edit2 size={15} />
+                      </button>
+                    )}
+                    <button
+                      onClick={() => setConfirmDeleteId(item.id)}
+                      className="btn btn-ghost btn-icon btn-sm is-danger"
+                      aria-label={`Delete ${title}`}
+                      title="Delete"
+                    >
+                      <Trash2 size={15} />
+                    </button>
                   </div>
-                );
-              })}
-            </div>
-          )}
+                </div>
+              </article>
+            );
+          })}
         </div>
       )}
-      
-      {/* Modals */}
+
       {activeModal !== 'none' && (
-        <div className="fixed inset-0 bg-zinc-900/40 backdrop-blur-sm flex items-center justify-center z-[100] p-4 sm:p-6 animate-in fade-in duration-200">
-          <div className="bg-white max-w-xl w-full rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
-            
-            <div className="px-6 py-5 border-b border-zinc-100 flex justify-between items-center bg-zinc-50/50">
+        <div className="modal-backdrop" onClick={(e) => { if (e.target === e.currentTarget && !isSaving) closeModal(); }}>
+          <form
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="kb-modal-title"
+            className="modal"
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (activeModal === 'faq') handleAddFaq();
+              else if (activeModal === 'fact') handleAddFact();
+            }}
+          >
+            <div className="modal-head">
               <div className="flex items-center gap-3">
-                {activeModal === 'upload' && <div className="p-2 bg-violet-100 text-violet-600 rounded-lg"><UploadCloud size={18} /></div>}
-                {activeModal === 'faq' && <div className="p-2 bg-blue-100 text-blue-600 rounded-lg"><HelpCircle size={18} /></div>}
-                {activeModal === 'fact' && <div className="p-2 bg-zinc-200 text-zinc-700 rounded-lg"><FileText size={18} /></div>}
-                
-                <div>
-                  <h2 className="text-lg font-semibold text-zinc-900">
-                    {activeModal === 'upload' ? 'Upload Document' : 
-                     activeModal === 'faq' ? (editingId ? 'Edit FAQ' : 'Add FAQ') : 
-                     (editingId ? 'Edit Business Fact' : 'Add Business Fact')}
-                  </h2>
-                </div>
+                <span className="icon-tile is-sm"><ModalIcon size={16} /></span>
+                <h2 id="kb-modal-title">{modalTitle}</h2>
               </div>
-              <button onClick={closeModal} className="p-2 text-zinc-400 hover:text-zinc-600 hover:bg-zinc-100 rounded-full transition-colors">
-                <X size={20} />
+              <button type="button" onClick={closeModal} disabled={isSaving} className="btn btn-ghost btn-icon btn-sm" aria-label="Close">
+                <X size={18} />
               </button>
             </div>
 
-            <div className="p-6 md:p-8 space-y-6">
-              
+            <div className="modal-body space-y-5">
               {activeModal === 'upload' && (
-                <div 
-                  onClick={() => !isSaving && fileInputRef.current?.click()}
-                  className={`border-2 border-dashed border-zinc-200 rounded-2xl p-10 text-center bg-zinc-50/50 ${!isSaving ? 'cursor-pointer hover:border-violet-300 hover:bg-violet-50/50' : ''} transition-all duration-300 group`}
-                >
-                  <input type="file" ref={fileInputRef} onChange={handleFileUpload} accept=".pdf,.txt" className="hidden" disabled={isSaving} />
-                  {isSaving ? (
-                    <div className="flex flex-col items-center gap-4">
-                      <Loader2 size={32} className="animate-spin text-violet-500" />
-                      <p className="font-semibold text-zinc-900">Analyzing content...</p>
-                    </div>
-                  ) : (
-                    <>
-                      <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mx-auto mb-4 border border-zinc-200 shadow-sm group-hover:scale-105 transition-transform">
-                        <UploadCloud size={24} className="text-violet-500" />
-                      </div>
-                      <h4 className="text-base font-semibold text-zinc-900 mb-1">Click or drag file here</h4>
-                      <p className="page-sub">Supports PDF and TXT. Max 10MB.</p>
-                    </>
-                  )}
-                </div>
+                <>
+                  <input
+                    id="kb-modal-file"
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleFileUpload}
+                    accept=".pdf,.txt"
+                    className="peer sr-only"
+                    disabled={isSaving}
+                  />
+                  <label
+                    htmlFor="kb-modal-file"
+                    onDragOver={(e) => e.preventDefault()}
+                    onDrop={handleFileDrop}
+                    aria-busy={isSaving || undefined}
+                    className={`flex flex-col items-center justify-center rounded-[10px] border-2 border-dashed px-6 py-10 text-center transition-colors peer-focus-visible:border-viridian ${
+                      isSaving ? 'cursor-progress border-hairline' : 'cursor-pointer border-hairline-strong hover:border-viridian hover:bg-porcelain'
+                    }`}
+                  >
+                    {isSaving ? (
+                      <>
+                        <Loader2 size={28} className="mb-3 animate-spin text-viridian" />
+                        <p className="text-[15px] font-semibold text-ink">Analyzing content…</p>
+                      </>
+                    ) : (
+                      <>
+                        <span className="icon-tile mb-3 h-11 w-11"><UploadCloud size={20} /></span>
+                        <p className="text-[15px] font-semibold text-ink">Click or drag a file here</p>
+                        <p className="mt-1 text-[13px] text-ink-soft">PDF or TXT, up to 10 MB.</p>
+                      </>
+                    )}
+                  </label>
+                </>
               )}
 
               {activeModal === 'faq' && (
-                <div className="space-y-4">
-                  <div className="space-y-1.5">
-                    <label className="text-[13px] font-medium text-zinc-500 ml-1">Question</label>
-                    <input 
-                      type="text" 
-                      placeholder="e.g. Do you ship internationally?" 
+                <>
+                  <div>
+                    <label htmlFor="kb-question" className="field-label">Question</label>
+                    <input
+                      id="kb-question"
+                      type="text"
+                      placeholder="e.g. Do you ship internationally?"
                       value={newQuestion}
                       onChange={(e) => setNewQuestion(e.target.value)}
-                      className="w-full bg-white border border-zinc-200 rounded-lg px-4 py-2.5 text-sm text-zinc-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all shadow-sm"
+                      className="field"
+                      autoFocus
                     />
                   </div>
-                  <div className="space-y-1.5">
-                    <label className="text-[13px] font-medium text-zinc-500 ml-1">Answer</label>
-                    <textarea 
-                      placeholder="Yes, we ship to over 50 countries..." 
+                  <div>
+                    <label htmlFor="kb-answer" className="field-label">Answer</label>
+                    <textarea
+                      id="kb-answer"
+                      placeholder="Yes, we ship to over 50 countries..."
                       value={newAnswer}
                       onChange={(e) => setNewAnswer(e.target.value)}
                       rows={4}
-                      className="w-full bg-white border border-zinc-200 rounded-lg px-4 py-2.5 text-sm text-zinc-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all shadow-sm resize-none"
+                      className="field"
                     />
                   </div>
-                </div>
+                </>
               )}
 
               {activeModal === 'fact' && (
-                <div className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-1.5">
-                      <label className="text-[13px] font-medium text-zinc-500 ml-1">Title</label>
-                      <input 
-                        type="text" 
-                        placeholder="e.g. Return Policy" 
+                <>
+                  <div className="grid gap-5 sm:grid-cols-2">
+                    <div>
+                      <label htmlFor="kb-title" className="field-label">Title</label>
+                      <input
+                        id="kb-title"
+                        type="text"
+                        placeholder="e.g. Return policy"
                         value={newTitle}
                         onChange={(e) => setNewTitle(e.target.value)}
-                        className="w-full bg-white border border-zinc-200 rounded-lg px-4 py-2.5 text-sm text-zinc-900 focus:border-zinc-500 focus:ring-1 focus:ring-zinc-500 outline-none transition-all shadow-sm"
+                        className="field"
+                        autoFocus
                       />
                     </div>
-                    <div className="space-y-1.5">
-                      <label className="text-[13px] font-medium text-zinc-500 ml-1">Category</label>
-                      <select 
+                    <div>
+                      <label htmlFor="kb-category" className="field-label">Category</label>
+                      <select
+                        id="kb-category"
                         value={category}
                         onChange={(e) => setCategory(e.target.value)}
-                        className="w-full bg-white border border-zinc-200 rounded-lg px-4 py-2.5 text-sm text-zinc-900 focus:border-zinc-500 focus:ring-1 focus:ring-zinc-500 outline-none transition-all shadow-sm"
+                        className="field"
                       >
                         <option>General</option>
                         <option>Products / Services</option>
@@ -451,33 +460,36 @@ const KnowledgeBase: React.FC = () => {
                       </select>
                     </div>
                   </div>
-                  <div className="space-y-1.5">
-                    <label className="text-[13px] font-medium text-zinc-500 ml-1">Fact Details</label>
-                    <textarea 
-                      placeholder="Paste business details here..." 
+                  <div>
+                    <label htmlFor="kb-content" className="field-label">Fact details</label>
+                    <textarea
+                      id="kb-content"
+                      placeholder="Paste business details here..."
                       value={newContent}
                       onChange={(e) => setNewContent(e.target.value)}
                       rows={5}
-                      className="w-full bg-white border border-zinc-200 rounded-lg px-4 py-2.5 text-sm text-zinc-900 focus:border-zinc-500 focus:ring-1 focus:ring-zinc-500 outline-none transition-all shadow-sm resize-none"
+                      className="field"
                     />
                   </div>
-                </div>
+                </>
               )}
             </div>
 
             {activeModal !== 'upload' && (
-              <div className="px-6 py-4 bg-zinc-50 border-t border-zinc-200 flex justify-end gap-3">
-                <button onClick={closeModal} className="px-5 py-2.5 bg-white border border-zinc-200 text-zinc-700 rounded-lg font-medium hover:bg-zinc-50 hover:border-zinc-300 transition-colors shadow-sm text-sm">Cancel</button>
-                <button 
-                  onClick={activeModal === 'faq' ? handleAddFaq : handleAddFact} 
-                  disabled={isSaving || (activeModal === 'faq' ? (!newQuestion || !newAnswer) : (!newTitle || !newContent))} 
-                  className="px-6 py-2.5 bg-violet-600 text-white rounded-lg font-medium hover:bg-violet-700 transition-colors shadow-sm text-sm flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              <div className="modal-foot">
+                <button type="button" onClick={closeModal} disabled={isSaving} className="btn">Cancel</button>
+                <button
+                  type="submit"
+                  disabled={isSaving || (activeModal === 'faq' ? (!newQuestion || !newAnswer) : (!newTitle || !newContent))}
+                  aria-busy={isSaving || undefined}
+                  className="btn btn-primary"
                 >
-                  {isSaving ? <Loader2 size={16} className="animate-spin" /> : 'Save Entry'}
+                  {isSaving && <Loader2 size={15} className="animate-spin" />}
+                  {editingId ? 'Save changes' : 'Save entry'}
                 </button>
               </div>
             )}
-          </div>
+          </form>
         </div>
       )}
 

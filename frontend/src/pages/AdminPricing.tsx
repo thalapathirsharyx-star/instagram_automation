@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { DollarSign, Save, Edit3, ShieldAlert } from 'lucide-react';
+import { IndianRupee, Save, Loader2, ShieldAlert } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
 
 const AdminPricing: React.FC = () => {
@@ -47,77 +47,76 @@ const AdminPricing: React.FC = () => {
   };
 
   return (
-    <div className="dashboard-page" style={{ minHeight: '100%', display: 'flex', flexDirection: 'column', gap: '32px' }}>
-      <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+    <div className="page">
+      <div className="page-head">
         <div>
           <h1 className="page-title">Plan pricing</h1>
-          <p style={{ margin: '8px 0 0', color: 'var(--text-dim)' }}>Manage subscription tiers, prices, and limits globally.</p>
+          <p className="page-sub">Manage subscription tiers, prices, and limits globally.</p>
         </div>
-        <button 
-          onClick={handleSave}
-          disabled={saving}
-          className="bg-zinc-900 text-white hover:bg-zinc-800 transition-colors shadow-sm" 
-          style={{ padding: '10px 24px', borderRadius: '12px', fontSize: '0.9rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '8px', opacity: saving ? 0.7 : 1, border: 'none', cursor: 'pointer' }}
-        >
-          <Save size={18} /> {saving ? 'Saving...' : 'Save Configuration'}
+        <button onClick={handleSave} disabled={saving} aria-busy={saving || undefined} className="btn btn-primary">
+          {saving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
+          {saving ? 'Saving…' : 'Save configuration'}
         </button>
       </div>
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '16px', background: 'rgba(245, 158, 11, 0.1)', border: '1px solid rgba(245, 158, 11, 0.2)', borderRadius: '12px', color: '#f59e0b' }}>
-        <ShieldAlert size={20} />
-        <span style={{ fontSize: '0.9rem', fontWeight: 500 }}>
+      <div className="notice notice-warn mb-6 justify-start">
+        <ShieldAlert size={18} className="shrink-0 text-signal-warn" />
+        <p className="notice-body m-0 text-[14px]">
           Modifying prices here will update the Razorpay checkout amounts for all future customer upgrades. Active subscriptions are not affected.
-        </span>
+        </p>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
         {plans.map((plan) => (
-          <div key={plan.id} style={{ background: '#ffffff', border: '1px solid #e4e4e7', borderRadius: '16px', boxShadow: '0 4px 20px rgba(0,0,0,0.03)', padding: '24px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <div style={{ padding: '8px', background: '#f4f4f5', borderRadius: '8px' }}>
-                  <Edit3 size={18} color="#18181b" />
-                </div>
-                <h3 style={{ margin: 0, color: '#18181b', fontSize: '1.2rem' }}>{plan.name} Plan</h3>
-              </div>
+          <section key={plan.id} className="surface overflow-hidden">
+            <div className="surface-head">
+              <h2>{plan.name} plan</h2>
             </div>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                <label style={{ fontSize: '0.8rem', color: '#71717a', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Monthly Price (₹)</label>
-                <div style={{ position: 'relative' }}>
-                  <DollarSign size={16} style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: '#a1a1aa' }} />
-                  <input 
-                    type="number" 
+            <div className="surface-body space-y-4">
+              <div>
+                <label htmlFor={`price-${plan.id}`} className="field-label">Monthly price</label>
+                <div className="field-icon">
+                  <IndianRupee size={15} />
+                  <input
+                    id={`price-${plan.id}`}
+                    type="number"
+                    min={0}
+                    inputMode="numeric"
                     value={plan.price}
                     onChange={(e) => handleUpdatePlan(plan.id, 'price', Number(e.target.value))}
-                    style={{ width: '100%', padding: '12px 12px 12px 40px', background: '#ffffff', border: '1px solid #e4e4e7', borderRadius: '10px', color: '#18181b', outline: 'none', fontSize: '0.95rem', transition: 'border-color 0.2s', boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.02)' }}
+                    className="field tabular-nums"
                   />
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  <label style={{ fontSize: '0.8rem', color: '#71717a', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Active Contacts</label>
-                  <input 
-                    type="number" 
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor={`contacts-${plan.id}`} className="field-label">Active contacts</label>
+                  <input
+                    id={`contacts-${plan.id}`}
+                    type="number"
+                    min={0}
+                    inputMode="numeric"
                     value={plan.activeContacts}
                     onChange={(e) => handleUpdatePlan(plan.id, 'activeContacts', Number(e.target.value))}
-                    style={{ width: '100%', padding: '12px 16px', background: '#ffffff', border: '1px solid #e4e4e7', borderRadius: '10px', color: '#18181b', outline: 'none', fontSize: '0.95rem', transition: 'border-color 0.2s', boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.02)' }}
+                    className="field tabular-nums"
                   />
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  <label style={{ fontSize: '0.8rem', color: '#71717a', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>AI Credits</label>
-                  <input 
-                    type="number" 
+                <div>
+                  <label htmlFor={`credits-${plan.id}`} className="field-label">AI credits</label>
+                  <input
+                    id={`credits-${plan.id}`}
+                    type="number"
+                    min={0}
+                    inputMode="numeric"
                     value={plan.aiCredits}
                     onChange={(e) => handleUpdatePlan(plan.id, 'aiCredits', Number(e.target.value))}
-                    style={{ width: '100%', padding: '12px 16px', background: '#ffffff', border: '1px solid #e4e4e7', borderRadius: '10px', color: '#18181b', outline: 'none', fontSize: '0.95rem', transition: 'border-color 0.2s', boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.02)' }}
+                    className="field tabular-nums"
                   />
                 </div>
               </div>
             </div>
-          </div>
+          </section>
         ))}
       </div>
     </div>

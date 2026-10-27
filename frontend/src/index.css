@@ -8,16 +8,15 @@
 /* ============================================================================
    Flazly design system
 
-   Two voices, two colours. The product's central mechanic is the handoff — the
-   automation answers, a person takes over — so the palette encodes who is
-   acting rather than decorating: viridian is the machine, ink is you. Nothing
-   else is tinted except genuine alerts, which keeps amber and red meaningful.
+   One accent, slate neutrals. The accent is an electric blue (the token keeps
+   its historical name, `--viridian`, so the ~900 call sites that resolve
+   through it did not have to change). It marks primary actions, the active
+   page, and the automation's rail; ink still marks a person. Nothing else is
+   tinted except genuine alerts, which keeps amber and red meaningful.
 
-   Two surfaces. Porcelain is chrome you navigate; white is content you read.
-   There is no third surface, so a white panel always means "read this".
-
-   Structure comes from hairlines and rails, never from shadow or a larger
-   radius. Static surfaces cast no shadow at all; one elevation is reserved for
+   Two surfaces. A soft slate background holds the app; white cards hold
+   content. Cards are separated by a soft shadow and a barely-there hairline,
+   with generous radii; one stronger elevation (`--lift`) is reserved for
    things that float above the page (modals, menus, toasts).
    ============================================================================ */
 
@@ -51,6 +50,7 @@
   --color-porcelain-deep: var(--porcelain-deep);
   --color-surface: var(--surface);
   --color-hairline: var(--hairline);
+  --color-hairline-strong: var(--hairline-strong);
   --color-viridian: var(--viridian);
   --color-viridian-soft: var(--viridian-soft);
   --color-viridian-tint: var(--viridian-tint);
@@ -111,41 +111,50 @@
   --leading-body: 1.55;
   --leading-ui: 1.4;
 
-  --radius-control: 6px;
-  --radius-surface: 10px;
-  --radius: 10px;
+  --radius-control: 10px;
+  --radius-surface: 16px;
+  --radius: 16px;
 }
 
 @layer base {
   :root {
-    --porcelain: #e9edec;
-    --porcelain-deep: #dfe5e3;
+    --porcelain: #f3f6fb;
+    --porcelain-deep: #eef1f6;
     --surface: #ffffff;
-    --ink: #15191b;
-    --ink-soft: #5e6a6c;
-    --ink-faint: #7d8b89;
-    --hairline: #d3dad9;
-    --hairline-strong: #bfc8c6;
+    --ink: #0f172a;
+    --ink-soft: #64748b;
+    --ink-faint: #7b8699;
+    --hairline: #e2e8f0;
+    --hairline-strong: #cfd8e3;
 
-    --viridian: #0b6b5b;
-    --viridian-deep: #064b40;
-    --viridian-soft: #0f8a75;
-    --viridian-tint: #e6efec;
+    --viridian: #2563eb;
+    --viridian-deep: #1d4ed8;
+    --viridian-soft: #3b82f6;
+    --viridian-tint: #e5f0fc;
 
     --signal-warn: #8a5a00;
-    --signal-warn-tint: #fbf1dd;
+    --signal-warn-tint: #fff7e6;
     --signal-stop: #9b2c2c;
-    --signal-stop-tint: #fbeaea;
+    --signal-stop-tint: #fce8e5;
     --signal-go: #1f6b3a;
-    --signal-go-tint: #e6f0e8;
+    --signal-go-tint: #e6f3ec;
 
     /* What sits on top of a filled accent or signal. These invert with the
        theme, because the fills themselves lighten in the dark palette. */
     --on-accent: #ffffff;
     --on-signal: #ffffff;
 
-    /* One elevation, for things that float only. */
-    --lift: 0 16px 40px -20px rgba(10, 25, 22, 0.28), 0 2px 6px -2px rgba(10, 25, 22, 0.12);
+    /* Pastel metric palette. Each tone is a soft fill plus the ink that reads on
+       it (all inks clear 4.5:1 on their fill). Blue, mint, amber and rose reuse
+       the accent and signal tints; peach and lavender exist only here. */
+    --pastel-peach: #fff0e2;
+    --peach-ink: #9a4710;
+    --pastel-lavender: #f0eafe;
+    --lavender-ink: #6a3fc0;
+
+    /* Cards rest on a soft, airy shadow; things that float get --lift. */
+    --shadow-card: 0 1px 2px rgba(15, 23, 42, 0.04), 0 6px 20px -8px rgba(15, 23, 42, 0.08);
+    --lift: 0 16px 40px -20px rgba(15, 23, 42, 0.28), 0 2px 6px -2px rgba(15, 23, 42, 0.12);
 
     /* Kept so landing-page rules that still read these keep resolving. */
     --brand-purple: var(--viridian);
@@ -154,29 +163,29 @@
     --ai-gradient-end: var(--viridian-deep);
     --ai-glow: transparent;
 
-    --background: 174 10% 92%;
-    --foreground: 195 12% 9%;
+    --background: 220 33% 97%;
+    --foreground: 222 47% 11%;
     --card: 0 0% 100%;
-    --card-foreground: 195 12% 9%;
-    --border: 170 9% 84%;
+    --card-foreground: 222 47% 11%;
+    --border: 216 25% 92%;
 
     color-scheme: light;
   }
 
   :root.dark {
-    --porcelain: #0e1413;
-    --porcelain-deep: #121a18;
-    --surface: #151d1b;
-    --ink: #e8edeb;
-    --ink-soft: #90a09d;
-    --ink-faint: #6b7a77;
-    --hairline: #2e3b37;
-    --hairline-strong: #3d4e49;
+    --porcelain: #0b0f17;
+    --porcelain-deep: #10161f;
+    --surface: #141b27;
+    --ink: #e5e9f0;
+    --ink-soft: #94a0b4;
+    --ink-faint: #6f7b90;
+    --hairline: #232c3b;
+    --hairline-strong: #2f3a4c;
 
-    --viridian: #3fbca3;
-    --viridian-deep: #6fd6c0;
-    --viridian-soft: #2f9b85;
-    --viridian-tint: #16302b;
+    --viridian: #60a5fa;
+    --viridian-deep: #93c5fd;
+    --viridian-soft: #3b82f6;
+    --viridian-tint: #15233d;
 
     --signal-warn: #d9a02a;
     --signal-warn-tint: #2c2310;
@@ -188,13 +197,19 @@
     --on-accent: #0b1210;
     --on-signal: #0b1210;
 
+    --pastel-peach: #2e2115;
+    --peach-ink: #f2ae74;
+    --pastel-lavender: #241d3b;
+    --lavender-ink: #b9a0f6;
+
+    --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.3), 0 6px 20px -8px rgba(0, 0, 0, 0.45);
     --lift: 0 18px 44px -20px rgba(0, 0, 0, 0.7), 0 2px 8px -2px rgba(0, 0, 0, 0.5);
 
-    --background: 174 18% 7%;
-    --foreground: 170 10% 92%;
-    --card: 174 15% 10%;
-    --card-foreground: 170 10% 92%;
-    --border: 168 12% 17%;
+    --background: 220 35% 7%;
+    --foreground: 216 25% 92%;
+    --card: 218 32% 12%;
+    --card-foreground: 216 25% 92%;
+    --border: 217 25% 18%;
 
     color-scheme: dark;
   }
@@ -300,6 +315,7 @@
     background: var(--surface);
     border: 1px solid var(--hairline);
     border-radius: var(--radius-surface);
+    box-shadow: var(--shadow-card);
   }
 
   /* A surface whose job is to hold a region of chrome rather than content. */
@@ -328,9 +344,187 @@
 
   .surface-head h2,
   .surface-head h3 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
     font-size: var(--text-lede);
     font-weight: 600;
     margin: 0;
+  }
+
+  .surface-head p {
+    margin: 2px 0 0;
+    font-size: var(--text-meta);
+    color: var(--ink-soft);
+  }
+
+  .surface-body {
+    padding: 20px;
+  }
+
+  /* Footer strip: the card's hint on the left, its actions on the right. */
+  .surface-foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 20px;
+    border-top: 1px solid var(--hairline);
+    background: var(--porcelain);
+  }
+
+  /* An icon introducing a card or row: soft accent square, never a fill. */
+  .icon-tile {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-control);
+    background: var(--viridian-tint);
+    color: var(--viridian);
+  }
+
+  :root.dark .icon-tile {
+    color: var(--viridian-deep);
+  }
+
+  .icon-tile.is-neutral {
+    background: var(--porcelain-deep);
+    color: var(--ink-soft);
+  }
+
+  .icon-tile.is-go { background: var(--signal-go-tint); color: var(--signal-go); }
+  .icon-tile.is-warn { background: var(--signal-warn-tint); color: var(--signal-warn); }
+  .icon-tile.is-stop { background: var(--signal-stop-tint); color: var(--signal-stop); }
+
+  /* --- Pastel tones ---------------------------------------------------------
+
+     One vocabulary for colour that carries meaning, shared by metric cards,
+     icon tiles and chips:
+       tone-blue      informational
+       tone-peach     conversations
+       tone-lavender  the AI / a person stepping in
+       tone-mint      success
+       tone-amber     warning
+       tone-rose      error
+     A tone sets --tone-bg and --tone-ink; components read them. Ordinary
+     content cards, tables and dialogs stay white and never take a tone. */
+
+  .tone-blue     { --tone-bg: var(--viridian-tint);    --tone-ink: var(--viridian-deep); }
+  .tone-peach    { --tone-bg: var(--pastel-peach);     --tone-ink: var(--peach-ink); }
+  .tone-lavender { --tone-bg: var(--pastel-lavender);  --tone-ink: var(--lavender-ink); }
+  .tone-mint     { --tone-bg: var(--signal-go-tint);   --tone-ink: var(--signal-go); }
+  .tone-amber    { --tone-bg: var(--signal-warn-tint); --tone-ink: var(--signal-warn); }
+  .tone-rose     { --tone-bg: var(--signal-stop-tint); --tone-ink: var(--signal-stop); }
+
+  .icon-tile[class*="tone-"],
+  .chip[class*="tone-"] {
+    background: var(--tone-bg);
+    color: var(--tone-ink);
+  }
+
+  .chip[class*="tone-"] {
+    border-color: color-mix(in oklab, var(--tone-ink) 22%, transparent);
+  }
+
+  /* --- Metric cards ---------------------------------------------------------
+
+     The headline numbers of a page: a grid of soft pastel cards, each with a
+     white icon tile in its tone. The figure stays ink so it reads first. */
+
+  .metric-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+  }
+
+  .metric {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    padding: 18px 20px;
+    border-radius: var(--radius-surface);
+    background: var(--tone-bg, var(--surface));
+    border: 1px solid color-mix(in oklab, var(--tone-ink, var(--ink)) 12%, transparent);
+  }
+
+  .metric-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+
+  .metric .icon-tile {
+    background: var(--surface);
+    color: var(--tone-ink, var(--viridian));
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+  }
+
+  /* Secondary text on a pastel fill: ink-soft alone dips under 4.5:1 on the
+     light tints, so it is pulled a third of the way toward ink. */
+  .metric {
+    --metric-soft: color-mix(in oklab, var(--ink-soft) 65%, var(--ink));
+  }
+
+  .metric-label {
+    font-size: var(--text-meta);
+    font-weight: 500;
+    color: var(--metric-soft);
+  }
+
+  .metric-figure {
+    display: block;
+    margin-top: 4px;
+    font-size: var(--text-figure);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: var(--tracking-heading);
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .metric-note {
+    margin-top: 6px;
+    font-size: var(--text-meta);
+    color: var(--metric-soft);
+  }
+
+  /* A trend figure inside a metric: tone ink, never a second colour. */
+  .metric-trend {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    font-size: var(--text-meta);
+    font-weight: 600;
+    color: var(--tone-ink, var(--signal-go));
+  }
+
+  .icon-tile.is-sm {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+  }
+
+  /* Tables scroll sideways inside their card instead of widening the page.
+     position: relative makes this the containing block, so absolutely
+     positioned children (an sr-only header label) are clipped here too
+     rather than escaping and widening the whole document. */
+  .table-wrap {
+    position: relative;
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  .table-wrap > .data-table {
+    min-width: 640px;
   }
 
   /* --- Page furniture ------------------------------------------------------ */
@@ -339,6 +533,12 @@
     max-width: 1200px;
     margin: 0 auto;
     padding-bottom: 48px;
+  }
+
+  /* The content of a form page, inside .page: keeps the page's left edge and
+     header width, but holds the form to a readable measure. */
+  .page-narrow {
+    max-width: 760px;
   }
 
   .page-head {
@@ -350,9 +550,40 @@
     margin-bottom: 24px;
   }
 
+  .page-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* "← Back to …" above a sub-page title. */
+  .page-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 12px;
+    color: var(--ink-soft);
+    font-size: var(--text-ui);
+    font-weight: 500;
+    text-decoration: none;
+    transition: color 0.12s ease;
+  }
+
+  .page-back:hover {
+    color: var(--ink);
+  }
+
+  /* Vertical rhythm between the sections of a page. */
+  .stack {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
   .page-title {
     font-size: var(--text-page);
-    font-weight: 600;
+    font-weight: 700;
     letter-spacing: var(--tracking-heading);
     line-height: var(--leading-heading);
     margin: 0;
@@ -395,6 +626,7 @@
     background: var(--surface);
     border: 1px solid var(--hairline);
     border-radius: var(--radius-surface);
+    box-shadow: var(--shadow-card);
     overflow: hidden;
   }
 
@@ -419,7 +651,7 @@
   .stat-figure {
     display: block;
     font-size: var(--text-figure);
-    font-weight: 600;
+    font-weight: 700;
     line-height: 1;
     letter-spacing: var(--tracking-heading);
     /* Inter runs wider than the condensed face this slot used to hold; a long figure
@@ -449,16 +681,34 @@
     }
   }
 
-  /* --- Buttons ------------------------------------------------------------- */
+  /* --- Buttons -------------------------------------------------------------
+
+     One base, one modifier for intent, one for size:
+
+       .btn                  secondary: Cancel, Back, View, Refresh, Export
+       .btn-primary          the one main action of a view: Save, Create, Confirm
+       .btn-outline          a visible boundary but no fill, for low-emphasis actions
+       .btn-ghost            no boundary: toolbars, inline row actions (.btn-quiet is an alias)
+       .btn-danger           a destructive action the person has already confirmed
+       .btn-danger-soft      the entry point to a destructive action (Delete, Revoke, Suspend)
+       .btn-success          explicitly completes something (Mark as paid, Approve)
+       .btn-sm / .btn-lg     30px / 44px tall; the default is 36px
+       .btn-icon             square, icon only; needs an aria-label
+       .btn-block            full width (auth forms, narrow cards)
+
+     A view has at most one primary button. A loading button keeps its label,
+     prepends a spinner and sets aria-busy so its width does not jump.
+     ------------------------------------------------------------------------ */
 
   .btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
-    padding: 9px 14px;
+    min-height: 36px;
+    padding: 7px 14px;
     border-radius: var(--radius-control);
-    border: 1px solid var(--hairline);
+    border: 1px solid var(--hairline-strong);
     background: var(--surface);
     color: var(--ink);
     font-size: var(--text-ui);
@@ -466,7 +716,13 @@
     line-height: var(--leading-ui);
     letter-spacing: var(--tracking-ui);
     white-space: nowrap;
-    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+    text-decoration: none;
+    user-select: none;
+    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.06s ease;
+  }
+
+  .btn > svg {
+    flex-shrink: 0;
   }
 
   .btn:hover:not(:disabled) {
@@ -474,21 +730,101 @@
     border-color: var(--hairline-strong);
   }
 
-  .btn:disabled {
+  .btn:active:not(:disabled) {
+    transform: translateY(1px);
+  }
+
+  .btn:focus-visible {
+    outline: 2px solid var(--viridian);
+    outline-offset: 2px;
+    border-radius: var(--radius-control);
+  }
+
+  .btn:disabled,
+  .btn[aria-disabled="true"] {
     opacity: 0.5;
     cursor: not-allowed;
   }
 
-  /* The human's action: ink, because in this interface ink is the person. */
+  .btn[aria-busy="true"] {
+    cursor: progress;
+  }
+
+  .btn-sm {
+    min-height: 30px;
+    padding: 4px 10px;
+    gap: 6px;
+    font-size: var(--text-meta);
+  }
+
+  .btn-lg {
+    min-height: 44px;
+    padding: 10px 18px;
+    font-size: var(--text-body);
+  }
+
+  .btn-block {
+    width: 100%;
+  }
+
+  .btn-icon {
+    width: 36px;
+    padding: 0;
+    gap: 0;
+  }
+
+  .btn-icon.btn-sm {
+    width: 30px;
+  }
+
+  .btn-outline {
+    background: transparent;
+    border-color: var(--hairline-strong);
+    color: var(--ink);
+  }
+
+  .btn-outline:hover:not(:disabled) {
+    background: var(--surface);
+    border-color: var(--ink-faint);
+  }
+
+  .btn-success {
+    background: var(--signal-go);
+    border-color: var(--signal-go);
+    color: var(--on-signal);
+  }
+
+  .btn-success:hover:not(:disabled) {
+    background: color-mix(in oklab, var(--signal-go) 85%, #000);
+    border-color: color-mix(in oklab, var(--signal-go) 85%, #000);
+  }
+
+  .btn-danger-soft {
+    background: var(--surface);
+    border-color: color-mix(in oklab, var(--signal-stop) 35%, transparent);
+    color: var(--signal-stop);
+  }
+
+  .btn-danger-soft:hover:not(:disabled) {
+    background: var(--signal-stop-tint);
+    border-color: var(--signal-stop);
+  }
+
+  /* The page's main action, in the accent. */
   .btn-primary {
-    background: var(--ink);
-    border-color: var(--ink);
-    color: var(--surface);
+    background: var(--viridian);
+    border-color: var(--viridian);
+    color: var(--on-accent);
   }
 
   .btn-primary:hover:not(:disabled) {
-    background: color-mix(in oklab, var(--ink) 86%, var(--surface));
-    border-color: color-mix(in oklab, var(--ink) 86%, var(--surface));
+    background: var(--viridian-deep);
+    border-color: var(--viridian-deep);
+  }
+
+  :root.dark .btn-primary:hover:not(:disabled) {
+    background: var(--viridian-soft);
+    border-color: var(--viridian-soft);
   }
 
   /* Reserved for actions that hand work to the automation. */
@@ -503,6 +839,11 @@
     border-color: var(--viridian-deep);
   }
 
+  :root.dark .btn-accent:hover:not(:disabled) {
+    background: var(--viridian-soft);
+    border-color: var(--viridian-soft);
+  }
+
   .btn-danger {
     background: var(--signal-stop);
     border-color: var(--signal-stop);
@@ -511,28 +852,27 @@
 
   .btn-danger:hover:not(:disabled) {
     background: color-mix(in oklab, var(--signal-stop) 85%, #000);
+    border-color: color-mix(in oklab, var(--signal-stop) 85%, #000);
   }
 
-  .btn-quiet {
+  .btn-quiet,
+  .btn-ghost {
     background: transparent;
     border-color: transparent;
     color: var(--ink-soft);
   }
 
-  .btn-quiet:hover:not(:disabled) {
+  .btn-quiet:hover:not(:disabled),
+  .btn-ghost:hover:not(:disabled) {
     background: var(--porcelain-deep);
     color: var(--ink);
     border-color: transparent;
   }
 
-  .btn-sm {
-    padding: 6px 10px;
-    font-size: var(--text-meta);
-  }
-
-  .btn-icon {
-    padding: 8px;
-    gap: 0;
+  /* The ghost variant for a destructive row action (a trash icon in a table). */
+  .btn-ghost.is-danger:hover:not(:disabled) {
+    background: var(--signal-stop-tint);
+    color: var(--signal-stop);
   }
 
   /* --- Fields -------------------------------------------------------------- */
@@ -540,7 +880,7 @@
   .field {
     width: 100%;
     padding: 9px 12px;
-    background: var(--surface);
+    background: var(--porcelain);
     border: 1px solid var(--hairline);
     border-radius: var(--radius-control);
     color: var(--ink);
@@ -554,6 +894,7 @@
   }
 
   .field:focus {
+    background: var(--surface);
     border-color: var(--viridian);
     box-shadow: 0 0 0 3px color-mix(in oklab, var(--viridian) 16%, transparent);
   }
@@ -578,6 +919,108 @@
     color: var(--ink-soft);
   }
 
+  .field-error {
+    margin-top: 6px;
+    font-size: var(--text-meta);
+    color: var(--signal-stop);
+  }
+
+  .field[aria-invalid="true"] {
+    border-color: var(--signal-stop);
+  }
+
+  textarea.field {
+    min-height: 96px;
+    line-height: var(--leading-body);
+    resize: vertical;
+  }
+
+  /* Native select, drawn to match the text field: same height, own chevron. */
+  select.field {
+    appearance: none;
+    padding-right: 36px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%238a94a6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px;
+    cursor: pointer;
+  }
+
+  /* A field with a leading icon: wrap both in .field-icon. */
+  .field-icon {
+    position: relative;
+  }
+
+  .field-icon > svg {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--ink-faint);
+    pointer-events: none;
+  }
+
+  .field-icon > .field {
+    padding-left: 38px;
+  }
+
+  /* --- Checkbox and switch ------------------------------------------------- */
+
+  .checkbox {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    accent-color: var(--viridian);
+    cursor: pointer;
+  }
+
+  /* A real checkbox drawn as a switch, so it keeps native keyboard and form
+     behaviour: <input type="checkbox" role="switch" class="switch"> */
+  .switch {
+    appearance: none;
+    position: relative;
+    flex-shrink: 0;
+    width: 36px;
+    height: 20px;
+    margin: 0;
+    border-radius: 999px;
+    background: var(--hairline-strong);
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+  }
+
+  .switch::after {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #ffffff;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.25);
+    transition: transform 0.15s ease;
+  }
+
+  .switch:checked {
+    background: var(--viridian);
+  }
+
+  .switch:checked::after {
+    transform: translateX(16px);
+  }
+
+  .switch:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .switch:focus-visible {
+    outline: 2px solid var(--viridian);
+    outline-offset: 2px;
+    border-radius: 999px;
+  }
+
   /* --- Chips --------------------------------------------------------------- */
 
   /* Status in words, sentence case. The border carries the state, not a fill. */
@@ -585,8 +1028,8 @@
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    padding: 2px 8px;
-    border-radius: var(--radius-control);
+    padding: 2px 9px;
+    border-radius: 999px;
     border: 1px solid var(--hairline);
     background: var(--surface);
     color: var(--ink-soft);
@@ -625,6 +1068,210 @@
     color: var(--surface);
   }
 
+  /* A status chip leads with a dot in its own colour. The dot pulses only while
+     the state is in flux (reconnecting), so stillness reads as "settled". */
+  .chip-dot::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  .chip-dot.is-pulsing::before {
+    animation: chip-pulse 1.4s ease-in-out infinite;
+  }
+
+  @keyframes chip-pulse {
+    0%, 100% { opacity: 1; box-shadow: 0 0 0 0 color-mix(in oklab, currentColor 45%, transparent); }
+    50% { opacity: 0.55; box-shadow: 0 0 0 4px transparent; }
+  }
+
+  /* --- Segmented control --------------------------------------------------- */
+
+  /* Filters that partition one list. Chrome, so it sits on porcelain; the
+     chosen segment lifts to the reading surface. */
+  .segmented {
+    display: flex;
+    gap: 2px;
+    padding: 2px;
+    background: var(--porcelain-deep);
+    border: 1px solid var(--hairline);
+    border-radius: var(--radius-control);
+  }
+
+  .segmented {
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .segmented > button {
+    flex: 1 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 4px 8px;
+    border-radius: 8px;
+    color: var(--ink-soft);
+    font-size: var(--text-meta);
+    font-weight: 500;
+    white-space: nowrap;
+    transition: background-color 0.12s ease, color 0.12s ease;
+  }
+
+  .segmented > button:hover {
+    color: var(--ink);
+  }
+
+  .segmented > button[aria-pressed="true"] {
+    background: var(--surface);
+    color: var(--ink);
+    box-shadow: 0 0 0 1px var(--hairline);
+  }
+
+  .segmented .count {
+    font-variant-numeric: tabular-nums;
+    color: var(--ink-faint);
+  }
+
+  .segmented > button:focus-visible {
+    outline: 2px solid var(--viridian);
+    outline-offset: -2px;
+  }
+
+  /* --- Tabs ----------------------------------------------------------------
+
+     Two controls, two jobs. `.tabs` switches between sections of a page
+     (underlined, sits on the page). `.segmented` filters one list (a pill
+     group, sits inside the list's card). Buttons carry role="tab" +
+     aria-selected, or aria-pressed for a segmented filter. */
+
+  .tabs {
+    display: flex;
+    gap: 4px;
+    border-bottom: 1px solid var(--hairline);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .tabs > button,
+  .tabs > a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+    margin-bottom: -1px;
+    padding: 10px 12px;
+    border-bottom: 2px solid transparent;
+    color: var(--ink-soft);
+    font-size: var(--text-ui);
+    font-weight: 500;
+    white-space: nowrap;
+    text-decoration: none;
+    transition: color 0.12s ease, border-color 0.12s ease;
+  }
+
+  .tabs > button:hover,
+  .tabs > a:hover {
+    color: var(--ink);
+  }
+
+  .tabs > [aria-selected="true"],
+  .tabs > .is-active {
+    color: var(--viridian);
+    border-bottom-color: var(--viridian);
+    font-weight: 600;
+  }
+
+  :root.dark .tabs > [aria-selected="true"],
+  :root.dark .tabs > .is-active {
+    color: var(--viridian-deep);
+  }
+
+  .tabs > button:focus-visible,
+  .tabs > a:focus-visible {
+    outline: 2px solid var(--viridian);
+    outline-offset: -2px;
+  }
+
+  /* --- Modal --------------------------------------------------------------- */
+
+  .modal-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    background: color-mix(in oklab, #0f172a 45%, transparent);
+    backdrop-filter: blur(2px);
+  }
+
+  .modal {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 520px;
+    max-height: calc(100vh - 32px);
+    max-height: calc(100dvh - 32px);
+    overflow: hidden;
+    background: var(--surface);
+    border: 1px solid var(--hairline);
+    border-radius: var(--radius-surface);
+    box-shadow: var(--lift);
+  }
+
+  .modal-lg {
+    max-width: 720px;
+  }
+
+  .modal-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 18px 24px;
+    border-bottom: 1px solid var(--hairline);
+  }
+
+  .modal-head h2,
+  .modal-head h3 {
+    margin: 0;
+    font-size: var(--text-lede);
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  .modal-body {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 20px 24px;
+  }
+
+  .modal-foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 14px 24px;
+    border-top: 1px solid var(--hairline);
+    background: var(--porcelain);
+  }
+
+  @media (max-width: 640px) {
+    .modal-head,
+    .modal-body,
+    .modal-foot {
+      padding-left: 16px;
+      padding-right: 16px;
+    }
+  }
+
   /* --- Tables -------------------------------------------------------------- */
 
   .data-table {
@@ -635,11 +1282,11 @@
 
   .data-table thead th {
     padding: 11px 18px;
-    background: var(--porcelain-deep);
+    background: var(--surface);
     border-bottom: 1px solid var(--hairline);
-    font-size: var(--text-meta);
+    font-size: var(--text-micro);
     font-weight: 600;
-    color: var(--ink-soft);
+    color: var(--ink-faint);
     white-space: nowrap;
   }
 
@@ -721,6 +1368,29 @@
     max-width: 44ch;
   }
 
+  /* The icon an empty state leads with: muted, in a soft square, never tinted. */
+  .empty-mark {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    margin-bottom: 8px;
+    border-radius: var(--radius-surface);
+    background: var(--porcelain-deep);
+    border: 1px solid var(--hairline);
+    color: var(--ink-faint);
+  }
+
+  .empty-mark svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  .empty .btn {
+    margin-top: 12px;
+  }
+
   /* --- Notices ------------------------------------------------------------- */
 
   .notice {
@@ -746,6 +1416,18 @@
     border-left-color: var(--signal-stop);
     background: var(--signal-stop-tint);
     border-color: color-mix(in oklab, var(--signal-stop) 26%, transparent);
+  }
+
+  .notice-info {
+    border-left-color: var(--viridian);
+    background: var(--viridian-tint);
+    border-color: color-mix(in oklab, var(--viridian) 26%, transparent);
+  }
+
+  .notice-go {
+    border-left-color: var(--signal-go);
+    background: var(--signal-go-tint);
+    border-color: color-mix(in oklab, var(--signal-go) 26%, transparent);
   }
 
   .notice-title {
@@ -796,6 +1478,7 @@
   background: var(--surface);
   border: 1px solid var(--hairline);
   border-radius: var(--radius-surface);
+  box-shadow: var(--shadow-card);
   padding: 20px;
   position: relative;
 }
@@ -807,19 +1490,19 @@
   gap: 8px;
   padding: 9px 14px;
   border-radius: var(--radius-control);
-  border: 1px solid var(--ink);
-  background: var(--ink);
-  color: var(--surface);
+  border: 1px solid var(--viridian);
+  background: var(--viridian);
+  color: var(--on-accent);
   font-weight: 500;
   transition: background-color 0.15s ease;
 }
 
 .w3-button-primary:hover {
-  background: color-mix(in oklab, var(--ink) 86%, var(--surface));
+  background: var(--viridian-deep);
 }
 
 .w3-input {
-  background: var(--surface);
+  background: var(--porcelain);
   border: 1px solid var(--hairline);
   border-radius: var(--radius-control);
   padding: 9px 12px;
@@ -829,6 +1512,7 @@
 }
 
 .w3-input:focus {
+  background: var(--surface);
   border-color: var(--viridian);
   box-shadow: 0 0 0 3px color-mix(in oklab, var(--viridian) 16%, transparent);
 }
@@ -981,7 +1665,7 @@
   height: 100%;
   min-height: 0;
   padding: 0;
-  background: var(--porcelain);
+  background: var(--surface);
   border-right: 1px solid var(--hairline);
   z-index: 50;
   transition: width 0.2s ease, min-width 0.2s ease;
@@ -993,8 +1677,23 @@
 }
 
 .sidebar.collapsed .logo-text,
-.sidebar.collapsed .nav-item span,
 .sidebar.collapsed .nav-group-label {
+  display: none;
+}
+
+/* Icon-only rail: the label leaves the layout but stays the link's accessible
+   name (display:none would leave a column of unnamed links). */
+.sidebar.collapsed .nav-item span {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* The plan lock rides after the label; there is no room for it in the rail. */
+.sidebar.collapsed .nav-item svg ~ svg {
   display: none;
 }
 
@@ -1074,9 +1773,8 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 8px 10px;
-  border-left: 2px solid transparent;
-  border-radius: 0 var(--radius-control) var(--radius-control) 0;
+  padding: 8px 12px;
+  border-radius: var(--radius-control);
   color: var(--ink-soft);
   font-size: var(--text-ui);
   font-weight: 500;
@@ -1098,10 +1796,13 @@
 }
 
 .nav-item.active {
-  background: var(--surface);
-  border-left-color: var(--viridian);
-  color: var(--ink);
+  background: var(--viridian-tint);
+  color: var(--viridian);
   font-weight: 600;
+}
+
+:root.dark .nav-item.active {
+  color: var(--viridian-deep);
 }
 
 .nav-item.active svg {
@@ -1136,10 +1837,10 @@
   gap: 10px;
   width: 320px;
   max-width: 100%;
-  padding: 7px 12px;
+  padding: 7px 14px;
   background: var(--porcelain);
   border: 1px solid var(--hairline);
-  border-radius: var(--radius-control);
+  border-radius: 999px;
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
@@ -1181,8 +1882,18 @@
     min-width: 64px;
   }
   .sidebar .logo-text,
-  .sidebar .nav-item span,
   .sidebar .nav-group-label {
+    display: none;
+  }
+  .sidebar .nav-item span {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .sidebar .nav-item svg ~ svg {
     display: none;
   }
   .sidebar .nav-item {
@@ -1228,35 +1939,35 @@
 
 .crm-layout,
 .auth-surface {
-  /* Neutral ramp: cool, slightly green, so it sits with viridian. */
+  /* Neutral ramp: slate, so it sits with the blue accent. */
   --n-0: #ffffff;
-  --n-50: #f4f7f6;
-  --n-100: #e9edec;
-  --n-200: #d3dad9;
-  --n-300: #bfc8c6;
-  --n-400: #8b9896;
-  --n-500: #5e6a6c;
-  --n-600: #4a5557;
-  --n-700: #374042;
-  --n-800: #242b2c;
-  --n-900: #15191b;
-  --n-950: #0e1413;
+  --n-50: #f8fafc;
+  --n-100: #f1f5f9;
+  --n-200: #e2e8f0;
+  --n-300: #cbd5e1;
+  --n-400: #8a94a6;
+  --n-500: #64748b;
+  --n-600: #475569;
+  --n-700: #334155;
+  --n-800: #1e293b;
+  --n-900: #0f172a;
+  --n-950: #020617;
 }
 
 :root.dark .crm-layout,
 :root.dark .auth-surface {
-  --n-0: #151d1b;
-  --n-50: #121a18;
-  --n-100: #18211f;
-  --n-200: #27332f;
-  --n-300: #35443f;
-  --n-400: #6b7a77;
-  --n-500: #90a09d;
-  --n-600: #a8b5b2;
-  --n-700: #c3cdcb;
-  --n-800: #dbe3e1;
-  --n-900: #e8edeb;
-  --n-950: #f2f6f5;
+  --n-0: #141b27;
+  --n-50: #10161f;
+  --n-100: #182131;
+  --n-200: #232c3b;
+  --n-300: #2f3a4c;
+  --n-400: #6f7b90;
+  --n-500: #94a0b4;
+  --n-600: #aab4c5;
+  --n-700: #c4ccd8;
+  --n-800: #dde2ea;
+  --n-900: #e5e9f0;
+  --n-950: #f1f4f8;
 }
 
 .crm-layout,
@@ -1420,8 +2131,9 @@
    Radius and shadow discipline inside the app
 
    152 call sites ask for rounded-2xl or rounded-3xl and 300 ask for a shadow.
-   Rather than edit each, the app is held to two radii and no static elevation;
-   overlays opt back in with .surface-lifted, which is what actually floats.
+   Rather than edit each, the app is held to two radii and one resting card
+   shadow, whatever size was asked for; overlays opt into --lift with
+   .surface-lifted, which is what actually floats.
    ---------------------------------------------------------------------------- */
 
 .crm-layout .rounded-2xl,
@@ -1445,7 +2157,10 @@
 .crm-layout .shadow-xl,
 .auth-surface .shadow-xl,
 .crm-layout .shadow-2xl,
-.auth-surface .shadow-2xl,
+.auth-surface .shadow-2xl {
+  box-shadow: var(--shadow-card);
+}
+
 .crm-layout .shadow-inner,
 .auth-surface .shadow-inner {
   box-shadow: none;
@@ -1476,9 +2191,9 @@
   color: var(--ink);
 }
 
-.crm-layout input,
+.crm-layout input::placeholder,
 .auth-surface input::placeholder,
-.crm-layout textarea,
+.crm-layout textarea::placeholder,
 .auth-surface textarea::placeholder {
   color: var(--ink-faint);
 }

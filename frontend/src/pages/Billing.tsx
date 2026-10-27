@@ -135,7 +135,7 @@ const Billing: React.FC = () => {
           email: user?.email || '',
         },
         theme: {
-          color: '#8b5cf6' // Brand violet
+          color: '#2563eb' // Brand accent
         }
       };
 
@@ -194,124 +194,155 @@ const Billing: React.FC = () => {
 
   const tabs = ['Billing', 'Plans'];
 
+  const plans = [
+    {
+      id: 'Free',
+      blurb: 'Explore basic automation capabilities for testing.',
+      price: '₹0',
+      credits: '250',
+      features: ['Connect 1 IG Account', 'Basic automations (up to 4)', '1 team seat', 'Unified inbox', 'Flazly branding attached'],
+    },
+    {
+      id: 'Pro',
+      blurb: 'For scaling creators & digital businesses.',
+      price: '₹2,499',
+      credits: '25,000',
+      badge: 'Most popular',
+      features: ['Connect 3 IG Accounts', 'Unlimited workflow automations', 'Broadcast messaging', '3 team seats', 'AI Persona customization', 'Brain Base (Knowledge) access', 'White-labeled (No branding)'],
+    },
+    {
+      id: 'Business',
+      blurb: 'For high-growth enterprise operations.',
+      price: '₹5,999',
+      credits: '75,000',
+      badge: 'Enterprise volume',
+      features: ['Unlimited IG Accounts', 'Unlimited workflow automations', 'Broadcast messaging', '5 team seats', 'Advanced AI Persona customization', 'Brain Base (Knowledge) access', 'Lead scoring & qualification', 'White-labeled (No branding)'],
+    },
+  ];
+  const activePlan = user?.company?.plan || 'Free';
+
   return (
-    <div className="max-w-5xl mx-auto w-full flex flex-col gap-6 min-h-full animate-in fade-in duration-500 pb-12 pt-4">
-      <div>
-        <h1 className="page-title">Billing</h1>
-        <p className="page-sub">Manage your subscription tier, track API usage, and download invoices.</p>
+    <div className="page">
+      <div className="page-head mb-4">
+        <div>
+          <h1 className="page-title">Billing</h1>
+          <p className="page-sub">Manage your subscription tier, track API usage, and download invoices.</p>
+        </div>
       </div>
 
-      <div className="flex flex-wrap items-center gap-2 border-b border-zinc-200 pb-4 mb-2 mt-2">
+      <div className="tabs mb-6" role="tablist" aria-label="Billing sections">
         {tabs.map((tab) => (
-          <button
-            key={tab}
-            onClick={() => setActiveTab(tab)}
-            className={`px-5 py-2 rounded-lg text-sm font-medium transition-all shadow-sm ${
-              activeTab === tab
-                ? 'bg-zinc-900 text-white border-zinc-800'
-                : 'bg-white text-zinc-600 border border-zinc-200 hover:bg-zinc-50 hover:text-zinc-900'
-            }`}
-          >
+          <button key={tab} role="tab" aria-selected={activeTab === tab} onClick={() => setActiveTab(tab)}>
             {tab}
           </button>
         ))}
       </div>
 
       {upgradeAlert && (
-        <div className="flex items-center justify-between gap-4 p-4 rounded-xl border border-violet-200 bg-violet-50 animate-in slide-in-from-top duration-500 shadow-sm">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-white rounded-lg border border-violet-100 shadow-sm">
-              <Lock size={16} className="text-violet-600" />
-            </div>
+        <div className="notice notice-info mb-6" role="status">
+          <div className="flex items-start gap-3">
+            <Lock size={16} className="mt-0.5 shrink-0 text-viridian" />
             <div>
-              <p className="text-sm font-medium text-violet-900">{upgradeAlert}</p>
-              <p className="text-xs font-medium text-violet-600/80 mt-0.5">Upgrade your subscription below to unlock this feature.</p>
+              <p className="notice-title">{upgradeAlert}</p>
+              <p className="notice-body">Upgrade your subscription below to unlock this feature.</p>
             </div>
           </div>
-          <button onClick={() => setUpgradeAlert(null)} className="p-1.5 text-violet-400 hover:text-violet-700 transition-colors rounded-lg hover:bg-violet-100/50">
+          <button onClick={() => setUpgradeAlert(null)} className="btn btn-ghost btn-icon btn-sm" aria-label="Dismiss">
             <X size={16} />
           </button>
         </div>
       )}
 
       {activeTab === 'Billing' && (
-        <div className="flex flex-col gap-8 animate-in fade-in duration-300">
-          <div className="grid md:grid-cols-2 gap-6">
-            
-            {/* Current Plan Card */}
-            <div className="bg-white rounded-2xl border border-zinc-200 shadow-sm p-6 md:p-8 flex flex-col">
-              <div className="flex justify-between items-start mb-2">
-                <h3 className="font-semibold text-zinc-900 text-xl">{currentPlan} Plan</h3>
-                <span className="font-medium text-zinc-500 text-sm"><span className="text-zinc-900 font-semibold text-lg">{planPrice}</span> / month</span>
+        <div className="stack">
+          <div className="grid gap-6 md:grid-cols-2">
+            <section className="surface flex flex-col p-6">
+              <div className="flex items-start justify-between gap-4">
+                <h2 className="text-[20px] font-semibold text-ink">{currentPlan} plan</h2>
+                <p className="text-[14px] text-ink-soft">
+                  <span className="text-[18px] font-semibold text-ink">{planPrice}</span> / month
+                </p>
               </div>
-              <p className="text-[13px] text-zinc-500 font-medium mb-10">
+              <p className="mt-1 text-[14px] text-ink-soft">
                 {currentPlan === 'Free' ? 'You are currently on the starter evaluation tier.' : `Premium AI infrastructure with up to ${planMaxRecords} queries.`}
               </p>
-              
-              <div className="mt-auto">
-                <div className="flex justify-between items-end mb-2">
-                  <p className="text-[13px] font-medium text-zinc-500">API Usage</p>
-                  <p className="text-sm font-medium text-zinc-900">{planRecordsUsed} / {planMaxRecords}</p>
+
+              <div className="mt-8">
+                <div className="mb-2 flex items-end justify-between">
+                  <p className="text-[13px] font-medium text-ink-soft">AI usage this month</p>
+                  <p className="text-[14px] font-medium tabular-nums text-ink">{planRecordsUsed} / {planMaxRecords}</p>
                 </div>
-                <div className="w-full bg-zinc-100 rounded-full h-2.5 mb-8 overflow-hidden">
-                  <div className={`h-full rounded-full transition-all duration-1000 ${planProgress > 90 ? 'bg-rose-500' : planProgress > 75 ? 'bg-amber-500' : 'bg-violet-500'}`} style={{ width: `${planProgress}%` }}></div>
-                </div>
-                
-                <div className="flex justify-start">
-                  <button onClick={() => setActiveTab('Plans')} className="px-6 py-2.5 bg-zinc-900 text-white rounded-lg text-sm font-semibold hover:bg-zinc-800 transition-colors shadow-sm">
-                    Upgrade Subscription
-                  </button>
+                <div
+                  className="meter"
+                  role="progressbar"
+                  aria-label="AI usage this month"
+                  aria-valuenow={Math.round(planProgress)}
+                  aria-valuemin={0}
+                  aria-valuemax={100}
+                >
+                  <span
+                    style={{ width: `${planProgress}%` }}
+                    className={planProgress > 90 ? '!bg-signal-stop' : planProgress > 75 ? '!bg-signal-warn' : ''}
+                  />
                 </div>
               </div>
-            </div>
 
-            {/* Plan Features Card */}
-            <div className="bg-white rounded-2xl border border-zinc-200 shadow-sm p-6 md:p-8 flex flex-col">
-              <h3 className="font-semibold text-zinc-900 text-lg mb-1">Current Included Features</h3>
-              <p className="text-[13px] font-medium text-zinc-500 mb-6">Everything included in your active plan.</p>
-              
-              <ul className="space-y-3.5 text-sm text-zinc-700 flex-grow font-medium">
+              <div className="mt-auto pt-6">
+                <button onClick={() => setActiveTab('Plans')} className="btn btn-primary">
+                  <Zap size={16} /> {currentPlan === 'Business' ? 'Compare plans' : 'Upgrade plan'}
+                </button>
+              </div>
+            </section>
+
+            <section className="surface p-6">
+              <h2 className="text-[16px] font-semibold text-ink">Included in your plan</h2>
+              <p className="mb-5 mt-1 text-[14px] text-ink-soft">Everything included in your active plan.</p>
+
+              <ul className="space-y-3 text-[14px] text-ink">
                 {currentPlanFeatures.map((feature, idx) => (
                   <li key={idx} className="flex items-start gap-3">
-                    <div className="p-0.5 rounded-full bg-emerald-50 text-emerald-500 mt-0.5 shrink-0 border border-emerald-100">
+                    <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-signal-go-tint text-signal-go">
                       <Check size={12} strokeWidth={3} />
-                    </div>
+                    </span>
                     {feature}
                   </li>
                 ))}
               </ul>
-            </div>
+            </section>
           </div>
 
-          {/* Invoices Section */}
-          <div className="mt-4">
-            <h3 className="font-semibold text-zinc-900 text-lg mb-1">Billing History</h3>
-            <p className="text-[13px] font-medium text-zinc-500 mb-6">Access all your previous invoices and payment receipts.</p>
-            
+          <section className="surface overflow-hidden">
+            <div className="surface-head">
+              <div>
+                <h2>Billing history</h2>
+                <p>Your previous invoices and payment receipts.</p>
+              </div>
+            </div>
+
             {invoices.length > 0 ? (
-              <div className="bg-white rounded-2xl border border-zinc-200 overflow-hidden shadow-sm">
-                <table className="w-full text-left border-collapse">
+              <div className="table-wrap">
+                <table className="data-table">
                   <thead>
-                    <tr className="bg-zinc-50/50 border-b border-zinc-200 text-[13px] font-medium text-zinc-500">
-                      <th className="px-6 py-4">Invoice ID</th>
-                      <th className="px-6 py-4">Date</th>
-                      <th className="px-6 py-4">Amount</th>
-                      <th className="px-6 py-4 text-right">Status</th>
+                    <tr>
+                      <th>Invoice</th>
+                      <th>Date</th>
+                      <th className="num">Amount</th>
+                      <th className="text-right">Status</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-zinc-100 text-sm font-medium text-zinc-900">
+                  <tbody>
                     {invoices.map((inv) => (
-                      <tr key={inv.id} className="hover:bg-zinc-50 transition-colors cursor-pointer group">
-                        <td className="px-6 py-4 font-semibold text-zinc-700 group-hover:text-violet-600 transition-colors flex items-center gap-2">
-                          <FileText size={14} className="text-zinc-400 group-hover:text-violet-500" />
-                          {inv.invoice_number}
-                        </td>
-                        <td className="px-6 py-4 text-zinc-500">{new Date(inv.created_on).toLocaleDateString()}</td>
-                        <td className="px-6 py-4 font-semibold">₹{inv.amount_paid?.toLocaleString()}</td>
-                        <td className="px-6 py-4 text-right">
-                          <span className="inline-flex items-center px-2.5 py-1 rounded-md text-[13px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
-                            {inv.invoice_status?.toUpperCase() || 'PAID'}
+                      <tr key={inv.id}>
+                        <td>
+                          <span className="flex items-center gap-2 font-medium">
+                            <FileText size={14} className="text-ink-faint" />
+                            {inv.invoice_number}
                           </span>
+                        </td>
+                        <td className="text-ink-soft">{new Date(inv.created_on).toLocaleDateString()}</td>
+                        <td className="num font-medium">₹{inv.amount_paid?.toLocaleString()}</td>
+                        <td className="text-right">
+                          <span className="chip chip-go capitalize">{(inv.invoice_status || 'paid').toLowerCase()}</span>
                         </td>
                       </tr>
                     ))}
@@ -319,137 +350,82 @@ const Billing: React.FC = () => {
                 </table>
               </div>
             ) : (
-              <div className="border border-zinc-200 rounded-2xl overflow-hidden bg-zinc-50/50 shadow-sm flex flex-col items-center justify-center py-20 px-4 text-center">
-                <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mb-4 border border-zinc-200 shadow-sm">
-                  <FileText className="text-zinc-300" size={24} />
-                </div>
-                <h4 className="font-semibold text-zinc-900 text-base mb-1">No billing history</h4>
-                <p className="text-sm font-medium text-zinc-500 max-w-sm">When you subscribe to a premium tier, your invoices will appear here.</p>
+              <div className="empty py-12">
+                <span className="empty-mark"><FileText /></span>
+                <p className="empty-title">No invoices yet</p>
+                <p className="empty-body">When you subscribe to a paid plan, your invoices appear here.</p>
               </div>
             )}
-          </div>
+          </section>
         </div>
       )}
 
       {activeTab === 'Plans' && (
-        <div className="flex flex-col animate-in fade-in duration-300">
-          <div className="mb-8 border-b border-zinc-200 pb-6 mt-2">
-            <h2 className="text-xl font-semibold text-zinc-900 mb-1 tracking-tight">Select your plan</h2>
-            <p className="text-zinc-500 font-medium text-sm">Choose the infrastructure tier that matches your business needs.</p>
+        <>
+          <div className="mb-6">
+            <h2 className="section-title">Choose your plan</h2>
+            <p className="mt-1 text-[14px] text-ink-soft">Pick the tier that matches your business needs.</p>
           </div>
 
-          <div className="grid lg:grid-cols-3 gap-6 md:gap-8 items-stretch">
-            
-            {/* Free Plan */}
-            <div className="bg-white rounded-3xl border border-zinc-200 p-8 flex flex-col hover:border-zinc-300 hover:shadow-md transition-all duration-300 relative">
-              <h3 className="text-xl font-semibold text-zinc-900 mb-2">Free</h3>
-              <p className="text-zinc-500 font-medium text-xs mb-8 h-8">Explore basic automation capabilities for testing.</p>
-              
-              <div className="mb-2 flex items-baseline">
-                <span className="text-4xl font-semibold text-zinc-900 tracking-tight">₹0</span>
-                <span className="text-zinc-500 ml-1 font-medium text-sm">/mo</span>
-              </div>
-              
-              <div className="mb-8 pb-8 border-b border-zinc-100">
-                <div className="text-lg font-semibold text-zinc-900">250</div>
-                <div className="text-xs font-medium text-zinc-500">API Credits / mo</div>
-              </div>
-              
-              <ul className="space-y-4 text-sm text-zinc-700 flex-grow font-medium mb-8">
-                <li className="flex items-start gap-3"><Check size={16} className="text-zinc-400 shrink-0" /> Connect 1 IG Account</li>
-                <li className="flex items-start gap-3"><Check size={16} className="text-zinc-400 shrink-0" /> Basic automations (up to 4)</li>
-                <li className="flex items-start gap-3"><Check size={16} className="text-zinc-400 shrink-0" /> 1 team seat</li>
-                <li className="flex items-start gap-3"><Check size={16} className="text-zinc-400 shrink-0" /> Unified inbox</li>
-                <li className="flex items-start gap-3"><Check size={16} className="text-zinc-400 shrink-0" /> Flazly branding attached</li>
-              </ul>
+          <div className="grid items-stretch gap-6 pt-3 lg:grid-cols-3">
+            {plans.map((plan) => {
+              const isCurrent = activePlan === plan.id;
+              const isFeatured = plan.id === 'Pro';
+              return (
+                <section
+                  key={plan.id}
+                  className={`surface relative flex flex-col p-6 ${isFeatured ? 'border-viridian ring-1 ring-viridian' : ''}`}
+                  aria-labelledby={`plan-${plan.id}`}
+                >
+                  {plan.badge && (
+                    <span className={`chip absolute left-1/2 top-0 -translate-x-1/2 -translate-y-1/2 ${isFeatured ? 'border-viridian bg-viridian text-on-accent' : ''}`}>
+                      {isFeatured && <Sparkles size={12} />} {plan.badge}
+                    </span>
+                  )}
 
-              <button 
-                onClick={() => handleSubscribe('Free')}
-                disabled={loading === 'Free' || user?.company?.plan === 'Free' || !user?.company?.plan}
-                className="w-full py-3 px-4 bg-white border border-zinc-200 text-zinc-700 font-semibold rounded-xl hover:bg-zinc-50 transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed mt-auto"
-              >
-                {loading === 'Free' ? 'Processing...' : (user?.company?.plan === 'Free' || !user?.company?.plan ? 'Current Plan' : 'Downgrade to Free')}
-              </button>
-            </div>
+                  <div className="flex items-center justify-between gap-2">
+                    <h3 id={`plan-${plan.id}`} className="text-[20px] font-semibold text-ink">{plan.id}</h3>
+                    {isCurrent && <span className="chip chip-dot chip-go">Current</span>}
+                  </div>
+                  <p className="mt-1 min-h-[42px] text-[14px] text-ink-soft">{plan.blurb}</p>
 
-            {/* Pro Plan */}
-            <div className="bg-white rounded-3xl border-2 border-violet-500 p-8 flex flex-col relative transform lg:-translate-y-4 shadow-[0_8px_30px_rgb(139,92,246,0.12)] transition-all duration-300 z-10">
-              <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-violet-600 text-white px-4 py-1 text-[13px] font-semibold rounded-full shadow-sm flex items-center gap-1 whitespace-nowrap">
-                <Sparkles size={12} /> Most Popular
-              </div>
-              
-              <h3 className="text-xl font-semibold text-zinc-900 mb-2">Pro</h3>
-              <p className="text-zinc-500 font-medium text-xs mb-8 h-8">For scaling creators & digital businesses.</p>
-              
-              <div className="mb-2 flex items-baseline">
-                <span className="text-4xl font-semibold text-zinc-900 tracking-tight">₹2,499</span>
-                <span className="text-zinc-500 ml-1 font-medium text-sm">/mo</span>
-              </div>
-              
-              <div className="mb-8 pb-8 border-b border-zinc-100">
-                <div className="text-lg font-semibold text-zinc-900">25,000</div>
-                <div className="text-xs font-medium text-zinc-500">API Credits / mo</div>
-              </div>
-              
-              <ul className="space-y-4 text-sm text-zinc-700 flex-grow font-medium mb-8">
-                <li className="flex items-start gap-3"><Check size={16} className="text-violet-500 shrink-0" /> Connect 3 IG Accounts</li>
-                <li className="flex items-start gap-3"><Check size={16} className="text-violet-500 shrink-0" /> Unlimited workflow automations</li>
-                <li className="flex items-start gap-3"><Check size={16} className="text-violet-500 shrink-0" /> Broadcast messaging</li>
-                <li className="flex items-start gap-3"><Check size={16} className="text-violet-500 shrink-0" /> 3 team seats</li>
-                <li className="flex items-start gap-3"><Check size={16} className="text-violet-500 shrink-0" /> AI Persona customization</li>
-                <li className="flex items-start gap-3"><Check size={16} className="text-violet-500 shrink-0" /> Brain Base (Knowledge) access</li>
-                <li className="flex items-start gap-3"><Check size={16} className="text-violet-500 shrink-0" /> White-labeled (No branding)</li>
-              </ul>
+                  <p className="mt-5 flex items-baseline gap-1">
+                    <span className="text-[32px] font-bold leading-none tracking-[-0.02em] text-ink">{plan.price}</span>
+                    <span className="text-[14px] text-ink-soft">/mo</span>
+                  </p>
 
-              <button 
-                onClick={() => handleSubscribe('Pro')}
-                disabled={loading === 'Pro' || user?.company?.plan === 'Pro'}
-                className="w-full py-3 px-4 bg-violet-600 text-white font-semibold rounded-xl hover:bg-violet-700 transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed mt-auto"
-              >
-                {loading === 'Pro' ? 'Processing...' : (user?.company?.plan === 'Pro' ? 'Current Plan' : 'Subscribe to Pro')}
-              </button>
-            </div>
+                  <div className="mb-5 mt-5 border-b border-hairline pb-5">
+                    <p className="text-[18px] font-semibold tabular-nums text-ink">{plan.credits}</p>
+                    <p className="text-[13px] text-ink-soft">AI credits / month</p>
+                  </div>
 
-            {/* Business Plan */}
-            <div className="bg-white rounded-3xl border border-zinc-200 p-8 flex flex-col hover:border-zinc-300 hover:shadow-md transition-all duration-300 relative">
-              <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-zinc-100 text-zinc-600 border border-zinc-200 px-3 py-1 text-[13px] font-medium rounded-full whitespace-nowrap">
-                Enterprise Volume
-              </div>
-              
-              <h3 className="text-xl font-semibold text-zinc-900 mb-2">Business</h3>
-              <p className="text-zinc-500 font-medium text-xs mb-8 h-8">For high-growth enterprise operations.</p>
-              
-              <div className="mb-2 flex items-baseline">
-                <span className="text-4xl font-semibold text-zinc-900 tracking-tight">₹5,999</span>
-                <span className="text-zinc-500 ml-1 font-medium text-sm">/mo</span>
-              </div>
-              
-              <div className="mb-8 pb-8 border-b border-zinc-100">
-                <div className="text-lg font-semibold text-zinc-900">75,000</div>
-                <div className="text-xs font-medium text-zinc-500">API Credits / mo</div>
-              </div>
-              
-              <ul className="space-y-4 text-sm text-zinc-700 flex-grow font-medium mb-8">
-                <li className="flex items-start gap-3"><Check size={16} className="text-zinc-800 shrink-0" /> Unlimited IG Accounts</li>
-                <li className="flex items-start gap-3"><Check size={16} className="text-zinc-800 shrink-0" /> Unlimited workflow automations</li>
-                <li className="flex items-start gap-3"><Check size={16} className="text-zinc-800 shrink-0" /> Broadcast messaging</li>
-                <li className="flex items-start gap-3"><Check size={16} className="text-zinc-800 shrink-0" /> 5 team seats</li>
-                <li className="flex items-start gap-3"><Check size={16} className="text-zinc-800 shrink-0" /> Advanced AI Persona customization</li>
-                <li className="flex items-start gap-3"><Check size={16} className="text-zinc-800 shrink-0" /> Brain Base (Knowledge) access</li>
-                <li className="flex items-start gap-3"><Check size={16} className="text-zinc-800 shrink-0" /> Lead scoring & qualification</li>
-                <li className="flex items-start gap-3"><Check size={16} className="text-zinc-800 shrink-0" /> White-labeled (No branding)</li>
-              </ul>
+                  <ul className="mb-6 flex-grow space-y-3 text-[14px] text-ink">
+                    {plan.features.map((f) => (
+                      <li key={f} className="flex items-start gap-2.5">
+                        <Check size={16} className="mt-0.5 shrink-0 text-viridian" /> {f}
+                      </li>
+                    ))}
+                  </ul>
 
-              <button 
-                onClick={() => handleSubscribe('Business')}
-                disabled={loading === 'Business' || user?.company?.plan === 'Business'}
-                className="w-full py-3 px-4 bg-zinc-900 text-white font-semibold rounded-xl hover:bg-zinc-800 transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed mt-auto"
-              >
-                {loading === 'Business' ? 'Processing...' : (user?.company?.plan === 'Business' ? 'Current Plan' : 'Subscribe to Business')}
-              </button>
-            </div>
+                  <button
+                    onClick={() => handleSubscribe(plan.id)}
+                    disabled={loading === plan.id || isCurrent}
+                    aria-busy={loading === plan.id || undefined}
+                    className={`btn btn-lg btn-block ${isCurrent ? '' : plan.id === 'Free' ? '' : 'btn-primary'}`}
+                  >
+                    {loading === plan.id
+                      ? 'Processing…'
+                      : isCurrent
+                        ? 'Current plan'
+                        : plan.id === 'Free'
+                          ? 'Downgrade to Free'
+                          : `Subscribe to ${plan.id}`}
+                  </button>
+                </section>
+              );
+            })}
           </div>
-        </div>
+        </>
       )}
     </div>
   );

@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { getLeads, getMessages, sendMessage, claimConversation, releaseConversation } from '../api/crm.api';
 import type { Lead, Message, ConversationHandoffResult } from '../models/crm.models';
-import { Send, Loader2, Search } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Send, Loader2, Search, SearchX, Inbox as InboxIcon, MessageCircle, MessagesSquare, ArrowLeft } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
 import { io } from 'socket.io-client';
 
@@ -16,6 +17,24 @@ const formatTime = (value: string) => {
   return isNaN(d.getTime()) ? 'Just now' : d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 };
 
+/** Thread-list timestamp: clock time today, short date before that. */
+const formatListTime = (value: string) => {
+  const d = new Date(value);
+  if (isNaN(d.getTime())) return '';
+  return d.toDateString() === new Date().toDateString()
+    ? d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    : d.toLocaleDateString([], { month: 'short', day: 'numeric' });
+};
+
+// There is no read/unread state on a lead, so the list filters on what the data
+// does carry: escalations waiting on a person, and threads the assistant holds.
+type ThreadFilter = 'all' | 'needs_you' | 'assistant';
+const THREAD_FILTERS: Record<ThreadFilter, { label: string; test: (lead: Lead) => boolean }> = {
+  all: { label: 'All', test: () => true },
+  needs_you: { label: 'Needs you', test: (lead) => lead.lead_status === 'Needs_Human' },
+  assistant: { label: 'Assistant', test: (lead) => !lead.human_agent_active },
+};
+
 const Inbox: React.FC = () => {
   const { toast } = useToast();
   const [leads, setLeads] = useState<Lead[]>([]);
@@ -27,6 +46,9 @@ const Inbox: React.FC = () => {
   const [outsideWindow, setOutsideWindow] = useState(false);
   const [messageText, setMessageText] = useState('');
   const [threadQuery, setThreadQuery] = useState('');
+  const [threadFilter, setThreadFilter] = useState<ThreadFilter>('all');
+  // Phones have room for one pane: the list, or the thread the person opened.
+  const [showThreadOnMobile, setShowThreadOnMobile] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
   const chatHistoryRef = useRef<HTMLDivElement>(null);
 
@@ -187,52 +209,85 @@ const Inbox: React.FC = () => {
     }
   };
 
-  const visibleLeads = leads.filter(lead =>
-    lead.customer_name.toLowerCase().includes(threadQuery.toLowerCase()) ||
-    lead.instagram_handle.toLowerCase().includes(threadQuery.toLowerCase())
-  );
+  const query = threadQuery.trim().toLowerCase();
+  const matchesQuery = (lead: Lead) =>
+    !query ||
+    lead.customer_name.toLowerCase().includes(query) ||
+    lead.instagram_handle.toLowerCase().includes(query);
+  const filterCounts: Record<ThreadFilter, number> = {
+    all: leads.length,
+    needs_you: leads.filter(THREAD_FILTERS.needs_you.test).length,
+    assistant: leads.filter(THREAD_FILTERS.assistant.test).length,
+  };
+  const visibleLeads = leads.filter(lead => THREAD_FILTERS[threadFilter].test(lead) && matchesQuery(lead));
 
   return (
-    <div className="flex h-[calc(100vh-104px)] flex-col">
-      <div className="page-head mb-4 shrink-0">
-        <div>
-          <h1 className="page-title">Inbox</h1>
-          <p className="page-sub">
-            Every conversation the assistant is handling. Take one over and it stops replying.
-          </p>
-        </div>
-        <span className={isConnected ? 'chip chip-go' : 'chip chip-warn'}>
-          {isConnected ? 'Live' : 'Reconnecting'}
-        </span>
-      </div>
-
+    // Fills the viewport under the 56px header, minus the content padding (16px a side on phones, 24px above 860px).
+    <div className="flex h-[calc(100dvh-88px)] flex-col min-[861px]:h-[calc(100dvh-104px)]">
       <div className="surface flex min-h-0 flex-grow overflow-hidden">
-        {/* Thread list */}
-        <div className="flex w-[300px] shrink-0 flex-col border-r border-hairline bg-porcelain">
-          <div className="border-b border-hairline p-2.5">
+        {/* Thread list. The page heading lives here, above the list it names. */}
+        <div className={`${showThreadOnMobile ? 'hidden md:flex' : 'flex'} w-full shrink-0 flex-col border-hairline bg-porcelain md:w-[300px] md:border-r lg:w-[320px]`}>
+          <div className="shrink-0 space-y-2.5 border-b border-hairline px-3 pb-3 pt-3.5">
+            <div className="flex items-center justify-between gap-2 px-0.5">
+              <h1 className="text-[18px] font-semibold tracking-[-0.014em] text-ink">Inbox</h1>
+              <span
+                className={isConnected ? 'chip chip-dot chip-go' : 'chip chip-dot chip-warn is-pulsing'}
+                role="status"
+              >
+                {isConnected ? 'Live' : 'Reconnecting'}
+              </span>
+            </div>
+
             <div className="relative">
               <Search size={15} className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-ink-faint" />
               <input
                 type="search"
                 value={threadQuery}
                 onChange={(e) => setThreadQuery(e.target.value)}
-                placeholder="Search conversations"
-                className="field pl-8"
+                placeholder="Search name or handle"
+                className="field py-[7px] pl-8 text-[14px]"
                 aria-label="Search conversations"
               />
+            </div>
+
+            <div className="segmented" role="group" aria-label="Filter conversations">
+              {(Object.keys(THREAD_FILTERS) as ThreadFilter[]).map((key) => (
+                <button
+                  key={key}
+                  type="button"
+                  aria-pressed={threadFilter === key}
+                  onClick={() => setThreadFilter(key)}
+                >
+                  {THREAD_FILTERS[key].label}
+                  <span className="count">{filterCounts[key]}</span>
+                </button>
+              ))}
             </div>
           </div>
 
           <div className="premium-scroll flex-grow overflow-y-auto">
             {visibleLeads.length === 0 ? (
-              <div className="empty px-5 py-10">
-                <p className="empty-title">{leads.length === 0 ? 'No conversations yet' : 'No matches'}</p>
-                <p className="empty-body">
-                  {leads.length === 0
-                    ? 'Threads appear the moment someone messages your account.'
-                    : 'Try a different name or handle.'}
-                </p>
-              </div>
+              leads.length === 0 ? (
+                <div className="empty px-6 py-12">
+                  <span className="empty-mark"><InboxIcon /></span>
+                  <p className="empty-title">No conversations yet</p>
+                  <p className="empty-body">Threads appear the moment someone messages your Instagram account.</p>
+                  <Link to="/meta-integration" className="btn btn-sm">Check Instagram connection</Link>
+                </div>
+              ) : (
+                <div className="empty px-6 py-12">
+                  <span className="empty-mark"><SearchX /></span>
+                  <p className="empty-title">Nothing matches</p>
+                  <p className="empty-body">No conversation fits this search and filter.</p>
+                  <button
+                    type="button"
+                    className="btn btn-sm"
+                    onClick={() => { setThreadQuery(''); setThreadFilter('all'); }}
+                  >
+                    Clear filters
+                  </button>
+                </div>
+              )
             ) : visibleLeads.map((lead) => {
               const isSelected = selectedLead?.id === lead.id;
               // The rail names who holds the thread: ink for a person on your
@@ -241,9 +296,9 @@ const Inbox: React.FC = () => {
               return (
                 <button
                   key={lead.id}
-                  onClick={() => handleSelectLead(lead)}
+                  onClick={() => { handleSelectLead(lead); setShowThreadOnMobile(true); }}
                   aria-current={isSelected}
-                  className={`flex w-full gap-2.5 border-b border-hairline p-3 text-left transition-colors ${railClass} ${
+                  className={`flex w-full items-center gap-2.5 border-b border-hairline px-3 py-2.5 text-left transition-colors ${railClass} ${
                     isSelected ? 'bg-surface' : 'hover:bg-porcelain-deep'
                   }`}
                 >
@@ -252,14 +307,19 @@ const Inbox: React.FC = () => {
                   </span>
                   <span className="min-w-0 flex-grow">
                     <span className="flex items-baseline justify-between gap-2">
-                      <span className={`truncate text-[15px] ${isSelected ? 'font-semibold text-ink' : 'font-medium text-ink'}`}>
+                      <span className={`truncate text-[14px] text-ink ${isSelected ? 'font-semibold' : 'font-medium'}`}>
                         {lead.customer_name}
                       </span>
+                      <span className="shrink-0 text-[12px] tabular-nums text-ink-faint">
+                        {formatListTime(lead.last_message_time)}
+                      </span>
+                    </span>
+                    <span className="flex items-center justify-between gap-2">
+                      <span className="truncate text-[13px] text-ink-soft">@{lead.instagram_handle}</span>
                       {lead.lead_status === 'Needs_Human' && (
-                        <span className="shrink-0 text-[13px] text-signal-stop">Needs you</span>
+                        <span className="chip chip-dot chip-stop shrink-0 px-1.5 py-0 text-[12px]">Needs you</span>
                       )}
                     </span>
-                    <span className="block truncate text-[13px] text-ink-soft">@{lead.instagram_handle}</span>
                   </span>
                 </button>
               );
@@ -268,11 +328,19 @@ const Inbox: React.FC = () => {
         </div>
 
         {/* Conversation */}
-        <div className="flex min-w-0 flex-grow flex-col">
+        <div className={`${showThreadOnMobile ? 'flex' : 'hidden md:flex'} min-w-0 flex-grow flex-col`}>
           {selectedLead ? (
             <>
               <div className="flex shrink-0 items-center justify-between gap-4 border-b border-hairline px-5 py-3">
                 <div className="flex min-w-0 items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setShowThreadOnMobile(false)}
+                    className="btn btn-ghost btn-icon btn-sm -ml-2 md:hidden"
+                    aria-label="Back to conversations"
+                  >
+                    <ArrowLeft size={18} />
+                  </button>
                   <span className="avatar-initial">{selectedLead.customer_name[0]}</span>
                   <div className="min-w-0">
                     <h2 className="truncate font-display text-[17px] font-semibold leading-tight text-ink">
@@ -283,7 +351,7 @@ const Inbox: React.FC = () => {
                 </div>
 
                 <div className="flex shrink-0 items-center gap-3">
-                  <span className={isManualMode ? 'chip chip-ink' : 'chip chip-accent'}>
+                  <span className={`${isManualMode ? 'chip chip-dot chip-ink' : 'chip chip-dot chip-accent'} hidden sm:inline-flex`}>
                     {isManualMode ? 'You are replying' : 'Assistant is replying'}
                   </span>
                   <button
@@ -310,7 +378,11 @@ const Inbox: React.FC = () => {
                 ref={chatHistoryRef}
               >
                 {messages.length === 0 && (
-                  <p className="py-8 text-center text-[13px] text-ink-faint">No messages in this conversation yet.</p>
+                  <div className="empty my-auto py-10">
+                    <span className="empty-mark"><MessageCircle /></span>
+                    <p className="empty-title">No messages yet</p>
+                    <p className="empty-body">New messages in this thread land here as they arrive.</p>
+                  </div>
                 )}
 
                 {messages.map((msg) => {
@@ -402,8 +474,14 @@ const Inbox: React.FC = () => {
             </>
           ) : (
             <div className="empty flex-grow bg-porcelain">
+              <span className="empty-mark"><MessagesSquare /></span>
               <p className="empty-title">Pick a conversation</p>
               <p className="empty-body">Choose a thread on the left to read it and step in if it needs you.</p>
+              {filterCounts.needs_you > 0 && (
+                <button type="button" className="btn btn-primary" onClick={() => setThreadFilter('needs_you')}>
+                  Show the {filterCounts.needs_you} that need you
+                </button>
+              )}
             </div>
           )}
         </div>

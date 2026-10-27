@@ -1,39 +1,33 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Users, 
-  Wallet, 
-  Server, 
-  ShieldCheck, 
+import { useNavigate } from 'react-router-dom';
+import {
+  Users,
+  Wallet,
+  ShieldCheck,
   ArrowUpRight,
-  BarChart3,
+  ArrowRight,
   Globe,
-  Settings
+  Loader2
 } from 'lucide-react';
-import { 
-  AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  BarChart, Bar, Cell
+import {
+  AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
 } from 'recharts';
 
 import api from '../lib/axios';
 
-const AdminStatCard: React.FC<{ title: string; value: string | number; icon: any; trend: string; color?: string }> = ({ title, value, icon: Icon, trend, color = 'var(--primary)' }) => (
-  <div className="glass-card hover-glow" style={{ padding: '24px', position: 'relative', overflow: 'hidden' }}>
-    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
-      <div style={{ padding: '10px', background: 'var(--glass-border)', borderRadius: '12px' }}>
-        <Icon size={20} style={{ color }} />
-      </div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#10b981', fontSize: '0.8rem', fontWeight: 600 }}>
-        {trend} <ArrowUpRight size={14} />
-      </div>
+const AdminStatCard: React.FC<{ title: string; value: string | number; icon: React.ElementType; trend: string; tone: string }> = ({ title, value, icon: Icon, trend, tone }) => (
+  <div className={`metric ${tone}`}>
+    <div className="metric-head">
+      <span className="icon-tile is-sm"><Icon size={16} /></span>
+      <span className="metric-trend">{trend} <ArrowUpRight size={13} /></span>
     </div>
-    <div>
-      <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-dim)', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.05em' }}>{title}</p>
-      <h3 style={{ margin: '8px 0 0', fontSize: '1.8rem', fontWeight: 700 }}>{value}</h3>
-    </div>
+    <span className="metric-label">{title}</span>
+    <span className="metric-figure">{value}</span>
   </div>
 );
 
 const SuperAdminDashboard: React.FC = () => {
+  const navigate = useNavigate();
   const [stats, setStats] = useState<any>({
     totalClients: 0,
     totalRevenue: 0,
@@ -50,7 +44,7 @@ const SuperAdminDashboard: React.FC = () => {
         if (response.data?.Data) {
           setStats(response.data.Data);
         }
-        
+
         // Fetch clients for usage widget
         const clientsRes = await api.get('/Company/Admin/All');
         if (clientsRes.data) {
@@ -76,88 +70,99 @@ const SuperAdminDashboard: React.FC = () => {
   ];
 
   if (isLoading) {
-    return <div style={{ display: 'flex', height: '100%', alignItems: 'center', justifyContent: 'center', color: 'var(--text-dim)' }}>Loading Admin Data...</div>;
+    return (
+      <div className="page">
+        <div className="surface empty">
+          <Loader2 size={22} className="animate-spin text-ink-faint" />
+          <p className="empty-body">Loading platform metrics…</p>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="dashboard-page" style={{ minHeight: '100%', display: 'flex', flexDirection: 'column', gap: '32px' }}>
-      <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+    <div className="page">
+      <div className="page-head">
         <div>
           <h1 className="page-title">Platform overview</h1>
-          <p style={{ margin: '8px 0 0', color: 'var(--text-dim)' }}>Global metrics across all tenants and clients.</p>
+          <p className="page-sub">Global metrics across all tenants and clients.</p>
         </div>
-        <div style={{ display: 'flex', gap: '12px' }}>
-          <button className="glass-card" style={{ padding: '10px 16px', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Server size={18} /> System Status: OK
-          </button>
-          <button className="gradient-btn" style={{ padding: '10px 20px', borderRadius: '12px', fontSize: '0.9rem', fontWeight: 600 }}>
-            Configure Platform
-          </button>
-        </div>
+        <span className="chip chip-dot chip-go" role="status">System status: OK</span>
       </div>
 
-      <div className="stats-grid" style={{ 
-        display: 'grid', 
-        gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', 
-        gap: '24px' 
-      }}>
-        <AdminStatCard title="Total Clients" value={stats.totalClients.toLocaleString()} icon={ShieldCheck} trend="+12%" />
-        <AdminStatCard title="Platform Revenue" value={`$${stats.totalRevenue.toLocaleString()}`} icon={Wallet} trend="+18%" color="#10b981" />
-        <AdminStatCard title="Global Users" value={stats.totalUsers.toLocaleString()} icon={Users} trend="+5%" color="#6366f1" />
-        <AdminStatCard title="API Requests (Msgs)" value={stats.totalMessages.toLocaleString()} icon={Globe} trend="+24%" color="#fbbf24" />
-      </div>
-
-      <div className="charts-row" style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '24px' }}>
-        <div className="glass-card" style={{ padding: '24px', minHeight: '400px' }}>
-          <h3 style={{ marginBottom: '32px' }}>Platform Revenue Growth</h3>
-          <div style={{ height: '300px' }}>
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={platformGrowth}>
-                <defs>
-                  <linearGradient id="adminRevenue" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="var(--primary)" stopOpacity={0.1}/>
-                    <stop offset="95%" stopColor="var(--primary)" stopOpacity={0}/>
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--glass-border)" />
-                <XAxis dataKey="month" axisLine={false} tickLine={false} />
-                <YAxis axisLine={false} tickLine={false} />
-                <Tooltip 
-                   contentStyle={{ background: 'var(--card)', border: '1px solid var(--glass-border)', borderRadius: '12px' }}
-                />
-                <Area type="monotone" dataKey="revenue" stroke="var(--primary)" fill="url(#adminRevenue)" strokeWidth={3} />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
+      <div className="stack">
+        <div className="metric-grid">
+          <AdminStatCard title="Total clients" value={stats.totalClients.toLocaleString()} icon={ShieldCheck} trend="+12%" tone="tone-blue" />
+          <AdminStatCard title="Platform revenue" value={`₹${stats.totalRevenue.toLocaleString()}`} icon={Wallet} trend="+18%" tone="tone-mint" />
+          <AdminStatCard title="Global users" value={stats.totalUsers.toLocaleString()} icon={Users} trend="+5%" tone="tone-lavender" />
+          <AdminStatCard title="AI requests (messages)" value={stats.totalMessages.toLocaleString()} icon={Globe} trend="+24%" tone="tone-peach" />
         </div>
 
-        <div className="glass-card" style={{ padding: '24px' }}>
-          <h3 style={{ marginBottom: '24px' }}>Top AI Consumers</h3>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            {topClients.map((client, i) => (
-              <div key={i} style={{ fontSize: '0.85rem', padding: '12px', borderBottom: '1px solid var(--glass-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div>
-                  <div style={{ fontWeight: 600 }}>{client.name}</div>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--text-dim)', marginTop: '2px' }}>
-                    <span className={`px-1.5 py-0.5 rounded text-[12px] font-medium mr-2 ${client.plan !== 'Free' ? 'bg-purple-500/10 text-purple-400 border border-purple-500/20' : 'bg-zinc-800 text-zinc-400'}`}>
-                      {client.plan || 'Free'}
-                    </span>
-                    {client.email}
-                  </div>
-                </div>
-                <div style={{ textAlign: 'right' }}>
-                  <div style={{ fontWeight: 700, color: 'var(--primary)' }}>{client.monthly_ai_usage || 0}</div>
-                  <div style={{ fontSize: '0.7rem', color: 'var(--text-dim)', textTransform: 'uppercase' }}>Tokens</div>
-                </div>
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+          <section className="surface overflow-hidden lg:col-span-2">
+            <div className="surface-head">
+              <div>
+                <h2>Platform revenue growth</h2>
+                <p>Last four months</p>
               </div>
-            ))}
-            {topClients.length === 0 && (
-              <div style={{ color: 'var(--text-dim)', textAlign: 'center', padding: '20px 0' }}>No active consumers yet.</div>
+            </div>
+            <div className="h-[300px] p-4 pl-0">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={platformGrowth}>
+                  <defs>
+                    <linearGradient id="adminRevenue" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="var(--viridian)" stopOpacity={0.18} />
+                      <stop offset="95%" stopColor="var(--viridian)" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--hairline)" />
+                  <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fill: 'var(--ink-soft)', fontSize: 12 }} />
+                  <YAxis axisLine={false} tickLine={false} tick={{ fill: 'var(--ink-soft)', fontSize: 12 }} tickFormatter={(v) => `₹${Number(v).toLocaleString()}`} width={84} />
+                  <Tooltip
+                    formatter={(v) => [`₹${Number(v).toLocaleString()}`, 'Revenue']}
+                    contentStyle={{ background: 'var(--surface)', border: '1px solid var(--hairline)', borderRadius: 10, color: 'var(--ink)' }}
+                  />
+                  <Area type="monotone" dataKey="revenue" stroke="var(--viridian)" fill="url(#adminRevenue)" strokeWidth={2.5} />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          </section>
+
+          <section className="surface flex flex-col overflow-hidden">
+            <div className="surface-head">
+              <h2>Top AI consumers</h2>
+            </div>
+            {topClients.length === 0 ? (
+              <div className="empty flex-grow py-10">
+                <p className="empty-body">No active consumers yet.</p>
+              </div>
+            ) : (
+              <ul className="flex-grow divide-y divide-hairline">
+                {topClients.map((client, i) => (
+                  <li key={i} className="flex items-center justify-between gap-3 px-5 py-3">
+                    <div className="min-w-0">
+                      <p className="truncate text-[14px] font-medium text-ink">{client.name}</p>
+                      <p className="mt-0.5 flex min-w-0 items-center gap-2 text-[13px] text-ink-soft">
+                        <span className={client.plan && client.plan !== 'Free' ? 'chip chip-accent px-1.5 py-0 text-[12px]' : 'chip px-1.5 py-0 text-[12px]'}>
+                          {client.plan || 'Free'}
+                        </span>
+                        <span className="truncate">{client.email}</span>
+                      </p>
+                    </div>
+                    <div className="shrink-0 text-right">
+                      <p className="text-[15px] font-semibold tabular-nums text-ink">{(client.monthly_ai_usage || 0).toLocaleString()}</p>
+                      <p className="text-[12px] text-ink-soft">tokens</p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
             )}
-          </div>
-          <button style={{ width: '100%', marginTop: '20px', background: 'transparent', border: 'none', color: 'var(--primary)', fontWeight: 500, cursor: 'pointer' }}>
-            View All Clients
-          </button>
+            <div className="surface-foot justify-center">
+              <button onClick={() => navigate('/admin/clients')} className="btn btn-ghost btn-sm">
+                View all clients <ArrowRight size={14} />
+              </button>
+            </div>
+          </section>
         </div>
       </div>
     </div>

@@ -5,7 +5,7 @@ import {
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   AreaChart, Area, PieChart, Pie, Cell, Legend
 } from 'recharts';
-import { Loader2, ArrowRight } from 'lucide-react';
+import { Loader2, ArrowRight, Users, MessageCircle, UserCheck, BadgeCheck } from 'lucide-react';
 import type { Lead } from '../models/crm.models';
 
 /**
@@ -31,13 +31,14 @@ const Dashboard: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isConnected, setIsConnected] = useState<boolean>(true);
   const [palette, setPalette] = useState({
-    accent: '#0b6b5b',
-    ink: '#15191b',
-    hairline: '#d3dad9',
-    inkSoft: '#5e6a6c',
+    accent: '#2563eb',
+    ink: '#0f172a',
+    hairline: '#e6eaf0',
+    inkSoft: '#64748b',
     go: '#1f6b3a',
     warn: '#8a5a00',
     stop: '#9b2c2c',
+    lavender: '#6a3fc0',
   });
 
   useEffect(() => {
@@ -47,13 +48,14 @@ const Dashboard: React.FC = () => {
   // Re-read the palette whenever the theme class on <html> changes.
   useEffect(() => {
     const read = () => setPalette({
-      accent: seriesColor('--viridian', '#0b6b5b'),
-      ink: seriesColor('--ink', '#15191b'),
-      hairline: seriesColor('--hairline', '#d3dad9'),
-      inkSoft: seriesColor('--ink-soft', '#5e6a6c'),
+      accent: seriesColor('--viridian', '#2563eb'),
+      ink: seriesColor('--ink', '#0f172a'),
+      hairline: seriesColor('--hairline', '#e2e8f0'),
+      inkSoft: seriesColor('--ink-soft', '#64748b'),
       go: seriesColor('--signal-go', '#1f6b3a'),
       warn: seriesColor('--signal-warn', '#8a5a00'),
       stop: seriesColor('--signal-stop', '#9b2c2c'),
+      lavender: seriesColor('--lavender-ink', '#6a3fc0'),
     });
     read();
     const observer = new MutationObserver(read);
@@ -130,7 +132,7 @@ const Dashboard: React.FC = () => {
   const handoffLeads = leads.filter((l) => l.human_agent_active);
   const buyers = leads.filter((l) => l.lead_status === 'Buyer');
   const leadsThisWeek = interactionData.reduce((sum, d) => sum + d.leads, 0);
-  const statusPalette = [palette.accent, palette.go, palette.warn, palette.stop, palette.inkSoft];
+  const statusPalette = [palette.accent, palette.go, palette.warn, palette.stop, palette.lavender];
 
   return (
     <div className="page">
@@ -155,29 +157,24 @@ const Dashboard: React.FC = () => {
         </div>
       )}
 
-      {/* Figures sit on one surface, divided by hairlines. Each is a count this
-          workspace actually has — no projected trends, no sample percentages. */}
-      <div className="stat-row mb-6">
-        <div className="stat">
-          <span className="stat-label">Leads captured</span>
-          <span className="stat-figure">{leads.length.toLocaleString()}</span>
-          <span className="stat-note">{leadsThisWeek.toLocaleString()} in the last 7 days</span>
-        </div>
-        <div className="stat">
-          <span className="stat-label">Open conversations</span>
-          <span className="stat-figure">{activeLeads.length.toLocaleString()}</span>
-          <span className="stat-note">Everything not marked lost</span>
-        </div>
-        <div className="stat">
-          <span className="stat-label">With a person</span>
-          <span className="stat-figure">{handoffLeads.length.toLocaleString()}</span>
-          <span className="stat-note">Taken over by your team</span>
-        </div>
-        <div className="stat">
-          <span className="stat-label">Marked as buyers</span>
-          <span className="stat-figure">{buyers.length.toLocaleString()}</span>
-          <span className="stat-note">Wallet balance ${Number(balance).toFixed(2)}</span>
-        </div>
+      {/* Headline counts as pastel metric cards, one tone per meaning. Each is a
+          count this workspace actually has: no projected trends, no sample percentages. */}
+      <div className="metric-grid mb-6">
+        {[
+          { label: 'Leads captured', value: leads.length, note: `${leadsThisWeek.toLocaleString()} in the last 7 days`, icon: Users, tone: 'tone-blue' },
+          { label: 'Open conversations', value: activeLeads.length, note: 'Everything not marked lost', icon: MessageCircle, tone: 'tone-peach' },
+          { label: 'With a person', value: handoffLeads.length, note: 'Taken over by your team', icon: UserCheck, tone: 'tone-lavender' },
+          { label: 'Marked as buyers', value: buyers.length, note: `Wallet balance $${Number(balance).toFixed(2)}`, icon: BadgeCheck, tone: 'tone-mint' },
+        ].map(({ label, value, note, icon: Icon, tone }) => (
+          <div key={label} className={`metric ${tone}`}>
+            <div className="metric-head">
+              <span className="metric-label">{label}</span>
+              <span className="icon-tile is-sm"><Icon size={16} /></span>
+            </div>
+            <span className="metric-figure">{value.toLocaleString()}</span>
+            <span className="metric-note">{note}</span>
+          </div>
+        ))}
       </div>
 
       <div className="mb-6 grid grid-cols-1 gap-5 lg:grid-cols-3">
@@ -316,7 +313,7 @@ const Dashboard: React.FC = () => {
           }
 
           return (
-            <div className="overflow-x-auto">
+            <div className="table-wrap">
               <table className="data-table">
                 <thead>
                   <tr>

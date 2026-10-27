@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { addTeamMember } from '../api/team.api';
-import { UserPlus, ShieldAlert, Eye, EyeOff, ArrowLeft } from 'lucide-react';
+import { UserPlus, ShieldAlert, Eye, EyeOff, ArrowLeft, Loader2 } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
 
 const AddTeamMember: React.FC = () => {
@@ -35,100 +35,107 @@ const AddTeamMember: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col gap-8 min-h-full animate-in fade-in duration-700 pb-10">
-      <div className="flex justify-between items-end">
+    <div className="page">
+      <Link to="/team" className="page-back">
+        <ArrowLeft size={16} /> Back to Team
+      </Link>
+      <div className="page-head">
         <div>
-          <div className="flex items-center gap-2 mb-2">
-            <Link to="/team" className="p-2 -ml-2 text-zinc-500 hover:text-zinc-900 transition-colors rounded-lg hover:bg-zinc-100">
-              <ArrowLeft size={20} />
-            </Link>
-            <h1 className="page-title">Add a teammate</h1>
-          </div>
-          <p className="text-zinc-500 font-medium">Invite a new user to your workspace.</p>
+          <h1 className="page-title">Add a teammate</h1>
+          <p className="page-sub">Invite a new user to your workspace.</p>
         </div>
       </div>
 
-      <div className="max-w-xl">
-        <div className="w3-card p-6 border border-zinc-200 shadow-sm relative bg-white rounded-2xl">
-          <div className="flex items-center gap-3 mb-6 pb-6 border-b border-zinc-100">
-            <div className="p-2.5 bg-zinc-100 text-zinc-700 rounded-xl border border-zinc-200">
-              <UserPlus size={20} />
-            </div>
-            <h3 className="text-lg font-semibold text-zinc-900">Member Details</h3>
-          </div>
+      <form onSubmit={handleInvite} className="surface page-narrow overflow-hidden">
+        <div className="surface-head">
+          <h2><span className="icon-tile is-sm"><UserPlus size={16} /></span>Member details</h2>
+        </div>
 
+        <div className="surface-body space-y-5">
           {error && (
-            <div className="mb-6 p-3 bg-red-50 border border-red-200 rounded-xl text-xs text-red-600 font-medium flex gap-2 items-start">
-              <ShieldAlert size={14} className="shrink-0 mt-0.5" />
-              {error}
+            <div className="notice notice-stop" role="alert">
+              <p className="notice-body flex items-start gap-2">
+                <ShieldAlert size={15} className="mt-0.5 shrink-0" />
+                {error}
+              </p>
             </div>
           )}
 
-          <form onSubmit={handleInvite} className="space-y-5">
+          <div className="grid gap-5 sm:grid-cols-2">
             <div>
-              <label className="block text-xs font-medium text-zinc-500 mb-1.5">First Name</label>
-              <input 
+              <label htmlFor="member-first" className="field-label">First name</label>
+              <input
+                id="member-first"
                 required
-                type="text" 
+                type="text"
+                autoComplete="off"
                 value={formData.first_name}
-                onChange={(e) => setFormData({...formData, first_name: e.target.value})}
-                className="w-full bg-zinc-50 border border-zinc-200 rounded-xl px-4 py-2.5 text-sm text-zinc-900 focus:border-zinc-400 focus:bg-white outline-none transition-colors"
+                onChange={(e) => setFormData({ ...formData, first_name: e.target.value })}
+                className="field"
                 placeholder="John"
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-zinc-500 mb-1.5">Last Name</label>
-              <input 
-                type="text" 
+              <label htmlFor="member-last" className="field-label">Last name</label>
+              <input
+                id="member-last"
+                type="text"
+                autoComplete="off"
                 value={formData.last_name}
-                onChange={(e) => setFormData({...formData, last_name: e.target.value})}
-                className="w-full bg-zinc-50 border border-zinc-200 rounded-xl px-4 py-2.5 text-sm text-zinc-900 focus:border-zinc-400 focus:bg-white outline-none transition-colors"
+                onChange={(e) => setFormData({ ...formData, last_name: e.target.value })}
+                className="field"
                 placeholder="Doe"
               />
             </div>
-            <div>
-              <label className="block text-xs font-medium text-zinc-500 mb-1.5">Email Address</label>
-              <input 
+          </div>
+          <div>
+            <label htmlFor="member-email" className="field-label">Email address</label>
+            <input
+              id="member-email"
+              required
+              type="email"
+              autoComplete="off"
+              value={formData.email}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              className="field"
+              placeholder="john@example.com"
+            />
+          </div>
+          <div>
+            <label htmlFor="member-password" className="field-label">Temporary password</label>
+            <div className="relative">
+              <input
+                id="member-password"
                 required
-                type="email" 
-                value={formData.email}
-                onChange={(e) => setFormData({...formData, email: e.target.value})}
-                className="w-full bg-zinc-50 border border-zinc-200 rounded-xl px-4 py-2.5 text-sm text-zinc-900 focus:border-zinc-400 focus:bg-white outline-none transition-colors"
-                placeholder="john@example.com"
+                type={showPassword ? 'text' : 'password'}
+                autoComplete="new-password"
+                minLength={6}
+                value={formData.password}
+                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                className="field pr-11"
+                placeholder="At least 6 characters"
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="btn btn-ghost btn-icon btn-sm absolute right-1.5 top-1/2 -translate-y-1/2"
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+              >
+                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+              </button>
             </div>
-            <div>
-              <label className="block text-xs font-medium text-zinc-500 mb-1.5">Temporary Password</label>
-              <div className="relative">
-                <input 
-                  required
-                  type={showPassword ? "text" : "password"}
-                  minLength={6}
-                  value={formData.password}
-                  onChange={(e) => setFormData({...formData, password: e.target.value})}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-xl pl-4 pr-12 py-2.5 text-sm text-zinc-900 focus:border-zinc-400 focus:bg-white outline-none transition-colors"
-                  placeholder="Min. 6 characters"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600 transition-colors p-1"
-                  aria-label={showPassword ? "Hide password" : "Show password"}
-                >
-                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-                </button>
-              </div>
-            </div>
-            <button 
-              type="submit" 
-              disabled={isInviting}
-              className="w-full mt-6 py-3 bg-zinc-900 text-white font-medium text-sm rounded-xl hover:bg-zinc-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm flex items-center justify-center gap-2"
-            >
-              {isInviting ? 'Adding...' : 'Add Team Member'}
-            </button>
-          </form>
+            <p className="field-hint">Share it with them privately; they can change it in Settings after signing in.</p>
+          </div>
         </div>
-      </div>
+
+        <div className="surface-foot justify-end">
+          <Link to="/team" className="btn">Cancel</Link>
+          <button type="submit" disabled={isInviting} aria-busy={isInviting || undefined} className="btn btn-primary">
+            {isInviting && <Loader2 size={15} className="animate-spin" />}
+            Add team member
+          </button>
+        </div>
+      </form>
     </div>
   );
 };

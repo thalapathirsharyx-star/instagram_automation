@@ -8,6 +8,7 @@ import {
 } from '../api/broadcast.api';
 import { useAuth } from '../context/AuthContext';
 import UpgradeOverlay from '../components/UpgradeOverlay';
+import { ConfirmModal } from '../components/ConfirmModal';
 import {
   Radio,
   Plus,
@@ -20,7 +21,6 @@ import {
   Loader2,
   AlertTriangle,
   Sparkles,
-  Zap,
   Eye,
   Filter,
 } from 'lucide-react';
@@ -39,11 +39,11 @@ interface BroadcastItem {
 }
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; icon: React.ReactNode }> = {
-  draft:     { label: 'Draft',     color: 'bg-zinc-800 text-zinc-400',                     icon: <Clock size={12} /> },
-  scheduled: { label: 'Scheduled', color: 'bg-amber-500/10 text-amber-400 border-amber-500/20', icon: <Clock size={12} /> },
-  sending:   { label: 'Sending',   color: 'bg-sky-500/10 text-sky-400 border-sky-500/20',       icon: <Loader2 size={12} className="animate-spin" /> },
-  completed: { label: 'Completed', color: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20', icon: <CheckCircle2 size={12} /> },
-  failed:    { label: 'Failed',    color: 'bg-rose-500/10 text-rose-400 border-rose-500/20',     icon: <XCircle size={12} /> },
+  draft:     { label: 'Draft',     color: 'chip',             icon: <Clock size={12} /> },
+  scheduled: { label: 'Scheduled', color: 'chip chip-warn',   icon: <Clock size={12} /> },
+  sending:   { label: 'Sending',   color: 'chip chip-accent', icon: <Loader2 size={12} className="animate-spin" /> },
+  completed: { label: 'Completed', color: 'chip chip-go',     icon: <CheckCircle2 size={12} /> },
+  failed:    { label: 'Failed',    color: 'chip chip-stop',   icon: <XCircle size={12} /> },
 };
 
 const LEAD_STATUSES = ['New', 'Hot', 'Buyer', 'Lost', 'Handoff'];
@@ -69,6 +69,8 @@ const Broadcasts: React.FC = () => {
     message: string;
     onConfirm: () => void;
     isLoading?: boolean;
+    confirmText?: string;
+    type?: 'danger' | 'primary';
   }>({
     isOpen: false,
     title: '',
@@ -147,6 +149,8 @@ const Broadcasts: React.FC = () => {
       isOpen: true,
       title: 'Delete Campaign',
       message: 'Are you sure you want to delete this broadcast campaign? This action cannot be undone.',
+      confirmText: 'Delete',
+      type: 'danger',
       onConfirm: async () => {
         setConfirmConfig(prev => ({ ...prev, isLoading: true }));
         try {
@@ -175,6 +179,8 @@ const Broadcasts: React.FC = () => {
       isOpen: true,
       title: 'Launch Broadcast',
       message: 'Are you sure you want to send this broadcast message to all matching leads right now?',
+      confirmText: 'Send now',
+      type: 'primary',
       onConfirm: async () => {
         setConfirmConfig(prev => ({ ...prev, isLoading: true }));
         setIsSending(id);
@@ -230,343 +236,307 @@ const Broadcasts: React.FC = () => {
 
   const getStatusConfig = (status: string) => STATUS_CONFIG[status] || STATUS_CONFIG.draft;
 
+  const totalSent = broadcasts.reduce((sum, b) => sum + (b.sent_count || 0), 0);
+  const totalRecipients = broadcasts.reduce((sum, b) => sum + (b.total_recipients || 0), 0);
+
   return (
-    <div className="relative flex flex-col gap-8 min-h-full animate-in fade-in duration-700 pb-10">
+    <div className="page relative">
       {showUpgradePrompt && <UpgradeOverlay feature="Broadcasts" onClose={() => setShowUpgradePrompt(false)} />}
-      
-      {/* Header */}
-      <div className="flex flex-col gap-4 md:flex-row md:justify-between md:items-end">
+
+      <div className="page-head">
         <div>
           <h1 className="page-title">Broadcasts</h1>
-          <p className="text-zinc-400 font-medium">Send bulk messages to your leads and contacts.</p>
+          <p className="page-sub">Send bulk messages to your leads and contacts.</p>
         </div>
-        <button
-          onClick={() => setShowCreate(!showCreate)}
-          className="w3-button-primary px-6 shadow-glow-purple self-start"
-        >
-          <Plus size={18} />
-          <span>{showCreate ? 'Cancel' : 'New Broadcast'}</span>
-        </button>
+        {showCreate ? (
+          <button onClick={() => setShowCreate(false)} className="btn">
+            Cancel
+          </button>
+        ) : (
+          <button onClick={() => setShowCreate(true)} className="btn btn-primary">
+            <Plus size={16} /> New broadcast
+          </button>
+        )}
       </div>
 
-      {/* Create Form */}
-      {showCreate && (
-        <div className="w3-card border border-purple-500/20 relative overflow-visible">
-          <div className="flex items-center gap-3 mb-6 pb-6 border-b border-white/5">
-            <div className="p-2.5 bg-purple-500/10 text-purple-400 rounded-xl border border-purple-500/20">
-              <Radio size={20} />
+      <div className="stack">
+        {showCreate && (
+          <form onSubmit={handleCreate} className="surface overflow-hidden">
+            <div className="surface-head">
+              <h2><span className="icon-tile is-sm"><Radio size={16} /></span>Create broadcast</h2>
             </div>
-            <h3 className="text-lg font-semibold text-zinc-100">Create Broadcast</h3>
-          </div>
 
-          {error && (
-            <div className="mb-6 p-3 bg-rose-500/10 border border-rose-500/20 rounded-xl text-xs text-rose-400 font-medium flex gap-2 items-start">
-              <AlertTriangle size={14} className="shrink-0 mt-0.5" />
-              {error}
-            </div>
-          )}
-
-          <form onSubmit={handleCreate} className="space-y-6">
-            <div className="grid md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-xs font-medium text-zinc-500 mb-1.5">Campaign Name</label>
-                <input
-                  required
-                  type="text"
-                  value={form.name}
-                  onChange={(e) => setForm({ ...form, name: e.target.value })}
-                  className="w-full bg-zinc-900 border border-white/5 rounded-xl px-4 py-2.5 text-sm text-zinc-100 focus:border-purple-500/50 outline-none transition-colors"
-                  placeholder="e.g. Weekly Product Drop Announcement"
-                />
-              </div>
-
-              {/* Audience Filters */}
-              <div>
-                <label className="block text-xs font-medium text-zinc-500 mb-1.5">
-                  <Filter size={12} className="inline mr-1" /> Target Audience
-                </label>
-                <div className="flex flex-wrap gap-2">
-                  {LEAD_STATUSES.map(status => (
-                    <button
-                      key={status}
-                      type="button"
-                      onClick={() => toggleLeadStatus(status)}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all border ${
-                        form.filters.lead_status.includes(status)
-                          ? 'bg-purple-500/20 text-purple-300 border-purple-500/30'
-                          : 'bg-zinc-900 text-zinc-500 border-white/5 hover:border-zinc-700'
-                      }`}
-                    >
-                      {status}
-                    </button>
-                  ))}
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setForm(prev => ({
-                        ...prev,
-                        filters: { ...prev.filters, lead_status: [] }
-                      }));
-                      setAudienceCount(null);
-                    }}
-                    className="px-3 py-1.5 rounded-lg text-xs font-medium bg-zinc-900 text-zinc-500 border border-white/5 hover:text-zinc-300 transition-all"
-                  >
-                    All Leads
-                  </button>
+            <div className="surface-body space-y-5">
+              {error && (
+                <div className="notice notice-stop" role="alert">
+                  <p className="notice-body flex items-start gap-2">
+                    <AlertTriangle size={15} className="mt-0.5 shrink-0" />
+                    {error}
+                  </p>
                 </div>
+              )}
+
+              <div className="grid gap-5 md:grid-cols-2">
+                <div>
+                  <label htmlFor="bc-name" className="field-label">Campaign name</label>
+                  <input
+                    id="bc-name"
+                    required
+                    type="text"
+                    value={form.name}
+                    onChange={(e) => setForm({ ...form, name: e.target.value })}
+                    className="field"
+                    placeholder="e.g. Weekly product drop"
+                  />
+                </div>
+
+                <fieldset>
+                  <legend className="field-label flex items-center gap-1.5">
+                    <Filter size={13} /> Target audience
+                  </legend>
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                      type="button"
+                      aria-pressed={form.filters.lead_status.length === 0}
+                      onClick={() => {
+                        setForm(prev => ({
+                          ...prev,
+                          filters: { ...prev.filters, lead_status: [] }
+                        }));
+                        setAudienceCount(null);
+                      }}
+                      className={`btn btn-sm ${form.filters.lead_status.length === 0 ? 'border-viridian bg-viridian-tint text-viridian' : ''}`}
+                    >
+                      All leads
+                    </button>
+                    {LEAD_STATUSES.map(status => {
+                      const on = form.filters.lead_status.includes(status);
+                      return (
+                        <button
+                          key={status}
+                          type="button"
+                          aria-pressed={on}
+                          onClick={() => toggleLeadStatus(status)}
+                          className={`btn btn-sm ${on ? 'border-viridian bg-viridian-tint text-viridian' : ''}`}
+                        >
+                          {status}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </fieldset>
+              </div>
+
+              <div>
+                <label htmlFor="bc-message" className="field-label">Message</label>
+                <textarea
+                  id="bc-message"
+                  required
+                  rows={4}
+                  value={form.message}
+                  onChange={(e) => setForm({ ...form, message: e.target.value })}
+                  className="field"
+                  placeholder="Write your broadcast message here..."
+                />
+                <p className={`field-hint text-right tabular-nums ${form.message.length > 500 ? 'text-signal-warn' : ''}`}>
+                  {form.message.length} characters{form.message.length > 500 ? ' · long messages get fewer replies' : ''}
+                </p>
               </div>
             </div>
 
-            {/* Message */}
-            <div>
-              <label className="block text-xs font-medium text-zinc-500 mb-1.5">Message Content</label>
-              <textarea
-                required
-                rows={4}
-                value={form.message}
-                onChange={(e) => setForm({ ...form, message: e.target.value })}
-                className="w-full bg-zinc-900 border border-white/5 rounded-xl px-4 py-3 text-sm text-zinc-100 focus:border-purple-500/50 outline-none transition-colors resize-none"
-                placeholder="Write your broadcast message here..."
-              />
-              <div className="mt-1.5 text-right text-[13px] font-medium text-zinc-600">
-                {form.message.length} characters
-              </div>
-            </div>
-
-            {/* Audience Preview + Actions */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-4 border-t border-white/5">
-              <div className="flex items-center gap-3">
+            <div className="surface-foot">
+              <div className="flex flex-wrap items-center gap-3">
                 <button
                   type="button"
                   onClick={handlePreviewAudience}
                   disabled={isCountLoading}
-                  className="px-4 py-2 bg-zinc-800 border border-white/10 rounded-xl text-sm font-medium text-zinc-300 hover:bg-zinc-700 transition-colors flex items-center gap-2"
+                  aria-busy={isCountLoading || undefined}
+                  className="btn btn-sm"
                 >
                   {isCountLoading ? <Loader2 size={14} className="animate-spin" /> : <Eye size={14} />}
-                  Preview Audience
+                  Preview audience
                 </button>
                 {audienceCount !== null && (
-                  <div className="flex items-center gap-1.5 text-sm font-medium text-purple-400">
-                    <Users size={14} />
+                  <span className="flex items-center gap-1.5 text-[14px] font-medium text-ink" role="status">
+                    <Users size={14} className="text-ink-soft" />
                     {audienceCount} {audienceCount === 1 ? 'lead' : 'leads'} matched
-                  </div>
+                  </span>
                 )}
               </div>
-              <button
-                type="submit"
-                disabled={isCreating}
-                className="w3-button-primary px-8 shadow-glow-purple"
-              >
-                {isCreating ? <Loader2 size={18} className="animate-spin" /> : <Plus size={18} />}
-                <span>Create Broadcast</span>
+              <button type="submit" disabled={isCreating} aria-busy={isCreating || undefined} className="btn btn-primary">
+                {isCreating ? <Loader2 size={16} className="animate-spin" /> : <Plus size={16} />}
+                Create broadcast
               </button>
             </div>
           </form>
-        </div>
-      )}
+        )}
 
-      {/* Broadcasts List */}
-      <div className="grid gap-6">
         {isLoading ? (
-          <div className="w3-card border border-white/5 p-12 text-center text-zinc-500">
-            <Loader2 size={24} className="animate-spin mx-auto mb-3" />
-            Loading broadcasts...
+          <div className="surface empty">
+            <Loader2 size={22} className="animate-spin text-ink-faint" />
+            <p className="empty-body">Loading broadcasts…</p>
           </div>
         ) : broadcasts.length === 0 ? (
-          <div className="w3-card border border-white/5 p-16 text-center flex flex-col items-center">
-            <div className="w-20 h-20 bg-zinc-900 rounded-2xl flex items-center justify-center mb-5 border border-white/5">
-              <Radio className="text-zinc-600" size={32} />
+          !showCreate && (
+            <div className="surface empty">
+              <span className="empty-mark"><Radio /></span>
+              <p className="empty-title">No broadcasts yet</p>
+              <p className="empty-body">
+                Send one message to many leads at once, filtered by lead status.
+              </p>
+              <button onClick={() => setShowCreate(true)} className="btn btn-primary">
+                <Plus size={16} /> New broadcast
+              </button>
             </div>
-            <h3 className="text-lg font-semibold text-zinc-300 mb-2">No Broadcasts Yet</h3>
-            <p className="text-sm text-zinc-500 max-w-sm">
-              Create your first broadcast to send bulk messages to your Instagram leads. Filter by lead status, tags, and more.
-            </p>
-          </div>
+          )
         ) : (
-          broadcasts.map((bc) => {
-            const cfg = getStatusConfig(bc.broadcast_status);
-            const progress = bc.total_recipients > 0
-              ? Math.round(((bc.sent_count + bc.failed_count) / bc.total_recipients) * 100)
-              : 0;
+          <div className="space-y-4">
+            {broadcasts.map((bc) => {
+              const cfg = getStatusConfig(bc.broadcast_status);
+              const progress = bc.total_recipients > 0
+                ? Math.round(((bc.sent_count + bc.failed_count) / bc.total_recipients) * 100)
+                : 0;
 
-            return (
-              <div
-                key={bc.id}
-                className="w3-card border border-white/5 hover:border-purple-500/20 transition-all duration-300"
-              >
-                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-                  {/* Left Info */}
-                  <div className="flex-grow space-y-3">
-                    <div className="flex items-center gap-3">
-                      <h3 className="text-lg font-semibold text-zinc-100">{bc.name}</h3>
-                      <span className={`text-[13px] uppercase font-medium tracking-wider px-2.5 py-1 rounded-md border flex items-center gap-1.5 ${cfg.color}`}>
-                        {cfg.icon} {cfg.label}
-                      </span>
-                    </div>
-                    <p className="text-sm text-zinc-400 font-medium line-clamp-2">{bc.message}</p>
-
-                    {/* Filters Display */}
-                    {bc.filters?.lead_status?.length > 0 && (
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <span className="text-[13px] font-medium text-zinc-500">Audience:</span>
-                        {bc.filters.lead_status.map((s: string) => (
-                          <span key={s} className="text-[13px] font-medium px-2 py-0.5 bg-purple-500/10 text-purple-400 rounded-md border border-purple-500/20">
-                            {s}
-                          </span>
-                        ))}
+              return (
+                <article key={bc.id} className="surface p-5">
+                  <div className="flex flex-col justify-between gap-5 lg:flex-row lg:items-center">
+                    <div className="min-w-0 flex-grow space-y-2">
+                      <div className="flex flex-wrap items-center gap-2.5">
+                        <h3 className="text-[16px] font-semibold text-ink">{bc.name}</h3>
+                        <span className={cfg.color}>{cfg.icon} {cfg.label}</span>
                       </div>
-                    )}
-                  </div>
+                      <p className="line-clamp-2 text-[14px] text-ink-soft">{bc.message}</p>
 
-                  {/* Right Stats + Actions */}
-                  <div className="flex items-center gap-6 shrink-0">
-                    {/* Stats */}
-                    {(bc.broadcast_status === 'completed' || bc.broadcast_status === 'sending') && (
-                      <div className="flex items-center gap-6 pr-6 border-r border-white/5">
-                        <div className="text-center">
-                          <div className="text-lg font-semibold text-zinc-100">{bc.sent_count}</div>
-                          <div className="text-[13px] font-medium text-zinc-500">Sent</div>
+                      {bc.filters?.lead_status?.length > 0 && (
+                        <div className="flex flex-wrap items-center gap-1.5">
+                          <span className="text-[13px] text-ink-faint">Audience</span>
+                          {bc.filters.lead_status.map((s: string) => (
+                            <span key={s} className="chip chip-accent">{s}</span>
+                          ))}
                         </div>
-                        <div className="text-center">
-                          <div className="text-lg font-semibold text-rose-400">{bc.failed_count}</div>
-                          <div className="text-[13px] font-medium text-zinc-500">Failed</div>
-                        </div>
-                        <div className="text-center">
-                          <div className="text-lg font-semibold text-purple-400">{bc.total_recipients}</div>
-                          <div className="text-[13px] font-medium text-zinc-500">Total</div>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Progress bar for sending */}
-                    {bc.broadcast_status === 'sending' && (
-                      <div className="w-24">
-                        <div className="h-2 bg-zinc-800 rounded-full overflow-hidden">
-                          <div
-                            className="h-full bg-gradient-to-r from-purple-500 to-indigo-500 rounded-full transition-all duration-500"
-                            style={{ width: `${progress}%` }}
-                          />
-                        </div>
-                        <div className="text-[13px] font-medium text-zinc-500 mt-1 text-center">{progress}%</div>
-                      </div>
-                    )}
-
-                    {/* Actions */}
-                    <div className="flex items-center gap-2">
-                      {(bc.broadcast_status === 'draft' || bc.broadcast_status === 'scheduled') && (
-                        <button
-                          onClick={() => handleSend(bc.id)}
-                          disabled={isSending === bc.id}
-                          className="px-4 py-2 bg-emerald-500 text-white font-medium text-xs rounded-xl hover:bg-emerald-600 transition-colors flex items-center gap-2 shadow-lg shadow-emerald-500/20 disabled:opacity-50"
-                        >
-                          {isSending === bc.id ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />}
-                          Send Now
-                        </button>
-                      )}
-                      {bc.broadcast_status !== 'sending' && (
-                        <button
-                          onClick={() => handleDelete(bc.id)}
-                          className="p-2 text-zinc-500 hover:text-rose-400 hover:bg-rose-500/10 rounded-xl transition-all"
-                          title="Delete"
-                        >
-                          <Trash2 size={16} />
-                        </button>
                       )}
                     </div>
+
+                    <div className="flex shrink-0 flex-wrap items-center gap-5">
+                      {(bc.broadcast_status === 'completed' || bc.broadcast_status === 'sending') && (
+                        <dl className="flex items-center gap-5 tabular-nums lg:border-r lg:border-hairline lg:pr-5">
+                          <div className="text-center">
+                            <dt className="text-[13px] text-ink-soft">Sent</dt>
+                            <dd className="text-[17px] font-semibold text-ink">{bc.sent_count}</dd>
+                          </div>
+                          <div className="text-center">
+                            <dt className="text-[13px] text-ink-soft">Failed</dt>
+                            <dd className={`text-[17px] font-semibold ${bc.failed_count ? 'text-signal-stop' : 'text-ink'}`}>{bc.failed_count}</dd>
+                          </div>
+                          <div className="text-center">
+                            <dt className="text-[13px] text-ink-soft">Total</dt>
+                            <dd className="text-[17px] font-semibold text-ink">{bc.total_recipients}</dd>
+                          </div>
+                        </dl>
+                      )}
+
+                      {bc.broadcast_status === 'sending' && (
+                        <div className="w-28" role="progressbar" aria-valuenow={progress} aria-valuemin={0} aria-valuemax={100} aria-label="Sending progress">
+                          <div className="meter"><span style={{ width: `${progress}%` }} /></div>
+                          <div className="mt-1 text-center text-[13px] tabular-nums text-ink-soft">{progress}%</div>
+                        </div>
+                      )}
+
+                      <div className="flex items-center gap-1.5">
+                        {(bc.broadcast_status === 'draft' || bc.broadcast_status === 'scheduled') && (
+                          <button
+                            onClick={() => handleSend(bc.id)}
+                            disabled={isSending === bc.id}
+                            aria-busy={isSending === bc.id || undefined}
+                            className="btn btn-primary btn-sm"
+                          >
+                            {isSending === bc.id ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />}
+                            Send now
+                          </button>
+                        )}
+                        {bc.broadcast_status !== 'sending' && (
+                          <button
+                            onClick={() => handleDelete(bc.id)}
+                            className="btn btn-ghost btn-icon btn-sm is-danger"
+                            aria-label={`Delete ${bc.name}`}
+                            title="Delete"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        )}
+                      </div>
+                    </div>
                   </div>
+                </article>
+              );
+            })}
+          </div>
+        )}
+
+        <div className="grid items-start gap-6 lg:grid-cols-3">
+          <section className="surface p-5">
+            <h2 className="mb-3 flex items-center gap-2.5 text-[16px] font-semibold text-ink">
+              <span className="icon-tile is-sm"><Sparkles size={16} /></span>
+              Broadcast tips
+            </h2>
+            <ul className="list-disc space-y-1.5 pl-5 text-[14px] text-ink-soft marker:text-ink-faint">
+              <li>Keep messages under 500 characters for best engagement.</li>
+              <li>Filter by "Hot" leads for the highest conversion rates.</li>
+              <li>Instagram allows roughly 200 messages an hour per account.</li>
+              <li>Avoid spammy language to prevent account restrictions.</li>
+            </ul>
+          </section>
+
+          <section className="lg:col-span-2">
+            <h2 className="sr-only">Broadcast analytics</h2>
+            <div className="metric-grid">
+              {[
+                { label: 'Total campaigns', value: broadcasts.length, icon: Radio, tone: 'tone-blue' },
+                { label: 'Messages sent', value: totalSent, icon: Send, tone: 'tone-peach' },
+                { label: 'Total recipients', value: totalRecipients, icon: Users, tone: 'tone-mint' },
+              ].map(({ label, value, icon: Icon, tone }) => (
+                <div key={label} className={`metric ${tone}`}>
+                  <div className="metric-head">
+                    <span className="metric-label">{label}</span>
+                    <span className="icon-tile is-sm"><Icon size={16} /></span>
+                  </div>
+                  <span className="metric-figure">{value.toLocaleString()}</span>
+                </div>
+              ))}
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <ConfirmModal
+        isOpen={confirmConfig.isOpen}
+        title={confirmConfig.title}
+        message={confirmConfig.message}
+        confirmText={confirmConfig.confirmText || 'Confirm'}
+        type={confirmConfig.type || 'primary'}
+        isLoading={confirmConfig.isLoading}
+        onConfirm={confirmConfig.onConfirm}
+        onCancel={() => setConfirmConfig(prev => ({ ...prev, isOpen: false }))}
+      />
+
+      {alertConfig.isOpen && (
+        <div className="modal-backdrop" onClick={(e) => { if (e.target === e.currentTarget) setAlertConfig(prev => ({ ...prev, isOpen: false })); }}>
+          <div role="alertdialog" aria-modal="true" aria-labelledby="bc-alert-title" className="modal max-w-md">
+            <div className="modal-head border-b-0 pb-2">
+              <div className="flex items-start gap-3">
+                <span className="icon-tile is-sm is-stop"><AlertTriangle size={16} /></span>
+                <div>
+                  <h3 id="bc-alert-title">{alertConfig.title}</h3>
+                  <p className="mt-1.5 text-[15px] leading-relaxed text-ink-soft">{alertConfig.message}</p>
                 </div>
               </div>
-            );
-          })
-        )}
-      </div>
-
-      {/* Info Card */}
-      <div className="grid lg:grid-cols-3 gap-6">
-        <div className="w3-card bg-gradient-to-br from-purple-900 to-indigo-900 border border-purple-500/20 text-white overflow-hidden relative">
-          <div className="relative z-10">
-            <h4 className="font-semibold flex items-center gap-2 mb-4 text-purple-200">
-              <Sparkles size={18} /> Broadcast Tips
-            </h4>
-            <ul className="space-y-2 text-sm font-medium text-purple-100/80">
-              <li>• Keep messages under 500 characters for best engagement</li>
-              <li>• Filter by "Hot" leads for highest conversion rates</li>
-              <li>• Instagram limits ~200 messages/hour per account</li>
-              <li>• Avoid spammy language to prevent account restrictions</li>
-            </ul>
-          </div>
-          <Zap className="absolute -bottom-6 -right-6 w-32 h-32 text-purple-500 opacity-20 blur-xl" />
-        </div>
-
-        <div className="w3-card border border-white/5 lg:col-span-2">
-          <h4 className="text-lg font-semibold text-zinc-100 mb-6">Broadcast Analytics</h4>
-          <div className="grid grid-cols-3 gap-6">
-            <div className="p-5 bg-zinc-900/50 rounded-2xl border border-white/5 text-center">
-              <div className="text-2xl font-semibold text-zinc-100">{broadcasts.length}</div>
-              <div className="text-xs text-zinc-500 font-medium mt-1">Total Campaigns</div>
             </div>
-            <div className="p-5 bg-zinc-900/50 rounded-2xl border border-white/5 text-center">
-              <div className="text-2xl font-semibold text-emerald-400">
-                {broadcasts.reduce((sum, b) => sum + (b.sent_count || 0), 0)}
-              </div>
-              <div className="text-xs text-zinc-500 font-medium mt-1">Messages Sent</div>
-            </div>
-            <div className="p-5 bg-zinc-900/50 rounded-2xl border border-white/5 text-center">
-              <div className="text-2xl font-semibold text-purple-400">
-                {broadcasts.reduce((sum, b) => sum + (b.total_recipients || 0), 0)}
-              </div>
-              <div className="text-xs text-zinc-500 font-medium mt-1">Total Recipients</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Custom Confirmation Modal */}
-      {confirmConfig.isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
-          <div className="w3-card max-w-md w-full border border-purple-500/20 bg-zinc-950 p-6 shadow-2xl animate-in zoom-in-95 duration-200">
-            <div className="flex items-center gap-3 text-amber-400 mb-4">
-              <AlertTriangle size={24} />
-              <h3 className="text-lg font-semibold text-zinc-100">{confirmConfig.title}</h3>
-            </div>
-            <p className="text-sm text-zinc-400 font-medium mb-6">{confirmConfig.message}</p>
-            <div className="flex justify-end gap-3 pt-4 border-t border-white/5">
+            <div className="modal-foot mt-3">
               <button
                 type="button"
-                onClick={() => setConfirmConfig(prev => ({ ...prev, isOpen: false }))}
-                disabled={confirmConfig.isLoading}
-                className="px-5 py-2 bg-zinc-900 hover:bg-zinc-800 border border-white/5 rounded-xl text-sm font-medium text-zinc-400 transition-colors disabled:opacity-50"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={confirmConfig.onConfirm}
-                disabled={confirmConfig.isLoading}
-                className="px-6 py-2 bg-purple-650 hover:bg-purple-700 text-white font-medium text-sm rounded-xl shadow-lg shadow-purple-650/20 transition-all flex items-center gap-2 disabled:opacity-50"
-              >
-                {confirmConfig.isLoading && <Loader2 size={14} className="animate-spin" />}
-                Confirm
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Custom Alert Modal */}
-      {alertConfig.isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
-          <div className="w3-card max-w-md w-full border border-rose-500/20 bg-zinc-950 p-6 shadow-2xl animate-in zoom-in-95 duration-200">
-            <div className="flex items-center gap-3 text-rose-450 mb-4">
-              <AlertTriangle size={24} />
-              <h3 className="text-lg font-semibold text-zinc-100">{alertConfig.title}</h3>
-            </div>
-            <p className="text-sm text-zinc-400 font-medium mb-6">{alertConfig.message}</p>
-            <div className="flex justify-end pt-4 border-t border-white/5">
-              <button
-                type="button"
+                autoFocus
                 onClick={() => setAlertConfig(prev => ({ ...prev, isOpen: false }))}
-                className="px-6 py-2 bg-zinc-900 hover:bg-zinc-800 border border-white/5 rounded-xl text-sm font-medium text-zinc-350 transition-colors"
+                className="btn"
               >
                 OK
               </button>

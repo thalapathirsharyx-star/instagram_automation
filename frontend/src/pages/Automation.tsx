@@ -197,62 +197,50 @@ const Automation: React.FC = () => {
     finally { setIsDeleting(false); setConfirmDeleteId(null); }
   };
 
-  const TabButton = ({ id, label, icon: Icon }: { id: any, label: string, icon: any }) => (
-    <button 
-      onClick={() => setActiveTab(id)}
-      className={`px-5 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 flex items-center gap-2 ${
-        activeTab === id 
-          ? 'bg-zinc-900 text-white shadow-md' 
-          : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100'
-      }`}
-    >
-      <Icon size={16} /> <span>{label}</span>
-    </button>
-  );
+  const tabs: { id: typeof activeTab; label: string; icon: React.ElementType }[] = [
+    // { id: 'playbook', label: 'Playbook builder', icon: GitBranch },
+    { id: 'comment', label: 'Comment-to-DM', icon: MessageSquare },
+    { id: 'welcome', label: 'Welcome flow', icon: Bot },
+    { id: 'advanced', label: 'Advanced logic', icon: Settings },
+  ];
 
   return (
-    <div className="max-w-7xl mx-auto pb-12 font-sans animate-in fade-in duration-500">
-      
-      {/* Header & Tabs */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8 border-b border-zinc-200/80 pb-6">
+    <div className="page">
+      <div className="page-head mb-4">
         <div>
           <h1 className="page-title">Automation</h1>
-          <p className="text-sm text-zinc-500 font-medium max-w-xl">Configure how AI intercepts conversations, replies to comments, and manages conditional playbooks across your Instagram account.</p>
-        </div>
-
-        <div className="flex items-center bg-zinc-50 p-1.5 rounded-xl border border-zinc-200 shrink-0 shadow-sm">
-          {/* <TabButton id="playbook" label="Playbook Builder" icon={GitBranch} /> */}
-          <TabButton id="comment" label="Comment-to-DM" icon={MessageSquare} />
-          <TabButton id="welcome" label="Welcome Flow" icon={Bot} />
-          <TabButton id="advanced" label="Advanced Logic" icon={Settings} />
+          <p className="page-sub">Configure how AI intercepts conversations, replies to comments, and manages conditional playbooks across your Instagram account.</p>
         </div>
       </div>
 
+      <div className="tabs mb-6" role="tablist" aria-label="Automation type">
+        {tabs.map(({ id, label, icon: Icon }) => (
+          <button key={id} role="tab" aria-selected={activeTab === id} onClick={() => setActiveTab(id)}>
+            <Icon size={16} /> {label}
+          </button>
+        ))}
+      </div>
+
       {isLoading ? (
-        <div className="flex h-64 items-center justify-center text-zinc-500 font-medium">
-          <Loader2 size={24} className="animate-spin mr-3 text-violet-600" /> Loading Automation Config...
+        <div className="surface empty">
+          <Loader2 size={22} className="animate-spin text-ink-faint" />
+          <p className="empty-body">Loading automation settings…</p>
         </div>
       ) : (
         <>
-          {/* Connection Warning Banner */}
           {!isConnected && (
-            <div className="mb-8 p-5 bg-amber-50 border border-amber-200 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-4 animate-in fade-in slide-in-from-top-4 duration-300">
-              <div className="flex gap-4 items-start">
-                <div className="p-2.5 bg-amber-100 text-amber-700 rounded-xl border border-amber-200 shrink-0">
-                  <AlertCircle size={20} strokeWidth={2.5} />
-                </div>
+            <div className="notice notice-warn mb-6">
+              <div className="flex items-start gap-3">
+                <AlertCircle size={18} className="mt-0.5 shrink-0 text-signal-warn" />
                 <div>
-                  <h4 className="font-medium text-amber-900 text-sm">Instagram Integration Pending</h4>
-                  <p className="text-xs text-amber-750 mt-1 font-medium leading-relaxed">
-                    This automation playbook and trigger system cannot send replies until you link your account. Click the button to authorize access.
+                  <p className="notice-title">Instagram isn't connected yet</p>
+                  <p className="notice-body">
+                    Triggers and replies can't send anything until you link your account.
                   </p>
                 </div>
               </div>
-              <button 
-                onClick={() => navigate('/settings?tab=meta')} 
-                className="w-full md:w-auto px-6 py-2.5 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-medium transition-all shadow-sm flex items-center justify-center gap-2 shrink-0 cursor-pointer"
-              >
-                <Link2 size={14} /> Connect with Facebook
+              <button onClick={() => navigate('/meta-integration')} className="btn btn-primary btn-sm">
+                <Link2 size={14} /> Connect Instagram
               </button>
             </div>
           )}
@@ -399,327 +387,335 @@ const Automation: React.FC = () => {
 
           {/* COMMENT TO DM */}
           {activeTab === 'comment' && (
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              <div className="lg:col-span-2 space-y-8">
-                
-                <div className="bg-white border border-zinc-200/80 rounded-2xl p-6 shadow-sm">
-                  <h3 className="text-lg font-semibold text-zinc-900 mb-1 flex items-center gap-2">
-                    <Plus size={20} className="text-violet-600" /> New Comment Trigger
-                  </h3>
-                  <p className="text-sm text-zinc-500 mb-6 font-medium">Map post comments directly to AI-driven DM workflows.</p>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
+            <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-3">
+              <div className="space-y-6 lg:col-span-2">
+                <section className="surface overflow-hidden">
+                  <div className="surface-head">
                     <div>
-                      <label className="text-xs font-medium text-zinc-500 block mb-2">Target Post</label>
-                      <select 
-                        value={newPostTitle}
-                        onChange={(e) => setNewPostTitle(e.target.value)}
-                        className="w-full bg-zinc-50 border border-zinc-200 px-4 py-2.5 rounded-lg text-sm font-semibold text-zinc-900 outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 transition-all"
-                      >
-                        <option>Latest Reel</option>
-                        <option>Reel: 10x Your Sales</option>
-                        <option>All Posts & Reels</option>
-                      </select>
+                      <h2><span className="icon-tile is-sm"><Plus size={16} /></span>New comment trigger</h2>
+                      <p>Send a DM automatically when someone comments a keyword.</p>
                     </div>
+                  </div>
+
+                  <div className="surface-body space-y-5">
+                    <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+                      <div>
+                        <label htmlFor="trigger-post" className="field-label">Target post</label>
+                        <select
+                          id="trigger-post"
+                          value={newPostTitle}
+                          onChange={(e) => setNewPostTitle(e.target.value)}
+                          className="field"
+                        >
+                          <option>Latest Reel</option>
+                          <option>Reel: 10x Your Sales</option>
+                          <option>All Posts & Reels</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label htmlFor="trigger-keyword" className="field-label">Trigger keyword</label>
+                        <input
+                          id="trigger-keyword"
+                          type="text"
+                          value={newKeyword}
+                          onChange={(e) => setNewKeyword(e.target.value)}
+                          placeholder="e.g. LINK or GROW"
+                          className="field"
+                        />
+                      </div>
+                    </div>
+
                     <div>
-                      <label className="text-xs font-medium text-zinc-500 block mb-2">Trigger Keyword</label>
-                      <input 
-                        type="text" 
-                        value={newKeyword}
-                        onChange={(e) => setNewKeyword(e.target.value)}
-                        placeholder="e.g. LINK or GROW" 
-                        className="w-full bg-zinc-50 border border-zinc-200 px-4 py-2.5 rounded-lg text-sm font-semibold text-zinc-900 outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 transition-all"
+                      <label htmlFor="trigger-reply" className="field-label">DM to send</label>
+                      <textarea
+                        id="trigger-reply"
+                        value={newReplyMessage}
+                        onChange={(e) => setNewReplyMessage(e.target.value)}
+                        placeholder="Hey! Thanks for commenting. Here is the link you requested..."
+                        rows={3}
+                        className="field"
                       />
                     </div>
                   </div>
 
-                  <div className="mb-6">
-                    <label className="text-xs font-medium text-zinc-500 block mb-2">Automated DM Payload</label>
-                    <textarea 
-                      value={newReplyMessage}
-                      onChange={(e) => setNewReplyMessage(e.target.value)}
-                      placeholder="Hey! Thanks for commenting. Here is the link you requested..." 
-                      rows={3}
-                      className="w-full bg-zinc-50 border border-zinc-200 p-4 rounded-lg text-sm font-medium text-zinc-900 outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 transition-all resize-none"
-                    />
-                  </div>
-
-                  <div className="flex justify-end pt-4 border-t border-zinc-100">
-                    <button onClick={addCommentTrigger} className="bg-violet-600 text-white hover:bg-violet-700 transition-colors px-6 py-2.5 rounded-lg text-sm font-semibold flex items-center gap-2 shadow-sm">
-                      <Plus size={16} /> Create Trigger
+                  <div className="surface-foot justify-end">
+                    <button onClick={addCommentTrigger} className="btn btn-primary">
+                      <Plus size={16} /> Create trigger
                     </button>
                   </div>
-                </div>
+                </section>
 
-                <div className="bg-white border border-zinc-200/80 rounded-2xl shadow-sm overflow-hidden">
-                  <div className="p-6 border-b border-zinc-100">
-                    <h3 className="text-base font-semibold text-zinc-900 flex items-center gap-2">
-                      <MessageSquare size={18} className="text-violet-600" /> Active Mappings
-                    </h3>
+                <section className="surface overflow-hidden">
+                  <div className="surface-head">
+                    <h2>
+                      <span className="icon-tile is-sm is-neutral"><MessageSquare size={16} /></span>
+                      Active triggers
+                      <span className="chip">{commentTriggers.length}</span>
+                    </h2>
                   </div>
 
-                  <div className="divide-y divide-zinc-100">
-                    {commentTriggers.length === 0 ? (
-                      <div className="p-12 text-center text-zinc-500 text-sm">No triggers configured yet.</div>
-                    ) : commentTriggers.map((trigger) => (
-                      <div key={trigger.id} className="p-6 hover:bg-zinc-50 transition-colors flex flex-col md:flex-row md:items-center justify-between gap-4">
-                        <div className="space-y-2 max-w-xl">
-                          <div className="flex items-center gap-3">
-                            <span className="text-[13px] font-medium px-2 py-1 bg-violet-100 text-violet-700 rounded border border-violet-200">
-                              IF: {trigger.keyword}
-                            </span>
-                            <span className="text-[13px] font-semibold text-zinc-500">
-                              Target: {trigger.postTitle}
-                            </span>
+                  {commentTriggers.length === 0 ? (
+                    <div className="empty py-10">
+                      <span className="empty-mark"><MessageSquare /></span>
+                      <p className="empty-title">No triggers yet</p>
+                      <p className="empty-body">Create one above and matching comments get a DM within seconds.</p>
+                    </div>
+                  ) : (
+                    <ul className="divide-y divide-hairline">
+                      {commentTriggers.map((trigger) => (
+                        <li key={trigger.id} className="flex flex-col justify-between gap-4 px-5 py-4 md:flex-row md:items-center">
+                          <div className="min-w-0 space-y-1.5">
+                            <div className="flex flex-wrap items-center gap-2">
+                              <span className="chip chip-accent">Keyword: {trigger.keyword}</span>
+                              <span className="text-[13px] text-ink-soft">on {trigger.postTitle}</span>
+                            </div>
+                            <p className="truncate text-[14px] text-ink">
+                              <span className="mr-1 text-ink-faint">Sends</span>{trigger.replyMessage}
+                            </p>
                           </div>
-                          <p className="text-sm text-zinc-700 font-medium truncate">
-                            <span className="text-zinc-400 font-semibold mr-1">THEN:</span> {trigger.replyMessage}
-                          </p>
-                        </div>
-                        
-                        <div className="flex items-center gap-4">
-                          <label className="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" className="sr-only peer" checked={trigger.isActive} onChange={() => toggleCommentTrigger(trigger.id)} />
-                            <div className="w-11 h-6 bg-zinc-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-zinc-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500"></div>
-                          </label>
-                          <button onClick={() => setConfirmDeleteId(trigger.id)} className="text-zinc-400 hover:text-rose-500 transition-colors p-1">
-                            <Trash2 size={16} />
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+
+                          <div className="flex shrink-0 items-center gap-3">
+                            <label className="flex cursor-pointer items-center gap-2 text-[13px] text-ink-soft">
+                              <input
+                                type="checkbox"
+                                role="switch"
+                                className="switch"
+                                checked={trigger.isActive}
+                                onChange={() => toggleCommentTrigger(trigger.id)}
+                              />
+                              {trigger.isActive ? 'On' : 'Off'}
+                            </label>
+                            <button
+                              onClick={() => setConfirmDeleteId(trigger.id)}
+                              className="btn btn-ghost btn-icon btn-sm is-danger"
+                              aria-label={`Delete trigger ${trigger.keyword}`}
+                              title="Delete trigger"
+                            >
+                              <Trash2 size={16} />
+                            </button>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </section>
               </div>
 
-              <div className="space-y-6">
-                <div className="bg-violet-50 border border-violet-100 rounded-2xl p-6">
-                  <h4 className="font-semibold flex items-center gap-2 mb-2 text-violet-900">
-                    <Zap size={18} className="text-violet-600" /> Conversion Strategy
-                  </h4>
-                  <p className="text-sm font-medium text-violet-800/80 leading-relaxed">
-                    Keyword triggers bridge the gap between public engagement and private sales. When a user comments "GROW", they are granting implicit permission to initiate a DM sequence.
-                  </p>
-                </div>
-              </div>
+              <aside className="notice notice-info block">
+                <p className="notice-title flex items-center gap-2">
+                  <Zap size={16} className="text-viridian" /> Why keyword triggers work
+                </p>
+                <p className="notice-body mt-1.5 leading-relaxed">
+                  They bridge public engagement and private sales. Someone who comments "GROW" has asked
+                  for the follow-up, so the DM lands as a reply, not a cold message.
+                </p>
+              </aside>
             </div>
           )}
 
           {/* WELCOME FLOW */}
           {activeTab === 'welcome' && (
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              <div className="lg:col-span-2 space-y-6">
-                <div className="bg-white border border-zinc-200/80 rounded-2xl p-6 shadow-sm">
-                  <div className="flex justify-between items-start mb-6">
+            <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-3">
+              <div className="space-y-6 lg:col-span-2">
+                <section className="surface overflow-hidden">
+                  <div className="surface-head">
                     <div>
-                      <h3 className="text-lg font-semibold text-zinc-900 mb-1">Onboarding Payload</h3>
-                      <p className="page-sub">The first message sent to net-new inbound conversations.</p>
+                      <h2>Welcome message</h2>
+                      <p>The first message sent to brand-new inbound conversations.</p>
                     </div>
                   </div>
 
-                  <div className="relative">
-                    <textarea 
+                  <div className="surface-body">
+                    <label htmlFor="welcome-message" className="sr-only">Welcome message</label>
+                    <textarea
+                      id="welcome-message"
                       value={welcomeMessage}
                       onChange={(e) => setWelcomeMessage(e.target.value)}
                       placeholder="Hi there! Thanks for reaching out. How can I help you today?"
                       rows={5}
-                      className="w-full bg-zinc-50 border border-zinc-200 p-4 rounded-xl text-sm font-medium text-zinc-900 outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 transition-all resize-none"
+                      className="field"
                     />
-                    <div className="absolute bottom-3 right-4 text-[13px] font-medium text-zinc-400 bg-white px-2 py-0.5 rounded border border-zinc-200">
-                      {welcomeMessage.length} CHARS
-                    </div>
+                    <p className="field-hint text-right tabular-nums">{welcomeMessage.length} characters</p>
                   </div>
 
-                  <div className="mt-6 flex justify-end pt-4 border-t border-zinc-100">
-                    <button onClick={handleSaveWelcome} disabled={isSaving} className="bg-violet-600 text-white hover:bg-violet-700 transition-colors px-6 py-2.5 rounded-lg text-sm font-semibold flex items-center gap-2 shadow-sm disabled:opacity-50">
-                      {isSaving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />} Save Payload
+                  <div className="surface-foot justify-end">
+                    <button onClick={handleSaveWelcome} disabled={isSaving} aria-busy={isSaving || undefined} className="btn btn-primary">
+                      {isSaving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />} Save message
                     </button>
                   </div>
-                </div>
+                </section>
 
-                <div className="bg-white border border-zinc-200/80 rounded-2xl p-6 shadow-sm">
-                  <h3 className="text-lg font-semibold text-zinc-900 mb-6">Global Hand-off Rules</h3>
-                  <div className="space-y-6">
-                    <div className="flex justify-between items-center">
+                <section className="surface overflow-hidden">
+                  <div className="surface-head">
+                    <h2>Hand-off rules</h2>
+                  </div>
+                  <div className="surface-body">
+                    <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
                       <div>
-                        <div className="font-medium text-zinc-900 text-sm">Artificial Typing Delay</div>
-                        <p className="text-[13px] text-zinc-500 font-medium">Inject latency to simulate human response times.</p>
+                        <label htmlFor="typing-delay" className="text-[14px] font-medium text-ink">Typing delay</label>
+                        <p className="text-[13px] text-ink-soft">Wait before replying so answers feel less instant.</p>
                       </div>
-                      <select className="bg-zinc-50 border border-zinc-200 px-3 py-2 rounded-lg text-sm font-semibold text-zinc-900 outline-none">
+                      <select id="typing-delay" className="field sm:w-56">
                         <option>Instant (0s)</option>
                         <option>Natural (2-5s)</option>
                         <option>Deliberate (5-10s)</option>
                       </select>
                     </div>
                   </div>
-                </div>
+                </section>
               </div>
 
-              <div className="space-y-6">
-                <div className="bg-white border border-zinc-200/80 rounded-2xl p-6 shadow-sm h-[500px] flex flex-col">
-                  <h4 className="text-sm font-medium text-zinc-900 mb-6 flex justify-between items-center">
-                    Simulated Output <span className="text-[13px] bg-zinc-100 text-zinc-500 px-2 py-1 rounded">PREVIEW</span>
-                  </h4>
-                  
-                  <div className="flex-grow flex flex-col gap-4 overflow-y-auto pr-2">
-                    <div className="flex flex-col items-start w-full">
-                      <div className="bg-zinc-100 text-zinc-800 px-4 py-2.5 rounded-2xl rounded-bl-sm text-[13px] font-medium max-w-[85%]">
-                        Hey! I saw your post.
-                      </div>
-                      <span className="text-[13px] text-zinc-400 mt-1 ml-1 font-medium">Customer • 12:01 PM</span>
+              <section className="surface flex flex-col overflow-hidden lg:min-h-[420px]">
+                <div className="surface-head">
+                  <h2 className="text-[15px]">Preview</h2>
+                  <span className="chip">How it looks in Instagram</span>
+                </div>
+
+                <div className="flex flex-grow flex-col gap-4 bg-porcelain p-4">
+                  <div className="flex w-full flex-col items-start">
+                    <div className="max-w-[85%] rounded-[16px] rounded-bl-[4px] border border-hairline bg-surface px-4 py-2.5 text-[14px] text-ink">
+                      Hey! I saw your post.
                     </div>
-                    
-                    <div className="flex flex-col items-end w-full mt-2">
-                      <div className="bg-blue-500 text-white px-4 py-2.5 rounded-2xl rounded-br-sm text-[13px] font-medium max-w-[85%] shadow-sm whitespace-pre-wrap">
-                        {welcomeMessage || 'Your message will render exactly like this.'}
-                      </div>
-                      <span className="text-[13px] text-zinc-400 mt-1 mr-1 font-medium">AI Agent • 12:01 PM</span>
+                    <span className="ml-1 mt-1 text-[12px] text-ink-faint">Customer · 12:01 PM</span>
+                  </div>
+
+                  <div className="flex w-full flex-col items-end">
+                    <div className="max-w-[85%] whitespace-pre-wrap rounded-[16px] rounded-br-[4px] bg-viridian px-4 py-2.5 text-[14px] text-on-accent">
+                      {welcomeMessage || 'Your message will render exactly like this.'}
                     </div>
+                    <span className="mr-1 mt-1 text-[12px] text-ink-faint">Assistant · 12:01 PM</span>
                   </div>
                 </div>
-              </div>
+              </section>
             </div>
           )}
 
           {/* ADVANCED TAB */}
           {activeTab === 'advanced' && (
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-6">
-              
-              {/* Routing */}
-              <div className="bg-white border border-zinc-200/80 rounded-2xl p-6 shadow-sm flex flex-col">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="p-2 bg-violet-100 text-violet-600 rounded-lg">
-                    <Bot size={20} />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-zinc-900">AI Routing Engine</h3>
-                    <p className="text-[13px] text-zinc-500 font-medium">Core inference settings</p>
-                  </div>
-                </div>
-                
-                <div className="space-y-5 flex-grow">
-                  <div className="flex items-center justify-between">
+            <>
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                <section className="surface overflow-hidden">
+                  <div className="surface-head">
                     <div>
-                      <h4 className="text-sm font-medium text-zinc-800">Auto-Reply Enable</h4>
-                      <p className="text-[13px] text-zinc-500">Allow AI to answer unmapped queries</p>
+                      <h2><span className="icon-tile is-sm"><Bot size={16} /></span>AI routing</h2>
+                      <p>Core inference settings</p>
                     </div>
-                    <label className="relative inline-flex items-center cursor-pointer">
-                      <input type="checkbox" className="sr-only peer" checked={autoReplyEnabled} onChange={(e) => setAutoReplyEnabled(e.target.checked)} />
-                      <div className="w-9 h-5 bg-zinc-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-zinc-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-500"></div>
+                  </div>
+                  <div className="divide-y divide-hairline px-5">
+                    <label className="flex cursor-pointer items-center justify-between gap-4 py-4">
+                      <span>
+                        <span className="block text-[14px] font-medium text-ink">Auto-reply</span>
+                        <span className="block text-[13px] text-ink-soft">Let the AI answer questions no rule covers.</span>
+                      </span>
+                      <input type="checkbox" role="switch" className="switch" checked={autoReplyEnabled} onChange={(e) => setAutoReplyEnabled(e.target.checked)} />
+                    </label>
+                    <label className="flex cursor-pointer items-center justify-between gap-4 py-4">
+                      <span>
+                        <span className="block text-[14px] font-medium text-ink">Escalation alerts</span>
+                        <span className="block text-[13px] text-ink-soft">Alert the dashboard when the AI hands a conversation to a person.</span>
+                      </span>
+                      <input type="checkbox" role="switch" className="switch" checked={humanHandoffAlerts} onChange={(e) => setHumanHandoffAlerts(e.target.checked)} />
                     </label>
                   </div>
-                  <div className="flex items-center justify-between">
+                </section>
+
+                <section className="surface overflow-hidden">
+                  <div className="surface-head">
                     <div>
-                      <h4 className="text-sm font-medium text-zinc-800">Escalation Alerts</h4>
-                      <p className="text-[13px] text-zinc-500">Ping dashboard when AI stops</p>
+                      <h2><span className="icon-tile is-sm"><Repeat size={16} /></span>Follow-up drip</h2>
+                      <p>Automatic follow-ups for leads who went quiet</p>
                     </div>
-                    <label className="relative inline-flex items-center cursor-pointer">
-                      <input type="checkbox" className="sr-only peer" checked={humanHandoffAlerts} onChange={(e) => setHumanHandoffAlerts(e.target.checked)} />
-                      <div className="w-9 h-5 bg-zinc-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-zinc-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-500"></div>
+                  </div>
+                  <div className="space-y-4 px-5 py-4">
+                    <label className="flex cursor-pointer items-center justify-between gap-4">
+                      <span className="text-[14px] font-medium text-ink">Send follow-ups</span>
+                      <input type="checkbox" role="switch" className="switch" checked={autoFollowUp} onChange={(e) => setAutoFollowUp(e.target.checked)} />
                     </label>
+                    {autoFollowUp && (
+                      <div className="space-y-3 border-t border-hairline pt-4">
+                        <div>
+                          <label htmlFor="drip-delay" className="field-label">Wait before following up</label>
+                          <select id="drip-delay" value={autoFollowUpDelayHours} onChange={(e) => setAutoFollowUpDelayHours(Number(e.target.value))} className="field">
+                            <option value={1}>1 hour</option>
+                            <option value={24}>24 hours (recommended)</option>
+                            <option value={48}>48 hours</option>
+                          </select>
+                        </div>
+                        <div>
+                          <label htmlFor="drip-message" className="field-label">Follow-up message</label>
+                          <textarea id="drip-message" value={autoFollowUpMessage} onChange={(e) => setAutoFollowUpMessage(e.target.value)} placeholder="Just checking in!" className="field min-h-0" rows={2} />
+                        </div>
+                      </div>
+                    )}
                   </div>
-                </div>
-              </div>
+                </section>
 
-              {/* Drip */}
-              <div className="bg-white border border-zinc-200/80 rounded-2xl p-6 shadow-sm flex flex-col">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="p-2 bg-blue-100 text-blue-600 rounded-lg">
-                    <Repeat size={20} />
+                <section className="surface overflow-hidden">
+                  <div className="surface-head">
+                    <div>
+                      <h2><span className="icon-tile is-sm"><Heart size={16} /></span>Story mentions</h2>
+                      <p>Thank people who mention you in their story</p>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="font-semibold text-zinc-900">Retention Drip</h3>
-                    <p className="text-[13px] text-zinc-500 font-medium">Automatic unread follow-ups</p>
-                  </div>
-                </div>
-
-                <div className="space-y-4 flex-grow">
-                  <div className="flex items-center justify-between border-b border-zinc-100 pb-4">
-                    <span className="text-sm font-medium text-zinc-800">Enable Drip Campaign</span>
-                    <label className="relative inline-flex items-center cursor-pointer">
-                      <input type="checkbox" className="sr-only peer" checked={autoFollowUp} onChange={(e) => setAutoFollowUp(e.target.checked)} />
-                      <div className="w-9 h-5 bg-zinc-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-zinc-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-500"></div>
+                  <div className="space-y-4 px-5 py-4">
+                    <label className="flex cursor-pointer items-center justify-between gap-4">
+                      <span className="text-[14px] font-medium text-ink">Reply to mentions</span>
+                      <input type="checkbox" role="switch" className="switch" checked={storyMentionEnabled} onChange={(e) => setStoryMentionEnabled(e.target.checked)} />
                     </label>
+                    <div>
+                      <label htmlFor="mention-message" className="field-label">Reply message</label>
+                      <textarea id="mention-message" disabled={!storyMentionEnabled} value={storyMentionMessage} onChange={(e) => setStoryMentionMessage(e.target.value)} placeholder="Thanks for the mention! 💖" className="field min-h-0" rows={2} />
+                    </div>
                   </div>
-                  {autoFollowUp && (
-                    <div className="space-y-3 pt-2">
-                      <select value={autoFollowUpDelayHours} onChange={(e) => setAutoFollowUpDelayHours(Number(e.target.value))} className="w-full bg-zinc-50 border border-zinc-200 px-3 py-2 rounded-lg text-sm font-semibold text-zinc-800 outline-none">
-                        <option value={1}>1 hour delay</option>
-                        <option value={24}>24 hours delay (Recommended)</option>
-                        <option value={48}>48 hours delay</option>
+                </section>
+
+                <section className="surface overflow-hidden">
+                  <div className="surface-head">
+                    <div>
+                      <h2><span className="icon-tile is-sm"><Moon size={16} /></span>Away hours</h2>
+                      <p>What customers hear outside working hours</p>
+                    </div>
+                  </div>
+                  <div className="space-y-4 px-5 py-4">
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label htmlFor="hours-start" className="field-label">Opens</label>
+                        <input id="hours-start" type="time" value={workingHoursStart} onChange={e => setWorkingHoursStart(e.target.value)} className="field" />
+                      </div>
+                      <div>
+                        <label htmlFor="hours-end" className="field-label">Closes</label>
+                        <input id="hours-end" type="time" value={workingHoursEnd} onChange={e => setWorkingHoursEnd(e.target.value)} className="field" />
+                      </div>
+                    </div>
+                    <div>
+                      <label htmlFor="hours-tz" className="field-label">Time zone</label>
+                      <select id="hours-tz" value={timezone} onChange={e => setTimezone(e.target.value)} className="field">
+                        <option value="UTC">UTC</option>
+                        <option value="America/New_York">Eastern Time (US)</option>
+                        <option value="America/Los_Angeles">Pacific Time (US)</option>
                       </select>
-                      <textarea value={autoFollowUpMessage} onChange={(e) => setAutoFollowUpMessage(e.target.value)} placeholder="Just checking in!" className="w-full bg-zinc-50 border border-zinc-200 p-3 rounded-lg text-sm resize-none" rows={2}/>
                     </div>
-                  )}
-                </div>
+                    <div>
+                      <label htmlFor="ooo-message" className="field-label">Away message</label>
+                      <textarea id="ooo-message" value={oooMessage} onChange={e => setOooMessage(e.target.value)} placeholder="We are currently closed..." className="field min-h-0" rows={2} />
+                    </div>
+                  </div>
+                </section>
               </div>
 
-              {/* Mentions */}
-              <div className="bg-white border border-zinc-200/80 rounded-2xl p-6 shadow-sm flex flex-col">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="p-2 bg-pink-100 text-pink-600 rounded-lg">
-                    <Heart size={20} />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-zinc-900">Story Mentions</h3>
-                    <p className="text-[13px] text-zinc-500 font-medium">Engage brand advocates</p>
-                  </div>
-                </div>
-
-                <div className="space-y-4 flex-grow">
-                  <div className="flex items-center justify-between border-b border-zinc-100 pb-4">
-                    <span className="text-sm font-medium text-zinc-800">Auto-Reply to Mentions</span>
-                    <label className="relative inline-flex items-center cursor-pointer">
-                      <input type="checkbox" className="sr-only peer" checked={storyMentionEnabled} onChange={(e) => setStoryMentionEnabled(e.target.checked)} />
-                      <div className="w-9 h-5 bg-zinc-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-zinc-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-500"></div>
-                    </label>
-                  </div>
-                  <textarea disabled={!storyMentionEnabled} value={storyMentionMessage} onChange={(e) => setStoryMentionMessage(e.target.value)} placeholder="Thanks for the mention! 💖" className="w-full bg-zinc-50 border border-zinc-200 p-3 rounded-lg text-sm resize-none disabled:opacity-50" rows={2}/>
-                </div>
+              <div className="mt-6 flex justify-end">
+                <button onClick={handleSaveAdvanced} disabled={isSaving} aria-busy={isSaving || undefined} className="btn btn-primary">
+                  {isSaving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />} Save advanced settings
+                </button>
               </div>
-
-              {/* OOO */}
-              <div className="bg-white border border-zinc-200/80 rounded-2xl p-6 shadow-sm flex flex-col">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="p-2 bg-indigo-100 text-indigo-600 rounded-lg">
-                    <Moon size={20} />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-zinc-900">Away Operations</h3>
-                    <p className="text-[13px] text-zinc-500 font-medium">Manage expectations during downtime</p>
-                  </div>
-                </div>
-
-                <div className="space-y-3 flex-grow">
-                  <div className="grid grid-cols-2 gap-3">
-                    <input type="time" value={workingHoursStart} onChange={e => setWorkingHoursStart(e.target.value)} className="bg-zinc-50 border border-zinc-200 px-3 py-2 rounded-lg text-sm font-semibold text-zinc-800 outline-none" />
-                    <input type="time" value={workingHoursEnd} onChange={e => setWorkingHoursEnd(e.target.value)} className="bg-zinc-50 border border-zinc-200 px-3 py-2 rounded-lg text-sm font-semibold text-zinc-800 outline-none" />
-                  </div>
-                  <select value={timezone} onChange={e => setTimezone(e.target.value)} className="w-full bg-zinc-50 border border-zinc-200 px-3 py-2 rounded-lg text-sm font-semibold text-zinc-800 outline-none">
-                    <option value="UTC">UTC</option>
-                    <option value="America/New_York">Eastern Time (US)</option>
-                    <option value="America/Los_Angeles">Pacific Time (US)</option>
-                  </select>
-                  <textarea value={oooMessage} onChange={e => setOooMessage(e.target.value)} placeholder="We are currently closed..." className="w-full bg-zinc-50 border border-zinc-200 p-3 rounded-lg text-sm resize-none" rows={2}/>
-                </div>
-              </div>
-
-            </div>
-          )}
-
-          {activeTab === 'advanced' && (
-            <div className="mt-6 flex justify-end">
-              <button onClick={handleSaveAdvanced} disabled={isSaving} className="bg-violet-600 text-white hover:bg-violet-700 transition-colors px-8 py-2.5 rounded-lg text-sm font-semibold flex items-center gap-2 shadow-sm disabled:opacity-50">
-                {isSaving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />} Save All Advanced Rules
-              </button>
-            </div>
+            </>
           )}
 
         </>
       )}
 
       {showCanvas && (
-        <PlaybookCanvas 
+        <PlaybookCanvas
           initialSteps={playbookSteps}
           onClose={() => setShowCanvas(false)}
           onSave={async (steps) => {
@@ -731,7 +727,7 @@ const Automation: React.FC = () => {
                 showToast('Playbook Flow saved successfully!');
                 setShowCanvas(false);
               }
-            } catch (error) { showToast('Failed to save playbook.', 'error'); } 
+            } catch (error) { showToast('Failed to save playbook.', 'error'); }
             finally { setIsSaving(false); }
           }}
         />

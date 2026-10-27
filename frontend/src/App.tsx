@@ -179,8 +179,8 @@ function AppContent() {
     ? 'Administrator'
     : isFreePlan ? 'Free plan' : `${plan} plan`;
   const planChipClass = user?.roleCode === 'SUPER_ADMIN'
-    ? 'chip chip-warn'
-    : isFreePlan ? 'chip' : 'chip chip-accent';
+    ? 'chip chip-dot chip-warn'
+    : isFreePlan ? 'chip chip-dot' : 'chip chip-dot chip-accent';
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', width: '100%', maxWidth: '100vw', overflow: 'hidden' }}>

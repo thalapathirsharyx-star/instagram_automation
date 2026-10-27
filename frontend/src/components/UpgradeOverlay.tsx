@@ -16,17 +16,17 @@ const UpgradeOverlay: React.FC<Props> = ({ feature, onClose }) => {
   const navigate = useNavigate();
 
   return (
-    <div className="absolute inset-0 z-50 flex items-center justify-center rounded-[10px] bg-porcelain/80 backdrop-blur-[2px]">
+    <div className="absolute inset-0 z-50 flex items-center justify-center rounded-[inherit] bg-porcelain/80 p-4 backdrop-blur-[2px]">
       <div className="surface-lifted relative max-w-sm p-6 text-center">
         {onClose && (
-          <button onClick={onClose} className="btn btn-quiet btn-icon absolute right-2 top-2" aria-label="Close">
+          <button onClick={onClose} className="btn btn-ghost btn-icon btn-sm absolute right-2 top-2" aria-label="Close">
             <X size={16} />
           </button>
         )}
 
-        <div className="mx-auto mb-4 flex h-9 w-9 items-center justify-center rounded-full border border-hairline bg-porcelain-deep text-ink-soft">
+        <span className="icon-tile is-neutral mx-auto mb-4">
           <Lock size={16} />
-        </div>
+        </span>
 
         <h3 className="font-display text-[17px] font-semibold text-ink">{feature} is on the Pro plan</h3>
         <p className="mx-auto mt-1.5 max-w-[34ch] text-[15px] leading-relaxed text-ink-soft">

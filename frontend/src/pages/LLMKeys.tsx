@@ -1,8 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { Key, Eye, EyeOff, Loader2, Sparkles, ShieldCheck, CheckCircle2, AlertTriangle, Zap, Server, ArrowRightLeft, Check, CheckCircle, XCircle } from 'lucide-react';
+import { Key, Eye, EyeOff, Loader2, Sparkles, ShieldCheck, Zap, Server, Check, CheckCircle, XCircle } from 'lucide-react';
 import { getLLMKeys, updateLLMKeys } from '../api/admin.api';
+import { useToast } from '../context/ToastContext';
+
+type ProviderId = 'openai' | 'gemini' | 'groq';
+
+const PROVIDERS: { id: ProviderId; name: string; models: string; placeholder: string; icon: React.ElementType; headline: string }[] = [
+  { id: 'openai', name: 'OpenAI', models: 'GPT-4, GPT-3.5-Turbo', placeholder: 'sk-...', icon: Sparkles, headline: 'OpenAI GPT-4' },
+  { id: 'gemini', name: 'Google Gemini', models: 'Gemini 1.5 Pro / Flash', placeholder: 'AIzaSy...', icon: ShieldCheck, headline: 'Google Gemini Pro' },
+  { id: 'groq', name: 'Groq', models: 'Llama-3 Ultra-fast', placeholder: 'gsk_...', icon: Zap, headline: 'Groq Llama-3' },
+];
 
 const LLMKeys: React.FC = () => {
+  const { toast } = useToast();
   const [keys, setKeys] = useState({ openai: '', gemini: '', groq: '', active_provider: 'openai', active_model: '' });
   const [visibleFields, setVisibleFields] = useState<Record<string, boolean>>({
     openai: false,
@@ -11,18 +21,14 @@ const LLMKeys: React.FC = () => {
   });
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-  const [toasts, setToasts] = useState<{ id: number; type: 'success' | 'error'; text: string }[]>([]);
 
   useEffect(() => {
     fetchKeys();
   }, []);
 
   const showToast = (type: 'success' | 'error', text: string) => {
-    const id = Date.now();
-    setToasts(prev => [...prev, { id, type, text }]);
-    setTimeout(() => {
-      setToasts(prev => prev.filter(t => t.id !== id));
-    }, 4000);
+    if (type === 'success') toast.success(text);
+    else toast.error(text);
   };
 
   const fetchKeys = async () => {
@@ -63,320 +69,180 @@ const LLMKeys: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="flex h-full min-h-[500px] items-center justify-center text-zinc-500 font-medium">
-        <Loader2 size={24} className="animate-spin mr-3 text-zinc-400" /> Initializing AI Infrastructure...
+      <div className="page">
+        <div className="surface empty">
+          <Loader2 size={22} className="animate-spin text-ink-faint" />
+          <p className="empty-body">Loading AI providers…</p>
+        </div>
       </div>
     );
   }
 
   const connectedCount = [keys.openai, keys.gemini, keys.groq].filter(k => k && k.trim() !== '').length;
+  const active = PROVIDERS.find(p => p.id === keys.active_provider) ?? PROVIDERS[2];
 
   return (
-    <div className="max-w-6xl mx-auto pb-12 font-sans">
-      
-      {/* Toast Notifications container */}
-      <div className="fixed top-6 right-6 z-50 flex flex-col gap-3 pointer-events-none">
-        {toasts.map(t => (
-          <div 
-            key={t.id} 
-            className={`pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-xl shadow-lg border transition-all duration-300 ${
-              t.type === 'success' 
-                ? 'bg-zinc-900 border-zinc-800 text-white' 
-                : 'bg-white border-rose-200 text-rose-900 shadow-rose-100/50'
-            }`}
-            style={{ animation: 'slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1)' }}
-          >
-            {t.type === 'success' ? <CheckCircle2 size={18} className="text-emerald-400" /> : <AlertTriangle size={18} className="text-rose-500" />}
-            <span className="text-sm font-medium">{t.text}</span>
-          </div>
-        ))}
+    <div className="page">
+      <div className="page-head">
+        <div>
+          <h1 className="page-title">LLM providers</h1>
+          <p className="page-sub">
+            Manage the AI providers powering Flazly's automation, lead qualification, customer conversations, and autonomous AI agents.
+          </p>
+        </div>
+        <button onClick={() => handleSave()} disabled={isSaving} aria-busy={isSaving || undefined} className="btn btn-primary">
+          {isSaving ? <Loader2 size={16} className="animate-spin" /> : <ShieldCheck size={16} />}
+          Save configuration
+        </button>
       </div>
 
-      <style dangerouslySetInnerHTML={{__html: `
-        @keyframes slideIn {
-          from { transform: translateX(100%); opacity: 0; }
-          to { transform: translateX(0); opacity: 1; }
-        }
-      `}} />
-
-      {/* Header Section */}
-      <div className="mb-8">
-        <h1 className="page-title">LLM providers</h1>
-        <p className="text-sm text-zinc-500 max-w-2xl leading-relaxed">
-          Manage the AI providers powering Flazly's automation, lead qualification, customer conversations, and autonomous AI agents.
-        </p>
-      </div>
-
-      {/* Metrics Row */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <div className="bg-white border border-zinc-200/80 rounded-2xl p-5 shadow-sm">
-          <div className="flex items-center gap-2 text-zinc-500 text-xs font-semibold mb-3">
-            <Server size={14} /> Connected Providers
-          </div>
-          <div className="text-2xl font-semibold text-zinc-900">{connectedCount} <span className="text-sm font-medium text-zinc-400">/ 3</span></div>
-        </div>
-        
-        <div className="bg-white border border-zinc-200/80 rounded-2xl p-5 shadow-sm">
-          <div className="flex items-center gap-2 text-zinc-500 text-xs font-semibold mb-3">
-            <Zap size={14} /> Active Engine
-          </div>
-          <div className="text-2xl font-semibold text-zinc-900 capitalize">
-            {keys.active_provider === 'openai' ? 'OpenAI' : keys.active_provider === 'gemini' ? 'Gemini' : 'Groq'}
-          </div>
-        </div>
-
-        <div className="bg-white border border-zinc-200/80 rounded-2xl p-5 shadow-sm">
-          <div className="flex items-center gap-2 text-zinc-500 text-xs font-semibold mb-3">
-            <ShieldCheck size={14} /> System Health
-          </div>
-          <div className="flex items-center gap-2 text-2xl font-semibold text-emerald-600">
-            <div className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
-            Healthy
-          </div>
-        </div>
-
-      </div>
-
-      {/* Active Provider Highlight */}
-      <div className="bg-white border border-zinc-200/80 rounded-2xl p-6 lg:p-8 shadow-sm mb-8 relative overflow-hidden group hover:border-violet-200 transition-colors">
-        
-        <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-8 relative z-10">
-          <div>
-            <div className="flex items-center gap-2 mb-3">
-              <div className="px-2.5 py-1 rounded-full bg-emerald-100 border border-emerald-200 flex items-center gap-1.5 text-[13px] font-medium text-emerald-700">
-                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500"></div> Active Provider
-              </div>
+      <div className="stack">
+        <div className="metric-grid">
+          <div className="metric tone-blue">
+            <div className="metric-head">
+              <span className="metric-label">Connected providers</span>
+              <span className="icon-tile is-sm"><Server size={16} /></span>
             </div>
-            <h2 className="text-3xl font-semibold text-zinc-900 mb-2 tracking-tight">
-              {keys.active_provider === 'openai' ? 'OpenAI GPT-4' : keys.active_provider === 'gemini' ? 'Google Gemini Pro' : 'Groq Llama-3'}
-            </h2>
-            <p className="text-sm text-zinc-500 max-w-lg leading-relaxed">
-              Currently intercepting and processing all live user requests. This engine is highly integrated with the platform's core automation loop.
-            </p>
-            
-            <div className="mt-8">
-              <span className="text-xs font-semibold text-zinc-400 mb-3 block">Currently Powering</span>
-              <div className="grid grid-cols-2 gap-y-3 gap-x-6">
+            <span className="metric-figure">{connectedCount}<span className="text-[17px] font-normal text-ink-soft"> / 3</span></span>
+          </div>
+          <div className="metric tone-lavender">
+            <div className="metric-head">
+              <span className="metric-label">Active engine</span>
+              <span className="icon-tile is-sm"><Zap size={16} /></span>
+            </div>
+            <span className="metric-figure">{keys.active_provider === 'openai' ? 'OpenAI' : keys.active_provider === 'gemini' ? 'Gemini' : 'Groq'}</span>
+          </div>
+          <div className="metric tone-mint">
+            <div className="metric-head">
+              <span className="metric-label">System health</span>
+              <span className="icon-tile is-sm"><ShieldCheck size={16} /></span>
+            </div>
+            <span className="metric-figure">Healthy</span>
+          </div>
+        </div>
+
+        <section className="surface p-6">
+          <div className="flex flex-col justify-between gap-8 lg:flex-row lg:items-start">
+            <div className="min-w-0">
+              <span className="chip chip-dot chip-go">Active provider</span>
+              <h2 className="mt-3 text-[26px] font-bold tracking-[-0.02em] text-ink">{active.headline}</h2>
+              <p className="mt-1.5 max-w-lg text-[14px] leading-relaxed text-ink-soft">
+                Currently intercepting and processing all live user requests. This engine is highly integrated with the platform's core automation loop.
+              </p>
+
+              <p className="mb-3 mt-6 text-[13px] font-medium text-ink-soft">Currently powering</p>
+              <ul className="grid grid-cols-1 gap-x-6 gap-y-2.5 sm:grid-cols-2">
                 {['AI Chat Agents', 'Instagram DM Automation', 'Lead Qualification', 'CRM Sync Workflows'].map(module => (
-                  <div key={module} className="flex items-center gap-2.5 text-sm text-zinc-700 font-medium">
-                    <div className="w-5 h-5 rounded-full bg-violet-50 border border-violet-100 flex items-center justify-center">
-                      <Check size={12} className="text-violet-600" strokeWidth={3} />
-                    </div>
+                  <li key={module} className="flex items-center gap-2.5 text-[14px] text-ink">
+                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-viridian-tint text-viridian">
+                      <Check size={12} strokeWidth={3} />
+                    </span>
                     {module}
-                  </div>
+                  </li>
                 ))}
+              </ul>
+            </div>
+
+            <div className="w-full shrink-0 space-y-4 rounded-[10px] border border-hairline bg-porcelain p-5 lg:w-80">
+              <div>
+                <label htmlFor="active-provider" className="field-label">Default engine</label>
+                <select
+                  id="active-provider"
+                  value={keys.active_provider}
+                  onChange={(e) => setKeys(prev => ({ ...prev, active_provider: e.target.value }))}
+                  className="field bg-surface"
+                >
+                  <option value="openai">OpenAI</option>
+                  <option value="gemini">Google Gemini</option>
+                  <option value="groq">Groq</option>
+                </select>
+              </div>
+              <div>
+                <label htmlFor="model-override" className="field-label">Model override <span className="font-normal text-ink-soft">(optional)</span></label>
+                <input
+                  id="model-override"
+                  type="text"
+                  value={keys.active_model || ''}
+                  onChange={(e) => setKeys(prev => ({ ...prev, active_model: e.target.value }))}
+                  className="field bg-surface font-mono text-[14px]"
+                  placeholder="e.g. gpt-4o, llama-3.3-70b-versatile"
+                  spellCheck={false}
+                />
+                <p className="field-hint">Leave blank to use the default model. Changes apply to all production workflows once saved.</p>
               </div>
             </div>
           </div>
-          
-          <div className="bg-zinc-50 border border-zinc-200/80 rounded-xl p-5 w-full lg:w-80 shrink-0 shadow-inner">
-            <label className="block text-xs font-semibold text-zinc-500 mb-3">Change Default Engine</label>
-            <div className="relative mb-4">
-              <select 
-                value={keys.active_provider}
-                onChange={(e) => setKeys(prev => ({ ...prev, active_provider: e.target.value }))}
-                className="w-full appearance-none bg-white border border-zinc-300 rounded-lg py-3 pl-4 pr-10 text-sm font-semibold text-zinc-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500 transition-all cursor-pointer hover:border-zinc-400"
-              >
-                <option value="openai">OpenAI</option>
-                <option value="gemini">Google Gemini</option>
-                <option value="groq">Groq</option>
-              </select>
-              <ArrowRightLeft size={16} className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none" />
-            </div>
-            
-            <label className="block text-xs font-semibold text-zinc-500 mb-2 mt-5">Model Override (Optional)</label>
-            <div className="relative mb-3">
-              <input
-                type="text"
-                value={keys.active_model || ''}
-                onChange={(e) => setKeys(prev => ({ ...prev, active_model: e.target.value }))}
-                className="w-full bg-white border border-zinc-300 rounded-lg py-2.5 px-4 text-sm font-mono text-zinc-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500 transition-all hover:border-zinc-400"
-                placeholder="e.g. gpt-4o, llama-3.3-70b-versatile"
-              />
-            </div>
+        </section>
 
-            <p className="text-[13px] text-zinc-500 leading-relaxed font-medium">
-              Leave model blank to use defaults. Changes apply instantly to all production workflows.
-            </p>
+        <div>
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+            <h2 className="section-title">Provider connections</h2>
+            <span className="flex items-center gap-1.5 text-[13px] text-ink-soft">
+              <Key size={14} /> Masked keys are kept as they are when you save
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+            {PROVIDERS.map(({ id, name, models, placeholder, icon: Icon }) => {
+              const isActive = keys.active_provider === id;
+              const hasKey = !!keys[id];
+              return (
+                <section
+                  key={id}
+                  className={`surface flex flex-col p-5 ${isActive ? 'border-viridian ring-1 ring-viridian' : ''}`}
+                  aria-labelledby={`provider-${id}`}
+                >
+                  <div className="mb-5 flex items-start justify-between gap-3">
+                    <div className="flex items-center gap-3">
+                      <span className="icon-tile"><Icon size={18} /></span>
+                      <div>
+                        <h3 id={`provider-${id}`} className="text-[15px] font-semibold text-ink">{name}</h3>
+                        <p className="text-[13px] text-ink-soft">{models}</p>
+                      </div>
+                    </div>
+                    {hasKey ? (
+                      <span className="chip chip-go"><CheckCircle size={12} /> Connected</span>
+                    ) : (
+                      <span className="chip chip-stop"><XCircle size={12} /> Missing</span>
+                    )}
+                  </div>
+
+                  <div className="flex-1">
+                    <label htmlFor={`key-${id}`} className="field-label">API secret key</label>
+                    <div className="relative">
+                      <input
+                        id={`key-${id}`}
+                        type={visibleFields[id] ? 'text' : 'password'}
+                        value={keys[id]}
+                        onChange={(e) => setKeys(prev => ({ ...prev, [id]: e.target.value }))}
+                        placeholder={placeholder}
+                        autoComplete="off"
+                        spellCheck={false}
+                        className="field pr-11 font-mono text-[14px]"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => toggleVisibility(id)}
+                        className="btn btn-ghost btn-icon btn-sm absolute right-1.5 top-1/2 -translate-y-1/2"
+                        aria-label={visibleFields[id] ? `Hide ${name} key` : `Show ${name} key`}
+                      >
+                        {visibleFields[id] ? <EyeOff size={16} /> : <Eye size={16} />}
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="mt-5 flex items-center justify-between border-t border-hairline pt-3 text-[13px]">
+                    <span className="text-ink-soft">Last verified: just now</span>
+                    <span className={isActive ? 'font-semibold text-viridian' : 'text-ink-soft'}>
+                      {isActive ? 'Primary engine' : 'Backup ready'}
+                    </span>
+                  </div>
+                </section>
+              );
+            })}
           </div>
         </div>
       </div>
-
-      <div className="mb-6 flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-zinc-900">Provider Connections</h2>
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-1.5 text-xs font-semibold text-zinc-500">
-            <Key size={14} className="text-zinc-400" /> Masked keys are preserved on save
-          </div>
-          <button
-            onClick={() => handleSave()}
-            disabled={isSaving}
-            className="bg-zinc-900 text-white hover:bg-zinc-800 transition-all shadow-md hover:shadow-lg disabled:opacity-70 disabled:hover:bg-zinc-900 px-5 py-2.5 rounded-lg text-sm font-semibold flex items-center gap-2"
-          >
-            {isSaving ? <Loader2 size={16} className="animate-spin" /> : <ShieldCheck size={16} />}
-            <span>Save Configuration</span>
-          </button>
-        </div>
-      </div>
-
-      {/* Provider Cards Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        
-        {/* OpenAI Card */}
-        <div className={`bg-white border ${keys.active_provider === 'openai' ? 'border-violet-400 ring-1 ring-violet-400 shadow-violet-100' : 'border-zinc-200/80 hover:border-zinc-300'} rounded-2xl p-6 shadow-sm transition-all duration-200 group flex flex-col`}>
-          <div className="flex justify-between items-start mb-6">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center text-purple-600 border border-purple-100">
-                <Sparkles size={20} />
-              </div>
-              <div>
-                <h3 className="font-semibold text-zinc-900">OpenAI</h3>
-                <p className="text-xs font-medium text-zinc-500">GPT-4, GPT-3.5-Turbo</p>
-              </div>
-            </div>
-            {keys.openai ? (
-              <span className="flex items-center gap-1 text-[13px] font-medium text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md border border-emerald-100">
-                <CheckCircle size={12} /> Connected
-              </span>
-            ) : (
-              <span className="flex items-center gap-1 text-[13px] font-medium text-rose-600 bg-rose-50 px-2 py-1 rounded-md border border-rose-100">
-                <XCircle size={12} /> Missing
-              </span>
-            )}
-          </div>
-          
-          <div className="flex-1">
-            <label className="block text-[13px] font-medium text-zinc-500 mb-2">API Secret Key</label>
-            <div className="relative group-focus-within:ring-2 ring-violet-500/20 rounded-lg transition-all">
-              <input
-                type={visibleFields.openai ? 'text' : 'password'}
-                value={keys.openai}
-                onChange={(e) => setKeys(prev => ({ ...prev, openai: e.target.value }))}
-                placeholder="sk-..."
-                className="w-full bg-zinc-50 border border-zinc-200 rounded-lg py-2.5 pl-3 pr-10 text-sm text-zinc-900 focus:outline-none focus:border-violet-500 focus:bg-white transition-colors font-mono"
-              />
-              <button
-                type="button"
-                onClick={() => toggleVisibility('openai')}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600 transition-colors"
-              >
-                {visibleFields.openai ? <EyeOff size={16} /> : <Eye size={16} />}
-              </button>
-            </div>
-          </div>
-          
-          <div className="mt-6 pt-4 border-t border-zinc-100 flex items-center justify-between text-xs font-medium">
-            <span className="text-zinc-400">Last verified: Just now</span>
-            <span className={keys.active_provider === 'openai' ? "text-violet-600 font-semibold" : "text-zinc-400"}>
-              {keys.active_provider === 'openai' ? "Primary Engine" : "Backup Ready"}
-            </span>
-          </div>
-        </div>
-
-        {/* Gemini Card */}
-        <div className={`bg-white border ${keys.active_provider === 'gemini' ? 'border-violet-400 ring-1 ring-violet-400 shadow-violet-100' : 'border-zinc-200/80 hover:border-zinc-300'} rounded-2xl p-6 shadow-sm transition-all duration-200 group flex flex-col`}>
-          <div className="flex justify-between items-start mb-6">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 border border-blue-100">
-                <ShieldCheck size={20} />
-              </div>
-              <div>
-                <h3 className="font-semibold text-zinc-900">Google Gemini</h3>
-                <p className="text-xs font-medium text-zinc-500">Gemini 1.5 Pro / Flash</p>
-              </div>
-            </div>
-            {keys.gemini ? (
-              <span className="flex items-center gap-1 text-[13px] font-medium text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md border border-emerald-100">
-                <CheckCircle size={12} /> Connected
-              </span>
-            ) : (
-              <span className="flex items-center gap-1 text-[13px] font-medium text-rose-600 bg-rose-50 px-2 py-1 rounded-md border border-rose-100">
-                <XCircle size={12} /> Missing
-              </span>
-            )}
-          </div>
-          
-          <div className="flex-1">
-            <label className="block text-[13px] font-medium text-zinc-500 mb-2">API Secret Key</label>
-            <div className="relative group-focus-within:ring-2 ring-violet-500/20 rounded-lg transition-all">
-              <input
-                type={visibleFields.gemini ? 'text' : 'password'}
-                value={keys.gemini}
-                onChange={(e) => setKeys(prev => ({ ...prev, gemini: e.target.value }))}
-                placeholder="AIzaSy..."
-                className="w-full bg-zinc-50 border border-zinc-200 rounded-lg py-2.5 pl-3 pr-10 text-sm text-zinc-900 focus:outline-none focus:border-violet-500 focus:bg-white transition-colors font-mono"
-              />
-              <button
-                type="button"
-                onClick={() => toggleVisibility('gemini')}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600 transition-colors"
-              >
-                {visibleFields.gemini ? <EyeOff size={16} /> : <Eye size={16} />}
-              </button>
-            </div>
-          </div>
-          
-          <div className="mt-6 pt-4 border-t border-zinc-100 flex items-center justify-between text-xs font-medium">
-            <span className="text-zinc-400">Last verified: Just now</span>
-            <span className={keys.active_provider === 'gemini' ? "text-violet-600 font-semibold" : "text-zinc-400"}>
-              {keys.active_provider === 'gemini' ? "Primary Engine" : "Backup Ready"}
-            </span>
-          </div>
-        </div>
-
-        {/* Groq Card */}
-        <div className={`bg-white border ${keys.active_provider === 'groq' ? 'border-violet-400 ring-1 ring-violet-400 shadow-violet-100' : 'border-zinc-200/80 hover:border-zinc-300'} rounded-2xl p-6 shadow-sm transition-all duration-200 group flex flex-col`}>
-          <div className="flex justify-between items-start mb-6">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600 border border-emerald-100">
-                <Zap size={20} />
-              </div>
-              <div>
-                <h3 className="font-semibold text-zinc-900">Groq</h3>
-                <p className="text-xs font-medium text-zinc-500">Llama-3 Ultra-fast</p>
-              </div>
-            </div>
-            {keys.groq ? (
-              <span className="flex items-center gap-1 text-[13px] font-medium text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md border border-emerald-100">
-                <CheckCircle size={12} /> Connected
-              </span>
-            ) : (
-              <span className="flex items-center gap-1 text-[13px] font-medium text-rose-600 bg-rose-50 px-2 py-1 rounded-md border border-rose-100">
-                <XCircle size={12} /> Missing
-              </span>
-            )}
-          </div>
-          
-          <div className="flex-1">
-            <label className="block text-[13px] font-medium text-zinc-500 mb-2">API Secret Key</label>
-            <div className="relative group-focus-within:ring-2 ring-violet-500/20 rounded-lg transition-all">
-              <input
-                type={visibleFields.groq ? 'text' : 'password'}
-                value={keys.groq}
-                onChange={(e) => setKeys(prev => ({ ...prev, groq: e.target.value }))}
-                placeholder="gsk_..."
-                className="w-full bg-zinc-50 border border-zinc-200 rounded-lg py-2.5 pl-3 pr-10 text-sm text-zinc-900 focus:outline-none focus:border-violet-500 focus:bg-white transition-colors font-mono"
-              />
-              <button
-                type="button"
-                onClick={() => toggleVisibility('groq')}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600 transition-colors"
-              >
-                {visibleFields.groq ? <EyeOff size={16} /> : <Eye size={16} />}
-              </button>
-            </div>
-          </div>
-          
-          <div className="mt-6 pt-4 border-t border-zinc-100 flex items-center justify-between text-xs font-medium">
-            <span className="text-zinc-400">Last verified: Just now</span>
-            <span className={keys.active_provider === 'groq' ? "text-violet-600 font-semibold" : "text-zinc-400"}>
-              {keys.active_provider === 'groq' ? "Primary Engine" : "Backup Ready"}
-            </span>
-          </div>
-        </div>
-
-      </div>
-
     </div>
   );
 };

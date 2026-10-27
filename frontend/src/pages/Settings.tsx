@@ -1,44 +1,112 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { 
-  Shield, 
-  Bot,
-  User, 
-  Database,
-  ExternalLink,
-  Info,
+import {
+  Shield,
+  ShieldCheck,
+  User,
+  Code2,
   CheckCircle2,
   X,
-  Smartphone,
-  ToggleRight,
-  Link2,
-  Zap,
-  RefreshCw,
-  Sparkles,
-  AlertCircle,
   Lock,
   Eye,
-  EyeOff
+  EyeOff,
+  Copy,
+  Loader2
 } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
 import { ConfirmModal } from '../components/ConfirmModal';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-const SettingsCard: React.FC<{ icon: any, title: string, subtitle: string, children: React.ReactNode }> = ({ icon: Icon, title, subtitle, children }) => (
-  <div className="bg-white border border-zinc-200/80 rounded-2xl shadow-sm flex flex-col gap-6 group hover:border-zinc-300 transition-all duration-300 p-6 md:p-8">
-    <div className="flex gap-4 items-start">
-      <div className="p-3 bg-violet-50 text-violet-600 rounded-xl group-hover:scale-105 transition-transform duration-300 shadow-sm border border-violet-100 shrink-0">
-        <Icon size={22} strokeWidth={2.5}/>
+/**
+ * One settings section: a titled card whose body is a stack of rows and whose
+ * footer carries the section's hint and its save action, so every section
+ * commits on its own.
+ */
+const SettingsSection: React.FC<{
+  title: string;
+  description: string;
+  badge?: React.ReactNode;
+  footer?: React.ReactNode;
+  tone?: 'danger';
+  children: React.ReactNode;
+}> = ({ title, description, badge, footer, tone, children }) => (
+  <section
+    className={`surface overflow-hidden ${tone === 'danger' ? 'border-[color:color-mix(in_oklab,var(--signal-stop)_35%,transparent)]' : ''}`}
+  >
+    <header className="flex items-start justify-between gap-4 px-6 pt-5">
+      <div className="min-w-0">
+        <h2 className={`text-[16px] font-semibold ${tone === 'danger' ? 'text-signal-stop' : 'text-ink'}`}>{title}</h2>
+        <p className="mt-1 text-[14px] text-ink-soft">{description}</p>
       </div>
-      <div>
-        <h3 className="text-lg font-semibold text-zinc-900">{title}</h3>
-        <p className="text-[13px] text-zinc-500 font-medium mt-1 leading-relaxed">{subtitle}</p>
-      </div>
+      {badge && <div className="shrink-0">{badge}</div>}
+    </header>
+    <div className="divide-y divide-hairline px-6">{children}</div>
+    {footer && (
+      <footer className="flex flex-wrap items-center justify-between gap-3 border-t border-hairline bg-porcelain px-6 py-3">
+        {footer}
+      </footer>
+    )}
+  </section>
+);
+
+/** A label on the left, its control on the right; stacks on narrow screens. */
+const SettingRow: React.FC<{
+  label: string;
+  description?: string;
+  htmlFor?: string;
+  children: React.ReactNode;
+}> = ({ label, description, htmlFor, children }) => (
+  <div className="grid gap-2 py-5 sm:grid-cols-[200px_minmax(0,1fr)] sm:items-center sm:gap-6">
+    <div>
+      <label htmlFor={htmlFor} className="block text-[14px] font-medium text-ink">{label}</label>
+      {description && <p className="mt-0.5 text-[13px] text-ink-soft">{description}</p>}
     </div>
-    <div className="flex flex-col gap-6 flex-grow pt-4 border-t border-zinc-100">
-      {children}
-    </div>
+    <div className="min-w-0">{children}</div>
   </div>
+);
+
+const PasswordField: React.FC<{
+  id: string;
+  value: string;
+  onChange: (value: string) => void;
+  visible: boolean;
+  onToggle: () => void;
+  autoComplete: string;
+  invalid?: boolean;
+}> = ({ id, value, onChange, visible, onToggle, autoComplete, invalid }) => (
+  <div className="relative">
+    <input
+      id={id}
+      type={visible ? 'text' : 'password'}
+      autoComplete={autoComplete}
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      aria-invalid={invalid || undefined}
+      className={`field pr-10 ${invalid ? 'border-signal-stop' : ''}`}
+    />
+    <button
+      type="button"
+      onClick={onToggle}
+      className="absolute right-2 top-1/2 -translate-y-1/2 rounded-[6px] p-1 text-ink-faint transition-colors hover:text-ink"
+      aria-label={visible ? 'Hide password' : 'Show password'}
+    >
+      {visible ? <EyeOff size={16} /> : <Eye size={16} />}
+    </button>
+  </div>
+);
+
+/** A numbered step in a setup flow. */
+const SetupStep: React.FC<{ n: number; title: string; description: string; children?: React.ReactNode }> = ({ n, title, description, children }) => (
+  <li className="flex gap-4">
+    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-viridian-tint text-[13px] font-semibold text-viridian">
+      {n}
+    </span>
+    <div className="min-w-0 flex-grow">
+      <p className="text-[14px] font-medium text-ink">{title}</p>
+      <p className="mt-0.5 text-[13px] text-ink-soft">{description}</p>
+      {children && <div className="mt-3">{children}</div>}
+    </div>
+  </li>
 );
 
 import { connectInstagram, getInstagramSettings, updateInstagramSettings, disconnectInstagram } from '../api/crm.api';
@@ -52,7 +120,6 @@ const Settings: React.FC = () => {
   const [isLoadingStatus, setIsLoadingStatus] = useState(true);
   const [showGuide, setShowGuide] = useState(false);
   const [connectionDetails, setConnectionDetails] = useState<{ name: string, id: string } | null>(null);
-  const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [profileEmail, setProfileEmail] = useState(user?.email || '');
   const [isUpdatingProfile, setIsUpdatingProfile] = useState(false);
 
@@ -66,7 +133,6 @@ const Settings: React.FC = () => {
       const res = await api.put('/User/UpdateProfile', { email: profileEmail });
       if (res.data.Type === 'S') {
         updateUser({ email: profileEmail });
-        setIsEditingProfile(false);
         toast.success('Profile updated successfully!');
       } else {
         toast.error(res.data.Message || 'Failed to update profile.');
@@ -315,7 +381,7 @@ const Settings: React.FC = () => {
     }
   };
 
-  type TabType = 'profile' | 'webhooks';
+  type TabType = 'profile' | 'security' | 'webhooks';
   const [activeTab, setActiveTab] = useState<TabType>('profile');
   const location = useLocation();
   const navigate = useNavigate();
@@ -327,431 +393,387 @@ const Settings: React.FC = () => {
       navigate('/meta-integration', { replace: true });
       return;
     }
-    if (tabParam && ['profile', 'webhooks'].includes(tabParam)) {
+    if (tabParam && ['profile', 'security', 'webhooks'].includes(tabParam)) {
       setActiveTab(tabParam as TabType);
     }
   }, [location, navigate]);
 
-  const tabs = [
-    { id: 'profile', label: 'My Profile', icon: User },
-    ...(user?.roleCode !== 'SUPER_ADMIN' ? [
-      { id: 'webhooks', label: 'Developer API', icon: Database }
-    ] : [])
+  // The tab lives in the URL so a section can be linked to and survives a reload.
+  const selectTab = (tab: TabType) => {
+    setActiveTab(tab);
+    navigate({ search: `?tab=${tab}` }, { replace: true });
+  };
+
+  const isSuperAdmin = user?.roleCode === 'SUPER_ADMIN';
+  const navGroups: { label: string; items: { id: TabType; label: string; icon: React.ElementType }[] }[] = [
+    {
+      label: 'Account',
+      items: [
+        { id: 'profile', label: 'General', icon: User },
+        { id: 'security', label: 'Security', icon: Lock },
+      ],
+    },
+    ...(!isSuperAdmin ? [{
+      label: 'Workspace',
+      items: [{ id: 'webhooks' as TabType, label: 'Developer API', icon: Code2 }],
+    }] : []),
   ];
 
+  const webhookUrl = `${window.location.origin}/api/v1/Instagram/Webhook`;
+  const copyWebhookUrl = async () => {
+    try {
+      await navigator.clipboard.writeText(webhookUrl);
+      toast.success('Webhook URL copied.');
+    } catch {
+      toast.error('Could not copy. Select the URL and copy it manually.');
+    }
+  };
+
+  const profileDirty = profileEmail.trim() !== (user?.email || '');
+  const passwordReady = (isGoogleRegistered || !!currentPassword) && !!newPassword && !!confirmPassword;
+  const passwordMismatch = !!confirmPassword && newPassword !== confirmPassword;
+
   return (
-    <div className="max-w-7xl mx-auto pb-12 font-sans animate-in fade-in duration-500">
-      
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8 border-b border-zinc-200/80 pb-6">
+    <div className="page">
+      <div className="page-head">
         <div>
           <h1 className="page-title">Settings</h1>
-          <p className="page-sub">Manage your personal profile, security preferences, and core system integrations.</p>
+          <p className="page-sub">Manage your profile, sign-in security and workspace integrations.</p>
         </div>
       </div>
 
-      <div className="flex flex-col md:flex-row gap-8 min-h-[600px]">
-        
-        {/* LEFT SIDEBAR NAVIGATION */}
-        <div className="w-full md:w-60 shrink-0 flex flex-col">
-          {tabs.map((tab) => {
-            const Icon = tab.icon;
-            const isActive = activeTab === tab.id;
-            // The same rail the main navigation uses: a rail reads as position,
-            // where a filled pill reads as a button waiting to be pressed.
-            return (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id as TabType)}
-                aria-current={isActive}
-                className={`flex w-full items-center gap-3 border-l-2 px-3.5 py-2.5 text-left text-[15px] transition-colors ${
-                  isActive
-                    ? 'border-viridian bg-surface font-semibold text-ink'
-                    : 'border-transparent font-medium text-ink-soft hover:bg-porcelain-deep hover:text-ink'
-                }`}
-              >
-                <Icon size={17} className={isActive ? 'text-viridian' : 'text-ink-faint'} />
-                {tab.label}
-              </button>
-            );
-          })}
-        </div>
+      <div className="grid gap-8 md:grid-cols-[208px_minmax(0,1fr)]">
+        {/* Section navigation. A row of pills on small screens, a list beside the content on wide ones. */}
+        <nav aria-label="Settings sections" className="flex gap-1 overflow-x-auto md:flex-col md:gap-0.5 md:overflow-visible">
+          {navGroups.map((group) => (
+            <div key={group.label} className="contents md:block">
+              <p className="hidden px-3 pb-1.5 pt-4 text-[12px] font-medium text-ink-faint first:pt-0 md:block">
+                {group.label}
+              </p>
+              {group.items.map(({ id, label, icon: Icon }) => {
+                const isActive = activeTab === id;
+                return (
+                  <button
+                    key={id}
+                    type="button"
+                    onClick={() => selectTab(id)}
+                    aria-current={isActive ? 'page' : undefined}
+                    className={`flex shrink-0 items-center gap-2.5 rounded-[10px] px-3 py-2 text-left text-[14px] transition-colors md:w-full ${
+                      isActive
+                        ? 'bg-viridian-tint font-semibold text-viridian'
+                        : 'font-medium text-ink-soft hover:bg-porcelain-deep hover:text-ink'
+                    }`}
+                  >
+                    <Icon size={17} className={isActive ? 'text-viridian' : 'text-ink-faint'} />
+                    {label}
+                  </button>
+                );
+              })}
+            </div>
+          ))}
+        </nav>
 
-        {/* RIGHT CONTENT AREA */}
-        <div className="flex-1 max-w-3xl space-y-8">
-          
+        <div className="min-w-0 max-w-3xl space-y-6">
           {activeTab === 'profile' && (
-            <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
-              <SettingsCard 
-                icon={User} 
-                title="Account Details" 
-                subtitle="Your primary authentication identity on the platform."
-              >
-                {isEditingProfile ? (
-                  <div className="space-y-4">
-                    <div className="flex gap-4 items-center mb-2">
-                      <div className="w-12 h-12 bg-zinc-100 text-zinc-600 rounded-full flex items-center justify-center border border-zinc-200 font-semibold text-lg shadow-sm uppercase shrink-0">
-                        {profileEmail[0]?.toUpperCase() || 'A'}
-                      </div>
-                      <div className="flex-grow">
-                        <label className="text-[13px] font-medium text-zinc-500 ml-1">Email Address</label>
-                        <input 
-                          type="email"
-                          value={profileEmail}
-                          onChange={(e) => setProfileEmail(e.target.value)}
-                          className="w-full bg-white border border-zinc-200 rounded-lg px-4 py-2.5 text-sm text-zinc-900 focus:border-violet-500 focus:ring-1 focus:ring-violet-500 outline-none transition-all mt-1 shadow-sm"
-                        />
-                      </div>
-                    </div>
-                    <div className="flex gap-3">
-                      <button 
-                        onClick={handleUpdateProfile}
-                        disabled={isUpdatingProfile}
-                        className="px-6 py-2.5 bg-zinc-900 text-white rounded-lg font-semibold hover:bg-zinc-800 transition-colors shadow-sm text-sm disabled:opacity-50"
-                      >
-                        {isUpdatingProfile ? 'Saving...' : 'Save Changes'}
-                      </button>
-                      <button 
-                        onClick={() => {
-                          setIsEditingProfile(false);
-                          setProfileEmail(user?.email || '');
-                        }}
-                        className="px-6 py-2.5 bg-white border border-zinc-200 rounded-lg text-zinc-700 font-semibold hover:bg-zinc-50 transition-colors shadow-sm text-sm"
-                      >
-                        Cancel
-                      </button>
-                    </div>
-                  </div>
-                ) : (
+            <>
+              <SettingsSection
+                title="Profile"
+                description="Your sign-in identity on Flazly."
+                footer={
                   <>
-                    <div className="flex gap-4 items-center mb-2">
-                      <div className="w-12 h-12 bg-zinc-100 text-zinc-600 rounded-full flex items-center justify-center border border-zinc-200 font-semibold text-lg shadow-sm uppercase shrink-0">
-                        {user?.email?.[0] || 'A'}
-                      </div>
-                      <div>
-                        <div className="font-semibold text-zinc-900 text-base">{user?.email || 'app.flazly@gmail.com'}</div>
-                        <div className="text-xs text-zinc-500 font-medium mt-0.5">{user?.role || 'Administrator Access'}</div>
-                      </div>
+                    <p className="text-[13px] text-ink-soft">Used to sign in and for account notifications.</p>
+                    <div className="flex gap-2">
+                      {profileDirty && (
+                        <button type="button" className="btn btn-sm" onClick={() => setProfileEmail(user?.email || '')}>
+                          Cancel
+                        </button>
+                      )}
+                      <button
+                        type="button"
+                        className="btn btn-primary btn-sm"
+                        onClick={handleUpdateProfile}
+                        disabled={!profileDirty || isUpdatingProfile}
+                      >
+                        {isUpdatingProfile && <Loader2 size={13} className="animate-spin" />}
+                        Save
+                      </button>
                     </div>
-                    <button 
-                      onClick={() => setIsEditingProfile(true)}
-                      className="w-fit px-5 py-2.5 bg-white border border-zinc-200 rounded-lg text-zinc-700 font-semibold hover:bg-zinc-50 transition-colors shadow-sm text-sm"
+                  </>
+                }
+              >
+                <SettingRow label="Avatar" description="Generated from your email address.">
+                  <span className="avatar-initial" style={{ width: 44, height: 44, fontSize: 17 }}>
+                    {(user?.email?.[0] || '?').toUpperCase()}
+                  </span>
+                </SettingRow>
+                <SettingRow label="Email address" htmlFor="profile-email">
+                  <input
+                    id="profile-email"
+                    type="email"
+                    autoComplete="email"
+                    value={profileEmail}
+                    onChange={(e) => setProfileEmail(e.target.value)}
+                    className="field"
+                  />
+                </SettingRow>
+                <SettingRow label="Role" description="Set by your workspace owner.">
+                  <span className="chip">{user?.role || '—'}</span>
+                </SettingRow>
+              </SettingsSection>
+
+              <SettingsSection title="Danger zone" description="Irreversible actions on this workspace." tone="danger">
+                <div className="flex flex-col gap-4 py-5 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="min-w-0">
+                    <p className="text-[14px] font-medium text-ink">Delete account and purge data</p>
+                    <p className="mt-0.5 max-w-[52ch] text-[13px] text-ink-soft">
+                      Permanently removes your Instagram connection, access tokens, leads, conversations and knowledge base.
+                    </p>
+                  </div>
+                  <button type="button" onClick={() => setConfirmPurge(true)} className="btn btn-danger btn-sm shrink-0">
+                    Delete account
+                  </button>
+                </div>
+              </SettingsSection>
+            </>
+          )}
+
+          {activeTab === 'security' && (
+            <>
+              <SettingsSection
+                title="Password"
+                description="Change the password you use to sign in."
+                footer={
+                  <>
+                    <p className={`text-[13px] ${passwordMismatch ? 'text-signal-stop' : 'text-ink-soft'}`}>
+                      {passwordMismatch ? 'The new passwords do not match.' : 'At least 6 characters.'}
+                    </p>
+                    <button
+                      type="button"
+                      onClick={handleChangePassword}
+                      disabled={isChangingPassword || !passwordReady || passwordMismatch}
+                      className="btn btn-primary btn-sm"
                     >
-                      Edit Profile
+                      {isChangingPassword && <Loader2 size={13} className="animate-spin" />}
+                      Update password
                     </button>
                   </>
-                )}
-              </SettingsCard>
-
-              <SettingsCard 
-                icon={Lock} 
-                title="Account Security" 
-                subtitle="Manage your password and authentication methods."
+                }
               >
-                <div className="space-y-6">
-                  <div className="flex items-center gap-3 p-4 bg-emerald-50 border border-emerald-100 rounded-xl">
-                    <input 
-                      type="checkbox" 
+                <div className="py-5">
+                  <label htmlFor="googleAuth" className="flex cursor-pointer items-start gap-3 rounded-[10px] border border-hairline bg-porcelain px-4 py-3">
+                    <input
+                      type="checkbox"
                       id="googleAuth"
                       checked={isGoogleRegistered}
                       onChange={(e) => setIsGoogleRegistered(e.target.checked)}
-                      className="w-4 h-4 rounded border-emerald-300 text-emerald-600 focus:ring-emerald-500/50 cursor-pointer"
+                      className="mt-0.5 h-4 w-4 shrink-0 cursor-pointer accent-[var(--viridian)]"
                     />
-                    <label htmlFor="googleAuth" className="text-xs font-medium text-emerald-800 cursor-pointer select-none">
-                      I registered using Google (Skip current password validation)
-                    </label>
-                  </div>
-
-                  {!isGoogleRegistered && (
-                    <div>
-                      <label className="text-[13px] font-medium text-zinc-500 ml-1">Current Password</label>
-                      <div className="relative mt-1">
-                        <input 
-                          type={showCurrentPassword ? "text" : "password"}
-                          placeholder="Enter your current password"
-                          value={currentPassword}
-                          onChange={(e) => setCurrentPassword(e.target.value)}
-                          className="w-full bg-white border border-zinc-200 rounded-lg pl-4 pr-10 py-2.5 text-sm text-zinc-900 focus:border-violet-500 focus:ring-1 focus:ring-violet-500 outline-none transition-all shadow-sm placeholder:text-zinc-400"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-                          className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600 transition-colors"
-                        >
-                          {showCurrentPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-                        </button>
-                      </div>
-                    </div>
-                  )}
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="text-[13px] font-medium text-zinc-500 ml-1">New Password</label>
-                      <div className="relative mt-1">
-                        <input 
-                          type={showNewPassword ? "text" : "password"}
-                          placeholder="Minimum 6 characters"
-                          value={newPassword}
-                          onChange={(e) => setNewPassword(e.target.value)}
-                          className="w-full bg-white border border-zinc-200 rounded-lg pl-4 pr-10 py-2.5 text-sm text-zinc-900 focus:border-violet-500 focus:ring-1 focus:ring-violet-500 outline-none transition-all shadow-sm placeholder:text-zinc-400"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setShowNewPassword(!showNewPassword)}
-                          className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600 transition-colors"
-                        >
-                          {showNewPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-                        </button>
-                      </div>
-                    </div>
-                    <div>
-                      <label className="text-[13px] font-medium text-zinc-500 ml-1">Confirm New Password</label>
-                      <div className="relative mt-1">
-                        <input 
-                          type={showConfirmPassword ? "text" : "password"}
-                          placeholder="Retype your new password"
-                          value={confirmPassword}
-                          onChange={(e) => setConfirmPassword(e.target.value)}
-                          className="w-full bg-white border border-zinc-200 rounded-lg pl-4 pr-10 py-2.5 text-sm text-zinc-900 focus:border-violet-500 focus:ring-1 focus:ring-violet-500 outline-none transition-all shadow-sm placeholder:text-zinc-400"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                          className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600 transition-colors"
-                        >
-                          {showConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex justify-end pt-2">
-                    <button 
-                      onClick={handleChangePassword}
-                      disabled={isChangingPassword || (!isGoogleRegistered && !currentPassword) || !newPassword || !confirmPassword}
-                      className="px-6 py-2.5 bg-zinc-900 text-white rounded-lg font-semibold hover:bg-zinc-800 transition-colors shadow-sm text-sm disabled:opacity-50"
-                    >
-                      {isChangingPassword ? 'Updating...' : 'Update Password'}
-                    </button>
-                  </div>
+                    <span>
+                      <span className="block text-[14px] font-medium text-ink">I signed up with Google</span>
+                      <span className="block text-[13px] text-ink-soft">
+                        You have never set a password, so there is no current one to enter.
+                      </span>
+                    </span>
+                  </label>
                 </div>
-              </SettingsCard>
 
-              <SettingsCard 
-                icon={Shield} 
-                title="Multi-Factor Authentication" 
-                subtitle="Add an extra layer of protection to your account using TOTP."
+                {!isGoogleRegistered && (
+                  <SettingRow label="Current password" htmlFor="current-password">
+                    <PasswordField
+                      id="current-password"
+                      value={currentPassword}
+                      onChange={setCurrentPassword}
+                      visible={showCurrentPassword}
+                      onToggle={() => setShowCurrentPassword(!showCurrentPassword)}
+                      autoComplete="current-password"
+                    />
+                  </SettingRow>
+                )}
+                <SettingRow label="New password" htmlFor="new-password">
+                  <PasswordField
+                    id="new-password"
+                    value={newPassword}
+                    onChange={setNewPassword}
+                    visible={showNewPassword}
+                    onToggle={() => setShowNewPassword(!showNewPassword)}
+                    autoComplete="new-password"
+                  />
+                </SettingRow>
+                <SettingRow label="Confirm new password" htmlFor="confirm-password">
+                  <PasswordField
+                    id="confirm-password"
+                    value={confirmPassword}
+                    onChange={setConfirmPassword}
+                    visible={showConfirmPassword}
+                    onToggle={() => setShowConfirmPassword(!showConfirmPassword)}
+                    autoComplete="new-password"
+                    invalid={passwordMismatch}
+                  />
+                </SettingRow>
+              </SettingsSection>
+
+              <SettingsSection
+                title="Two-factor authentication"
+                description="Require a code from an authenticator app when you sign in."
+                badge={
+                  user?.twoFactorEnabled
+                    ? <span className="chip chip-dot chip-go">Enabled</span>
+                    : <span className="chip chip-dot">Off</span>
+                }
+                footer={
+                  isSettingUp2Fa ? (
+                    <>
+                      <p className="text-[13px] text-ink-soft">2FA turns on once the code is verified.</p>
+                      <div className="flex gap-2">
+                        <button type="button" onClick={() => setIsSettingUp2Fa(false)} className="btn btn-sm">
+                          Cancel
+                        </button>
+                        <button
+                          type="button"
+                          onClick={handleVerifyAndEnable2FA}
+                          disabled={isVerifying2Fa || totpVerificationCode.length < 6}
+                          className="btn btn-primary btn-sm"
+                        >
+                          {isVerifying2Fa && <Loader2 size={13} className="animate-spin" />}
+                          Verify and enable
+                        </button>
+                      </div>
+                    </>
+                  ) : user?.twoFactorEnabled ? (
+                    <>
+                      <p className="text-[13px] text-ink-soft">Turning it off makes your account easier to break into.</p>
+                      <button type="button" onClick={() => setConfirmDisable2FA(true)} className="btn btn-sm text-signal-stop">
+                        Disable 2FA
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <p className="text-[13px] text-ink-soft">Works with Google Authenticator, 1Password, Authy and others.</p>
+                      <button type="button" onClick={handleSetup2FA} className="btn btn-primary btn-sm">
+                        Set up 2FA
+                      </button>
+                    </>
+                  )
+                }
               >
                 {isSettingUp2Fa ? (
-                  <div className="space-y-6">
-                    <div className="p-6 bg-zinc-50 rounded-xl border border-zinc-200 flex flex-col items-center gap-4 shadow-inner">
-                      <p className="text-sm text-zinc-600 text-center font-medium">Scan this QR code with your authenticator app (e.g. Google Authenticator, Duo):</p>
-                      {qrCodeUrl && (
-                        <div className="bg-white p-3 rounded-xl border border-zinc-200 shadow-sm">
-                          <img src={qrCodeUrl} alt="2FA QR Code" className="w-40 h-40" />
+                  <ol className="space-y-6 py-5">
+                    <SetupStep n={1} title="Scan the QR code" description="Open your authenticator app and scan this code, or enter the key by hand.">
+                      <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+                        <div className="flex h-[168px] w-[168px] shrink-0 items-center justify-center rounded-[10px] border border-hairline bg-white p-3">
+                          {qrCodeUrl
+                            ? <img src={qrCodeUrl} alt="Two-factor setup QR code" className="h-full w-full" />
+                            : <Loader2 size={20} className="animate-spin text-ink-faint" />}
                         </div>
-                      )}
-                      <div className="text-center w-full max-w-sm mt-2">
-                        <span className="text-[13px] text-zinc-500 font-medium block mb-1">Manual Setup Key</span>
-                        <code className="text-xs text-zinc-700 font-mono bg-white px-3 py-2 rounded-lg border border-zinc-200 block select-all">{secret}</code>
+                        <div className="min-w-0 flex-grow">
+                          <p className="field-label">Setup key</p>
+                          <code className="block select-all break-all rounded-[10px] border border-hairline bg-porcelain px-3 py-2 text-[13px] text-ink">
+                            {secret || '…'}
+                          </code>
+                        </div>
                       </div>
-                    </div>
+                    </SetupStep>
 
                     {recoveryCodes.length > 0 && (
-                      <div className="p-6 bg-rose-50 rounded-xl border border-rose-100">
-                        <span className="text-[13px] text-rose-700 font-medium block mb-3 flex items-center gap-1.5">
-                          <AlertCircle size={14}/> Save Backup Codes
-                        </span>
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-                          {recoveryCodes.map((code, idx) => (
-                            <code key={idx} className="text-xs text-rose-900 font-mono bg-white px-2.5 py-1.5 rounded border border-rose-200 text-center select-all shadow-sm">{code}</code>
+                      <SetupStep n={2} title="Save your recovery codes" description="Each code signs you in once if you lose your device. Store them somewhere safe; they are not shown again.">
+                        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+                          {recoveryCodes.map((code) => (
+                            <code key={code} className="select-all rounded-[8px] border border-hairline bg-porcelain px-2 py-1.5 text-center text-[13px] text-ink">
+                              {code}
+                            </code>
                           ))}
                         </div>
-                      </div>
+                      </SetupStep>
                     )}
 
-                    <div className="space-y-2 max-w-xs mx-auto">
-                      <label className="text-[13px] font-medium text-zinc-500 ml-1 text-center block">Enter 6-Digit Code</label>
-                      <input 
+                    <SetupStep n={recoveryCodes.length > 0 ? 3 : 2} title="Enter the 6-digit code" description="Type the code your app shows now to confirm it is set up.">
+                      <input
                         type="text"
-                        placeholder="000 000"
+                        inputMode="numeric"
+                        autoComplete="one-time-code"
+                        placeholder="000000"
                         value={totpVerificationCode}
-                        onChange={(e) => setTotpVerificationCode(e.target.value)}
-                        className="w-full bg-white border border-zinc-200 rounded-xl px-4 py-3 text-zinc-900 focus:border-violet-500 focus:ring-1 focus:ring-violet-500 outline-none transition-all shadow-sm text-center font-mono tracking-[0.5em] text-xl"
+                        onChange={(e) => setTotpVerificationCode(e.target.value.replace(/\D/g, ''))}
+                        onKeyDown={(e) => { if (e.key === 'Enter' && totpVerificationCode.length === 6) handleVerifyAndEnable2FA(); }}
+                        className="field max-w-[200px] text-center font-mono text-[18px] tracking-[0.4em]"
                         maxLength={6}
+                        aria-label="Verification code"
                       />
-                    </div>
-
-                    <div className="flex justify-center gap-3 pt-4">
-                      <button 
-                        onClick={() => setIsSettingUp2Fa(false)}
-                        className="px-6 py-2.5 bg-white border border-zinc-200 rounded-lg text-zinc-700 font-semibold hover:bg-zinc-50 transition-colors shadow-sm text-sm"
-                      >
-                        Cancel
-                      </button>
-                      <button 
-                        onClick={handleVerifyAndEnable2FA}
-                        disabled={isVerifying2Fa || !totpVerificationCode}
-                        className="px-6 py-2.5 bg-violet-600 text-white rounded-lg font-semibold hover:bg-violet-700 transition-colors shadow-sm text-sm disabled:opacity-50"
-                      >
-                        {isVerifying2Fa ? 'Verifying...' : 'Verify & Enable 2FA'}
-                      </button>
-                    </div>
-                  </div>
-                ) : user?.twoFactorEnabled ? (
-                  <div className="space-y-6">
-                    <div className="flex items-center gap-2 text-emerald-700 font-medium text-[13px] bg-emerald-50 px-3 py-1.5 rounded-lg w-fit border border-emerald-200">
-                      <CheckCircle2 size={14} className="text-emerald-500" />
-                      2FA Active
-                    </div>
-                    <p className="text-sm text-zinc-600 font-medium leading-relaxed">
-                      Your account is currently protected by a secondary Time-based One-Time Password (TOTP).
-                    </p>
-                    <button 
-                      onClick={() => setConfirmDisable2FA(true)}
-                      className="px-5 py-2.5 bg-white text-rose-600 hover:bg-rose-50 border border-zinc-200 hover:border-rose-200 rounded-lg font-semibold transition-colors text-sm shadow-sm"
-                    >
-                      Disable Multi-Factor Authentication
-                    </button>
-                  </div>
+                    </SetupStep>
+                  </ol>
                 ) : (
-                  <div className="space-y-6">
-                    <div className="flex items-center gap-2 text-zinc-600 font-medium text-[13px] bg-zinc-100 px-3 py-1.5 rounded-lg w-fit border border-zinc-200">
-                      <AlertCircle size={14} className="text-zinc-500" />
-                      2FA Inactive
-                    </div>
-                    <p className="text-sm text-zinc-600 font-medium leading-relaxed max-w-xl">
-                      Protect your account from unauthorized access by requiring a second form of authentication during sign in.
+                  <div className="flex items-start gap-3 py-5">
+                    <span className={`mt-0.5 shrink-0 ${user?.twoFactorEnabled ? 'text-signal-go' : 'text-ink-faint'}`}>
+                      {user?.twoFactorEnabled ? <ShieldCheck size={20} /> : <Shield size={20} />}
+                    </span>
+                    <p className="text-[14px] text-ink-soft">
+                      {user?.twoFactorEnabled
+                        ? 'Your account asks for a one-time code from your authenticator app at every sign-in.'
+                        : 'Add a second step at sign-in so a stolen password alone cannot open your account.'}
                     </p>
-                    <button 
-                      onClick={handleSetup2FA}
-                      className="px-6 py-2.5 bg-zinc-900 text-white rounded-lg font-semibold hover:bg-zinc-800 transition-colors shadow-sm text-sm"
-                    >
-                      Enable 2FA Now
-                    </button>
                   </div>
                 )}
-              </SettingsCard>
-              
-              <div className="bg-rose-50 border border-rose-200 rounded-2xl p-6 md:p-8">
-                <div className="flex gap-4 items-start mb-4">
-                  <div className="p-2.5 bg-rose-100 text-rose-600 rounded-xl border border-rose-200 shrink-0">
-                    <AlertCircle size={20} strokeWidth={2.5}/>
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-semibold text-rose-900">Danger Zone</h3>
-                    <p className="text-[13px] text-rose-700 font-medium mt-1 leading-relaxed">Irreversible account and data management actions.</p>
-                  </div>
-                </div>
-                <div className="pt-4 border-t border-rose-200/50 mt-2">
-                  <p className="text-sm text-rose-800/80 font-medium leading-relaxed mb-6">
-                    This action is permanent. All your access tokens, CRM logs, message metadata, and settings will be completely destroyed.
-                  </p>
-                  <button 
-                    onClick={() => setConfirmPurge(true)}
-                    className="px-6 py-2.5 bg-white text-rose-600 border border-rose-200 rounded-lg font-medium hover:bg-rose-600 hover:text-white transition-colors text-sm shadow-sm"
-                  >
-                    Delete Account & Purge Data
-                  </button>
-                </div>
-              </div>
-            </div>
+              </SettingsSection>
+            </>
           )}
 
-          {activeTab === 'webhooks' && user?.roleCode !== 'SUPER_ADMIN' && (
-            <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
-              <SettingsCard 
-                icon={Database} 
-                title="Developer Infrastructure" 
-                subtitle="Configure payload destinations and API endpoints."
-              >
-                <div className="space-y-4">
-                  <label className="text-[13px] font-medium text-zinc-500 ml-1">Inbound Webhook URL</label>
-                  <div className="bg-zinc-50 p-4 rounded-xl border border-zinc-200 text-sm font-mono text-zinc-700 truncate shadow-inner select-all">
-                    {`${window.location.origin}/api/v1/Instagram/Webhook`}
-                  </div>
-                  <button className="flex items-center gap-2 px-4 py-2 bg-white border border-zinc-200 rounded-lg text-xs font-medium text-zinc-700 hover:bg-zinc-50 transition-colors shadow-sm mt-2">
-                    <Zap size={14} className="text-amber-500" /> Dispatch Test Event
+          {activeTab === 'webhooks' && !isSuperAdmin && (
+            <SettingsSection
+              title="Webhook"
+              description="Where Meta delivers Instagram messages, comments and story replies."
+              footer={
+                <p className="text-[13px] text-ink-soft">
+                  Paste this into the Webhooks section of your Meta app, subscribed to the Instagram object.
+                </p>
+              }
+            >
+              <SettingRow label="Callback URL" description="Read-only." htmlFor="webhook-url">
+                <div className="flex gap-2">
+                  <input
+                    id="webhook-url"
+                    readOnly
+                    value={webhookUrl}
+                    onFocus={(e) => e.target.select()}
+                    className="field min-w-0 font-mono text-[13px]"
+                  />
+                  <button type="button" onClick={copyWebhookUrl} className="btn shrink-0" aria-label="Copy webhook URL">
+                    <Copy size={15} />
+                    Copy
                   </button>
                 </div>
-              </SettingsCard>
-            </div>
+              </SettingRow>
+            </SettingsSection>
           )}
-          
         </div>
       </div>
 
       {/* Meta Link Guide Modal */}
       {showGuide && (
-        <div className="fixed inset-0 bg-zinc-900/40 backdrop-blur-sm flex items-center justify-center z-[100] p-4 sm:p-6 animate-in fade-in duration-200">
-          <div className="bg-white max-w-xl w-full rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
-            
-            <div className="px-6 py-5 border-b border-zinc-100 flex justify-between items-center bg-zinc-50/50">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-ink/40 p-4 backdrop-blur-sm sm:p-6">
+          <div className="surface-lifted w-full max-w-xl overflow-hidden" role="dialog" aria-modal="true" aria-labelledby="meta-guide-title">
+            <div className="flex items-start justify-between gap-4 border-b border-hairline px-6 py-5">
               <div>
-                <h2 className="text-lg font-semibold text-zinc-900">Required Meta Configuration</h2>
-                <p className="page-sub">Please ensure these steps are completed before linking.</p>
+                <h2 id="meta-guide-title" className="text-[18px] font-semibold text-ink">Finish setting up Instagram</h2>
+                <p className="mt-1 text-[14px] text-ink-soft">Complete these steps in Instagram, then try linking again.</p>
               </div>
-              <button 
-                onClick={() => setShowGuide(false)}
-                className="p-2 text-zinc-400 hover:text-zinc-600 hover:bg-zinc-100 rounded-full transition-colors"
-              >
-                <X size={20} />
+              <button type="button" onClick={() => setShowGuide(false)} className="btn btn-quiet btn-icon" aria-label="Close">
+                <X size={18} />
               </button>
             </div>
 
-            <div className="p-6 md:p-8 space-y-8">
-              
-              <div className="flex gap-4 items-start">
-                <div className="w-10 h-10 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center shrink-0 border border-blue-100 shadow-sm font-semibold">
-                  1
-                </div>
-                <div className="pt-1">
-                  <h4 className="font-medium text-zinc-900 text-sm mb-1">Switch to Professional Account</h4>
-                  <p className="text-sm text-zinc-500 font-medium leading-relaxed">
-                    Open the Instagram App &gt; Settings &gt; Account Type. Make sure you are switched to a <strong className="text-zinc-700">Business</strong> or <strong className="text-zinc-700">Creator</strong> account.
-                  </p>
-                </div>
-              </div>
+            <ol className="space-y-6 px-6 py-6">
+              <SetupStep n={1} title="Switch to a professional account" description="Instagram app → Settings → Account type. Choose Business or Creator." />
+              <SetupStep n={2} title="Link a Facebook Page" description="Edit profile → Public business information → Page. Select or create a Page to link." />
+              <SetupStep n={3} title="Allow access to messages" description={'Settings → Privacy → Messages. Turn on "Allow access to messages" at the bottom.'} />
+            </ol>
 
-              <div className="flex gap-4 items-start">
-                <div className="w-10 h-10 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center shrink-0 border border-blue-100 shadow-sm font-semibold">
-                  2
-                </div>
-                <div className="pt-1">
-                  <h4 className="font-medium text-zinc-900 text-sm mb-1">Link to a Facebook Page</h4>
-                  <p className="text-sm text-zinc-500 font-medium leading-relaxed">
-                    On your Instagram profile, click Edit Profile &gt; Public Business Information &gt; Page. Select or create a Facebook Page to link.
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex gap-4 items-start">
-                <div className="w-10 h-10 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center shrink-0 border border-blue-100 shadow-sm font-semibold">
-                  3
-                </div>
-                <div className="pt-1">
-                  <h4 className="font-medium text-zinc-900 text-sm mb-1">Allow Message Access</h4>
-                  <p className="text-sm text-zinc-500 font-medium leading-relaxed">
-                    In Instagram Settings &gt; Privacy &gt; Messages. Scroll to the bottom and turn <strong className="text-emerald-600 font-medium uppercase text-[13px] bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200 ml-1">On</strong> the "Allow Access to Messages" toggle.
-                  </p>
-                </div>
-              </div>
-
-            </div>
-
-            <div className="px-6 py-4 bg-zinc-50 border-t border-zinc-200 flex flex-col sm:flex-row gap-3">
-              <button 
-                onClick={handleConnect}
-                className="flex-1 px-4 py-2.5 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors shadow-sm flex items-center justify-center gap-2 text-sm"
-              >
-                <CheckCircle2 size={18} />
-                <span>I've Completed These Steps</span>
-              </button>
-              <button 
-                 onClick={() => setShowGuide(false)}
-                 className="flex-1 sm:flex-none px-4 py-2.5 bg-white border border-zinc-300 text-zinc-700 rounded-lg font-medium hover:bg-zinc-50 transition-colors shadow-sm text-sm"
-              >
+            <div className="flex flex-col-reverse gap-2 border-t border-hairline bg-porcelain px-6 py-4 sm:flex-row sm:justify-end">
+              <button type="button" onClick={() => setShowGuide(false)} className="btn">
                 Cancel
+              </button>
+              <button type="button" onClick={handleConnect} disabled={isConnecting} className="btn btn-primary">
+                {isConnecting ? <Loader2 size={15} className="animate-spin" /> : <CheckCircle2 size={15} />}
+                I've done these steps
               </button>
             </div>
           </div>

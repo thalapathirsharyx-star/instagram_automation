@@ -83,29 +83,24 @@ const Leads: React.FC = () => {
       </div>
 
       {/* Filters are the content's own statuses, so they double as a legend. */}
-      <div className="mb-4 flex flex-wrap items-center gap-1.5">
+      <div className="segmented mb-4 w-fit max-w-full" role="group" aria-label="Filter by status">
         {STATUS_FILTERS.map(status => {
           const count = status === 'All' ? leads.length : leads.filter(l => l.lead_status === status).length;
-          const isActive = statusFilter === status;
           return (
             <button
               key={status}
+              type="button"
               onClick={() => setStatusFilter(status)}
-              aria-pressed={isActive}
-              className={`rounded-[6px] border px-2.5 py-1 text-[13px] transition-colors ${
-                isActive
-                  ? 'border-ink bg-ink text-surface'
-                  : 'border-hairline bg-surface text-ink-soft hover:border-[color:var(--hairline-strong)] hover:text-ink'
-              }`}
+              aria-pressed={statusFilter === status}
             >
-              {status} <span className={isActive ? 'opacity-70' : 'text-ink-faint'}>{count}</span>
+              {status} <span className="count">{count}</span>
             </button>
           );
         })}
       </div>
 
       <div className="surface overflow-hidden">
-        <div className="overflow-x-auto">
+        <div className="table-wrap">
           <table className="data-table">
             <thead>
               <tr>
@@ -114,7 +109,7 @@ const Leads: React.FC = () => {
                 <th>Handled by</th>
                 <th>Last intent</th>
                 <th className="num">Score</th>
-                <th />
+                <th><span className="sr-only">Details</span></th>
               </tr>
             </thead>
             <tbody>
@@ -152,7 +147,14 @@ const Leads: React.FC = () => {
                     <div className="flex items-center gap-3">
                       <span className="avatar-initial">{lead.customer_name[0]}</span>
                       <div className="min-w-0">
-                        <div className="truncate font-medium">{lead.customer_name}</div>
+                        {/* The row is clickable for the mouse; this button is the keyboard's way in. */}
+                        <button
+                          type="button"
+                          onClick={(e) => { e.stopPropagation(); setSelectedLead(lead); }}
+                          className="block max-w-full truncate rounded-[4px] text-left font-medium text-ink hover:text-viridian"
+                        >
+                          {lead.customer_name}
+                        </button>
                         <div className="truncate text-[13px] text-ink-soft">@{lead.instagram_handle}</div>
                       </div>
                     </div>
@@ -177,7 +179,7 @@ const Leads: React.FC = () => {
                     </div>
                   </td>
                   <td className="w-10 text-right">
-                    <span className="text-ink-faint"><ExternalLink size={15} /></span>
+                    <ExternalLink size={15} className="inline text-ink-faint" aria-hidden="true" />
                   </td>
                 </tr>
               ))}
@@ -195,35 +197,30 @@ const Leads: React.FC = () => {
       </div>
 
       {selectedLead && (
-        <div
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-ink/45 p-4"
-          onClick={() => setSelectedLead(null)}
-        >
+        <div className="modal-backdrop" onClick={() => setSelectedLead(null)}>
           <div
             role="dialog"
             aria-modal="true"
             aria-labelledby="lead-name"
-            className="surface-lifted w-full max-w-xl overflow-hidden"
+            className="modal modal-lg max-w-xl"
             onClick={e => e.stopPropagation()}
           >
-            <div className="flex items-start justify-between gap-4 border-b border-hairline p-5">
-              <div className="flex items-center gap-3">
+            <div className="modal-head">
+              <div className="flex min-w-0 items-center gap-3">
                 <span className="avatar-initial" style={{ width: 42, height: 42, fontSize: 17 }}>
                   {selectedLead.customer_name[0]}
                 </span>
-                <div>
-                  <h2 id="lead-name" className="font-display text-[20px] font-semibold text-ink">
-                    {selectedLead.customer_name}
-                  </h2>
-                  <p className="text-[13px] text-ink-soft">@{selectedLead.instagram_handle}</p>
+                <div className="min-w-0">
+                  <h2 id="lead-name" className="truncate">{selectedLead.customer_name}</h2>
+                  <p className="truncate text-[13px] text-ink-soft">@{selectedLead.instagram_handle}</p>
                 </div>
               </div>
-              <button onClick={() => setSelectedLead(null)} className="btn btn-quiet btn-icon" aria-label="Close">
-                <X size={16} />
+              <button onClick={() => setSelectedLead(null)} className="btn btn-ghost btn-icon btn-sm" aria-label="Close" autoFocus>
+                <X size={18} />
               </button>
             </div>
 
-            <div className="max-h-[66vh] overflow-y-auto p-5">
+            <div className="modal-body">
               <div className="stat-row mb-5">
                 <div className="stat">
                   <span className="stat-label">Score</span>
@@ -264,7 +261,7 @@ const Leads: React.FC = () => {
               )}
             </div>
 
-            <div className="flex flex-wrap items-center justify-between gap-3 border-t border-hairline p-4">
+            <div className="modal-foot justify-between">
               <span className="text-[13px] text-ink-soft">
                 Last message {new Date(selectedLead.last_message_time || Date.now()).toLocaleDateString()}
               </span>

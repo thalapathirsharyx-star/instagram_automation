@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Activity, UserPlus, CreditCard, Zap, RefreshCw, Clock, AlertTriangle, ListFilter } from 'lucide-react';
+import { Activity, UserPlus, CreditCard, Zap, Clock, AlertTriangle, ListFilter, Loader2 } from 'lucide-react';
 import api from '../lib/axios';
 
 interface ActivityItem {
@@ -123,147 +123,134 @@ const AdminActivity: React.FC = () => {
     }
   };
 
+  // Each event already carries its tone as a colour; map it onto the shared tile tones.
+  const tileTone = (color: string) =>
+    color.includes('rose') ? 'is-stop' : color.includes('amber') ? 'is-warn' : color.includes('emerald') ? 'is-go' : '';
+
   const filterButtons = [
-    { key: 'all', label: 'All Events' },
+    { key: 'all', label: 'All events' },
     { key: 'new_client', label: 'Signups' },
     { key: 'plan_upgrade', label: 'Upgrades' },
-    { key: 'high_usage', label: 'Usage Alerts' },
+    { key: 'high_usage', label: 'Usage alerts' },
   ];
 
   if (isLoading) {
     return (
-      <div className="flex h-64 items-center justify-center text-zinc-500 font-medium">
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-8 h-8 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
-          <span className="text-sm">Fetching Audit Trail...</span>
+      <div className="page">
+        <div className="surface empty">
+          <Loader2 size={22} className="animate-spin text-ink-faint" />
+          <p className="empty-body">Loading the activity log…</p>
         </div>
       </div>
     );
   }
 
+  const counts = {
+    new_client: activities.filter(a => a.type === 'new_client').length,
+    plan_upgrade: activities.filter(a => a.type === 'plan_upgrade').length,
+    high_usage: activities.filter(a => a.type === 'high_usage').length,
+  };
+
   return (
-    <div className="max-w-7xl mx-auto pb-12 font-sans animate-in fade-in duration-500">
-      
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8 border-b border-zinc-200/80 pb-6">
+    <div className="page">
+      <div className="page-head">
         <div>
           <h1 className="page-title">Activity log</h1>
           <p className="page-sub">Real-time audit trail of SaaS signups, upgrades, and API warnings.</p>
         </div>
-        
-        <div className="flex items-center gap-2 bg-zinc-50 p-1.5 rounded-xl border border-zinc-200 shadow-sm shrink-0 overflow-x-auto">
-          {filterButtons.map(btn => (
-            <button
-              key={btn.key}
-              onClick={() => setFilter(btn.key)}
-              className={`px-4 py-2 rounded-lg text-xs font-medium transition-all whitespace-nowrap ${
-                filter === btn.key 
-                  ? 'bg-zinc-900 text-white shadow-sm' 
-                  : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100'
-              }`}
-            >
-              {btn.label}
-            </button>
+      </div>
+
+      <div className="stack">
+        <div className="metric-grid">
+          {[
+            { label: 'Signups', value: counts.new_client, icon: UserPlus, tone: 'tone-mint' },
+            { label: 'Plan upgrades', value: counts.plan_upgrade, icon: CreditCard, tone: 'tone-blue' },
+            { label: 'Usage alerts', value: counts.high_usage, icon: AlertTriangle, tone: 'tone-amber' },
+          ].map(({ label, value, icon: Icon, tone }) => (
+            <div key={label} className={`metric ${tone}`}>
+              <div className="metric-head">
+                <span className="metric-label">{label}</span>
+                <span className="icon-tile is-sm"><Icon size={16} /></span>
+              </div>
+              <span className="metric-figure">{value}</span>
+            </div>
           ))}
         </div>
-      </div>
 
-      {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-6 flex items-center gap-4 shadow-sm hover:shadow-md transition-shadow">
-          <div className="w-12 h-12 rounded-xl bg-white flex items-center justify-center text-emerald-600 border border-emerald-100 shadow-sm">
-            <UserPlus size={20} />
+        <section className="surface overflow-hidden">
+          <div className="surface-head flex-wrap">
+            <h2>
+              <span className="icon-tile is-sm"><Activity size={16} /></span>
+              Events
+              <span className="chip">{filteredActivities.length}</span>
+            </h2>
+            <div className="segmented" role="group" aria-label="Filter events">
+              {filterButtons.map(btn => (
+                <button
+                  key={btn.key}
+                  type="button"
+                  aria-pressed={filter === btn.key}
+                  onClick={() => setFilter(btn.key)}
+                >
+                  {btn.label}
+                </button>
+              ))}
+            </div>
           </div>
-          <div>
-            <div className="text-2xl font-semibold text-emerald-900 tracking-tight">{activities.filter(a => a.type === 'new_client').length}</div>
-            <div className="text-[13px] font-medium text-emerald-700 mt-0.5">Total Signups</div>
-          </div>
-        </div>
-        <div className="bg-violet-50 border border-violet-200 rounded-2xl p-6 flex items-center gap-4 shadow-sm hover:shadow-md transition-shadow">
-          <div className="w-12 h-12 rounded-xl bg-white flex items-center justify-center text-violet-600 border border-violet-100 shadow-sm">
-            <CreditCard size={20} />
-          </div>
-          <div>
-            <div className="text-2xl font-semibold text-violet-900 tracking-tight">{activities.filter(a => a.type === 'plan_upgrade').length}</div>
-            <div className="text-[13px] font-medium text-violet-700 mt-0.5">Plan Upgrades</div>
-          </div>
-        </div>
-        <div className="bg-amber-50 border border-amber-200 rounded-2xl p-6 flex items-center gap-4 shadow-sm hover:shadow-md transition-shadow">
-          <div className="w-12 h-12 rounded-xl bg-white flex items-center justify-center text-amber-600 border border-amber-100 shadow-sm">
-            <AlertTriangle size={20} />
-          </div>
-          <div>
-            <div className="text-2xl font-semibold text-amber-900 tracking-tight">{activities.filter(a => a.type === 'high_usage').length}</div>
-            <div className="text-[13px] font-medium text-amber-700 mt-0.5">Usage Alerts</div>
-          </div>
-        </div>
-      </div>
 
-      {/* Activity Timeline */}
-      <div className="bg-white border border-zinc-200/80 rounded-2xl shadow-sm overflow-hidden">
-        <div className="px-6 py-4 border-b border-zinc-100 bg-zinc-50 flex justify-between items-center">
-          <div className="flex items-center gap-2">
-            <Activity size={18} className="text-blue-600" />
-            <h3 className="text-sm font-medium text-zinc-900">Event Audit Trail</h3>
-          </div>
-          <span className="text-xs font-medium text-zinc-500 bg-zinc-200 px-2 py-0.5 rounded-full">{filteredActivities.length} events</span>
-        </div>
-        
-        <div className="divide-y divide-zinc-100">
           {filteredActivities.length === 0 ? (
-            <div className="py-24 text-center flex flex-col items-center justify-center">
-              <div className="w-16 h-16 bg-zinc-50 rounded-2xl flex items-center justify-center mb-4 border border-zinc-200 shadow-sm">
-                <ListFilter size={24} className="text-zinc-400" />
-              </div>
-              <h3 className="text-base font-semibold text-zinc-900 mb-1">No events found</h3>
-              <p className="page-sub">Try changing the filter settings.</p>
+            <div className="empty py-12">
+              <span className="empty-mark"><ListFilter /></span>
+              <p className="empty-title">No events</p>
+              <p className="empty-body">Nothing of this type has happened yet. Try another filter.</p>
             </div>
           ) : (
             <>
-              {paginatedActivities.map((item, i) => (
-                <div key={item.id} className="p-5 sm:p-6 hover:bg-zinc-50 transition-colors flex items-start gap-4 sm:gap-6 group">
-                  <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl flex items-center justify-center shrink-0 border shadow-sm transition-transform group-hover:scale-105 ${item.bgLight} ${item.color} ${item.borderLight}`}>
-                    {item.icon}
-                  </div>
-                  <div className="flex-grow min-w-0 pt-0.5">
-                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-1 sm:gap-4 mb-1">
-                      <span className="font-medium text-zinc-900 text-sm sm:text-base leading-tight">{item.title}</span>
-                      <span className="flex items-center gap-1.5 text-[13px] font-medium text-zinc-400 shrink-0">
-                        <Clock size={12} /> {formatTime(item.timestamp)}
-                      </span>
+              <ul className="divide-y divide-hairline">
+                {paginatedActivities.map((item) => (
+                  <li key={item.id} className="flex items-start gap-4 px-5 py-4">
+                    <span className={`icon-tile ${tileTone(item.color)}`}>
+                      {item.icon}
+                    </span>
+                    <div className="min-w-0 flex-grow">
+                      <div className="flex flex-col gap-0.5 sm:flex-row sm:items-baseline sm:justify-between sm:gap-4">
+                        <p className="text-[15px] font-medium text-ink">{item.title}</p>
+                        <time dateTime={item.timestamp} className="flex shrink-0 items-center gap-1.5 text-[13px] text-ink-soft">
+                          <Clock size={12} /> {formatTime(item.timestamp)}
+                        </time>
+                      </div>
+                      <p className="mt-0.5 text-[14px] leading-relaxed text-ink-soft">{item.description}</p>
                     </div>
-                    <p className="text-[13px] sm:text-sm text-zinc-500 font-medium leading-relaxed max-w-3xl">{item.description}</p>
-                  </div>
-                </div>
-              ))}
-              
-              {/* Pagination Footer */}
+                  </li>
+                ))}
+              </ul>
+
               {totalPages > 1 && (
-                <div className="px-6 py-4 bg-zinc-50 border-t border-zinc-200 flex justify-between items-center">
-                  <span className="text-xs font-medium text-zinc-500">
-                    Showing <strong className="text-zinc-900">{((currentPage - 1) * itemsPerPage) + 1}</strong> to <strong className="text-zinc-900">{Math.min(currentPage * itemsPerPage, filteredActivities.length)}</strong> of <strong className="text-zinc-900">{filteredActivities.length}</strong> events
-                  </span>
+                <nav className="surface-foot" aria-label="Pagination">
+                  <p className="text-[13px] text-ink-soft">
+                    Showing <span className="font-medium text-ink">{((currentPage - 1) * itemsPerPage) + 1}</span>–<span className="font-medium text-ink">{Math.min(currentPage * itemsPerPage, filteredActivities.length)}</span> of <span className="font-medium text-ink">{filteredActivities.length}</span> events
+                  </p>
                   <div className="flex gap-2">
                     <button
                       onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                       disabled={currentPage === 1}
-                      className="px-4 py-2 border border-zinc-200 rounded-lg text-xs font-medium text-zinc-600 bg-white hover:bg-zinc-50 disabled:opacity-50 disabled:hover:bg-white shadow-sm transition-colors"
+                      className="btn btn-sm"
                     >
                       Previous
                     </button>
                     <button
                       onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                       disabled={currentPage === totalPages}
-                      className="px-4 py-2 border border-zinc-200 rounded-lg text-xs font-medium text-zinc-600 bg-white hover:bg-zinc-50 disabled:opacity-50 disabled:hover:bg-white shadow-sm transition-colors"
+                      className="btn btn-sm"
                     >
                       Next
                     </button>
                   </div>
-                </div>
+                </nav>
               )}
             </>
           )}
-        </div>
+        </section>
       </div>
     </div>
   );

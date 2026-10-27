@@ -31,20 +31,27 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
   onCancel,
 }) => {
   const confirmRef = useRef<HTMLButtonElement>(null);
+  const cancelRef = useRef<HTMLButtonElement>(null);
 
-  // Escape closes, and focus lands on the action so the keyboard works alone.
+  // Escape closes. Focus lands on the action, except for a destructive one,
+  // where a reflexive Enter must not delete anything; it lands on Cancel.
+  // Closing hands focus back to whatever opened the dialog.
   useEffect(() => {
     if (!isOpen) return;
-    confirmRef.current?.focus();
+    const opener = document.activeElement as HTMLElement | null;
+    (type === 'danger' ? cancelRef : confirmRef).current?.focus();
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && !isLoading) onCancel();
     };
     window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [isOpen, isLoading, onCancel]);
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      opener?.focus?.();
+    };
+  }, [isOpen, isLoading, onCancel, type]);
 
   const confirmClass =
-    type === 'danger' ? 'btn btn-danger' : type === 'warning' ? 'btn btn-primary' : 'btn btn-accent';
+    type === 'danger' ? 'btn btn-danger' : 'btn btn-primary';
 
   return (
     <AnimatePresence>
@@ -67,24 +74,22 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 8 }}
             transition={{ duration: 0.16, ease: 'easeOut' }}
-            className="surface-lifted relative w-full max-w-md overflow-hidden"
+            className="modal relative max-w-md"
           >
-            <div className="flex items-start justify-between gap-4 border-b border-hairline p-5">
+            <div className="modal-head border-b-0 pb-2">
               <div>
-                <h3 id="confirm-title" className="font-display text-[17px] font-semibold text-ink">
-                  {title}
-                </h3>
+                <h3 id="confirm-title">{title}</h3>
                 <p className="mt-1.5 text-[15px] leading-relaxed text-ink-soft">{message}</p>
               </div>
               {!isLoading && (
-                <button onClick={onCancel} className="btn btn-quiet btn-icon -mt-1 -mr-1" aria-label="Close">
+                <button onClick={onCancel} className="btn btn-ghost btn-icon btn-sm -mr-2 -mt-1" aria-label="Close">
                   <X size={16} />
                 </button>
               )}
             </div>
 
-            <div className="flex justify-end gap-2 p-4">
-              <button type="button" onClick={onCancel} disabled={isLoading} className="btn">
+            <div className="modal-foot mt-3">
+              <button ref={cancelRef} type="button" onClick={onCancel} disabled={isLoading} className="btn">
                 {cancelText}
               </button>
               <button
@@ -92,6 +97,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
                 type="button"
                 onClick={onConfirm}
                 disabled={isLoading}
+                aria-busy={isLoading || undefined}
                 className={confirmClass}
               >
                 {isLoading && <Loader2 size={14} className="animate-spin" />}

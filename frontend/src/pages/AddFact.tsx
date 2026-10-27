@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FileText, Loader2, ArrowLeft } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import api from '../lib/axios';
 import { useToast } from '../context/ToastContext';
 
@@ -14,7 +14,7 @@ const AddFact: React.FC = () => {
 
   const handleAdd = async () => {
     if (!newTitle || !newContent) return;
-    
+
     try {
       setIsSaving(true);
       const res = await api.post('/Instagram/KnowledgeBase', {
@@ -38,46 +38,45 @@ const AddFact: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col gap-8 min-h-full animate-in fade-in duration-700 pb-10">
-      <div className="flex justify-between items-end">
+    <div className="page">
+      <Link to="/knowledge" className="page-back">
+        <ArrowLeft size={16} /> Back to Brain base
+      </Link>
+      <div className="page-head">
         <div>
-          <button 
-            onClick={() => navigate('/knowledge')}
-            className="flex items-center gap-2 text-zinc-400 hover:text-white mb-4 transition-colors font-medium"
-          >
-            <ArrowLeft size={18} /> Back to Brain Base
-          </button>
           <h1 className="page-title">Add a fact</h1>
-          <p className="text-zinc-400 font-medium">Add text-based information about your business.</p>
+          <p className="page-sub">Add text-based information about your business.</p>
         </div>
       </div>
 
-      <div className="w3-card p-10 border-purple-500/20 bg-zinc-900 animate-in slide-in-from-bottom-4 duration-500 shadow-xl max-w-3xl">
-        <h3 className="text-xl font-semibold text-zinc-100 flex items-center gap-3 mb-8">
-          <div className="p-2 bg-purple-500/10 rounded-lg text-purple-400 border border-purple-500/20">
-            <FileText size={20} />
-          </div> 
-          Fact Details
-        </h3>
-
-        <div className="space-y-6">
-          <div className="grid grid-cols-2 gap-6">
-            <div className="space-y-2">
-              <label className="text-xs font-medium text-zinc-500 ml-1">Title</label>
-              <input 
-                type="text" 
-                placeholder="e.g. Return Policy" 
+      <form
+        className="surface page-narrow overflow-hidden"
+        onSubmit={(e) => { e.preventDefault(); handleAdd(); }}
+      >
+        <div className="surface-head">
+          <h2><span className="icon-tile is-sm"><FileText size={16} /></span>Fact details</h2>
+        </div>
+        <div className="surface-body space-y-5">
+          <div className="grid gap-5 sm:grid-cols-2">
+            <div>
+              <label htmlFor="fact-title" className="field-label">Title</label>
+              <input
+                id="fact-title"
+                type="text"
+                placeholder="e.g. Return policy"
                 value={newTitle}
                 onChange={(e) => setNewTitle(e.target.value)}
-                className="w3-input w-full shadow-sm"
+                className="field"
+                required
               />
             </div>
-            <div className="space-y-2">
-              <label className="text-xs font-medium text-zinc-500 ml-1">Category</label>
-              <select 
+            <div>
+              <label htmlFor="fact-category" className="field-label">Category</label>
+              <select
+                id="fact-category"
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-                className="w3-input w-full shadow-sm appearance-none cursor-pointer"
+                className="field"
               >
                 <option>General</option>
                 <option>Products / Services</option>
@@ -87,24 +86,32 @@ const AddFact: React.FC = () => {
               </select>
             </div>
           </div>
-          <div className="space-y-2">
-            <label className="text-xs font-medium text-zinc-500 ml-1">Knowledge Content</label>
-            <textarea 
-              placeholder="Paste details here..." 
+          <div>
+            <label htmlFor="fact-content" className="field-label">Knowledge content</label>
+            <textarea
+              id="fact-content"
+              placeholder="Paste details here..."
               value={newContent}
               onChange={(e) => setNewContent(e.target.value)}
-              rows={6}
-              className="w3-input w-full shadow-sm resize-none"
+              rows={7}
+              className="field"
+              required
             />
           </div>
-          <div className="flex justify-end gap-4 pt-4 border-t border-white/5 mt-8">
-            <button onClick={() => navigate('/knowledge')} className="px-6 py-3 text-zinc-500 font-semibold hover:text-zinc-300">Cancel</button>
-            <button onClick={handleAdd} disabled={isSaving || !newTitle || !newContent} className="w3-button-primary px-10">
-              {isSaving ? <Loader2 size={20} className="animate-spin" /> : 'Save Fact'}
-            </button>
-          </div>
         </div>
-      </div>
+        <div className="surface-foot justify-end">
+          <button type="button" onClick={() => navigate('/knowledge')} className="btn">Cancel</button>
+          <button
+            type="submit"
+            disabled={isSaving || !newTitle || !newContent}
+            aria-busy={isSaving || undefined}
+            className="btn btn-primary"
+          >
+            {isSaving && <Loader2 size={15} className="animate-spin" />}
+            Save fact
+          </button>
+        </div>
+      </form>
     </div>
   );
 };
