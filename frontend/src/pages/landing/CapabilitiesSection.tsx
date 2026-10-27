@@ -1,5 +1,18 @@
 import React from 'react';
 import { Bot, FileText, Check } from 'lucide-react';
+import AnimatedIcon from '../../components/AnimatedIcon';
+import type { MotionIconName } from '../../components/AnimatedIcon';
+
+// One animated icon per card, matched to what the card describes. Cards not
+// listed here (Knowledge Base) keep their mockup alone.
+const CARD_ICONS: Record<string, MotionIconName> = {
+  'Smart Inbox': 'inbox',
+  'Flazly AI Agent': 'chat',
+  'Automation Builder': 'workflow',
+  'Comment-To-DM Workflows': 'reply',
+  'Lead Capture System': 'contact',
+  'Broadcast Campaigns': 'plane',
+};
 
 export const CapabilitiesSection: React.FC = () => {
   const capabilities = [
@@ -202,6 +215,11 @@ export const CapabilitiesSection: React.FC = () => {
 
                 <div className="flex-grow flex flex-col justify-between">
                   <div>
+                    {CARD_ICONS[mod.title] && (
+                      <span className="mi-tile mb-4">
+                        <AnimatedIcon name={CARD_ICONS[mod.title]} size={24} />
+                      </span>
+                    )}
                     <h3 className="text-lg font-bold text-zinc-900 dark:text-white mb-2 font-inter">{mod.title}</h3>
                     <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed mb-6 font-medium font-sans">{mod.desc}</p>
                   </div>

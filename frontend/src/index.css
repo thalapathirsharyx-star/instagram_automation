@@ -3232,3 +3232,214 @@ html {
 .landing-page .accent-\[\#38BDF8\] {
   accent-color: var(--lp-blue);
 }
+
+/* ============================================================================
+   Animated icons (AnimatedIcon.tsx)
+
+   One family: a 24px grid, rounded strokes, navy line, one blue accent, and a
+   single shared rhythm (2.4s, ease-in-out) so nothing on the page competes.
+   Motion runs only while the icon is on screen (.is-playing) and never for
+   people who ask for reduced motion.
+   ============================================================================ */
+
+.mi {
+  display: inline-flex;
+  flex-shrink: 0;
+  color: var(--lp-navy, #0e0b3d);
+  --mi-accent: var(--lp-blue, #1463ff);
+}
+
+.mi svg * {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.mi svg [class*="mi-"] {
+  animation-duration: 2.4s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-play-state: paused;
+}
+
+.mi.is-playing svg [class*="mi-"] {
+  animation-play-state: running;
+}
+
+/* chat: dots type in turn */
+.mi-dot { animation-name: mi-dot; }
+.mi-d2 { animation-delay: 0.18s; }
+.mi-d3 { animation-delay: 0.36s; }
+@keyframes mi-dot {
+  0%, 50%, 100% { transform: translateY(0); opacity: 0.45; }
+  20% { transform: translateY(-2px); opacity: 1; }
+}
+
+/* bell: swing from the top; badge pops */
+.mi-swing { animation-name: mi-swing; transform-origin: 50% 8% !important; }
+@keyframes mi-swing {
+  0%, 60%, 100% { transform: rotate(0); }
+  10% { transform: rotate(12deg); }
+  25% { transform: rotate(-10deg); }
+  40% { transform: rotate(5deg); }
+}
+.mi-pop { animation-name: mi-pop; }
+@keyframes mi-pop {
+  0%, 100% { transform: scale(1); }
+  15% { transform: scale(1.35); }
+  30% { transform: scale(0.9); }
+  45% { transform: scale(1); }
+}
+
+/* sparkle */
+.mi-twinkle { animation-name: mi-twinkle; }
+.mi-late { animation-delay: 0.8s; }
+@keyframes mi-twinkle {
+  0%, 100% { transform: scale(1) rotate(0); opacity: 1; }
+  50% { transform: scale(0.85) rotate(20deg); opacity: 0.8; }
+}
+
+/* cursor: tap and ripple */
+.mi-tap { animation-name: mi-tap; }
+@keyframes mi-tap {
+  0%, 60%, 100% { transform: translate(0, 0); }
+  30% { transform: translate(-1.5px, -1.5px) scale(0.92); }
+}
+.mi-ripple { animation-name: mi-ripple; }
+@keyframes mi-ripple {
+  0%, 28% { transform: scale(0.3); opacity: 0; }
+  35% { opacity: 0.9; }
+  70%, 100% { transform: scale(1.4); opacity: 0; }
+}
+
+/* heart: a like */
+.mi-beat { animation-name: mi-beat; }
+@keyframes mi-beat {
+  0%, 45%, 100% { transform: scale(1); }
+  15% { transform: scale(1.18); }
+  30% { transform: scale(0.96); }
+}
+
+/* inbox: a message drops in, unread dot breathes */
+.mi-drop { animation-name: mi-drop; }
+@keyframes mi-drop {
+  0% { transform: translateY(-4px); opacity: 0; }
+  30%, 70% { transform: translateY(0); opacity: 1; }
+  100% { transform: translateY(2px); opacity: 0; }
+}
+.mi-pulse { animation-name: mi-pulse; }
+@keyframes mi-pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(0.75); opacity: 0.6; }
+}
+
+/* workflow: a dot travels the branch */
+.mi-travel { animation-name: mi-travel; animation-timing-function: linear; }
+@keyframes mi-travel {
+  0% { transform: translate(0, 0); opacity: 0; }
+  10% { opacity: 1; }
+  40% { transform: translate(6px, 0); }
+  70% { transform: translate(6px, 5px); }
+  90% { transform: translate(9.5px, 5px); opacity: 1; }
+  100% { transform: translate(9.5px, 5px); opacity: 0; }
+}
+
+/* reply: the private-reply arrow nudges forward */
+.mi-nudge { animation-name: mi-nudge; }
+@keyframes mi-nudge {
+  0%, 100% { transform: translateX(0); }
+  40% { transform: translateX(1.5px); }
+}
+
+/* contact, shield, chart trend: a stroke drawn in, held, then reset */
+.mi-draw {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation-name: mi-draw;
+}
+@keyframes mi-draw {
+  0%, 10% { stroke-dashoffset: 1; }
+  45%, 85% { stroke-dashoffset: 0; }
+  100% { stroke-dashoffset: 0; opacity: 0; }
+}
+
+/* paper plane: takes off, comes back */
+.mi-fly { animation-name: mi-fly; animation-duration: 3.2s !important; }
+@keyframes mi-fly {
+  0%, 100% { transform: translate(0, 0); opacity: 1; }
+  45% { transform: translate(5px, -5px); opacity: 0; }
+  46% { transform: translate(-5px, 5px); opacity: 0; }
+  70% { transform: translate(0, 0); opacity: 1; }
+}
+
+/* chart: bars grow from the baseline in sequence */
+.mi-grow { animation-name: mi-grow; transform-origin: 50% 100% !important; }
+.mi-g2 { animation-delay: 0.15s; }
+.mi-g3 { animation-delay: 0.3s; }
+@keyframes mi-grow {
+  0% { transform: scaleY(0.3); }
+  35%, 80% { transform: scaleY(1); }
+  100% { transform: scaleY(0.3); }
+}
+
+/* Static icons, fully drawn, for anyone who prefers no motion. */
+@media (prefers-reduced-motion: reduce) {
+  .mi svg [class*="mi-"] {
+    animation: none !important;
+  }
+  .mi-draw {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* --- Where the icons sit -------------------------------------------------- */
+
+/* A floating chip in the hero margins: white, rounded, the card shadow. */
+.mi-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  border-radius: 18px;
+  background: #ffffff;
+  box-shadow: var(--lp-shadow-card);
+  animation: mi-float 6s ease-in-out infinite;
+}
+
+.mi-chip.is-small {
+  width: 50px;
+  height: 50px;
+  border-radius: 16px;
+}
+
+@keyframes mi-float {
+  0%, 100% { transform: translateY(0) rotate(var(--mi-tilt, 0deg)); }
+  50% { transform: translateY(-8px) rotate(var(--mi-tilt, 0deg)); }
+}
+
+/* An icon introducing a card or section: a soft tile in the accent tint. */
+.mi-tile {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: var(--lp-blue-tint, #eef4ff);
+}
+
+/* On a dark panel the line turns white and the accent a lighter blue. */
+.lp-dark-panel .mi {
+  color: #ffffff;
+  --mi-accent: #8fb4ff;
+}
+
+.lp-dark-panel .mi-tile {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mi-chip {
+    animation: none;
+  }
+}

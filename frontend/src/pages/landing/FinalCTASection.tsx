@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
+import AnimatedIcon from '../../components/AnimatedIcon';
 
 export const FinalCTASection: React.FC = () => {
   const navigate = useNavigate();
@@ -10,6 +11,9 @@ export const FinalCTASection: React.FC = () => {
       {/* The reference closes on a navy-to-violet rounded block. */}
       <div className="lp-dark-panel is-gradient mockup-dark max-w-6xl mx-auto px-6 py-16 md:py-24">
       <div className="max-w-4xl mx-auto relative z-10 font-inter">
+        <span className="mi-tile mb-6 mx-auto flex w-fit">
+          <AnimatedIcon name="message-badge" size={26} />
+        </span>
         <h2 className="lp-title text-[34px] md:text-[56px] mb-6">
           Stop Losing Leads Inside Your <span className="text-logo-gradient">Instagram DMs</span>
         </h2>

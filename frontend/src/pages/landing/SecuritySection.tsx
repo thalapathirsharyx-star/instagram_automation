@@ -1,4 +1,5 @@
 import React from 'react';
+import AnimatedIcon from '../../components/AnimatedIcon';
 
 export const SecuritySection: React.FC = () => {
   const securityFeatures = [
@@ -33,6 +34,9 @@ export const SecuritySection: React.FC = () => {
       {/* A dark rounded panel, as the reference uses to break up the white page. */}
       <div className="lp-dark-panel mockup-dark max-w-6xl mx-auto px-6 py-16 sm:px-10 md:px-16 md:py-20">
         <div className="text-center max-w-2xl mx-auto mb-16">
+          <span className="mi-tile mb-4 mx-auto flex w-fit">
+            <AnimatedIcon name="shield" size={24} />
+          </span>
           <span className="lp-eyebrow">Enterprise Security</span>
           <h2 className="lp-title text-3xl md:text-5xl font-bold tracking-tight text-zinc-900 dark:text-white mt-3 mb-4 leading-tight">
             Secure Connections, Complete Control

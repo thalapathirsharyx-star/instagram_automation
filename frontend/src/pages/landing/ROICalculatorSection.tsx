@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
+import AnimatedIcon from '../../components/AnimatedIcon';
 
 export const ROICalculator: React.FC = () => {
   const [dms, setDms] = useState(2500);
@@ -143,6 +144,9 @@ export const ROICalculatorSection: React.FC = () => {
     <section className="py-28 relative border-t border-zinc-200/80 dark:border-white/5 bg-zinc-100/10 dark:bg-[#121826]/10">
       <div className="max-w-6xl mx-auto px-6">
         <div className="text-center max-w-2xl mx-auto mb-16">
+          <span className="mi-tile mb-4 mx-auto flex w-fit">
+            <AnimatedIcon name="chart" size={24} />
+          </span>
           <span className="lp-eyebrow">ROI Calculator</span>
           <h2 className="lp-title text-3xl md:text-5xl font-bold tracking-tight mb-4 text-zinc-900 dark:text-white mt-3">
             Calculate Your Recovered Revenue

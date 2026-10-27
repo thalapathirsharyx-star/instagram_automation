@@ -1,12 +1,33 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight, Play, Sparkles } from 'lucide-react';
+import AnimatedIcon from '../../components/AnimatedIcon';
 
 export const HeroSection: React.FC = () => {
   const navigate = useNavigate();
 
   return (
     <section className="relative pt-16 pb-16 md:pt-24 z-10 overflow-hidden text-center">
+      {/* Floating interface icons in the margins, asymmetric, wide screens only so
+          they never sit on the headline or the buttons. Decorative. */}
+      <div className="pointer-events-none absolute inset-0 hidden xl:block" aria-hidden="true">
+        <span className="mi-chip absolute top-[120px] left-[calc(50%-600px)]" style={{ ['--mi-tilt' as string]: '-6deg' }}>
+          <AnimatedIcon name="chat" size={30} />
+        </span>
+        <span className="mi-chip is-small absolute top-[318px] left-[calc(50%-540px)]" style={{ ['--mi-tilt' as string]: '8deg', animationDelay: '-2s' }}>
+          <AnimatedIcon name="sparkle" size={26} />
+        </span>
+        <span className="mi-chip is-small absolute top-[440px] left-[calc(50%-618px)]" style={{ ['--mi-tilt' as string]: '-4deg', animationDelay: '-4s' }}>
+          <AnimatedIcon name="heart" size={26} />
+        </span>
+        <span className="mi-chip absolute top-[86px] left-[calc(50%+548px)]" style={{ ['--mi-tilt' as string]: '6deg', animationDelay: '-3s' }}>
+          <AnimatedIcon name="bell" size={30} />
+        </span>
+        <span className="mi-chip is-small absolute top-[372px] left-[calc(50%+500px)]" style={{ ['--mi-tilt' as string]: '-8deg', animationDelay: '-1s' }}>
+          <AnimatedIcon name="cursor" size={26} />
+        </span>
+      </div>
+
       <div className="max-w-5xl mx-auto px-6 relative z-10 flex flex-col items-center">
         
         {/* Category Badge */}
