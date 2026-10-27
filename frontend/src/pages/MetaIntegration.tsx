@@ -198,9 +198,11 @@ const MetaIntegration: React.FC = () => {
         <div className="surface-head">
           <h2><span className="icon-tile is-sm"><Shield size={16} /></span>Meta account</h2>
           {!isLoadingStatus && (
-            isConnected
-              ? <span className="chip chip-dot chip-go">Connected</span>
-              : <span className="chip chip-dot">Not connected</span>
+            !isConnected
+              ? <span className="chip chip-dot">Not connected</span>
+              : connectionWarnings.length > 0
+                ? <span className="chip chip-dot chip-warn">Needs reconnecting</span>
+                : <span className="chip chip-dot chip-go">Connected</span>
           )}
         </div>
 
@@ -220,6 +222,27 @@ const MetaIntegration: React.FC = () => {
                     Meta Business ID <code className="select-all text-ink">{connectionDetails?.id}</code>
                   </p>
                 </div>
+              </div>
+
+              {/* What this connection lets Flazly do, matching the permissions the
+                  login configuration requests (see handleConnect). */}
+              <div>
+                <p className="label mb-2.5">What Flazly can do with this connection</p>
+                <ul className="grid gap-2.5 sm:grid-cols-3">
+                  {[
+                    { title: 'Direct messages', body: 'Read and reply to DMs and story replies' },
+                    { title: 'Comments', body: 'Read, reply to, hide and delete comments' },
+                    { title: 'Live updates', body: 'Receive new messages and comments instantly' },
+                  ].map((item) => (
+                    <li key={item.title} className="rounded-[10px] border border-hairline p-3">
+                      <p className="flex items-center gap-1.5 text-[14px] font-medium text-ink">
+                        <CheckCircle2 size={14} className={connectionWarnings.length > 0 ? 'text-ink-faint' : 'text-signal-go'} />
+                        {item.title}
+                      </p>
+                      <p className="mt-1 text-[13px] leading-snug text-ink-soft">{item.body}</p>
+                    </li>
+                  ))}
+                </ul>
               </div>
 
               {connectionWarnings.length > 0 && (
@@ -242,9 +265,18 @@ const MetaIntegration: React.FC = () => {
               <button onClick={() => setShowGuide(true)} className="btn btn-ghost btn-sm">
                 <Info size={15} /> Setup guide
               </button>
-              <button onClick={() => setConfirmDisconnect(true)} className="btn btn-danger-soft btn-sm">
-                <X size={15} /> Revoke Meta access
-              </button>
+              <div className="flex flex-wrap items-center gap-2">
+                <button onClick={() => setConfirmDisconnect(true)} className="btn btn-danger-soft btn-sm">
+                  <X size={15} /> Revoke Meta access
+                </button>
+                {/* A flagged token can only be fixed by connecting again. */}
+                {connectionWarnings.length > 0 && (
+                  <button onClick={handleConnect} disabled={isConnecting} aria-busy={isConnecting || undefined} className="btn btn-primary btn-sm">
+                    {isConnecting ? <RefreshCw className="animate-spin" size={15} /> : <Link2 size={15} />}
+                    {isConnecting ? 'Reconnecting…' : 'Reconnect'}
+                  </button>
+                )}
+              </div>
             </div>
           </>
         ) : (

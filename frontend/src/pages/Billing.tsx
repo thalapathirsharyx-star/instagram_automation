@@ -159,7 +159,13 @@ const Billing: React.FC = () => {
   const planPrice = currentPlan === 'Business' ? '₹5,999' : currentPlan === 'Pro' ? '₹2,499' : '₹0';
   const planMaxRecords = currentPlan === 'Business' ? '75,000' : currentPlan === 'Pro' ? '25,000' : '250';
   const planRecordsUsed = user?.company?.monthly_ai_usage || 0;
-  const planProgress = Math.min((Number(planRecordsUsed) / parseInt(planMaxRecords.replace(/,/g, ''))) * 100, 100);
+  const planLimit = parseInt(planMaxRecords.replace(/,/g, ''));
+  const planProgress = Math.min((Number(planRecordsUsed) / planLimit) * 100, 100);
+  const planRemaining = Math.max(planLimit - Number(planRecordsUsed), 0);
+  // Paid plans run for a fixed period from payment; Free never expires.
+  const planExpiresAt = currentPlan !== 'Free' && user?.company?.plan_expires_at ? new Date(user.company.plan_expires_at) : null;
+  const formatDate = (value: string | Date) =>
+    new Date(value).toLocaleDateString([], { day: 'numeric', month: 'short', year: 'numeric' });
 
   const planFeaturesList: Record<string, string[]> = {
     'Free': [
@@ -267,10 +273,12 @@ const Billing: React.FC = () => {
                 {currentPlan === 'Free' ? 'You are currently on the starter evaluation tier.' : `Premium AI infrastructure with up to ${planMaxRecords} queries.`}
               </p>
 
-              <div className="mt-8">
-                <div className="mb-2 flex items-end justify-between">
+              <div className="mt-6">
+                <div className="mb-2 flex items-end justify-between gap-3">
                   <p className="text-[13px] font-medium text-ink-soft">AI usage this month</p>
-                  <p className="text-[14px] font-medium tabular-nums text-ink">{planRecordsUsed} / {planMaxRecords}</p>
+                  <p className="tabular whitespace-nowrap text-[14px] font-medium text-ink">
+                    {Number(planRecordsUsed).toLocaleString()} <span className="text-ink-soft">/ {planMaxRecords}</span>
+                  </p>
                 </div>
                 <div
                   className="meter"
@@ -286,6 +294,23 @@ const Billing: React.FC = () => {
                   />
                 </div>
               </div>
+
+              {/* The figures behind the meter, so the card reads at a glance. */}
+              <dl className="mt-5 grid grid-cols-3 gap-3 border-t border-hairline pt-4">
+                <div>
+                  <dt className="text-[12px] text-ink-soft">Used</dt>
+                  <dd className="tabular mt-0.5 text-[15px] font-semibold text-ink">{Math.round(planProgress)}%</dd>
+                </div>
+                <div>
+                  <dt className="text-[12px] text-ink-soft">Remaining</dt>
+                  <dd className="tabular mt-0.5 text-[15px] font-semibold text-ink">{planRemaining.toLocaleString()}</dd>
+                </div>
+                <div>
+                  <dt className="text-[12px] text-ink-soft">{planExpiresAt ? 'Active until' : 'Usage resets'}</dt>
+                  <dd className="mt-0.5 text-[15px] font-semibold text-ink">{planExpiresAt ? formatDate(planExpiresAt) : 'Monthly'}</dd>
+                </div>
+              </dl>
+              <p className="mt-3 text-[13px] text-ink-soft">We email you at 80% and 100% of your monthly allowance.</p>
 
               <div className="mt-auto pt-6">
                 <button onClick={() => setActiveTab('Plans')} className="btn btn-primary">
@@ -321,7 +346,7 @@ const Billing: React.FC = () => {
 
             {invoices.length > 0 ? (
               <div className="table-wrap">
-                <table className="data-table">
+                <table className="data-table is-stacked">
                   <thead>
                     <tr>
                       <th>Invoice</th>
@@ -339,10 +364,15 @@ const Billing: React.FC = () => {
                             {inv.invoice_number}
                           </span>
                         </td>
-                        <td className="text-ink-soft">{new Date(inv.created_on).toLocaleDateString()}</td>
-                        <td className="num font-medium">₹{inv.amount_paid?.toLocaleString()}</td>
-                        <td className="text-right">
-                          <span className="chip chip-go capitalize">{(inv.invoice_status || 'paid').toLowerCase()}</span>
+                        <td data-label="Date" className="text-ink-soft">{formatDate(inv.created_on)}</td>
+                        <td data-label="Amount" className="num font-medium">₹{inv.amount_paid?.toLocaleString()}</td>
+                        <td data-label="Status" className="text-right">
+                          {(() => {
+                            // The chip follows the invoice's real state, not just "paid".
+                            const status = String(inv.invoice_status || 'paid').toLowerCase();
+                            const tone = status === 'paid' ? 'chip-go' : status === 'failed' ? 'chip-stop' : 'chip-warn';
+                            return <span className={`chip ${tone} capitalize`}>{status}</span>;
+                          })()}
                         </td>
                       </tr>
                     ))}

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { getLeads, getMessages, sendMessage, claimConversation, releaseConversation } from '../api/crm.api';
 import type { Lead, Message, ConversationHandoffResult } from '../models/crm.models';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Send, Loader2, Search, SearchX, Inbox as InboxIcon, MessageCircle, MessagesSquare, ArrowLeft } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
 import { io } from 'socket.io-client';
@@ -108,6 +108,11 @@ const Inbox: React.FC = () => {
     };
   }, []);
 
+  // A link from elsewhere (the dashboard's attention list) can name the
+  // conversation to open; otherwise the newest one is shown.
+  const location = useLocation();
+  const requestedLeadId = useRef<string | undefined>((location.state as { leadId?: string } | null)?.leadId);
+
   const selectedLeadRef = useRef<Lead | null>(null);
   useEffect(() => {
     selectedLeadRef.current = selectedLead;
@@ -119,7 +124,9 @@ const Inbox: React.FC = () => {
       const data = res?.Data || [];
       setLeads(data);
       if (data.length > 0 && !selectedLeadRef.current) {
-        handleSelectLead(data[0]);
+        const requested = data.find((l: Lead) => l.id === requestedLeadId.current);
+        requestedLeadId.current = undefined;
+        handleSelectLead(requested || data[0]);
       }
     } catch (error) {
       console.error('Error fetching leads:', error);
@@ -129,6 +136,9 @@ const Inbox: React.FC = () => {
 
   const handleSelectLead = async (lead: Lead) => {
     if (!lead) return;
+    // Set now, not after the next render: a second leads fetch resolving in
+    // between would otherwise see nothing selected and jump to the first lead.
+    selectedLeadRef.current = lead;
     setSelectedLead(lead);
     try {
       const res = await getMessages(lead.id);

@@ -286,8 +286,11 @@
     color: var(--ink);
   }
 
-  /* Figures line up in columns and don't jitter as they tick over. */
-  td, th, .tabular {
+  /* Figures line up in columns and don't jitter as they tick over. Only on
+     cells that hold figures (.num) and opt-in text: applied to every cell,
+     Inter's tabular forms also widen hyphens, so "INV-2026" and email
+     addresses came out spaced. */
+  .tabular {
     font-variant-numeric: tabular-nums;
   }
 
@@ -4136,4 +4139,99 @@ html {
   .auth-ring.is-small { animation: none; }
   .auth-split .btn-primary,
   .auth-strength span { transition: none; }
+}
+
+/* ============================================================================
+   Dashboard pass: stacked tables and a muted chip
+
+   .data-table.is-stacked turns each row into a small card on phones instead
+   of a table that hides every column but the first behind a sideways scroll.
+   Cells name themselves with data-label; the first cell (the record's name)
+   leads the card without a label. .is-stacked-hide drops a cell that only
+   makes sense as a column (a row's "open" arrow).
+   ============================================================================ */
+
+.chip.is-muted {
+  color: var(--ink-faint);
+  background: var(--porcelain);
+}
+
+/* Stacked tables wrap their cells instead of forcing the 640px scroll width;
+   below 640px they become cards (next block). */
+.table-wrap > .data-table.is-stacked {
+  min-width: 0;
+}
+
+@media (max-width: 640px) {
+
+  .data-table.is-stacked thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  .data-table.is-stacked,
+  .data-table.is-stacked tbody {
+    display: block;
+  }
+
+  .data-table.is-stacked tbody tr {
+    display: block;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--hairline);
+  }
+
+  .data-table.is-stacked tbody tr:last-child {
+    border-bottom: 0;
+  }
+
+  .data-table.is-stacked tbody tr:hover td {
+    background: transparent;
+  }
+
+  .data-table.is-stacked tbody td {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    max-width: none;
+    padding: 5px 0;
+    border-bottom: 0;
+    text-align: right;
+  }
+
+  .data-table.is-stacked tbody td:first-child {
+    justify-content: flex-start;
+    padding: 0 0 8px;
+    text-align: left;
+  }
+
+  .data-table.is-stacked tbody td[data-label]::before {
+    content: attr(data-label);
+    flex-shrink: 0;
+    font-size: var(--text-meta);
+    font-weight: 500;
+    color: var(--ink-soft);
+    text-align: left;
+  }
+
+  .data-table.is-stacked tbody td.num > div {
+    justify-content: flex-end;
+  }
+
+  .data-table.is-stacked .is-stacked-hide {
+    display: none;
+  }
+
+  .data-table.is-stacked .is-stacked-action {
+    justify-content: flex-end;
+    padding-top: 6px;
+  }
+
+  .data-table.is-stacked .is-stacked-action:empty {
+    display: none;
+  }
 }

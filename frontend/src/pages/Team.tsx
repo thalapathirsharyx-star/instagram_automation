@@ -4,6 +4,8 @@ import { Users, Trash2, UserPlus, Loader2 } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
 import { ConfirmModal } from '../components/ConfirmModal';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import { teamSeatsFor } from '../lib/planLimits';
 
 const Team: React.FC = () => {
   const { toast } = useToast();
@@ -11,6 +13,11 @@ const Team: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [confirmRemoveId, setConfirmRemoveId] = useState<string | null>(null);
   const [isRemoving, setIsRemoving] = useState(false);
+  const { user } = useAuth();
+  const plan = user?.company?.plan || 'Free';
+  const seats = teamSeatsFor(plan);
+  // The server refuses a new member past this; say so before the form, not after it.
+  const seatsFull = !isLoading && members.length >= seats;
 
   useEffect(() => {
     fetchMembers();
@@ -59,18 +66,41 @@ const Team: React.FC = () => {
           <h1 className="page-title">Team</h1>
           <p className="page-sub">Manage access and permissions for your workspace.</p>
         </div>
-        <Link to="/team/add" className="btn btn-primary">
-          <UserPlus size={16} /> Add team member
-        </Link>
+        {seatsFull ? (
+          <Link to="/billing" className="btn">
+            Upgrade for more seats
+          </Link>
+        ) : (
+          <Link to="/team/add" className="btn btn-primary">
+            <UserPlus size={16} /> Add team member
+          </Link>
+        )}
       </div>
 
       <section className="surface overflow-hidden">
-        <div className="surface-head">
+        <div className="surface-head flex-wrap">
           <h2>
             <span className="icon-tile is-sm is-neutral"><Users size={16} /></span>
             Current members
             {!isLoading && <span className="chip">{members.length}</span>}
           </h2>
+          {!isLoading && (
+            <div className="flex items-center gap-3 text-[13px] text-ink-soft">
+              <span className="tabular whitespace-nowrap">
+                <span className="font-semibold text-ink">{Math.min(members.length, seats)}</span> of {seats} {seats === 1 ? 'seat' : 'seats'} on {plan}
+              </span>
+              <span
+                className="meter hidden w-24 sm:block"
+                role="progressbar"
+                aria-label="Seats used"
+                aria-valuenow={members.length}
+                aria-valuemin={0}
+                aria-valuemax={seats}
+              >
+                <span style={{ width: `${Math.min((members.length / seats) * 100, 100)}%` }} />
+              </span>
+            </div>
+          )}
         </div>
 
         {isLoading ? (
@@ -87,7 +117,7 @@ const Team: React.FC = () => {
           </div>
         ) : (
           <div className="table-wrap">
-            <table className="data-table">
+            <table className="data-table is-stacked">
               <thead>
                 <tr>
                   <th>Member</th>
@@ -107,13 +137,13 @@ const Team: React.FC = () => {
                         <span className="font-medium text-ink">{member.first_name} {member.last_name}</span>
                       </div>
                     </td>
-                    <td className="text-ink-soft">{member.email}</td>
-                    <td>
+                    <td data-label="Email" className="text-ink-soft">{member.email}</td>
+                    <td data-label="Role">
                       <span className={member.role === 'Client Admin' ? 'chip chip-accent' : 'chip'}>
                         {member.role || 'Agent'}
                       </span>
                     </td>
-                    <td className="text-right">
+                    <td className="text-right is-stacked-action">
                       {member.role !== 'Client Admin' && (
                         <button
                           onClick={() => setConfirmRemoveId(member.id)}

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Bot, Save, Loader2, MessageSquare, Sparkles, Cpu, Zap, Lightbulb } from 'lucide-react';
+import { Bot, Save, Loader2, MessageSquare, Sparkles, Cpu, Lightbulb, CheckCircle2 } from 'lucide-react';
 import { getAIPrompt, updateAIPrompt } from '../api/crm.api';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
@@ -11,6 +11,10 @@ const tonePrompts: Record<string, string> = {
   Salesy: "Maintain an energetic, persuasive, and sales-focused tone. Highlight product benefits and encourage purchase.",
   Casual: "Maintain a relaxed, casual, and informal tone. Speak like a friend."
 };
+
+/** The preset whose line the prompt currently starts with, if any. */
+const toneInPrompt = (prompt: string) =>
+  Object.keys(tonePrompts).find((key) => prompt.split('\n').some((line) => line === `Tone: ${tonePrompts[key]}`)) || null;
 
 const guardrails = [
   { label: 'Persona', body: <>Give the agent a name, role, and specific vocabulary to use.</>, tone: 'is-neutral' },
@@ -24,7 +28,10 @@ const AISettings: React.FC = () => {
   const currentPlan = user?.company?.plan || 'Free';
   const hasProPlan = ['Pro', 'Business', 'Advanced'].includes(currentPlan);
   const [prompt, setPrompt] = useState('');
-  const [tone, setTone] = useState('Friendly');
+  // What the server has, so the page can say whether there is anything to save.
+  const [savedPrompt, setSavedPrompt] = useState('');
+  const tone = toneInPrompt(prompt);
+  const isDirty = prompt !== savedPrompt;
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [showUpgradePrompt, setShowUpgradePrompt] = useState(false);
@@ -38,6 +45,7 @@ const AISettings: React.FC = () => {
       setIsLoading(true);
       const res = await getAIPrompt();
       setPrompt(res?.Data?.prompt || '');
+      setSavedPrompt(res?.Data?.prompt || '');
     } catch (error) {
       console.error('Error fetching prompt:', error);
       toast.error('Failed to load AI prompt');
@@ -46,8 +54,15 @@ const AISettings: React.FC = () => {
     }
   };
 
+  // Leaving with unsaved instructions asks first, as the browser allows.
+  useEffect(() => {
+    if (!isDirty) return;
+    const warn = (e: BeforeUnloadEvent) => { e.preventDefault(); };
+    window.addEventListener('beforeunload', warn);
+    return () => window.removeEventListener('beforeunload', warn);
+  }, [isDirty]);
+
   const handleToneSelect = (selectedTone: string) => {
-    setTone(selectedTone);
     const toneInstruction = tonePrompts[selectedTone];
     const tonePrefix = "Tone: ";
 
@@ -66,6 +81,7 @@ const AISettings: React.FC = () => {
     try {
       setIsSaving(true);
       await updateAIPrompt(prompt);
+      setSavedPrompt(prompt);
       toast.success('System instructions updated');
     } catch (error) {
       console.error('Error updating prompt:', error);
@@ -95,10 +111,22 @@ const AISettings: React.FC = () => {
           <h1 className="page-title">AI persona</h1>
           <p className="page-sub">Define the core personality, rules of engagement, and base logic for your AI conversational agent.</p>
         </div>
-        <button className="btn btn-primary" onClick={handleSave} disabled={isSaving} aria-busy={isSaving || undefined}>
-          {isSaving ? <Loader2 className="animate-spin" size={16} /> : <Save size={16} />}
-          {isSaving ? 'Saving…' : 'Save instructions'}
-        </button>
+        <div className="page-actions">
+          <span className="text-[13px] text-ink-soft" role="status" aria-live="polite">
+            {isDirty
+              ? <span className="chip chip-dot chip-warn">Unsaved changes</span>
+              : <span className="flex items-center gap-1.5"><CheckCircle2 size={14} className="text-signal-go" /> All changes saved</span>}
+          </span>
+          {isDirty && (
+            <button className="btn" onClick={() => setPrompt(savedPrompt)} disabled={isSaving}>
+              Discard
+            </button>
+          )}
+          <button className="btn btn-primary" onClick={handleSave} disabled={isSaving || !isDirty} aria-busy={isSaving || undefined}>
+            {isSaving ? <Loader2 className="animate-spin" size={16} /> : <Save size={16} />}
+            {isSaving ? 'Saving…' : 'Save instructions'}
+          </button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-3">
@@ -108,7 +136,7 @@ const AISettings: React.FC = () => {
               <span className="icon-tile is-sm"><Cpu size={16} /></span>
               <label htmlFor="system-prompt">System instructions</label>
             </h2>
-            <span className="chip"><Zap size={12} /> Llama 3.3</span>
+            <span className="tabular text-[13px] text-ink-faint">{prompt.length.toLocaleString()} characters</span>
           </div>
 
           <textarea

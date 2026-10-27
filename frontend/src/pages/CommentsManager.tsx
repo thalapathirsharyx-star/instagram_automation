@@ -467,22 +467,25 @@ const CommentsManager: React.FC = () => {
                         <span className="avatar-initial" style={{ width: 28, height: 28, fontSize: 12 }}>
                           {c.username ? c.username.charAt(0) : 'U'}
                         </span>
+                        {/* Name and time stack, so a long handle truncates instead of
+                            running under the action buttons on a phone. */}
                         <div className="min-w-0">
-                          <span className="text-[14px] font-medium text-ink">@{handle}</span>
-                          <span className="ml-2 text-[13px] text-ink-faint">
+                          <span className="block truncate text-[14px] font-medium text-ink">@{handle}</span>
+                          <span className="flex items-center gap-2 whitespace-nowrap text-[12px] text-ink-faint">
                             {new Date(c.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} · {new Date(c.timestamp).toLocaleDateString([], { month: 'short', day: 'numeric' })}
+                            {isHidden && <span className="chip px-1.5 py-0 text-[11px]">Hidden</span>}
                           </span>
                         </div>
                       </div>
 
                       <div className="flex shrink-0 items-center gap-1">
-                        {isHidden && <span className="chip">Hidden</span>}
                         <button
                           onClick={() => setReplyTargetComment(isTargetReply ? null : c)}
                           aria-pressed={isTargetReply}
+                          aria-label={`Reply to @${handle}`}
                           className={`btn btn-sm ${isTargetReply ? 'btn-primary' : 'btn-ghost'}`}
                         >
-                          <Send size={13} /> Reply
+                          <Send size={13} /> <span className="hidden sm:inline">Reply</span>
                         </button>
                         <button
                           onClick={() => handleToggleHide(c)}
@@ -505,12 +508,12 @@ const CommentsManager: React.FC = () => {
                       </div>
                     </div>
 
-                    <p className={`mt-2 pl-[38px] text-[14px] leading-relaxed ${isHidden ? 'text-ink-soft' : 'text-ink'}`}>
+                    <p className={`mt-2 text-[14px] leading-relaxed sm:pl-[38px] ${isHidden ? 'text-ink-soft' : 'text-ink'}`}>
                       {c.text}
                     </p>
 
                     {c.replies?.data && c.replies.data.length > 0 && (
-                      <div className="ml-[38px] mt-3 space-y-2 border-l-2 border-hairline-strong pl-3">
+                      <div className="mt-3 space-y-2 border-l-2 border-hairline-strong pl-3 sm:ml-[38px]">
                         {c.replies.data.map(reply => (
                           <div key={reply.id} className="rounded-[8px] bg-porcelain p-2.5">
                             <div className="mb-0.5 flex items-center gap-1.5 text-[13px] font-medium text-ink">

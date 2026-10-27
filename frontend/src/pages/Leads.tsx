@@ -2,19 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { getLeads } from '../api/crm.api';
 import type { Lead } from '../models/crm.models';
 import { Search, ExternalLink, Loader2, X, RefreshCw } from 'lucide-react';
+import { formatScore, scorePercent, leadStatusLabel } from '../lib/leadStatus';
+import { LeadStatusChip, HandlerChip } from '../components/LeadStatusChip';
 
-const STATUS_FILTERS = ['All', 'New', 'Hot', 'Handoff', 'Buyer', 'Lost'] as const;
-
-const statusChipClass = (status?: string) => {
-  switch (status) {
-    case 'Buyer': return 'chip chip-go';
-    case 'Hot': return 'chip chip-accent';
-    case 'Needs_Human': return 'chip chip-stop';
-    case 'Handoff': return 'chip chip-ink';
-    case 'Lost': return 'chip';
-    default: return 'chip';
-  }
-};
+// Every status the backend sets, so no lead is reachable only through "All".
+const STATUS_FILTERS = ['All', 'New', 'Hot', 'Needs_Human', 'Handoff', 'Buyer', 'Lost'] as const;
 
 const Leads: React.FC = () => {
   const [leads, setLeads] = useState<Lead[]>([]);
@@ -83,7 +75,26 @@ const Leads: React.FC = () => {
       </div>
 
       {/* Filters are the content's own statuses, so they double as a legend. */}
-      <div className="segmented mb-4 w-fit max-w-full" role="group" aria-label="Filter by status">
+      {/* Phones get a select: seven segments do not fit and would scroll out of sight. */}
+      <label className="mb-4 block sm:hidden">
+        <span className="sr-only">Filter by status</span>
+        <select
+          className="field"
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value as typeof STATUS_FILTERS[number])}
+        >
+          {STATUS_FILTERS.map((status) => {
+            const count = status === 'All' ? leads.length : leads.filter(l => l.lead_status === status).length;
+            return (
+              <option key={status} value={status}>
+                {status === 'All' ? 'All statuses' : leadStatusLabel(status)} ({count})
+              </option>
+            );
+          })}
+        </select>
+      </label>
+
+      <div className="segmented mb-4 hidden w-fit max-w-full sm:flex" role="group" aria-label="Filter by status">
         {STATUS_FILTERS.map(status => {
           const count = status === 'All' ? leads.length : leads.filter(l => l.lead_status === status).length;
           return (
@@ -93,7 +104,7 @@ const Leads: React.FC = () => {
               onClick={() => setStatusFilter(status)}
               aria-pressed={statusFilter === status}
             >
-              {status} <span className="count">{count}</span>
+              {status === 'All' ? 'All' : leadStatusLabel(status)} <span className="count">{count}</span>
             </button>
           );
         })}
@@ -101,13 +112,13 @@ const Leads: React.FC = () => {
 
       <div className="surface overflow-hidden">
         <div className="table-wrap">
-          <table className="data-table">
+          <table className="data-table is-stacked">
             <thead>
               <tr>
                 <th>Customer</th>
                 <th>Status</th>
                 <th>Handled by</th>
-                <th>Last intent</th>
+                <th className="max-lg:hidden">Last intent</th>
                 <th className="num">Score</th>
                 <th><span className="sr-only">Details</span></th>
               </tr>
@@ -159,26 +170,18 @@ const Leads: React.FC = () => {
                       </div>
                     </div>
                   </td>
-                  <td>
-                    <span className={statusChipClass(lead.lead_status)}>
-                      {String(lead.lead_status || 'New').replace(/_/g, ' ')}
-                    </span>
-                  </td>
-                  <td>
-                    <span className={lead.human_agent_active ? 'chip chip-ink' : 'chip chip-accent'}>
-                      {lead.human_agent_active ? 'Your team' : 'Assistant'}
-                    </span>
-                  </td>
-                  <td className="max-w-[220px] truncate text-ink-soft">{lead.last_intent || '—'}</td>
-                  <td className="num">
+                  <td data-label="Status"><LeadStatusChip status={lead.lead_status} /></td>
+                  <td data-label="Handled by"><HandlerChip human={lead.human_agent_active} /></td>
+                  <td data-label="Last intent" className="max-w-[220px] truncate text-ink-soft max-lg:hidden">{lead.last_intent || '—'}</td>
+                  <td data-label="Score" className="num">
                     <div className="flex items-center justify-end gap-2.5">
-                      <span className="meter w-16 shrink-0">
-                        <span style={{ width: `${Math.min(Number(lead.lead_score || 0) * 10, 100)}%` }} />
+                      <span className="meter w-16 shrink-0 max-lg:hidden" aria-hidden="true">
+                        <span style={{ width: `${scorePercent(lead.lead_score)}%` }} />
                       </span>
-                      <span className="w-4 text-right font-medium">{Number(lead.lead_score || 0).toFixed(0)}</span>
+                      <span className="w-7 text-right font-medium">{formatScore(lead.lead_score)}</span>
                     </div>
                   </td>
-                  <td className="w-10 text-right">
+                  <td className="w-10 text-right is-stacked-hide">
                     <ExternalLink size={15} className="inline text-ink-faint" aria-hidden="true" />
                   </td>
                 </tr>
@@ -225,16 +228,14 @@ const Leads: React.FC = () => {
                 <div className="stat">
                   <span className="stat-label">Score</span>
                   <span className="stat-figure">
-                    {Number(selectedLead.lead_score || 0).toFixed(0)}
+                    {formatScore(selectedLead.lead_score)}
                     <span className="text-[17px] font-normal text-ink-faint"> / 10</span>
                   </span>
                 </div>
                 <div className="stat">
                   <span className="stat-label">Status</span>
                   <span className="mt-1 block">
-                    <span className={statusChipClass(selectedLead.lead_status)}>
-                      {String(selectedLead.lead_status || 'New').replace(/_/g, ' ')}
-                    </span>
+                    <LeadStatusChip status={selectedLead.lead_status} />
                   </span>
                 </div>
                 <div className="stat">
@@ -263,7 +264,7 @@ const Leads: React.FC = () => {
 
             <div className="modal-foot justify-between">
               <span className="text-[13px] text-ink-soft">
-                Last message {new Date(selectedLead.last_message_time || Date.now()).toLocaleDateString()}
+                Last message {new Date(selectedLead.last_message_time || Date.now()).toLocaleDateString([], { day: 'numeric', month: 'short', year: 'numeric' })}
               </span>
               <div className="flex gap-2">
                 <button onClick={() => setSelectedLead(null)} className="btn">Close</button>

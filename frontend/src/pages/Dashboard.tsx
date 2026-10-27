@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getBalance, getLeads, getInstagramSettings } from '../api/crm.api';
+import { getLeads, getInstagramSettings } from '../api/crm.api';
 import {
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  AreaChart, Area, PieChart, Pie, Cell, Legend
+  AreaChart, Area, PieChart, Pie, Cell
 } from 'recharts';
 import { Loader2, ArrowRight, Users, MessageCircle, UserCheck, BadgeCheck } from 'lucide-react';
 import type { Lead } from '../models/crm.models';
+import { formatScore, leadStatusLabel, leadStatusColorVar } from '../lib/leadStatus';
+import { LeadStatusChip, HandlerChip } from '../components/LeadStatusChip';
 
 /**
  * Chart series read in the app's own palette: the accent for anything the
@@ -24,7 +26,6 @@ const seriesColor = (token: string, fallback: string) => {
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
-  const [balance, setBalance] = useState<number>(0);
   const [leads, setLeads] = useState<Lead[]>([]);
   const [interactionData, setInteractionData] = useState<DayBucket[]>([]);
   const [statusData, setStatusData] = useState<StatusSlice[]>([]);
@@ -66,8 +67,7 @@ const Dashboard: React.FC = () => {
   const fetchStats = async () => {
     try {
       setIsLoading(true);
-      const [balanceRes, leadsRes, igSettingsRes] = await Promise.all([
-        getBalance(),
+      const [leadsRes, igSettingsRes] = await Promise.all([
         getLeads(),
         getInstagramSettings().catch(err => {
           console.error('Failed to fetch IG settings in dashboard:', err);
@@ -82,7 +82,6 @@ const Dashboard: React.FC = () => {
       }
 
       const leadList: Lead[] = leadsRes?.Data || [];
-      setBalance(balanceRes?.Data ?? 0);
       setLeads(leadList);
 
       const statusCounts = leadList.reduce<Record<string, number>>((acc, lead) => {
@@ -132,7 +131,11 @@ const Dashboard: React.FC = () => {
   const handoffLeads = leads.filter((l) => l.human_agent_active);
   const buyers = leads.filter((l) => l.lead_status === 'Buyer');
   const leadsThisWeek = interactionData.reduce((sum, d) => sum + d.leads, 0);
-  const statusPalette = [palette.accent, palette.go, palette.warn, palette.stop, palette.lavender];
+  const buyerShare = leads.length ? Math.round((buyers.length / leads.length) * 100) : 0;
+  // Pipeline slices take each status's own colour, the same one its chip uses.
+  // Read on every render, so a theme switch (which re-renders via `palette`) recolours them.
+  const statusColor = (status: string) => seriesColor(leadStatusColorVar(status), '#94a3b8');
+  const pipeline = [...statusData].sort((a, b) => b.value - a.value);
 
   return (
     <div className="page">
@@ -164,7 +167,7 @@ const Dashboard: React.FC = () => {
           { label: 'Leads captured', value: leads.length, note: `${leadsThisWeek.toLocaleString()} in the last 7 days`, icon: Users, tone: 'tone-blue' },
           { label: 'Open conversations', value: activeLeads.length, note: 'Everything not marked lost', icon: MessageCircle, tone: 'tone-peach' },
           { label: 'With a person', value: handoffLeads.length, note: 'Taken over by your team', icon: UserCheck, tone: 'tone-lavender' },
-          { label: 'Marked as buyers', value: buyers.length, note: `Wallet balance $${Number(balance).toFixed(2)}`, icon: BadgeCheck, tone: 'tone-mint' },
+          { label: 'Marked as buyers', value: buyers.length, note: leads.length ? `${buyerShare}% of all leads` : 'None yet', icon: BadgeCheck, tone: 'tone-mint' },
         ].map(({ label, value, note, icon: Icon, tone }) => (
           <div key={label} className={`metric ${tone}`}>
             <div className="metric-head">
@@ -243,42 +246,43 @@ const Dashboard: React.FC = () => {
               <p className="empty-body">Statuses appear here once the assistant has handled its first conversation.</p>
             </div>
           ) : (
-            <div className="min-h-0 flex-grow p-2">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={statusData}
-                    cx="50%"
-                    cy="46%"
-                    innerRadius={52}
-                    outerRadius={76}
-                    paddingAngle={2}
-                    dataKey="value"
-                    stroke="none"
-                  >
-                    {statusData.map((entry, index) => (
-                      <Cell key={entry.name} fill={statusPalette[index % statusPalette.length]} />
-                    ))}
-                  </Pie>
-                  <Legend
-                    verticalAlign="bottom"
-                    iconType="circle"
-                    iconSize={8}
-                    formatter={(value) => (
-                      <span style={{ color: 'var(--ink-soft)', fontSize: 13 }}>{String(value).replace(/_/g, ' ')}</span>
-                    )}
-                  />
-                  <Tooltip
-                    contentStyle={{
-                      background: 'var(--surface)',
-                      border: '1px solid var(--hairline)',
-                      borderRadius: 6,
-                      color: 'var(--ink)',
-                      fontSize: 13,
-                    }}
-                  />
-                </PieChart>
-              </ResponsiveContainer>
+            <div className="flex min-h-0 flex-grow flex-col items-center gap-4 px-4 py-4 sm:flex-row">
+              {/* Donut with the total in its middle; the list beside it is the legend. */}
+              <div className="relative h-[132px] w-[132px] shrink-0">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie data={pipeline} innerRadius={44} outerRadius={64} paddingAngle={2} dataKey="value" stroke="none" isAnimationActive={false}>
+                      {pipeline.map((entry) => (
+                        <Cell key={entry.name} fill={statusColor(entry.name)} />
+                      ))}
+                    </Pie>
+                    <Tooltip
+                      formatter={(value, name) => [value, leadStatusLabel(String(name))]}
+                      contentStyle={{
+                        background: 'var(--surface)',
+                        border: '1px solid var(--hairline)',
+                        borderRadius: 6,
+                        color: 'var(--ink)',
+                        fontSize: 13,
+                      }}
+                    />
+                  </PieChart>
+                </ResponsiveContainer>
+                <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
+                  <span className="tabular text-[22px] font-bold leading-none text-ink">{leads.length}</span>
+                  <span className="mt-1 text-[12px] text-ink-soft">leads</span>
+                </div>
+              </div>
+              <ul className="w-full min-w-0 flex-1 space-y-2">
+                {pipeline.map((entry) => (
+                  <li key={entry.name} className="flex items-center gap-2.5 text-[14px]">
+                    <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: statusColor(entry.name) }} aria-hidden="true" />
+                    <span className="min-w-0 flex-1 truncate text-ink">{leadStatusLabel(entry.name)}</span>
+                    <span className="tabular font-semibold text-ink">{entry.value}</span>
+                    <span className="tabular w-9 text-right text-[13px] text-ink-soft">{Math.round((entry.value / leads.length) * 100)}%</span>
+                  </li>
+                ))}
+              </ul>
             </div>
           )}
         </div>
@@ -298,7 +302,10 @@ const Dashboard: React.FC = () => {
           // shortlist of threads where stepping in is most likely to matter.
           const attention = [...leads]
             .filter((l) => l.lead_status !== 'Lost' && l.lead_status !== 'Buyer')
-            .sort((a, b) => Number(b.lead_score || 0) - Number(a.lead_score || 0))
+            // Anyone who asked for a person comes first, then the warmest leads.
+            .sort((a, b) =>
+              Number(b.lead_status === 'Needs_Human') - Number(a.lead_status === 'Needs_Human') ||
+              Number(b.lead_score || 0) - Number(a.lead_score || 0))
             .slice(0, 6);
 
           if (attention.length === 0) {
@@ -314,13 +321,13 @@ const Dashboard: React.FC = () => {
 
           return (
             <div className="table-wrap">
-              <table className="data-table">
+              <table className="data-table is-stacked">
                 <thead>
                   <tr>
                     <th>Customer</th>
                     <th>Status</th>
                     <th>Handled by</th>
-                    <th>Last intent</th>
+                    <th className="max-lg:hidden">Last intent</th>
                     <th className="num">Score</th>
                   </tr>
                 </thead>
@@ -328,7 +335,7 @@ const Dashboard: React.FC = () => {
                   {attention.map((lead) => (
                     <tr
                       key={lead.id}
-                      onClick={() => navigate('/inbox')}
+                      onClick={() => navigate('/inbox', { state: { leadId: lead.id } })}
                       className="cursor-pointer"
                     >
                       <td>
@@ -342,22 +349,10 @@ const Dashboard: React.FC = () => {
                           </div>
                         </div>
                       </td>
-                      <td>
-                        <span className={
-                          lead.lead_status === 'Needs_Human' ? 'chip chip-stop'
-                            : lead.lead_status === 'Handoff' ? 'chip chip-ink'
-                              : 'chip'
-                        }>
-                          {String(lead.lead_status || 'New').replace(/_/g, ' ')}
-                        </span>
-                      </td>
-                      <td>
-                        <span className={lead.human_agent_active ? 'chip chip-ink' : 'chip chip-accent'}>
-                          {lead.human_agent_active ? 'Your team' : 'Assistant'}
-                        </span>
-                      </td>
-                      <td className="text-ink-soft">{lead.last_intent || '—'}</td>
-                      <td className="num">{Number(lead.lead_score || 0).toFixed(0)}</td>
+                      <td data-label="Status"><LeadStatusChip status={lead.lead_status} /></td>
+                      <td data-label="Handled by"><HandlerChip human={lead.human_agent_active} /></td>
+                      <td data-label="Last intent" className="text-ink-soft max-lg:hidden">{lead.last_intent || '—'}</td>
+                      <td data-label="Score" className="num font-medium">{formatScore(lead.lead_score)}</td>
                     </tr>
                   ))}
                 </tbody>
