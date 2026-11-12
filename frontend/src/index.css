@@ -5395,3 +5395,153 @@ body:has(.crm-layout),
   align-items: center;
   gap: 12px;
 }
+
+/* --- Instagram connection page ------------------------------------------------ */
+
+.meta-connect {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 36px var(--card-pad) 32px;
+  text-align: center;
+  background: radial-gradient(70% 55% at 50% 0%, var(--fz-color-action-primary-subtle), transparent 70%);
+}
+
+.meta-connect-link {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 22px;
+}
+
+.meta-connect-node {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 20px;
+  box-shadow: var(--fz-shadow-app-card);
+}
+
+.meta-connect-node.is-instagram {
+  color: #ffffff;
+  background: linear-gradient(45deg, #f9a825 0%, #ee2a7b 50%, #6228d7 100%);
+}
+
+.meta-connect-node.is-flazly {
+  background: var(--surface);
+  box-shadow: 0 0 0 1px var(--hairline), var(--fz-shadow-app-card);
+}
+
+.meta-connect-node.is-flazly img {
+  width: 42px;
+  height: 42px;
+  object-fit: contain;
+}
+
+/* A dashed link with a dot travelling along it: the connection to be made. */
+.meta-connect-line {
+  position: relative;
+  width: 72px;
+  height: 0;
+  border-top: 2px dashed color-mix(in oklab, var(--fz-color-text-brand) 45%, transparent);
+}
+
+.meta-connect-line::after {
+  content: "";
+  position: absolute;
+  top: -5px;
+  left: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--fz-color-text-brand);
+  animation: meta-link 2.2s ease-in-out infinite;
+}
+
+@keyframes meta-link {
+  0% { left: 0; opacity: 0; }
+  15%, 85% { opacity: 1; }
+  100% { left: calc(100% - 8px); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .meta-connect-line::after { animation: none; left: calc(50% - 4px); }
+}
+
+.meta-connect-title {
+  font-family: var(--fz-font-heading);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+.meta-connect-text {
+  max-width: 52ch;
+  margin-top: 8px;
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+}
+
+.meta-connect-caps {
+  display: grid;
+  gap: 10px;
+  width: 100%;
+  margin-top: 24px;
+  text-align: left;
+}
+
+@media (min-width: 720px) {
+  .meta-connect-caps { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+.meta-connect-caps > li {
+  display: flex;
+  gap: 12px;
+  padding: 14px;
+}
+
+.meta-cap-icon,
+.meta-safe-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border-radius: 999px;
+}
+
+.meta-cap-icon {
+  width: 34px;
+  height: 34px;
+  background: var(--fz-color-action-primary-subtle);
+  color: var(--fz-color-text-brand);
+}
+
+.meta-safe-icon {
+  width: 28px;
+  height: 28px;
+  background: var(--fz-color-success-subtle);
+  color: var(--fz-color-success);
+}
+
+.meta-step {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  border-radius: 999px;
+  background: var(--fz-color-action-primary-subtle);
+  color: var(--fz-color-text-brand);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.meta-step.is-done {
+  background: var(--fz-color-success-subtle);
+  color: var(--fz-color-success);
+}

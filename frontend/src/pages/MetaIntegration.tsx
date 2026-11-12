@@ -7,8 +7,31 @@ import {
   Link2, 
   RefreshCw, 
   Info, 
-  Loader2
+  Loader2,
+  MessageCircle,
+  MessagesSquare,
+  Zap,
+  Lock,
+  KeyRound,
+  LogIn
 } from 'lucide-react';
+
+// What the connection lets Flazly do; matches the permissions the login
+// configuration requests (see handleConnect).
+const CAPABILITIES = [
+  { icon: MessagesSquare, title: 'Direct messages', body: 'Read and reply to DMs and story replies' },
+  { icon: MessageCircle, title: 'Comments', body: 'Read, reply to, hide and delete comments' },
+  { icon: Zap, title: 'Live updates', body: 'Receive new messages and comments instantly' },
+];
+
+/** Instagram's camera glyph, drawn inline: lucide no longer ships brand icons. */
+const InstagramGlyph: React.FC<{ size?: number }> = ({ size = 26 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <rect x="2" y="2" width="20" height="20" rx="5" />
+    <circle cx="12" cy="12" r="4" />
+    <circle cx="17.5" cy="6.5" r="0.6" fill="currentColor" />
+  </svg>
+);
 import { useToast } from '../context/ToastContext';
 import { ConfirmModal } from '../components/ConfirmModal';
 import { connectInstagram, getInstagramSettings, disconnectInstagram } from '../api/crm.api';
@@ -194,7 +217,8 @@ const MetaIntegration: React.FC = () => {
         </div>
       </div>
 
-      <section className="surface page-narrow overflow-hidden">
+      <div className="grid items-start gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">
+      <section className="surface min-w-0 overflow-hidden">
         <div className="surface-head">
           <h2><span className="icon-tile is-sm"><Shield size={16} /></span>Meta account</h2>
           {!isLoadingStatus && (
@@ -224,16 +248,10 @@ const MetaIntegration: React.FC = () => {
                 </div>
               </div>
 
-              {/* What this connection lets Flazly do, matching the permissions the
-                  login configuration requests (see handleConnect). */}
               <div>
                 <p className="label mb-2.5">What Flazly can do with this connection</p>
                 <ul className="grid gap-2.5 sm:grid-cols-3">
-                  {[
-                    { title: 'Direct messages', body: 'Read and reply to DMs and story replies' },
-                    { title: 'Comments', body: 'Read, reply to, hide and delete comments' },
-                    { title: 'Live updates', body: 'Receive new messages and comments instantly' },
-                  ].map((item) => (
+                  {CAPABILITIES.map((item) => (
                     <li key={item.title} className="inset-panel p-3.5">
                       <p className="flex items-center gap-1.5 text-[14px] font-medium text-ink">
                         <CheckCircle2 size={14} className={connectionWarnings.length > 0 ? 'text-ink-faint' : 'text-signal-go'} />
@@ -280,31 +298,85 @@ const MetaIntegration: React.FC = () => {
             </div>
           </>
         ) : (
-          <>
-            <div className="surface-body">
-              <p className="text-[15px] text-ink">Connect your Instagram professional account</p>
-              <p className="mt-1 text-[14px] text-ink-soft">
-                Flazly gets permission to read and reply to direct messages and comments in real time.
-                You can revoke it here at any time.
-              </p>
+          <div className="meta-connect">
+            <div className="meta-connect-link" aria-hidden="true">
+              <span className="meta-connect-node is-instagram"><InstagramGlyph /></span>
+              <span className="meta-connect-line" />
+              <span className="meta-connect-node is-flazly"><img src="/Light Theme.png" alt="" /></span>
             </div>
-            <div className="surface-foot">
-              <button onClick={() => setShowGuide(true)} className="btn btn-sm">
-                <Info size={15} /> Setup guide
-              </button>
-              <button
-                onClick={handleConnect}
-                disabled={isConnecting}
-                aria-busy={isConnecting || undefined}
-                className="btn btn-primary"
-              >
-                {isConnecting ? <RefreshCw className="animate-spin" size={16} /> : <Link2 size={16} />}
-                {isConnecting ? 'Connecting…' : 'Connect with Facebook'}
-              </button>
-            </div>
-          </>
+
+            <h3 className="meta-connect-title">Connect your Instagram professional account</h3>
+            <p className="meta-connect-text">
+              Sign in with Facebook and pick the Page linked to your Instagram account. Flazly gets permission to
+              read and reply in real time, and you can revoke it here at any time.
+            </p>
+
+            <ul className="meta-connect-caps">
+              {CAPABILITIES.map(({ icon: Icon, title, body }) => (
+                <li key={title} className="inset-panel">
+                  <span className="meta-cap-icon"><Icon size={17} /></span>
+                  <span className="min-w-0">
+                    <span className="block text-[14px] font-semibold text-ink">{title}</span>
+                    <span className="block text-[13px] leading-snug text-ink-soft">{body}</span>
+                  </span>
+                </li>
+              ))}
+            </ul>
+
+            <button
+              onClick={handleConnect}
+              disabled={isConnecting}
+              aria-busy={isConnecting || undefined}
+              className="btn btn-primary btn-lg mt-7 min-w-[260px]"
+            >
+              {isConnecting ? <RefreshCw className="animate-spin" size={17} /> : <Link2 size={17} />}
+              {isConnecting ? 'Connecting…' : 'Connect with Facebook'}
+            </button>
+            <p className="mt-3 text-[13px] text-ink-soft">Takes about a minute. No password is shared with Flazly.</p>
+          </div>
         )}
       </section>
+
+        <aside className="space-y-5">
+          {/* The setup steps, shown inline rather than only behind a dialog. */}
+          <section className="surface">
+            <div className="surface-head">
+              <h2>{isConnected ? 'Setup checklist' : 'Before you connect'}</h2>
+            </div>
+            <ol className="surface-body space-y-4">
+              {steps.map((step, i) => (
+                <li key={step.title} className="flex gap-3.5">
+                  <span className={`meta-step ${isConnected ? 'is-done' : ''}`}>
+                    {isConnected ? <CheckCircle2 size={16} /> : i + 1}
+                  </span>
+                  <div className="min-w-0">
+                    <p className="text-[14px] font-semibold text-ink">{step.title}</p>
+                    <p className="mt-0.5 text-[13px] leading-relaxed text-ink-soft">{step.body}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </section>
+
+          <section className="surface">
+            <div className="surface-head">
+              <h2>Your account stays safe</h2>
+            </div>
+            <ul className="surface-body space-y-3.5">
+              {[
+                { icon: LogIn, text: "You sign in through Meta's own login. Flazly never sees your password." },
+                { icon: KeyRound, text: 'The access token Meta issues is encrypted before it is stored.' },
+                { icon: Lock, text: 'Revoke access here or in your Facebook settings whenever you like.' },
+              ].map(({ icon: Icon, text }) => (
+                <li key={text} className="flex gap-3 text-[13px] leading-relaxed text-ink-soft">
+                  <span className="meta-safe-icon"><Icon size={15} /></span>
+                  {text}
+                </li>
+              ))}
+            </ul>
+          </section>
+        </aside>
+      </div>
 
       {showGuide && (
         <div className="modal-backdrop" onClick={(e) => { if (e.target === e.currentTarget) setShowGuide(false); }}>
