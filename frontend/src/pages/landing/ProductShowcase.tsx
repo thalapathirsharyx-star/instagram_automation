@@ -132,7 +132,7 @@ const InboxMockup = () => {
       className="grid lg:grid-cols-[220px_1fr_240px] gap-4 min-h-[440px] items-stretch text-left"
     >
       {/* Left Chat List Panel */}
-      <div data-lenis-prevent className="bg-black/30 border border-white/5 rounded-2xl p-3 flex flex-col gap-2 overflow-y-auto max-h-[440px]">
+      <div className="bg-black/30 border border-white/5 rounded-2xl p-3 flex flex-col gap-2 overflow-y-auto max-h-[440px]">
         <span className="text-[9px] font-bold text-zinc-400 uppercase tracking-wider px-2 mb-1">Conversations</span>
 
         <div className="p-2 rounded-xl bg-white/5 border border-zinc-700 flex flex-col gap-1 cursor-pointer">
@@ -180,7 +180,7 @@ const InboxMockup = () => {
           </div>
         </div>
 
-        <div data-lenis-prevent className="flex-1 p-3 space-y-3.5 overflow-y-auto max-h-[320px]">
+        <div className="flex-1 p-3 space-y-3.5 overflow-y-auto max-h-[320px]">
           <div className="flex gap-2 max-w-[85%]">
             <div className="w-5 h-5 rounded-full bg-zinc-800 flex items-center justify-center text-[7px] font-bold shrink-0 text-zinc-300">US</div>
             <div className="bg-zinc-800/80 border border-white/5 p-2.5 rounded-2xl rounded-tl-none">
@@ -264,7 +264,7 @@ const InboxMockup = () => {
 const AgentMockup = () => {
   return (
     <div className="grid lg:grid-cols-[1.2fr_0.8fr] gap-4 min-h-[440px] items-stretch text-left">
-      <div data-lenis-prevent className="bg-black/30 border border-white/5 rounded-2xl p-4 flex flex-col gap-4 overflow-y-auto">
+      <div className="bg-black/30 border border-white/5 rounded-2xl p-4 flex flex-col gap-4 overflow-y-auto">
         <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest border-b border-white/5 pb-2">AI Agent Setup</span>
 
         <div className="flex flex-col gap-1.5">
@@ -427,7 +427,7 @@ const AnalyticsMockup = () => {
       <div className="bg-black/30 border border-white/5 rounded-2xl p-4 flex flex-col justify-between">
         <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest border-b border-white/5 pb-2 block">Recent Conversions</span>
 
-        <div data-lenis-prevent className="space-y-2 flex-grow overflow-y-auto py-2 max-h-[260px]">
+        <div className="space-y-2 flex-grow overflow-y-auto py-2 max-h-[260px]">
           <div className="bg-white/[0.02] border border-white/5 p-2 rounded-xl flex items-center justify-between">
             <div className="flex items-center gap-2">
               <div className="w-6 h-6 rounded-full bg-zinc-800 flex items-center justify-center text-[8px] text-zinc-200 font-bold">SM</div>

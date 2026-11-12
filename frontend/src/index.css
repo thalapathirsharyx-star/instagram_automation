@@ -2256,6 +2256,13 @@ html {
   scroll-behavior: smooth;
 }
 
+/* While Lenis drives the scroll it sets the position every frame; CSS smooth
+   scrolling would animate each of those jumps too, and the two fight (judder
+   when changing direction). Lenis does the smoothing itself. */
+html.lenis {
+  scroll-behavior: auto;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -4308,13 +4315,6 @@ html {
   display: inline-block;
 }
 
-/* Lenis contains scrolling inside regions it leaves alone. Let those inner
-   lists hand the scroll back to the page at their end, as native scrolling
-   does, so the pointer resting over the product preview never traps the page. */
-html.lenis [data-lenis-prevent] {
-  overscroll-behavior: auto;
-}
-
 /* ============================================================================
    How It Works pipeline graphic (IntegrationsFlowCanvas)
 
@@ -4386,11 +4386,19 @@ html.lenis [data-lenis-prevent] {
 }
 
 .lp-flow-body {
+  position: relative;
   flex: 1;
+  min-height: 0;
+}
+
+/* Every step fills the same cell, so the outgoing and incoming steps overlap
+   while they crossfade instead of one waiting for the other. */
+.lp-flow-step {
+  position: absolute;
+  inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 0;
 }
 
 .lp-flow-node {

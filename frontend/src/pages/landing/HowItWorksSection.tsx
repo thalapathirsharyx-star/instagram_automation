@@ -76,11 +76,12 @@ const WebhookFlow: React.FC = () => {
   );
 };
 
+// Steps share one cell and crossfade, so a change never leaves the card blank.
 const stepMotion = {
-  initial: { opacity: 0, y: 8 },
+  initial: { opacity: 0, y: 6 },
   animate: { opacity: 1, y: 0 },
-  exit: { opacity: 0, y: -8 },
-  transition: { duration: 0.3, ease: [0.22, 1, 0.36, 1] as const },
+  exit: { opacity: 0, y: -6 },
+  transition: { duration: 0.25, ease: [0.22, 1, 0.36, 1] as const },
 };
 
 export const IntegrationsFlowCanvas: React.FC<{ activeStep: number }> = ({ activeStep }) => {
@@ -97,9 +98,9 @@ export const IntegrationsFlowCanvas: React.FC<{ activeStep: number }> = ({ activ
       </div>
 
       <div className="lp-flow-body">
-        <AnimatePresence mode="wait">
+        <AnimatePresence initial={false}>
           {activeStep === 0 && (
-            <motion.div key="step-0" {...stepMotion} className="flex w-full flex-col items-center">
+            <motion.div key="step-0" {...stepMotion} className="lp-flow-step flex-col">
               <div className="flex w-full max-w-[320px] items-center">
                 <div className="flex flex-col items-center gap-2">
                   <span className="lp-flow-node is-instagram">
@@ -135,7 +136,8 @@ export const IntegrationsFlowCanvas: React.FC<{ activeStep: number }> = ({ activ
           )}
 
           {activeStep === 1 && (
-            <motion.div key="step-1" {...stepMotion} className="w-full max-w-[340px] space-y-3">
+            <motion.div key="step-1" {...stepMotion} className="lp-flow-step">
+              <div className="w-full max-w-[340px] space-y-3">
               <div className="flex items-end gap-2.5">
                 <span className="lp-flow-avatar">US</span>
                 <p className="lp-flow-bubble is-in">"Can I buy the hoodie? Do you ship to Germany?"</p>
@@ -157,11 +159,12 @@ export const IntegrationsFlowCanvas: React.FC<{ activeStep: number }> = ({ activ
                   <span className="lp-flow-chip">✓ Location: Germany</span>
                 </div>
               </div>
+              </div>
             </motion.div>
           )}
 
           {activeStep === 2 && (
-            <motion.div key="step-2" {...stepMotion} className="flex w-full justify-center">
+            <motion.div key="step-2" {...stepMotion} className="lp-flow-step">
               <WebhookFlow />
             </motion.div>
           )}
@@ -206,9 +209,18 @@ export const HowItWorksSection: React.FC = () => {
   const isPinned = useIsDesktop() && !reduce;
   const { scrollYProgress } = useScroll({ target: trackRef, offset: [`start ${PIN_TOP}px`, 'end end'] });
 
+  // A step changes only once the scroll is clearly past a boundary, so a small
+  // back-and-forth right on the line does not flicker between two steps.
   useMotionValueEvent(scrollYProgress, 'change', (v) => {
     if (!isPinned) return;
-    setActiveStep(Math.min(2, Math.max(0, Math.floor(v * 3))));
+    setActiveStep((current) => {
+      const raw = v * 3;
+      const BUFFER = 0.12;
+      if (raw > current + 1 + BUFFER || raw < current - BUFFER) {
+        return Math.min(2, Math.max(0, Math.floor(raw)));
+      }
+      return current;
+    });
   });
 
   // A step clicked while pinned scrolls to the middle of its segment, so the
