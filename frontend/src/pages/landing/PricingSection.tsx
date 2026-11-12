@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Check } from 'lucide-react';
+import { Reveal, RevealText } from '../../components/motion/Reveal';
 
 export const PricingSection: React.FC = () => {
   const navigate = useNavigate();
@@ -63,13 +64,13 @@ export const PricingSection: React.FC = () => {
     <section id="pricing" className="py-28 border-t border-zinc-200/80 dark:border-white/5 bg-zinc-100/10 dark:bg-[#121826]/10 relative">
       <div className="max-w-6xl mx-auto px-6">
         <div className="text-center max-w-2xl mx-auto mb-16">
-          <span className="lp-eyebrow is-violet">Pricing Plans</span>
-          <h2 className="lp-title text-3xl md:text-5xl font-bold tracking-tight text-zinc-900 dark:text-white mt-3 mb-4 leading-tight">
+          <Reveal as="span" y={8} className="lp-eyebrow is-violet">Pricing Plans</Reveal>
+          <RevealText as="h2" className="lp-title text-3xl md:text-5xl font-bold tracking-tight text-zinc-900 dark:text-white mt-3 mb-4 leading-tight">
             Simple, Transparent Pricing
-          </h2>
-          <p className="text-sm md:text-base text-zinc-600 dark:text-zinc-400 font-medium leading-relaxed">
+          </RevealText>
+          <Reveal as="p" delay={0.15} className="text-sm md:text-base text-zinc-600 dark:text-zinc-400 font-medium leading-relaxed">
             Scale your lead capture volume. All plans include our 14-day free trial.
-          </p>
+          </Reveal>
         </div>
 
         {/* Pricing tiers grid */}

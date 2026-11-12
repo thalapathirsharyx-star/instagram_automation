@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import type { MouseEvent } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { scrollToElement } from './smoothScroll';
 
 /** Every section of the landing page the marketing chrome can link to. */
 export const SECTION_IDS = {
@@ -38,7 +39,7 @@ export const useSectionLink = () => {
       const target = onLanding ? document.getElementById(id) : null;
 
       if (target) {
-        target.scrollIntoView({ block: 'start' });
+        scrollToElement(target);
         // Keep the address bar in step without pushing a history entry for
         // every section the person glances at.
         window.history.replaceState(null, '', `#${id}`);

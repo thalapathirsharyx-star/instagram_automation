@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { SECTION_IDS, useSectionLink } from '../lib/sectionNav';
+import { scrollToTop } from '../lib/smoothScroll';
 
 const Footer: React.FC = () => {
   const goToSection = useSectionLink();
@@ -41,14 +42,17 @@ const Footer: React.FC = () => {
               The modern Instagram DM API and CRM for digital creators, scaling agencies, and high-growth e-commerce brands. Automatically route inquiries and scale your conversions.
             </p>
             <div className="flex items-center gap-3">
-              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="social-icon-link" aria-label="Facebook">
+              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="social-icon-link is-facebook" aria-label="Facebook">
                 <svg fill="currentColor" viewBox="0 0 24 24" aria-hidden="true" className="w-4 h-4">
                   <path fillRule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" clipRule="evenodd" />
                 </svg>
               </a>
-              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="social-icon-link" aria-label="Instagram">
-                <svg fill="currentColor" viewBox="0 0 24 24" aria-hidden="true" className="w-4 h-4">
-                  <path fillRule="evenodd" d="M12.315 2c2.43 0 2.784.008 3.752.052 2.73.124 4.093 1.528 4.21 4.283.043.968.052 1.32.052 3.752 0 2.43-.008 2.784-.052 3.752-.117 2.736-1.48 4.088-4.21 4.283-.968.043-1.32.052-3.752.052-2.43-.008-2.784-.052-3.752-.052-2.73-.124-4.093-1.528-4.21-4.283-.043-.968-.052-1.32-.052-3.752 0-2.43.008-2.784.052-3.752.117-2.736 1.48-4.088 4.21-4.283.968-.043 1.32-.052 3.752-.052L12.315 2zm-1.157 2.053c-2.408.03-3.244.143-3.784.354-.72.28-1.236.616-1.777 1.156-.54.54-.876 1.056-1.156 1.776-.21.54-.324 1.376-.354 3.784-.03 2.408-.03 2.78 0 5.188.03 2.408.143 3.244.354 3.784.28.72.616 1.236 1.156 1.776.54.54 1.056.876 1.776 1.156.54.21 1.376.324 3.784.354 2.408.03 2.78.03 5.188 0 2.408-.03 3.244-.143 3.784-.354.72-.28 1.236-.616 1.776-1.156.54-.54.876-1.056 1.156-1.776.21-.54.324-1.376.354-3.784.03-2.408.03-2.78 0-5.188-.03-2.408-.143-3.244-.354-3.784-.28-.72-.616-1.236-1.156-1.776-.54-.54-1.056-.876-1.776-1.156-.54-.21-1.376-.324-3.784-.354-2.408-.03-2.78-.03-5.188 0zm-2.07 9.878a4.92 4.92 0 119.84 0 4.92 4.92 0 01-9.84 0zm6.787-3.9a1.11 1.11 0 110-2.22 1.11 1.11 0 010 2.22z" clipRule="evenodd" />
+              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="social-icon-link is-instagram" aria-label="Instagram">
+                {/* Instagram's glyph: rounded square, lens and flash dot. */}
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <rect x="3" y="3" width="18" height="18" rx="5" />
+                  <circle cx="12" cy="12" r="4" />
+                  <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
                 </svg>
               </a>
             </div>
@@ -94,9 +98,9 @@ const Footer: React.FC = () => {
           <div>
             <h4 className="text-[15px] font-semibold mb-5">Legal</h4>
             <ul className="space-y-3 text-sm">
-              <li><Link to="/privacy" onClick={() => window.scrollTo(0, 0)} className="transition-colors">Privacy Policy</Link></li>
-              <li><Link to="/terms" onClick={() => window.scrollTo(0, 0)} className="transition-colors">Terms of Service</Link></li>
-              <li><Link to="/data-deletion" onClick={() => window.scrollTo(0, 0)} className="transition-colors">Data Deletion</Link></li>
+              <li><Link to="/privacy" onClick={scrollToTop} className="transition-colors">Privacy Policy</Link></li>
+              <li><Link to="/terms" onClick={scrollToTop} className="transition-colors">Terms of Service</Link></li>
+              <li><Link to="/data-deletion" onClick={scrollToTop} className="transition-colors">Data Deletion</Link></li>
             </ul>
           </div>
 

@@ -2,6 +2,7 @@ import React from 'react';
 import { Bot, FileText, Check } from 'lucide-react';
 import AnimatedIcon from '../../components/AnimatedIcon';
 import type { MotionIconName } from '../../components/AnimatedIcon';
+import { Reveal, RevealText, Stagger, StaggerItem } from '../../components/motion/Reveal';
 
 // One animated icon per card, matched to what the card describes. Cards not
 // listed here (Knowledge Base) keep their mockup alone.
@@ -193,16 +194,16 @@ export const CapabilitiesSection: React.FC = () => {
     <section id="features" className="py-28 border-t border-zinc-200/80 dark:border-white/5 bg-zinc-100/10 dark:bg-[#121826]/10 relative overflow-hidden">
       <div className="max-w-6xl mx-auto px-6">
         <div className="text-center max-w-2xl mx-auto mb-20">
-          <span className="lp-eyebrow is-teal">Core Capabilities</span>
-          <h2 className="lp-title text-3xl md:text-5xl font-bold tracking-tight text-zinc-900 dark:text-white mt-3 mb-4">
+          <Reveal as="span" y={8} className="lp-eyebrow is-teal">Core Capabilities</Reveal>
+          <RevealText as="h2" className="lp-title text-3xl md:text-5xl font-bold tracking-tight text-zinc-900 dark:text-white mt-3 mb-4">
             Designed to Generate More Business Leads
-          </h2>
-          <p className="text-sm md:text-base text-zinc-600 dark:text-zinc-400 font-medium">
+          </RevealText>
+          <Reveal as="p" delay={0.15} className="text-sm md:text-base text-zinc-600 dark:text-zinc-400 font-medium">
             Everything you need to automate conversations, capture details, and scale lead collection.
-          </p>
+          </Reveal>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <Stagger className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {capabilities.map((mod, idx) => {
             const isColSpan2 = mod.gridClass.includes('col-span-2');
             const cardContent = (
@@ -243,21 +244,21 @@ export const CapabilitiesSection: React.FC = () => {
 
             if (mod.special) {
               return (
-                <div key={idx} className={`${mod.gridClass} relative p-[1px] rounded-[32px] bg-gradient-to-br from-[#4F39F6] via-[#818CF8] to-[#38BDF8] dark:from-[#4F39F6] dark:to-[#38BDF8] shadow-[0_4px_30px_rgba(0,0,0,0.02)] dark:shadow-none hover:shadow-[0_12px_40px_rgba(79,57,246,0.1)] transition-all duration-300`}>
+                <StaggerItem key={idx} className={`${mod.gridClass} relative p-[1px] rounded-[32px] bg-gradient-to-br from-[#4F39F6] via-[#818CF8] to-[#38BDF8] dark:from-[#4F39F6] dark:to-[#38BDF8] shadow-[0_4px_30px_rgba(0,0,0,0.02)] dark:shadow-none hover:shadow-[0_12px_40px_rgba(79,57,246,0.1)] transition-all duration-300`}>
                   <div className="bg-gradient-to-b from-white to-zinc-50/50 dark:from-[#0f1220] dark:to-[#090b14] rounded-[31px] p-8 h-full text-left">
                     {cardContent}
                   </div>
-                </div>
+                </StaggerItem>
               );
             }
 
             return (
-              <div key={idx} className={`${mod.gridClass} bg-gradient-to-b from-white to-zinc-50/30 dark:from-[#131929]/50 dark:to-[#0f1422]/50 border border-zinc-200/50 dark:border-white/5 rounded-[32px] p-8 text-left hover:border-[#38BDF8]/20 dark:hover:border-[#38BDF8]/30 transition-all duration-300 shadow-[0_4px_30px_rgba(0,0,0,0.01)] hover:shadow-[0_8px_40px_rgba(0,0,0,0.03)] dark:shadow-none`}>
+              <StaggerItem key={idx} className={`${mod.gridClass} bg-gradient-to-b from-white to-zinc-50/30 dark:from-[#131929]/50 dark:to-[#0f1422]/50 border border-zinc-200/50 dark:border-white/5 rounded-[32px] p-8 text-left hover:border-[#38BDF8]/20 dark:hover:border-[#38BDF8]/30 transition-all duration-300 shadow-[0_4px_30px_rgba(0,0,0,0.01)] hover:shadow-[0_8px_40px_rgba(0,0,0,0.03)] dark:shadow-none`}>
                 {cardContent}
-              </div>
+              </StaggerItem>
             );
           })}
-        </div>
+        </Stagger>
       </div>
     </section>
   );

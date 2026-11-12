@@ -2671,6 +2671,18 @@ html {
   height: 18px;
 }
 
+/* Each network in its own colour on hover. !important only because an older
+   light-theme rule forces every footer link blue on hover with !important. */
+.site-footer .social-icon-link.is-facebook:hover {
+  background: #e7f0fe;
+  color: #1877f2 !important;
+}
+
+.site-footer .social-icon-link.is-instagram:hover {
+  background: #fdeaf1;
+  color: #e1306c !important;
+}
+
 /* Premium Enterprise SaaS Visual System */
 .text-headline-gradient {
   color: var(--lp-blue, #1463ff);
@@ -3199,7 +3211,8 @@ html {
   top: 610px;
   width: min(1100px, 92vw);
   height: 520px;
-  transform: translateX(-50%) perspective(1200px) rotateX(18deg);
+  /* --wash-* are driven by scroll (HeroWash.tsx); the defaults are the resting tilt. */
+  transform: translateX(-50%) translateY(var(--wash-y, 0px)) perspective(1200px) rotateX(var(--wash-tilt, 18deg));
   border-radius: 48px;
   background:
     radial-gradient(60% 80% at 50% 0%, rgba(255, 255, 255, 0.6), transparent 70%),
@@ -3397,27 +3410,69 @@ html {
 /* --- Where the icons sit -------------------------------------------------- */
 
 /* A floating chip in the hero margins: white, rounded, the card shadow. */
-.mi-chip {
-  display: inline-flex;
+/* Hero margin cards: small notification-style pieces of the product, in the
+   app's own card language (white, hairline, soft shadow), drifting slowly. */
+.lp-hero-card {
+  position: absolute;
+  display: flex;
   align-items: center;
-  justify-content: center;
-  width: 60px;
-  height: 60px;
-  border-radius: 18px;
-  background: #ffffff;
-  box-shadow: var(--lp-shadow-card);
-  animation: mi-float 6s ease-in-out infinite;
-}
-
-.mi-chip.is-small {
-  width: 50px;
-  height: 50px;
+  gap: 12px;
+  width: 248px;
+  padding: 12px 14px;
   border-radius: 16px;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 0 0 1px var(--lp-line), 0 12px 32px -12px rgba(14, 11, 61, 0.18);
+  backdrop-filter: blur(6px);
+  animation: lp-card-drift 9s ease-in-out infinite;
 }
 
-@keyframes mi-float {
-  0%, 100% { transform: translateY(0) rotate(var(--mi-tilt, 0deg)); }
-  50% { transform: translateY(-8px) rotate(var(--mi-tilt, 0deg)); }
+.lp-hero-card.is-left { left: max(24px, calc(50% - 680px)); }
+.lp-hero-card.is-right { right: max(24px, calc(50% - 680px)); }
+
+.lp-hero-card img {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  padding: 5px;
+  border-radius: 10px;
+  background: var(--lp-panel);
+  object-fit: contain;
+}
+
+.lp-hero-card-title {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--lp-navy);
+  white-space: nowrap;
+}
+
+.lp-hero-card-title span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--lp-muted);
+}
+
+.lp-hero-card-body {
+  margin-top: 2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 13px;
+  color: var(--lp-ink);
+}
+
+@keyframes lp-card-drift {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lp-hero-card { animation: none; }
 }
 
 /* An icon introducing a card or section: a soft tile in the accent tint. */
@@ -3442,9 +3497,6 @@ html {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .mi-chip {
-    animation: none;
-  }
 }
 
 /* ============================================================================
@@ -4234,4 +4286,299 @@ html {
   .data-table.is-stacked .is-stacked-action:empty {
     display: none;
   }
+}
+
+/* ============================================================================
+   Scroll reveals (components/motion/Reveal.tsx)
+
+   A word rises out of its own line box. The mask pads below the baseline so
+   descenders are not clipped, and pulls the space back so lines keep their
+   height.
+   ============================================================================ */
+
+.reveal-mask {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  padding-bottom: 0.12em;
+  margin-bottom: -0.12em;
+}
+
+.reveal-word {
+  display: inline-block;
+}
+
+/* Lenis contains scrolling inside regions it leaves alone. Let those inner
+   lists hand the scroll back to the page at their end, as native scrolling
+   does, so the pointer resting over the product preview never traps the page. */
+html.lenis [data-lenis-prevent] {
+  overscroll-behavior: auto;
+}
+
+/* ============================================================================
+   How It Works pipeline graphic (IntegrationsFlowCanvas)
+
+   One white card in the landing language. Colour appears only where it means
+   something: the Instagram and Flazly tiles, and each destination's icon.
+   ============================================================================ */
+
+.lp-flow-card {
+  display: flex;
+  flex-direction: column;
+  height: 360px;
+  padding: 0 22px;
+  border-radius: 24px;
+  background:
+    radial-gradient(120% 70% at 50% 0%, rgba(20, 99, 255, 0.05), transparent 60%),
+    #ffffff;
+  box-shadow: 0 0 0 1px var(--lp-line), var(--lp-shadow-card);
+}
+
+.lp-flow-head,
+.lp-flow-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-shrink: 0;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--lp-muted);
+}
+
+.lp-flow-head {
+  padding: 18px 0 14px;
+  border-bottom: 1px solid var(--lp-line);
+}
+
+.lp-flow-foot {
+  padding: 14px 0 16px;
+  border-top: 1px solid var(--lp-line);
+  font-size: 10px;
+}
+
+.lp-flow-tag {
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: var(--lp-panel);
+  box-shadow: inset 0 0 0 1px var(--lp-line);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--lp-ink);
+}
+
+.lp-flow-live {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: #12b76a;
+  box-shadow: 0 0 0 3px rgba(18, 183, 106, 0.18);
+}
+
+.lp-flow-live.is-accent {
+  background: var(--lp-blue);
+  box-shadow: 0 0 0 3px rgba(20, 99, 255, 0.18);
+}
+
+.lp-flow-body {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+}
+
+.lp-flow-node {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  color: #ffffff;
+}
+
+/* The real Flazly mark on white, so its own gradient reads true; a soft blue
+   ring and glow mark it as the hub every line runs from. */
+.lp-flow-node.is-flazly {
+  background: #ffffff;
+  box-shadow: 0 0 0 1px rgba(20, 99, 255, 0.18), 0 10px 24px -10px rgba(20, 99, 255, 0.55);
+}
+
+.lp-flow-node.is-flazly img {
+  /* The PNG carries its own transparent margin, so it is drawn larger than the tile's inner area. */
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+}
+
+.lp-flow-node.is-instagram {
+  background: linear-gradient(45deg, #f9a825 0%, #ee2a7b 50%, #6228d7 100%);
+  box-shadow: 0 10px 22px -10px rgba(238, 42, 123, 0.6);
+}
+
+.lp-flow-caption {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--lp-ink);
+}
+
+.lp-flow-caption.is-accent {
+  color: var(--lp-blue);
+}
+
+.lp-flow-line {
+  height: 0;
+  border-top: 2px dashed rgba(20, 99, 255, 0.45);
+}
+
+.lp-flow-pill {
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #ffffff;
+  box-shadow: inset 0 0 0 1px rgba(20, 99, 255, 0.25);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--lp-blue);
+  white-space: nowrap;
+}
+
+.lp-flow-note,
+.lp-flow-dest {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-radius: 14px;
+  background: #ffffff;
+  box-shadow: 0 0 0 1px var(--lp-line), 0 4px 12px -6px rgba(14, 11, 61, 0.12);
+}
+
+.lp-flow-note {
+  width: 100%;
+  max-width: 300px;
+  padding: 12px 14px;
+}
+
+.lp-flow-dest {
+  padding: 0 12px;
+}
+
+.lp-flow-dest.is-compact {
+  gap: 8px;
+  padding: 0 9px;
+}
+
+.lp-flow-dest.is-compact .lp-flow-icon {
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+}
+
+.lp-flow-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+  border-radius: 9px;
+}
+
+.lp-flow-icon.is-mint { background: #e6f3ec; color: #067647; }
+.lp-flow-icon.is-peach { background: #fff0e2; color: #c2410c; }
+.lp-flow-icon.is-lavender { background: #f0eafe; color: #6a3fc0; }
+
+.lp-flow-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  border-radius: 999px;
+  background: var(--lp-panel-2);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--lp-ink);
+}
+
+.lp-flow-bubble {
+  max-width: 230px;
+  padding: 9px 12px;
+  border-radius: 14px;
+  font-size: 12.5px;
+  line-height: 1.45;
+}
+
+.lp-flow-bubble.is-in {
+  background: #f2f4f7;
+  color: var(--lp-navy);
+  border-bottom-left-radius: 4px;
+}
+
+.lp-flow-bubble.is-out {
+  background: var(--lp-blue);
+  color: #ffffff;
+  font-weight: 500;
+  border-bottom-right-radius: 4px;
+}
+
+.lp-flow-chip {
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: #ecfdf3;
+  font-size: 11px;
+  font-weight: 600;
+  color: #067647;
+}
+
+/* Connectors: a faint track, with a brighter dash flowing toward each destination. */
+.lp-flow-path {
+  fill: none;
+  stroke: #d8e2fb;
+  stroke-width: 2;
+}
+
+.lp-flow-path.is-moving {
+  stroke: var(--lp-blue);
+  stroke-dasharray: 6 10;
+  animation: lp-flow 1.2s linear infinite;
+}
+
+.lp-flow-end {
+  fill: #ffffff;
+  stroke: var(--lp-blue);
+  stroke-width: 2;
+}
+
+@keyframes lp-flow {
+  to { stroke-dashoffset: -32; }
+}
+
+/* Header and footer each stay one line. */
+.lp-flow-head > span:first-child,
+.lp-flow-foot > span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lp-flow-tag {
+  flex-shrink: 0;
+}
+
+@media (max-width: 420px) {
+  .lp-flow-card { padding: 0 16px; }
+  .lp-flow-head { font-size: 10px; letter-spacing: 0.06em; }
+  .lp-flow-foot > span:last-child { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lp-flow-path.is-moving { animation: none; }
 }

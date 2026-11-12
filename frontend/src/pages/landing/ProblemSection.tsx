@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useInView } from 'framer-motion';
 import { ChevronLeft, RefreshCw, Image, Mic, Smile, Lightbulb } from 'lucide-react';
+import { Reveal, RevealText } from '../../components/motion/Reveal';
 
 /**
  * The minutes a lead spends waiting are the argument this section is making, so
@@ -456,14 +457,14 @@ export const ProblemSection: React.FC = () => {
     <section className="py-16 md:py-24 relative px-4 sm:px-6">
       <div className="lp-problem-stage max-w-6xl mx-auto px-3 py-14 sm:px-10 md:px-14 md:py-20">
         <div className="text-center max-w-2xl mx-auto px-2 sm:px-0">
-          <span className="lp-eyebrow is-orange">The Cost Of Waiting</span>
-          <h2 className="lp-title text-[34px] md:text-[48px] mt-3">
+          <Reveal as="span" y={8} className="lp-eyebrow is-orange">The Cost Of Waiting</Reveal>
+          <RevealText as="h2" className="lp-title text-[34px] md:text-[48px] mt-3">
             Every unanswered DM is somebody else's customer.
-          </h2>
-          <p className="mt-5 text-[16px] md:text-[18px] text-[#535479] leading-relaxed">
+          </RevealText>
+          <Reveal as="p" delay={0.15} className="mt-5 text-[16px] md:text-[18px] text-[#535479] leading-relaxed">
             Your next buyer is in your inbox right now, asking what you charge. Here is what
             the next five minutes cost you.
-          </p>
+          </Reveal>
         </div>
 
         <ProblemStorytelling />

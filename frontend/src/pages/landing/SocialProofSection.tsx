@@ -1,5 +1,6 @@
 import React from 'react';
 import { MessageCircle, Users, Clock, Sparkles, Star } from 'lucide-react';
+import { Reveal, RevealText, Stagger, StaggerItem } from '../../components/motion/Reveal';
 
 export const SocialProofSection: React.FC = () => {
   const metrics = [
@@ -30,29 +31,29 @@ export const SocialProofSection: React.FC = () => {
     <section className="py-28 border-t border-zinc-200/80 dark:border-white/5 bg-zinc-100/20 dark:bg-[#121826]/20 relative overflow-hidden">
       <div className="max-w-6xl mx-auto px-6">
         <div className="text-center max-w-2xl mx-auto mb-20">
-          <span className="lp-eyebrow is-orange">Success Stories</span>
-          <h2 className="lp-title text-3xl md:text-5xl font-bold tracking-tight text-zinc-900 dark:text-white mt-3 mb-4 leading-tight">
+          <Reveal as="span" y={8} className="lp-eyebrow is-orange">Success Stories</Reveal>
+          <RevealText as="h2" className="lp-title text-3xl md:text-5xl font-bold tracking-tight text-zinc-900 dark:text-white mt-3 mb-4 leading-tight">
             Trusted by High-Growth Brands
-          </h2>
+          </RevealText>
         </div>
 
         {/* Metrics Row */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+        <Stagger className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
           {metrics.map((metric, i) => (
-            <div key={i} className="bg-white dark:bg-[#121826]/40 border border-zinc-200/80 dark:border-white/5 p-6 rounded-2xl flex flex-col items-center text-center shadow-sm">
+            <StaggerItem key={i} className="bg-white dark:bg-[#121826]/40 border border-zinc-200/80 dark:border-white/5 p-6 rounded-2xl flex flex-col items-center text-center shadow-sm">
               <div className="w-10 h-10 rounded-xl bg-[#38BDF8]/10 border border-[#38BDF8]/20 flex items-center justify-center mb-4 text-[#38BDF8]">
                 {metric.icon}
               </div>
               <div className="text-3xl md:text-4xl font-bold text-zinc-900 dark:text-white mb-2 tracking-tight">{metric.value}</div>
               <div className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">{metric.label}</div>
-            </div>
+            </StaggerItem>
           ))}
-        </div>
+        </Stagger>
 
         {/* Testimonials */}
-        <div className="grid md:grid-cols-2 gap-8 text-left">
+        <Stagger className="grid md:grid-cols-2 gap-8 text-left">
           {testimonials.map((t, i) => (
-            <div key={i} className="premium-gradient-border">
+            <StaggerItem key={i} className="premium-gradient-border">
               <div className="premium-card-content p-8 flex flex-col justify-between h-full">
                 <div>
                   <div className="flex gap-1 mb-6">
@@ -80,9 +81,9 @@ export const SocialProofSection: React.FC = () => {
                   </div>
                 </div>
               </div>
-            </div>
+            </StaggerItem>
           ))}
-        </div>
+        </Stagger>
       </div>
     </section>
   );

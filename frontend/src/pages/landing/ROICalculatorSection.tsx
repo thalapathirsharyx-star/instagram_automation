@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import AnimatedIcon from '../../components/AnimatedIcon';
+import { Reveal, RevealText } from '../../components/motion/Reveal';
 
 export const ROICalculator: React.FC = () => {
   const [dms, setDms] = useState(2500);
@@ -147,13 +148,13 @@ export const ROICalculatorSection: React.FC = () => {
           <span className="mi-tile mb-4 mx-auto flex w-fit">
             <AnimatedIcon name="chart" size={24} />
           </span>
-          <span className="lp-eyebrow">ROI Calculator</span>
-          <h2 className="lp-title text-3xl md:text-5xl font-bold tracking-tight mb-4 text-zinc-900 dark:text-white mt-3">
+          <Reveal as="span" y={8} className="lp-eyebrow">ROI Calculator</Reveal>
+          <RevealText as="h2" className="lp-title text-3xl md:text-5xl font-bold tracking-tight mb-4 text-zinc-900 dark:text-white mt-3">
             Calculate Your Recovered Revenue
-          </h2>
-          <p className="text-sm md:text-base text-zinc-600 dark:text-zinc-400 font-medium">
+          </RevealText>
+          <Reveal as="p" delay={0.15} className="text-sm md:text-base text-zinc-600 dark:text-zinc-400 font-medium">
             See how much revenue is left unrecovered without automated lead pipelines.
-          </p>
+          </Reveal>
         </div>
 
         <ROICalculator />

@@ -15,6 +15,7 @@ import Automation from './pages/Automation';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Landing from './pages/Landing';
+import { scrollToElement, scrollToTop } from './lib/smoothScroll';
 import VerifyEmail from './pages/VerifyEmail';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
@@ -83,7 +84,7 @@ function AppContent() {
   // Scroll to the hash target if the URL has one, else to the top.
   useEffect(() => {
     if (!location.hash) {
-      window.scrollTo(0, 0);
+      scrollToTop();
       return;
     }
 
@@ -95,7 +96,7 @@ function AppContent() {
     let frame = requestAnimationFrame(function find() {
       const element = document.getElementById(id);
       if (element) {
-        element.scrollIntoView({ block: 'start' });
+        scrollToElement(element);
       } else if (attempts++ < 90) {
         frame = requestAnimationFrame(find);
       }

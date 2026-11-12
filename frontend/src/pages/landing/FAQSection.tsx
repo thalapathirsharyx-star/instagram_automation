@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
+import { Reveal, RevealText } from '../../components/motion/Reveal';
 
 const FAQItemComponent = ({ question, answer }: { question: string; answer: string }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -83,10 +84,10 @@ export const FAQSection: React.FC = () => {
       <div className="lp-soft-panel max-w-4xl mx-auto px-5 py-14 sm:px-10 md:py-20">
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-16">
-          <span className="lp-eyebrow">Have Questions?</span>
-          <h2 className="lp-title text-3xl md:text-5xl font-bold tracking-tight text-zinc-900 dark:text-white mt-3 leading-tight">
+          <Reveal as="span" y={8} className="lp-eyebrow">Have Questions?</Reveal>
+          <RevealText as="h2" className="lp-title text-3xl md:text-5xl font-bold tracking-tight text-zinc-900 dark:text-white mt-3 leading-tight">
             Frequently Asked Questions
-          </h2>
+          </RevealText>
         </div>
 
         <div className="flex flex-col gap-4">

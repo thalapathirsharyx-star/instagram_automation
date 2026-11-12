@@ -1,5 +1,8 @@
 import React from 'react';
+import { MotionConfig } from 'framer-motion';
 import Navbar from '../components/Navbar';
+import { SmoothScroll } from '../components/motion/SmoothScroll';
+import { HeroWash } from '../components/motion/HeroWash';
 import Footer from '../components/Footer';
 
 // Modular Landing Sections
@@ -21,9 +24,11 @@ import { FinalCTASection } from './landing/FinalCTASection';
 
 const Landing: React.FC = () => {
   return (
-    <div className="landing-page font-inter selection:bg-[#1463FF]/15 selection:text-[#0E0B3D] min-h-screen relative overflow-x-hidden">
+    <MotionConfig reducedMotion="user">
+    <SmoothScroll>
+    <div className="landing-page font-inter selection:bg-[#1463FF]/15 selection:text-[#0E0B3D] min-h-screen relative overflow-x-clip">
       {/* The reference's soft, tilted blue slab behind the product preview. */}
-      <div className="lp-hero-wash hidden md:block" aria-hidden="true" />
+      <HeroWash />
 
       {/* Main Navbar */}
       <Navbar />
@@ -80,6 +85,8 @@ const Landing: React.FC = () => {
       {/* Global Footer */}
       <Footer />
     </div>
+    </SmoothScroll>
+    </MotionConfig>
   );
 };
 
