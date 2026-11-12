@@ -233,7 +233,7 @@ const Inbox: React.FC = () => {
 
   return (
     // Fills the viewport under the 56px header, minus the content padding (16px a side on phones, 24px above 860px).
-    <div className="flex h-[calc(100dvh-88px)] flex-col min-[861px]:h-[calc(100dvh-104px)]">
+    <div className="page-fill flex h-[calc(100dvh-88px)] flex-col min-[861px]:h-[calc(100dvh-104px)]">
       <div className="surface flex min-h-0 flex-grow overflow-hidden">
         {/* Thread list. The page heading lives here, above the list it names. */}
         <div className={`${showThreadOnMobile ? 'hidden md:flex' : 'flex'} w-full shrink-0 flex-col border-hairline bg-porcelain md:w-[300px] md:border-r lg:w-[320px]`}>

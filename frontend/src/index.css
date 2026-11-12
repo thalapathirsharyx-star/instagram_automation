@@ -535,10 +535,23 @@
 
   /* --- Page furniture ------------------------------------------------------ */
 
+  /* Every page shares one content width: the 24px router gutter on each side,
+     up to --page-max, centred only beyond that. Full-height views (the Inbox)
+     use .page-fill so they line up with everything else. */
+  :root {
+    --page-max: 1600px;
+  }
+
   .page {
-    max-width: 1200px;
+    max-width: var(--page-max);
     margin: 0 auto;
     padding-bottom: 48px;
+  }
+
+  .page-fill {
+    width: 100%;
+    max-width: var(--page-max);
+    margin: 0 auto;
   }
 
   /* The content of a form page, inside .page: keeps the page's left edge and
