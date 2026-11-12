@@ -353,7 +353,7 @@ const Inbox: React.FC = () => {
                   </button>
                   <span className="avatar-initial">{selectedLead.customer_name[0]}</span>
                   <div className="min-w-0">
-                    <h2 className="truncate font-display text-[17px] font-semibold leading-tight text-ink">
+                    <h2 className="title-display truncate font-display text-[17px] font-semibold leading-tight text-ink">
                       {selectedLead.customer_name}
                     </h2>
                     <p className="truncate text-[13px] text-ink-soft">@{selectedLead.instagram_handle}</p>

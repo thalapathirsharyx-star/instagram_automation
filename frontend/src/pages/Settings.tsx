@@ -650,7 +650,7 @@ const Settings: React.FC = () => {
                 badge={
                   user?.twoFactorEnabled
                     ? <span className="chip chip-dot chip-go">Enabled</span>
-                    : <span className="chip chip-dot">Off</span>
+                    : <span className="chip chip-dot chip-warn">Off</span>
                 }
                 footer={
                   isSettingUp2Fa ? (

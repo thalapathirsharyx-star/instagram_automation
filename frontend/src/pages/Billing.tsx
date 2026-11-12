@@ -264,7 +264,7 @@ const Billing: React.FC = () => {
           <div className="grid gap-6 md:grid-cols-2">
             <section className="surface flex flex-col p-6">
               <div className="flex items-start justify-between gap-4">
-                <h2 className="text-[20px] font-semibold text-ink">{currentPlan} plan</h2>
+                <h2 className="title-display text-[22px] font-bold text-ink">{currentPlan} plan</h2>
                 <p className="text-[14px] text-ink-soft">
                   <span className="text-[18px] font-semibold text-ink">{planPrice}</span> / month
                 </p>

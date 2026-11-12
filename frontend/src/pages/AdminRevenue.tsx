@@ -41,7 +41,7 @@ const AdminRevenue: React.FC = () => {
   const paidClients = clients.filter(c => c.plan && c.plan !== 'Free').length;
   const conversionRate = clients.length > 0 ? Math.round((paidClients / clients.length) * 100) : 0;
 
-  const planChip = (plan: string) => (plan && plan !== 'Free' ? 'chip chip-accent' : 'chip');
+  const planChip = (plan: string) => (plan && plan !== 'Free' ? 'chip chip-orange' : 'chip');
 
   // Downloads the revenue table this page is built from: one row per tenant.
   const exportCsv = () => {
@@ -164,7 +164,7 @@ const AdminRevenue: React.FC = () => {
         <section className="surface overflow-hidden">
           <div className="surface-head">
             <h2><span className="icon-tile is-sm"><Users size={16} /></span>Active subscriptions</h2>
-            <span className="chip chip-accent">{paidClients} paying</span>
+            <span className="chip chip-orange">{paidClients} paying</span>
           </div>
 
           {paidClients === 0 ? (
@@ -176,7 +176,7 @@ const AdminRevenue: React.FC = () => {
           ) : (
             <div className="grid grid-cols-1 gap-3 p-5 md:grid-cols-2 lg:grid-cols-3">
               {clients.filter(c => c.plan && c.plan !== 'Free').map((client) => (
-                <div key={client.id} className="flex items-center gap-3 rounded-[10px] border border-hairline p-3.5">
+                <div key={client.id} className="inset-panel flex items-center gap-3 p-3.5">
                   <span className="avatar-initial">{client.name?.charAt(0)?.toUpperCase() || '?'}</span>
                   <div className="min-w-0 flex-grow">
                     <p className="truncate text-[14px] font-medium text-ink">{client.name}</p>

@@ -220,7 +220,7 @@ const ClientManagement: React.FC = () => {
                   <td>
                     <div className="space-y-1">
                       <div className="flex flex-wrap items-center gap-2">
-                        <span className={client.plan && client.plan !== 'Free' ? 'chip chip-accent' : 'chip'}>
+                        <span className={client.plan && client.plan !== 'Free' ? 'chip chip-orange' : 'chip'}>
                           {client.plan || 'Free'}
                         </span>
                         {client.plan_expires_at && (

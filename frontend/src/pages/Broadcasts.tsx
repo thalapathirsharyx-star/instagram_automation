@@ -41,7 +41,7 @@ interface BroadcastItem {
 const STATUS_CONFIG: Record<string, { label: string; color: string; icon: React.ReactNode }> = {
   draft:     { label: 'Draft',     color: 'chip',             icon: <Clock size={12} /> },
   scheduled: { label: 'Scheduled', color: 'chip chip-warn',   icon: <Clock size={12} /> },
-  sending:   { label: 'Sending',   color: 'chip chip-accent', icon: <Loader2 size={12} className="animate-spin" /> },
+  sending:   { label: 'Sending',   color: 'chip chip-info', icon: <Loader2 size={12} className="animate-spin" /> },
   completed: { label: 'Completed', color: 'chip chip-go',     icon: <CheckCircle2 size={12} /> },
   failed:    { label: 'Failed',    color: 'chip chip-stop',   icon: <XCircle size={12} /> },
 };

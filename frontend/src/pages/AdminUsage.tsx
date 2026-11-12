@@ -122,7 +122,7 @@ const AdminUsage: React.FC = () => {
                       </div>
                     </td>
                     <td>
-                      <span className={client.plan && client.plan !== 'Free' ? 'chip chip-accent' : 'chip'}>
+                      <span className={client.plan && client.plan !== 'Free' ? 'chip chip-orange' : 'chip'}>
                         {client.plan || 'Free'}
                       </span>
                     </td>

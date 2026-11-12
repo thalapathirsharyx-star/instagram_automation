@@ -258,7 +258,7 @@ const CommentsManager: React.FC = () => {
         <div>
           <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
             <h1 className="page-title">Comments</h1>
-            <span className="chip chip-accent hidden sm:inline-flex" title="Meta permission this page uses">
+            <span className="chip chip-info hidden sm:inline-flex" title="Meta permission this page uses">
               <ShieldCheck size={13} />
               instagram_business_manage_comments
             </span>

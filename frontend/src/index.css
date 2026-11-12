@@ -5163,3 +5163,235 @@ body:has(.crm-layout),
   box-shadow: none;
   opacity: 1;
 }
+
+/* ============================================================================
+   Functional colours (admin panel + client portal)
+
+   Indigo is the brand: primary actions, links, navigation, AI. Everything
+   else carries a meaning and only that meaning:
+     blue   information, in-progress, neutral facts worth noticing
+     green  success, completed, active and healthy
+     amber  warning, pending, needs attention
+     red    destructive actions, errors, failed, critical
+     orange highlights: paid plans, hot leads, important counts
+   Every ink clears 4.5:1 on its own tint in both themes (gen.py / tone notes).
+   ============================================================================ */
+
+.crm-layout .tone-blue   { --tone-bg: var(--fz-color-info-subtle);    --tone-ink: var(--fz-color-info); }
+.crm-layout .tone-mint   { --tone-bg: var(--fz-color-success-subtle); --tone-ink: var(--fz-color-success); }
+.crm-layout .tone-amber  { --tone-bg: var(--fz-color-warning-subtle); --tone-ink: var(--fz-color-warning); }
+.crm-layout .tone-rose   { --tone-bg: var(--fz-color-danger-subtle);  --tone-ink: var(--fz-color-danger); }
+.crm-layout .tone-peach  { --tone-bg: var(--pastel-peach);            --tone-ink: var(--peach-ink); }
+.crm-layout .tone-indigo { --tone-bg: var(--fz-color-action-primary-subtle); --tone-ink: var(--fz-color-text-brand); }
+
+/* Stat cards: the icon bubble takes the card's meaning (brand indigo when none). */
+.crm-layout .metric .icon-tile {
+  background: var(--tone-bg, var(--fz-color-action-primary-subtle));
+  color: var(--tone-ink, var(--fz-color-text-brand));
+}
+
+/* Status chips for the two meanings that had none. */
+.crm-layout .chip-info {
+  border-color: color-mix(in oklab, var(--fz-color-info) 30%, transparent);
+  background: var(--fz-color-info-subtle);
+  color: var(--fz-color-info);
+}
+
+.crm-layout .chip-orange {
+  border-color: color-mix(in oklab, var(--peach-ink) 30%, transparent);
+  background: var(--pastel-peach);
+  color: var(--peach-ink);
+}
+
+/* Information notices are blue, not the brand colour. */
+.crm-layout .notice-info {
+  border-left-color: var(--fz-color-info);
+  background: var(--fz-color-info-subtle);
+  border-color: color-mix(in oklab, var(--fz-color-info) 26%, transparent);
+}
+
+.crm-layout .notice-info .text-viridian,
+.crm-layout .notice-info svg {
+  color: var(--fz-color-info);
+}
+
+/* ============================================================================
+   App typography: firmer, clearer text (admin panel + client portal)
+
+   Body copy sits at weight 450 (Inter is loaded as a variable font, so this is
+   exact, not rounded) instead of a thin-looking 400. Secondary and muted text
+   are a step darker; labels, chips and table headers are semibold. Sizes and
+   spacing are unchanged.
+     headings        Plus Jakarta Sans 700
+     labels, chips   600
+     emphasis        500-600 (already set per element)
+     body, lists     450
+   ============================================================================ */
+
+.crm-layout {
+  font-weight: 450;
+  --ink-soft: #414860;   /* secondary: 9.0:1 on white, 7.3:1 on the deepest tint */
+  --ink-faint: #555b71;  /* muted: 6.7:1 on white, 5.4:1 on the deepest tint */
+}
+
+:root.dark .crm-layout {
+  --ink-soft: #c8ccd8;   /* 11.2:1 on the dark surface */
+  --ink-faint: #a7acbb;  /* 7.9:1 on the dark surface */
+}
+
+/* Tailwind's text-ink-soft / text-ink-faint utilities resolved these at :root,
+   so they are re-pointed here too or they keep the old, lighter grey. */
+.crm-layout,
+:root.dark .crm-layout {
+  --color-ink-soft: var(--ink-soft);
+  --color-ink-faint: var(--ink-faint);
+  --color-muted-foreground: var(--ink-soft);
+}
+
+/* Nothing in the app renders lighter than body weight. */
+.crm-layout .font-normal,
+.crm-layout input,
+.crm-layout textarea,
+.crm-layout select {
+  font-weight: 450;
+}
+
+.crm-layout .field-label,
+.crm-layout .metric-label,
+.crm-layout .stat-label {
+  font-weight: 600;
+}
+
+.crm-layout .metric-label {
+  color: var(--ink-soft);
+}
+
+.crm-layout .chip {
+  font-weight: 600;
+}
+
+.crm-layout .field-hint,
+.crm-layout .notice-body,
+.crm-layout .empty-body,
+.crm-layout .page-sub {
+  font-weight: 450;
+  color: var(--ink-soft);
+}
+
+/* Sidebar items and section hints read as navigation, not as captions. */
+.crm-layout .nav-item {
+  font-weight: 550;
+}
+
+/* ============================================================================
+   Section design (admin panel + client portal)
+
+   One card language for every page:
+     --card-pad     inner padding of every card and its head/body/foot strips
+     card title     Plus Jakarta 17px bold (`.surface h2`)
+     page section   Plus Jakarta 20px bold (`.section-title`, between cards)
+     display title  a deliberate exception keeps its size (`.title-display`)
+     .inset-panel   a box nested in a card: soft tinted fill, no border
+   Controls and nested boxes share one radius (12px); cards use 20px.
+   ============================================================================ */
+
+.crm-layout {
+  --card-pad: 24px;
+  --inset-radius: 14px;
+}
+
+@media (max-width: 640px) {
+  .crm-layout { --card-pad: 18px; }
+}
+
+.crm-layout .surface-head {
+  padding: 18px var(--card-pad);
+  border-bottom-color: color-mix(in oklab, var(--hairline) 70%, transparent);
+}
+
+.crm-layout .surface-body { padding: 20px var(--card-pad); }
+
+.crm-layout .surface-foot {
+  padding: 14px var(--card-pad);
+  border-top-color: color-mix(in oklab, var(--hairline) 70%, transparent);
+}
+
+.crm-layout .surface.p-5,
+.crm-layout .surface.p-6 {
+  padding: var(--card-pad);
+}
+
+/* Card titles: one size, one weight, one face. */
+.crm-layout .surface h2:not(.title-display) {
+  font-family: var(--fz-font-heading);
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  line-height: 1.3;
+  color: var(--ink);
+}
+
+.crm-layout .title-display {
+  font-family: var(--fz-font-heading);
+  letter-spacing: -0.02em;
+}
+
+/* Titles that introduce a group of cards, outside any card. */
+.crm-layout .section-title {
+  font-family: var(--fz-font-heading);
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+/* A card's one-line description sits close under its title. */
+.crm-layout .surface-head h2 + p,
+.crm-layout .surface-head .label {
+  margin-top: 2px;
+  font-size: 13.5px;
+  color: var(--ink-soft);
+}
+
+.crm-layout .inset-panel {
+  border-radius: var(--inset-radius);
+  background: var(--porcelain);
+}
+
+:root.dark .crm-layout .inset-panel {
+  background: var(--fz-color-bg-subtle);
+}
+
+/* Nested controls and boxes that still use the old 10px radius join the 12px set. */
+.crm-layout .rounded-\[10px\] {
+  border-radius: 12px;
+}
+
+/* Icons that lead a card title: one round, tinted badge everywhere (card
+   heads, Settings sections). Neutral and status variants keep their colour. */
+.crm-layout .surface h2 > .icon-tile,
+.crm-layout .surface-head .icon-tile,
+.crm-layout .settings-section-icon {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: 999px;
+}
+
+.crm-layout .surface h2 > .icon-tile:not([class*="tone-"]):not(.is-neutral):not(.is-go):not(.is-warn):not(.is-stop),
+.crm-layout .surface-head .icon-tile:not([class*="tone-"]):not(.is-neutral):not(.is-go):not(.is-warn):not(.is-stop) {
+  background: var(--fz-color-action-primary-subtle);
+  color: var(--fz-color-text-brand);
+}
+
+.crm-layout .surface h2 > .icon-tile svg,
+.crm-layout .surface-head .icon-tile svg {
+  width: 19px;
+  height: 19px;
+}
+
+.crm-layout .surface h2:has(> .icon-tile) {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}

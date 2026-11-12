@@ -187,11 +187,11 @@ const AISettings: React.FC = () => {
             <ul className="space-y-4">
               {guardrails.map((g) => (
                 <li key={g.label}>
-                  <p className="flex items-center gap-2 text-[13px] font-medium text-ink-soft">
+                  <p className="flex items-center gap-2 text-[14px] font-semibold text-ink">
                     <span className={`h-1.5 w-1.5 rounded-full ${g.tone === 'is-stop' ? 'bg-signal-stop' : 'bg-ink-faint'}`} />
                     {g.label}
                   </p>
-                  <p className="ml-3.5 mt-1 text-[14px] leading-relaxed text-ink">{g.body}</p>
+                  <p className="ml-3.5 mt-1 text-[14px] leading-relaxed text-ink-soft">{g.body}</p>
                 </li>
               ))}
             </ul>

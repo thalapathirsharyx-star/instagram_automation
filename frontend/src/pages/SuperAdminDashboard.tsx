@@ -143,7 +143,7 @@ const SuperAdminDashboard: React.FC = () => {
                     <div className="min-w-0">
                       <p className="truncate text-[14px] font-medium text-ink">{client.name}</p>
                       <p className="mt-0.5 flex min-w-0 items-center gap-2 text-[13px] text-ink-soft">
-                        <span className={client.plan && client.plan !== 'Free' ? 'chip chip-accent px-1.5 py-0 text-[12px]' : 'chip px-1.5 py-0 text-[12px]'}>
+                        <span className={client.plan && client.plan !== 'Free' ? 'chip chip-orange px-1.5 py-0 text-[12px]' : 'chip px-1.5 py-0 text-[12px]'}>
                           {client.plan || 'Free'}
                         </span>
                         <span className="truncate">{client.email}</span>

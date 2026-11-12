@@ -6,10 +6,10 @@ import type { Lead } from '../models/crm.models';
  *
  * Tones follow the shared vocabulary in index.css: peach for live interest,
  * rose when someone is needed, lavender for a person stepping in, mint for a
- * sale. New and Lost stay neutral.
+ * sale, blue for a new lead (information). Lost stays neutral.
  */
 export const LEAD_STATUS: Record<Lead['lead_status'], { label: string; tone: string; color: string }> = {
-  New: { label: 'New', tone: '', color: '--ink-faint' },
+  New: { label: 'New', tone: 'tone-blue', color: '--fz-color-info' },
   Hot: { label: 'Hot', tone: 'tone-peach', color: '--peach-ink' },
   Needs_Human: { label: 'Needs human', tone: 'tone-rose', color: '--signal-stop' },
   Handoff: { label: 'Handoff', tone: 'tone-lavender', color: '--lavender-ink' },

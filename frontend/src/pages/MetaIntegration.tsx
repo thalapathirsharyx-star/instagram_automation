@@ -199,7 +199,7 @@ const MetaIntegration: React.FC = () => {
           <h2><span className="icon-tile is-sm"><Shield size={16} /></span>Meta account</h2>
           {!isLoadingStatus && (
             !isConnected
-              ? <span className="chip chip-dot">Not connected</span>
+              ? <span className="chip chip-dot chip-stop">Not connected</span>
               : connectionWarnings.length > 0
                 ? <span className="chip chip-dot chip-warn">Needs reconnecting</span>
                 : <span className="chip chip-dot chip-go">Connected</span>
@@ -214,7 +214,7 @@ const MetaIntegration: React.FC = () => {
         ) : isConnected ? (
           <>
             <div className="surface-body space-y-5">
-              <div className="flex items-center gap-4 rounded-[10px] border border-hairline bg-porcelain p-4">
+              <div className="inset-panel flex items-center gap-4 p-4">
                 <span className="icon-tile is-neutral h-12 w-12"><Smartphone size={22} /></span>
                 <div className="min-w-0">
                   <p className="truncate text-[16px] font-semibold text-ink">{connectionDetails?.name}</p>
@@ -234,7 +234,7 @@ const MetaIntegration: React.FC = () => {
                     { title: 'Comments', body: 'Read, reply to, hide and delete comments' },
                     { title: 'Live updates', body: 'Receive new messages and comments instantly' },
                   ].map((item) => (
-                    <li key={item.title} className="rounded-[10px] border border-hairline p-3">
+                    <li key={item.title} className="inset-panel p-3.5">
                       <p className="flex items-center gap-1.5 text-[14px] font-medium text-ink">
                         <CheckCircle2 size={14} className={connectionWarnings.length > 0 ? 'text-ink-faint' : 'text-signal-go'} />
                         {item.title}

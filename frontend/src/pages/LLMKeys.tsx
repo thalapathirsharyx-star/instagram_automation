@@ -125,7 +125,7 @@ const LLMKeys: React.FC = () => {
           <div className="flex flex-col justify-between gap-8 lg:flex-row lg:items-start">
             <div className="min-w-0">
               <span className="chip chip-dot chip-go">Active provider</span>
-              <h2 className="mt-3 text-[26px] font-bold tracking-[-0.02em] text-ink">{active.headline}</h2>
+              <h2 className="title-display mt-3 text-[26px] font-bold tracking-[-0.02em] text-ink">{active.headline}</h2>
               <p className="mt-1.5 max-w-lg text-[14px] leading-relaxed text-ink-soft">
                 Currently intercepting and processing all live user requests. This engine is highly integrated with the platform's core automation loop.
               </p>
@@ -143,7 +143,7 @@ const LLMKeys: React.FC = () => {
               </ul>
             </div>
 
-            <div className="w-full shrink-0 space-y-4 rounded-[10px] border border-hairline bg-porcelain p-5 lg:w-80">
+            <div className="inset-panel w-full shrink-0 space-y-4 p-5 lg:w-80">
               <div>
                 <label htmlFor="active-provider" className="field-label">Default engine</label>
                 <select
