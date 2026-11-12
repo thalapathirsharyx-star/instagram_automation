@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { getLeads } from '../api/crm.api';
 import type { Lead } from '../models/crm.models';
-import { Search, ExternalLink, Loader2, X, RefreshCw } from 'lucide-react';
+import { Search, ExternalLink, Loader2, X, RefreshCw, Users } from 'lucide-react';
 import { formatScore, scorePercent, leadStatusLabel } from '../lib/leadStatus';
 import { LeadStatusChip, HandlerChip } from '../components/LeadStatusChip';
 
@@ -137,6 +137,7 @@ const Leads: React.FC = () => {
                 <tr>
                   <td colSpan={6}>
                     <div className="empty">
+                      <span className="empty-mark">{leads.length === 0 ? <Users /> : <Search />}</span>
                       <p className="empty-title">
                         {leads.length === 0 ? 'No leads yet' : 'Nothing matches that'}
                       </p>

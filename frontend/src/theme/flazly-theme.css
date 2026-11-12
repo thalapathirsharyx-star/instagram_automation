@@ -23,6 +23,16 @@
   --fz-violet-700: #5925b3;
   --fz-violet-800: #43188c;
   --fz-violet-900: #300e67;
+  --fz-indigo-50: #f3f5ff;
+  --fz-indigo-100: #e4e9ff;
+  --fz-indigo-200: #c9d0ff;
+  --fz-indigo-300: #a8acff;
+  --fz-indigo-400: #8880ff;
+  --fz-indigo-500: #6a50ff;
+  --fz-indigo-600: #5635f0;
+  --fz-indigo-700: #4423c7;
+  --fz-indigo-800: #33159c;
+  --fz-indigo-900: #240d74;
   --fz-neutral-50: #f9fafd;
   --fz-neutral-100: #f2f3f8;
   --fz-neutral-200: #e4e6ed;
@@ -190,4 +200,32 @@
   --fz-shadow-sm: 0 1px 2px rgb(0 0 0 / 0.4);
   --fz-shadow-md: 0 1px 2px rgb(0 0 0 / 0.4), 0 8px 20px -8px rgb(0 0 0 / 0.5);
   --fz-shadow-lg: 0 2px 4px rgb(0 0 0 / 0.4), 0 24px 48px -16px rgb(0 0 0 / 0.6);
+}
+
+/* Signed-in panels (admin + client portal): indigo accent, Horizon-style
+   lavender page ground and floating card shadow. body:has() reaches toasts
+   and dialogs rendered outside .crm-layout; .crm-layout is the fallback. */
+body:has(.crm-layout),
+.crm-layout {
+  --fz-color-bg-page: #f3f7ff;
+  --fz-color-action-primary: #5635f0;
+  --fz-color-action-primary-hover: #4423c7;
+  --fz-color-action-primary-subtle: #f3f5ff;
+  --fz-color-link: #5635f0;
+  --fz-color-text-brand: #5635f0;
+  --fz-color-focus-ring: #6a50ff;
+  --fz-shadow-app-card: 0 18px 40px rgb(112 144 176 / 0.12);
+  --fz-shadow-primary: 0 10px 24px -10px rgb(79 47 224 / 0.55);
+}
+
+:root.dark body:has(.crm-layout),
+:root.dark .crm-layout {
+  --fz-color-action-primary: #594ae2;
+  --fz-color-action-primary-hover: #4d3ccb;
+  --fz-color-action-primary-subtle: #22224f;
+  --fz-color-link: #a1a7ff;
+  --fz-color-text-brand: #a1a7ff;
+  --fz-color-focus-ring: #9296ff;
+  --fz-color-bg-page: #070b26;
+  --fz-shadow-app-card: 0 1px 2px rgb(0 0 0 / 0.4), 0 18px 40px rgb(0 0 0 / 0.45);
 }

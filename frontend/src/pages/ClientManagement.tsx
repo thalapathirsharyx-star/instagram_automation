@@ -188,6 +188,7 @@ const ClientManagement: React.FC = () => {
                 <tr>
                   <td colSpan={6}>
                     <div className="empty py-12">
+                      <span className="empty-mark">{clients.length === 0 ? <Building2 /> : <Search />}</span>
                       <p className="empty-title">{clients.length === 0 ? 'No clients yet' : 'No clients match'}</p>
                       <p className="empty-body">
                         {clients.length === 0 ? 'Workspaces appear here when businesses sign up.' : 'Try a different name or email.'}

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { LayoutDashboard, Users, MessageSquare, MessageCircle, Settings, Book, Zap, Sparkles, ChevronLeft, ChevronRight, CreditCard, Activity, DollarSign, Key, Lock, IndianRupee, ClipboardList, Shield } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import SidebarStatusCard from './SidebarStatusCard';
 
 const navItemClass = ({ isActive }: { isActive: boolean }) => `nav-item ${isActive ? 'active' : ''}`;
 
@@ -115,6 +116,8 @@ const Sidebar: React.FC = () => {
           </>
         )}
       </nav>
+
+      {!isSuperAdmin && !isCollapsed && <SidebarStatusCard />}
     </aside>
   );
 };

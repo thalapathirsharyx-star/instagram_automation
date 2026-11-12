@@ -5,7 +5,7 @@ import {
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   AreaChart, Area, PieChart, Pie, Cell
 } from 'recharts';
-import { Loader2, ArrowRight, Users, MessageCircle, UserCheck, BadgeCheck } from 'lucide-react';
+import { Loader2, ArrowRight, Users, MessageCircle, UserCheck, BadgeCheck, TrendingUp, PieChart as PieChartIcon, CheckCircle2 } from 'lucide-react';
 import type { Lead } from '../models/crm.models';
 import { formatScore, leadStatusLabel, leadStatusColorVar } from '../lib/leadStatus';
 import { LeadStatusChip, HandlerChip } from '../components/LeadStatusChip';
@@ -20,7 +20,10 @@ interface StatusSlice { name: string; value: number }
 
 const seriesColor = (token: string, fallback: string) => {
   if (typeof window === 'undefined') return fallback;
-  const value = getComputedStyle(document.documentElement).getPropertyValue(token).trim();
+  // Read inside the app shell: the panels re-point the accent there (indigo),
+  // while :root keeps the public site's blue.
+  const scope = document.querySelector('.crm-layout') ?? document.documentElement;
+  const value = getComputedStyle(scope).getPropertyValue(token).trim();
   return value || fallback;
 };
 
@@ -188,6 +191,14 @@ const Dashboard: React.FC = () => {
               <p className="label mt-0.5">Last 7 days</p>
             </div>
           </div>
+          {/* A week with no leads shows a placeholder, not a flat line on empty axes. */}
+          {leadsThisWeek === 0 ? (
+            <div className="empty flex-grow">
+              <span className="empty-mark"><TrendingUp /></span>
+              <p className="empty-title">No leads this week</p>
+              <p className="empty-body">Each new lead the assistant captures lands here, day by day.</p>
+            </div>
+          ) : (
           <div className="min-h-0 flex-grow p-4 pl-1">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={interactionData} margin={{ top: 8, right: 12, left: 4, bottom: 0 }}>
@@ -234,6 +245,7 @@ const Dashboard: React.FC = () => {
               </AreaChart>
             </ResponsiveContainer>
           </div>
+          )}
         </div>
 
         <div className="surface flex h-[340px] flex-col">
@@ -242,6 +254,7 @@ const Dashboard: React.FC = () => {
           </div>
           {statusData.length === 0 ? (
             <div className="empty flex-grow">
+              <span className="empty-mark"><PieChartIcon /></span>
               <p className="empty-title">No leads yet</p>
               <p className="empty-body">Statuses appear here once the assistant has handled its first conversation.</p>
             </div>
@@ -311,6 +324,7 @@ const Dashboard: React.FC = () => {
           if (attention.length === 0) {
             return (
               <div className="empty">
+                <span className="empty-mark"><CheckCircle2 /></span>
                 <p className="empty-title">Nothing waiting</p>
                 <p className="empty-body">
                   Every open conversation is either resolved or still with the assistant.

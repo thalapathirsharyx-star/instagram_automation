@@ -36,6 +36,7 @@ import CommentsManager from './pages/CommentsManager';
 import { Sun, Moon, LogOut } from 'lucide-react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
+import RoleRoute from './components/RoleRoute';
 import { ToastProvider } from './context/ToastContext';
 
 /** Signed-out account pages: reachable without a session, served on the app domain. */
@@ -208,7 +209,7 @@ function AppContent() {
       <main className="content-area">
         <header className="top-header relative z-[100]">
           <div className="flex-grow" />
-          <div className="flex items-center gap-2">
+          <div className="top-header-tools flex items-center gap-2">
             <span className={planChipClass}>{planLabel}</span>
 
             <button
@@ -262,33 +263,33 @@ function AppContent() {
         <div className="router-container">
           <Routes>
             {/* Client Routes */}
-            <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-            <Route path="/leads" element={<ProtectedRoute><Leads /></ProtectedRoute>} />
-            <Route path="/inbox" element={<ProtectedRoute><Inbox /></ProtectedRoute>} />
-            <Route path="/comments-manager" element={<ProtectedRoute><CommentsManager /></ProtectedRoute>} />
-            <Route path="/knowledge" element={<ProtectedRoute><KnowledgeBase /></ProtectedRoute>} />
-            {/* <Route path="/catalog" element={<ProtectedRoute><ProductCatalog /></ProtectedRoute>} /> */}
-            <Route path="/knowledge/upload" element={<ProtectedRoute><UploadDocument /></ProtectedRoute>} />
-            <Route path="/knowledge/add-faq" element={<ProtectedRoute><AddFaq /></ProtectedRoute>} />
-            <Route path="/knowledge/add-fact" element={<ProtectedRoute><AddFact /></ProtectedRoute>} />
-            <Route path="/automation" element={<ProtectedRoute><Automation /></ProtectedRoute>} />
-            <Route path="/broadcasts" element={<ProtectedRoute><Broadcasts /></ProtectedRoute>} />
-            <Route path="/ai-settings" element={<ProtectedRoute><AISettings /></ProtectedRoute>} />
+            <Route path="/dashboard" element={<ProtectedRoute><RoleRoute access="client"><Dashboard /></RoleRoute></ProtectedRoute>} />
+            <Route path="/leads" element={<ProtectedRoute><RoleRoute access="client"><Leads /></RoleRoute></ProtectedRoute>} />
+            <Route path="/inbox" element={<ProtectedRoute><RoleRoute access="client"><Inbox /></RoleRoute></ProtectedRoute>} />
+            <Route path="/comments-manager" element={<ProtectedRoute><RoleRoute access="client"><CommentsManager /></RoleRoute></ProtectedRoute>} />
+            <Route path="/knowledge" element={<ProtectedRoute><RoleRoute access="client"><KnowledgeBase /></RoleRoute></ProtectedRoute>} />
+            {/* <Route path="/catalog" element={<ProtectedRoute><RoleRoute access="client"><ProductCatalog /></RoleRoute></ProtectedRoute>} /> */}
+            <Route path="/knowledge/upload" element={<ProtectedRoute><RoleRoute access="client"><UploadDocument /></RoleRoute></ProtectedRoute>} />
+            <Route path="/knowledge/add-faq" element={<ProtectedRoute><RoleRoute access="client"><AddFaq /></RoleRoute></ProtectedRoute>} />
+            <Route path="/knowledge/add-fact" element={<ProtectedRoute><RoleRoute access="client"><AddFact /></RoleRoute></ProtectedRoute>} />
+            <Route path="/automation" element={<ProtectedRoute><RoleRoute access="client"><Automation /></RoleRoute></ProtectedRoute>} />
+            <Route path="/broadcasts" element={<ProtectedRoute><RoleRoute access="client"><Broadcasts /></RoleRoute></ProtectedRoute>} />
+            <Route path="/ai-settings" element={<ProtectedRoute><RoleRoute access="owner"><AISettings /></RoleRoute></ProtectedRoute>} />
             
             {/* Admin Routes */}
-            <Route path="/admin/dashboard" element={<ProtectedRoute><SuperAdminDashboard /></ProtectedRoute>} />
-            <Route path="/admin/clients" element={<ProtectedRoute><ClientManagement /></ProtectedRoute>} />
-            <Route path="/admin/usage" element={<ProtectedRoute><AdminUsage /></ProtectedRoute>} />
-            <Route path="/admin/pricing" element={<ProtectedRoute><AdminPricing /></ProtectedRoute>} />
-            <Route path="/admin/revenue" element={<ProtectedRoute><AdminRevenue /></ProtectedRoute>} />
-            <Route path="/admin/activity" element={<ProtectedRoute><AdminActivity /></ProtectedRoute>} />
-            <Route path="/admin/llm-keys" element={<ProtectedRoute><LLMKeys /></ProtectedRoute>} />
+            <Route path="/admin/dashboard" element={<ProtectedRoute><RoleRoute access="admin"><SuperAdminDashboard /></RoleRoute></ProtectedRoute>} />
+            <Route path="/admin/clients" element={<ProtectedRoute><RoleRoute access="admin"><ClientManagement /></RoleRoute></ProtectedRoute>} />
+            <Route path="/admin/usage" element={<ProtectedRoute><RoleRoute access="admin"><AdminUsage /></RoleRoute></ProtectedRoute>} />
+            <Route path="/admin/pricing" element={<ProtectedRoute><RoleRoute access="admin"><AdminPricing /></RoleRoute></ProtectedRoute>} />
+            <Route path="/admin/revenue" element={<ProtectedRoute><RoleRoute access="admin"><AdminRevenue /></RoleRoute></ProtectedRoute>} />
+            <Route path="/admin/activity" element={<ProtectedRoute><RoleRoute access="admin"><AdminActivity /></RoleRoute></ProtectedRoute>} />
+            <Route path="/admin/llm-keys" element={<ProtectedRoute><RoleRoute access="admin"><LLMKeys /></RoleRoute></ProtectedRoute>} />
             
-            <Route path="/meta-integration" element={<ProtectedRoute><MetaIntegration /></ProtectedRoute>} />
+            <Route path="/meta-integration" element={<ProtectedRoute><RoleRoute access="client"><MetaIntegration /></RoleRoute></ProtectedRoute>} />
             <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
-            <Route path="/team" element={<ProtectedRoute><Team /></ProtectedRoute>} />
-            <Route path="/team/add" element={<ProtectedRoute><AddTeamMember /></ProtectedRoute>} />
-            <Route path="/billing" element={<ProtectedRoute><Billing /></ProtectedRoute>} />
+            <Route path="/team" element={<ProtectedRoute><RoleRoute access="owner"><Team /></RoleRoute></ProtectedRoute>} />
+            <Route path="/team/add" element={<ProtectedRoute><RoleRoute access="owner"><AddTeamMember /></RoleRoute></ProtectedRoute>} />
+            <Route path="/billing" element={<ProtectedRoute><RoleRoute access="owner"><Billing /></RoleRoute></ProtectedRoute>} />
             
             {/* Redirect logic */}
             <Route path="/" element={<Navigate to={user?.roleCode === 'SUPER_ADMIN' ? "/admin/dashboard" : "/dashboard"} replace />} />

@@ -67,7 +67,12 @@ amber = scale(70, 0.17)
 red = scale(25, 0.21)
 sky = scale(232, 0.14)
 
-primitives = {'brand': brand, 'violet': violet, 'neutral': neutral, 'green': green, 'amber': amber, 'red': red, 'sky': sky}
+# App accent: the signed-in panels (admin + client portal) use an indigo-purple
+# between the brand blue and the logo violet, in the spirit of Horizon UI's
+# #4318FF. The public site and auth pages keep the brand blue.
+indigo = scale(280, 0.27)
+
+primitives = {'brand': brand, 'violet': violet, 'indigo': indigo, 'neutral': neutral, 'green': green, 'amber': amber, 'red': red, 'sky': sky}
 
 # --- Semantic tokens -------------------------------------------------------------
 light = {
@@ -146,8 +151,30 @@ PAIRS = [
     ('focus ring on surface (UI)', 'color-focus-ring', 'color-bg-surface', 3.0),
 ]
 
+# App scope (signed-in panels): only the accent and the page ground change.
+# Horizon floats white cards on a cool lavender-blue page.
+app_light = {
+    'color-bg-page': oklch_to_hex(0.975, 0.012, 270),
+    'color-action-primary': indigo[600],
+    'color-action-primary-hover': indigo[700],
+    'color-action-primary-subtle': indigo[50],
+    'color-link': indigo[600],
+    'color-text-brand': indigo[600],
+    'color-focus-ring': indigo[500],
+}
+app_dark = {
+    'color-action-primary': oklch_to_hex(0.52, 0.22, 280),
+    'color-action-primary-hover': oklch_to_hex(0.47, 0.21, 280),
+    'color-action-primary-subtle': oklch_to_hex(0.28, 0.08, 280),
+    'color-link': oklch_to_hex(0.76, 0.13, 280),
+    'color-text-brand': oklch_to_hex(0.76, 0.13, 280),
+    'color-focus-ring': oklch_to_hex(0.72, 0.16, 280),
+}
+app_light_full = {**light, **app_light}
+app_dark_full = {**dark, **app_dark}
+
 report = []
-for mode, t in (('light', light), ('dark', dark)):
+for mode, t in (('light', light), ('dark', dark), ('app light', app_light_full), ('app dark', app_dark_full)):
     for label, fg, bg, need in PAIRS:
         r = contrast(t[fg], t[bg])
         report.append((mode, label, t[fg], t[bg], r, need))
@@ -214,6 +241,23 @@ css += [
     '  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.4);',
     '  --shadow-md: 0 1px 2px rgb(0 0 0 / 0.4), 0 8px 20px -8px rgb(0 0 0 / 0.5);',
     '  --shadow-lg: 0 2px 4px rgb(0 0 0 / 0.4), 0 24px 48px -16px rgb(0 0 0 / 0.6);',
+    '}',
+    '',
+    '/* Signed-in panels (admin + client portal): indigo accent, Horizon-style',
+    '   lavender page ground and floating card shadow. body:has() reaches toasts',
+    '   and dialogs rendered outside .crm-layout; .crm-layout is the fallback. */',
+    'body:has(.crm-layout),',
+    '.crm-layout {',
+    *[f'  --{k}: {v};' for k, v in app_light.items()],
+    '  --shadow-app-card: 0 18px 40px rgb(112 144 176 / 0.12);',
+    '  --shadow-primary: 0 10px 24px -10px rgb(79 47 224 / 0.55);',
+    '}',
+    '',
+    ':root.dark body:has(.crm-layout),',
+    ':root.dark .crm-layout {',
+    *[f'  --{k}: {v};' for k, v in app_dark.items()],
+    '  --color-bg-page: ' + dark['color-bg-page'] + ';',
+    '  --shadow-app-card: 0 1px 2px rgb(0 0 0 / 0.4), 0 18px 40px rgb(0 0 0 / 0.45);',
     '}',
 ]
 # Namespace every token with fz- so nothing collides with Tailwind's own

@@ -24,6 +24,18 @@
       "800": "#43188c",
       "900": "#300e67"
     },
+    "indigo": {
+      "50": "#f3f5ff",
+      "100": "#e4e9ff",
+      "200": "#c9d0ff",
+      "300": "#a8acff",
+      "400": "#8880ff",
+      "500": "#6a50ff",
+      "600": "#5635f0",
+      "700": "#4423c7",
+      "800": "#33159c",
+      "900": "#240d74"
+    },
     "neutral": {
       "50": "#f9fafd",
       "100": "#f2f3f8",
@@ -445,6 +457,310 @@
       "fg": "#6e9bfb",
       "bg": "#131624",
       "ratio": 6.63,
+      "need": 3.0
+    },
+    {
+      "mode": "app light",
+      "pair": "text-primary on surface",
+      "fg": "#101635",
+      "bg": "#ffffff",
+      "ratio": 17.67,
+      "need": 4.5
+    },
+    {
+      "mode": "app light",
+      "pair": "text-primary on page",
+      "fg": "#101635",
+      "bg": "#f3f7ff",
+      "ratio": 16.46,
+      "need": 4.5
+    },
+    {
+      "mode": "app light",
+      "pair": "text-secondary on surface",
+      "fg": "#4e546b",
+      "bg": "#ffffff",
+      "ratio": 7.49,
+      "need": 4.5
+    },
+    {
+      "mode": "app light",
+      "pair": "text-secondary on page",
+      "fg": "#4e546b",
+      "bg": "#f3f7ff",
+      "ratio": 6.97,
+      "need": 4.5
+    },
+    {
+      "mode": "app light",
+      "pair": "text-muted on surface",
+      "fg": "#5f6579",
+      "bg": "#ffffff",
+      "ratio": 5.79,
+      "need": 4.5
+    },
+    {
+      "mode": "app light",
+      "pair": "text-muted on subtle",
+      "fg": "#5f6579",
+      "bg": "#f2f3f8",
+      "ratio": 5.23,
+      "need": 4.5
+    },
+    {
+      "mode": "app light",
+      "pair": "text-muted on muted",
+      "fg": "#5f6579",
+      "bg": "#e4e6ed",
+      "ratio": 4.65,
+      "need": 4.5
+    },
+    {
+      "mode": "app light",
+      "pair": "link on surface",
+      "fg": "#5635f0",
+      "bg": "#ffffff",
+      "ratio": 6.64,
+      "need": 4.5
+    },
+    {
+      "mode": "app light",
+      "pair": "button text on primary",
+      "fg": "#ffffff",
+      "bg": "#5635f0",
+      "ratio": 6.64,
+      "need": 4.5
+    },
+    {
+      "mode": "app light",
+      "pair": "button text on primary hover",
+      "fg": "#ffffff",
+      "bg": "#4423c7",
+      "ratio": 9.09,
+      "need": 4.5
+    },
+    {
+      "mode": "app light",
+      "pair": "brand text on primary-subtle (chip)",
+      "fg": "#5635f0",
+      "bg": "#f3f5ff",
+      "ratio": 6.11,
+      "need": 4.5
+    },
+    {
+      "mode": "app light",
+      "pair": "brand text on page",
+      "fg": "#5635f0",
+      "bg": "#f3f7ff",
+      "ratio": 6.18,
+      "need": 4.5
+    },
+    {
+      "mode": "app light",
+      "pair": "AI accent on AI subtle",
+      "fg": "#6e36d8",
+      "bg": "#f7f4ff",
+      "ratio": 6.08,
+      "need": 4.5
+    },
+    {
+      "mode": "app light",
+      "pair": "success on success-subtle",
+      "fg": "#006422",
+      "bg": "#effaf1",
+      "ratio": 6.89,
+      "need": 4.5
+    },
+    {
+      "mode": "app light",
+      "pair": "warning on warning-subtle",
+      "fg": "#622b00",
+      "bg": "#fff5eb",
+      "ratio": 10.46,
+      "need": 4.5
+    },
+    {
+      "mode": "app light",
+      "pair": "danger on danger-subtle",
+      "fg": "#bc0d20",
+      "bg": "#fff2f0",
+      "ratio": 5.97,
+      "need": 4.5
+    },
+    {
+      "mode": "app light",
+      "pair": "info on info-subtle",
+      "fg": "#005985",
+      "bg": "#eef9ff",
+      "ratio": 7.09,
+      "need": 4.5
+    },
+    {
+      "mode": "app light",
+      "pair": "border-strong on surface (UI)",
+      "fg": "#cdd1da",
+      "bg": "#ffffff",
+      "ratio": 1.53,
+      "need": 1.5
+    },
+    {
+      "mode": "app light",
+      "pair": "focus ring on surface (UI)",
+      "fg": "#6a50ff",
+      "bg": "#ffffff",
+      "ratio": 4.99,
+      "need": 3.0
+    },
+    {
+      "mode": "app dark",
+      "pair": "text-primary on surface",
+      "fg": "#f9fafd",
+      "bg": "#131624",
+      "ratio": 17.23,
+      "need": 4.5
+    },
+    {
+      "mode": "app dark",
+      "pair": "text-primary on page",
+      "fg": "#f9fafd",
+      "bg": "#070b26",
+      "ratio": 18.55,
+      "need": 4.5
+    },
+    {
+      "mode": "app dark",
+      "pair": "text-secondary on surface",
+      "fg": "#b8bdcc",
+      "bg": "#131624",
+      "ratio": 9.58,
+      "need": 4.5
+    },
+    {
+      "mode": "app dark",
+      "pair": "text-secondary on page",
+      "fg": "#b8bdcc",
+      "bg": "#070b26",
+      "ratio": 10.31,
+      "need": 4.5
+    },
+    {
+      "mode": "app dark",
+      "pair": "text-muted on surface",
+      "fg": "#9298a9",
+      "bg": "#131624",
+      "ratio": 6.24,
+      "need": 4.5
+    },
+    {
+      "mode": "app dark",
+      "pair": "text-muted on subtle",
+      "fg": "#9298a9",
+      "bg": "#1a1e2f",
+      "ratio": 5.73,
+      "need": 4.5
+    },
+    {
+      "mode": "app dark",
+      "pair": "text-muted on muted",
+      "fg": "#9298a9",
+      "bg": "#252a3d",
+      "ratio": 4.93,
+      "need": 4.5
+    },
+    {
+      "mode": "app dark",
+      "pair": "link on surface",
+      "fg": "#a1a7ff",
+      "bg": "#131624",
+      "ratio": 8.12,
+      "need": 4.5
+    },
+    {
+      "mode": "app dark",
+      "pair": "button text on primary",
+      "fg": "#ffffff",
+      "bg": "#594ae2",
+      "ratio": 6.0,
+      "need": 4.5
+    },
+    {
+      "mode": "app dark",
+      "pair": "button text on primary hover",
+      "fg": "#ffffff",
+      "bg": "#4d3ccb",
+      "ratio": 7.44,
+      "need": 4.5
+    },
+    {
+      "mode": "app dark",
+      "pair": "brand text on primary-subtle (chip)",
+      "fg": "#a1a7ff",
+      "bg": "#22224f",
+      "ratio": 6.73,
+      "need": 4.5
+    },
+    {
+      "mode": "app dark",
+      "pair": "brand text on page",
+      "fg": "#a1a7ff",
+      "bg": "#070b26",
+      "ratio": 8.74,
+      "need": 4.5
+    },
+    {
+      "mode": "app dark",
+      "pair": "AI accent on AI subtle",
+      "fg": "#ae97ff",
+      "bg": "#2a2148",
+      "ratio": 6.15,
+      "need": 4.5
+    },
+    {
+      "mode": "app dark",
+      "pair": "success on success-subtle",
+      "fg": "#6ad18a",
+      "bg": "#112d1a",
+      "ratio": 7.85,
+      "need": 4.5
+    },
+    {
+      "mode": "app dark",
+      "pair": "warning on warning-subtle",
+      "fg": "#f9b64f",
+      "bg": "#372508",
+      "ratio": 8.27,
+      "need": 4.5
+    },
+    {
+      "mode": "app dark",
+      "pair": "danger on danger-subtle",
+      "fg": "#fb817a",
+      "bg": "#421c19",
+      "ratio": 6.04,
+      "need": 4.5
+    },
+    {
+      "mode": "app dark",
+      "pair": "info on info-subtle",
+      "fg": "#67c4f2",
+      "bg": "#082d3d",
+      "ratio": 7.4,
+      "need": 4.5
+    },
+    {
+      "mode": "app dark",
+      "pair": "border-strong on surface (UI)",
+      "fg": "#41475c",
+      "bg": "#131624",
+      "ratio": 1.95,
+      "need": 1.5
+    },
+    {
+      "mode": "app dark",
+      "pair": "focus ring on surface (UI)",
+      "fg": "#9296ff",
+      "bg": "#131624",
+      "ratio": 6.87,
       "need": 3.0
     }
   ]

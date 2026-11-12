@@ -4640,3 +4640,526 @@ html.lenis {
   font-family: var(--fz-font-heading);
   letter-spacing: var(--fz-letter-spacing-heading);
 }
+
+/* ============================================================================
+   Signed-in panels: Horizon UI layout language in Flazly's indigo
+   (admin panel + client portal only; landing and auth pages are untouched).
+
+   The legacy names below are re-declared at the app scope because they were
+   resolved at :root against the blue tokens; re-pointing them here is what
+   turns the app indigo. Everything else comes from theme/flazly-theme.css.
+   ============================================================================ */
+
+body:has(.crm-layout),
+.crm-layout {
+  --porcelain: var(--fz-color-bg-page);
+  --viridian: var(--fz-color-action-primary);
+  --viridian-deep: var(--fz-color-action-primary-hover);
+  --viridian-soft: var(--fz-indigo-500);
+  --viridian-tint: var(--fz-color-action-primary-subtle);
+  --shadow-card: var(--fz-shadow-app-card);
+  --radius-surface: 20px;
+  --radius-control: 12px;
+}
+
+:root.dark body:has(.crm-layout),
+:root.dark .crm-layout {
+  --viridian: var(--fz-color-text-brand);
+  --viridian-deep: var(--fz-color-text-brand);
+  --viridian-soft: var(--fz-color-action-primary-hover);
+}
+
+/* --- Cards: pure white, floating, barely-there border ---------------------- */
+
+.crm-layout .surface {
+  border-color: color-mix(in oklab, var(--hairline) 70%, transparent);
+  box-shadow: var(--fz-shadow-app-card);
+}
+
+/* --- Stat cards: white, round indigo icon bubble, label over a bold figure -- */
+
+.crm-layout .metric {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-rows: auto auto auto;
+  column-gap: 16px;
+  align-items: center;
+  padding: 20px 22px;
+  background: var(--surface);
+  border: 1px solid color-mix(in oklab, var(--hairline) 70%, transparent);
+  box-shadow: var(--fz-shadow-app-card);
+  --metric-soft: var(--ink-soft);
+}
+
+.crm-layout .metric-head {
+  display: contents;
+}
+
+.crm-layout .metric .icon-tile {
+  grid-column: 1;
+  grid-row: 1 / span 3;
+  align-self: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 999px;
+  background: var(--fz-color-action-primary-subtle);
+  color: var(--fz-color-text-brand);
+  box-shadow: none;
+}
+
+.crm-layout .metric .icon-tile svg {
+  width: 24px;
+  height: 24px;
+}
+
+.crm-layout .metric-label {
+  grid-column: 2;
+  grid-row: 1;
+  align-self: end;
+}
+
+.crm-layout .metric-figure {
+  grid-column: 2;
+  grid-row: 2;
+  margin-top: 2px;
+  font-family: var(--fz-font-heading);
+  font-size: 28px;
+  letter-spacing: -0.03em;
+}
+
+.crm-layout .metric-note,
+.crm-layout .metric-trend {
+  grid-column: 2;
+  grid-row: 3;
+  align-self: start;
+  margin-top: 2px;
+}
+
+/* --- Sidebar: white rail, quiet items, indigo active bar on the right ------- */
+
+.crm-layout .sidebar {
+  border-right-color: color-mix(in oklab, var(--hairline) 60%, transparent);
+}
+
+.crm-layout .logo-text {
+  font-family: var(--fz-font-heading);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.crm-layout .nav-links {
+  gap: 2px;
+}
+
+.crm-layout .nav-item {
+  position: relative;
+  padding: 10px 12px;
+  color: var(--ink-faint);
+  font-weight: 500;
+}
+
+.crm-layout .nav-item:hover {
+  background: transparent;
+  color: var(--ink);
+}
+
+.crm-layout .nav-item.active,
+:root.dark .crm-layout .nav-item.active {
+  background: transparent;
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.crm-layout .nav-item.active svg {
+  color: var(--fz-color-text-brand);
+}
+
+/* The active marker: a rounded bar on the rail's right edge. */
+.crm-layout .nav-item.active::after {
+  content: "";
+  position: absolute;
+  top: 6px;
+  bottom: 6px;
+  right: -8px;
+  width: 4px;
+  border-radius: 999px;
+  background: var(--fz-color-text-brand);
+}
+
+.crm-layout .nav-group-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* --- Header: blends into the page; tools sit in one floating white pill ----- */
+
+.crm-layout .top-header {
+  background: var(--porcelain);
+  border-bottom-color: transparent;
+}
+
+.crm-layout .top-header-tools {
+  padding: 4px 6px 4px 10px;
+  border-radius: 999px;
+  background: var(--surface);
+  box-shadow: var(--fz-shadow-app-card);
+}
+
+/* --- Sidebar: the same floating language as the header pill — a white panel
+   lifted off the page with rounded corners and the soft card shadow. -------- */
+
+.crm-layout {
+  background: var(--porcelain);
+}
+
+.crm-layout .sidebar {
+  margin: 12px 0 12px 12px;
+  height: calc(100% - 24px);
+  border: 0;
+  border-radius: 20px;
+  box-shadow: var(--fz-shadow-app-card);
+  overflow: hidden;
+}
+
+/* The logo row's divider stops short of the rounded corners. */
+.crm-layout .sidebar .logo-container {
+  margin: 0 12px;
+  padding: 0 2px;
+}
+
+@media (max-width: 860px) {
+  .crm-layout .sidebar {
+    margin: 8px 0 8px 8px;
+    height: calc(100% - 16px);
+    border-radius: 16px;
+  }
+}
+
+.crm-layout .top-header-tools > .border-l {
+  border-left-color: color-mix(in oklab, var(--hairline) 70%, transparent);
+}
+
+/* --- Empty states: a soft indigo halo around the icon, clear next step ------ */
+
+.crm-layout .empty {
+  gap: 6px;
+}
+
+.crm-layout .empty-mark {
+  width: 64px;
+  height: 64px;
+  margin-bottom: 12px;
+  border: 0;
+  border-radius: 999px;
+  background: radial-gradient(circle at 30% 25%, var(--surface) 0%, var(--fz-color-action-primary-subtle) 70%);
+  box-shadow: 0 0 0 8px color-mix(in oklab, var(--fz-color-action-primary-subtle) 55%, transparent);
+  color: var(--fz-color-text-brand);
+}
+
+.crm-layout .empty-mark svg {
+  width: 26px;
+  height: 26px;
+}
+
+.crm-layout .empty-title {
+  font-family: var(--fz-font-heading);
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+/* --- Tables: Horizon's quiet uppercase headers --------------------------------- */
+
+.crm-layout .data-table thead th {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.crm-layout .data-table tbody td {
+  border-bottom-color: color-mix(in oklab, var(--hairline) 70%, transparent);
+}
+
+/* --- Primary action: indigo with a soft glow ------------------------------------ */
+
+.crm-layout .btn-primary:not(:disabled) {
+  box-shadow: var(--fz-shadow-primary);
+}
+
+/* --- Sidebar status card: gradient widget with a badge riding its top edge -- */
+
+.sidebar-card {
+  position: relative;
+  flex-shrink: 0;
+  margin: 34px 14px 14px;
+  padding: 38px 16px 16px;
+  border-radius: 20px;
+  text-align: center;
+  color: rgb(255 255 255 / 0.85);
+  background:
+    radial-gradient(120% 80% at 100% 0%, rgb(255 255 255 / 0.18), transparent 60%),
+    linear-gradient(150deg, var(--fz-violet-500) 0%, var(--fz-indigo-600) 55%, var(--fz-indigo-800) 100%);
+  box-shadow: 0 14px 30px -14px color-mix(in oklab, var(--fz-indigo-600) 70%, transparent);
+}
+
+/* Half in, half out: centred on the card's top border, ringed in the sidebar's white. */
+.sidebar-card-badge {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 999px;
+  transform: translate(-50%, -50%);
+  color: #ffffff;
+  background: linear-gradient(150deg, var(--fz-violet-500), var(--fz-indigo-700));
+  box-shadow: 0 0 0 5px var(--surface), 0 8px 18px -8px color-mix(in oklab, var(--fz-indigo-700) 80%, transparent);
+}
+
+.sidebar-card-title {
+  font-family: var(--fz-font-heading);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: #ffffff;
+}
+
+.sidebar-card-text {
+  margin-top: 4px;
+  font-size: 12.5px;
+  line-height: 1.45;
+}
+
+.sidebar-card-meter {
+  height: 6px;
+  margin-top: 12px;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.22);
+  overflow: hidden;
+}
+
+.sidebar-card-meter > span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: #ffffff;
+}
+
+.sidebar-card-btn {
+  display: block;
+  margin-top: 14px;
+  padding: 9px 12px;
+  border-radius: 12px;
+  background: #ffffff;
+  color: var(--fz-indigo-700);
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: transform 150ms ease, box-shadow 150ms ease;
+}
+
+.sidebar-card-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px -6px rgb(0 0 0 / 0.35);
+}
+
+.sidebar-card-btn:focus-visible {
+  outline: 2px solid #ffffff;
+  outline-offset: 2px;
+}
+
+/* The menu never scrolls behind the card: the whole rail scrolls instead, and
+   the card rests at the bottom when there is room, just below the menu when not. */
+.crm-layout .sidebar:has(.sidebar-card) {
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.crm-layout .sidebar:has(.sidebar-card) .nav-links {
+  flex: 1 0 auto;
+  overflow: visible;
+}
+
+.crm-layout .sidebar-card {
+  margin-top: 34px;
+}
+
+/* The icon-only sidebar has no room for it. */
+@media (max-width: 860px) {
+  .sidebar-card { display: none; }
+}
+
+/* --- Settings page (Horizon look) -------------------------------------------- */
+
+.settings-profile-banner {
+  height: 92px;
+  background:
+    radial-gradient(90% 120% at 100% 0%, rgb(255 255 255 / 0.22), transparent 55%),
+    linear-gradient(135deg, var(--fz-violet-500) 0%, var(--fz-indigo-600) 55%, var(--fz-indigo-800) 100%);
+}
+
+.settings-profile-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  border-radius: 999px;
+  background: var(--fz-color-action-primary-subtle);
+  color: var(--fz-color-text-brand);
+  font-family: var(--fz-font-heading);
+  font-size: 30px;
+  font-weight: 700;
+  box-shadow: 0 0 0 5px var(--surface), 0 10px 22px -10px rgb(30 27 75 / 0.35);
+}
+
+.settings-nav {
+  display: flex;
+  gap: 6px;
+  padding: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+@media (min-width: 1024px) {
+  .settings-nav {
+    display: block;
+    padding: 10px;
+    overflow: visible;
+  }
+}
+
+.settings-nav-label {
+  display: none;
+  padding: 10px 10px 6px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+@media (min-width: 1024px) {
+  .settings-nav-label { display: block; }
+}
+
+.settings-nav-item {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 9px 10px;
+  border-radius: 14px;
+  color: var(--ink-soft);
+  font-weight: 600;
+  transition: background-color 0.12s ease, color 0.12s ease;
+}
+
+@media (max-width: 1023px) {
+  .settings-nav-item { width: auto; }
+  .settings-nav-hint,
+  .settings-nav-chevron { display: none !important; }
+}
+
+.settings-nav-item:hover {
+  background: var(--porcelain);
+  color: var(--ink);
+}
+
+.settings-nav-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  border-radius: 12px;
+  background: var(--porcelain);
+  color: var(--ink-faint);
+  transition: background-color 0.12s ease, color 0.12s ease;
+}
+
+.settings-nav-hint {
+  display: block;
+  margin-top: 1px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ink-faint);
+}
+
+.settings-nav-chevron {
+  flex-shrink: 0;
+  color: var(--ink-faint);
+  opacity: 0;
+  transition: opacity 0.12s ease;
+}
+
+.settings-nav-item.is-active {
+  background: var(--fz-color-action-primary-subtle);
+  color: var(--ink);
+}
+
+.settings-nav-item.is-active .settings-nav-icon {
+  background: var(--fz-color-action-primary);
+  color: #ffffff;
+  box-shadow: var(--fz-shadow-primary);
+}
+
+.settings-nav-item.is-active .settings-nav-chevron {
+  opacity: 1;
+  color: var(--fz-color-text-brand);
+}
+
+.settings-section-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  border-radius: 999px;
+  background: var(--fz-color-action-primary-subtle);
+  color: var(--fz-color-text-brand);
+}
+
+.settings-section-title {
+  font-family: var(--fz-font-heading);
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+}
+
+.settings-section-foot {
+  border-top: 1px solid var(--hairline);
+  background: var(--porcelain);
+}
+
+.settings-section.is-danger {
+  border-color: color-mix(in oklab, var(--signal-stop) 30%, transparent);
+}
+
+.settings-section.is-danger .settings-section-icon {
+  background: var(--signal-stop-tint);
+  color: var(--signal-stop);
+}
+
+.settings-section.is-danger .settings-section-title {
+  color: var(--signal-stop);
+}
+
+/* A primary button with nothing to save reads as neutral, not as a faded purple. */
+.crm-layout .btn-primary:disabled {
+  background: var(--porcelain-deep);
+  border-color: var(--hairline);
+  color: var(--ink-faint);
+  box-shadow: none;
+  opacity: 1;
+}

@@ -11,7 +11,12 @@ import {
   Eye,
   EyeOff,
   Copy,
-  Loader2
+  Loader2,
+  KeyRound,
+  Mail,
+  Trash2,
+  Webhook,
+  ChevronRight
 } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
 import { ConfirmModal } from '../components/ConfirmModal';
@@ -25,24 +30,26 @@ import { useLocation, useNavigate } from 'react-router-dom';
 const SettingsSection: React.FC<{
   title: string;
   description: string;
+  icon?: React.ElementType;
   badge?: React.ReactNode;
   footer?: React.ReactNode;
   tone?: 'danger';
   children: React.ReactNode;
-}> = ({ title, description, badge, footer, tone, children }) => (
-  <section
-    className={`surface overflow-hidden ${tone === 'danger' ? 'border-[color:color-mix(in_oklab,var(--signal-stop)_35%,transparent)]' : ''}`}
-  >
-    <header className="flex items-start justify-between gap-4 px-6 pt-5">
-      <div className="min-w-0">
-        <h2 className={`text-[16px] font-semibold ${tone === 'danger' ? 'text-signal-stop' : 'text-ink'}`}>{title}</h2>
-        <p className="mt-1 text-[14px] text-ink-soft">{description}</p>
+}> = ({ title, description, icon: Icon, badge, footer, tone, children }) => (
+  <section className={`settings-section surface overflow-hidden ${tone === 'danger' ? 'is-danger' : ''}`}>
+    <header className="flex items-start justify-between gap-4 px-6 pt-6 sm:px-7">
+      <div className="flex min-w-0 items-center gap-3.5">
+        {Icon && <span className="settings-section-icon" aria-hidden="true"><Icon size={19} /></span>}
+        <div className="min-w-0">
+          <h2 className="settings-section-title">{title}</h2>
+          <p className="mt-0.5 text-[14px] text-ink-soft">{description}</p>
+        </div>
       </div>
       {badge && <div className="shrink-0">{badge}</div>}
     </header>
-    <div className="divide-y divide-hairline px-6">{children}</div>
+    <div className="divide-y divide-hairline px-6 sm:px-7">{children}</div>
     {footer && (
-      <footer className="flex flex-wrap items-center justify-between gap-3 border-t border-hairline bg-porcelain px-6 py-3">
+      <footer className="settings-section-foot flex flex-wrap items-center justify-between gap-3 px-6 py-3.5 sm:px-7">
         {footer}
       </footer>
     )}
@@ -405,17 +412,17 @@ const Settings: React.FC = () => {
   };
 
   const isSuperAdmin = user?.roleCode === 'SUPER_ADMIN';
-  const navGroups: { label: string; items: { id: TabType; label: string; icon: React.ElementType }[] }[] = [
+  const navGroups: { label: string; items: { id: TabType; label: string; hint: string; icon: React.ElementType }[] }[] = [
     {
       label: 'Account',
       items: [
-        { id: 'profile', label: 'General', icon: User },
-        { id: 'security', label: 'Security', icon: Lock },
+        { id: 'profile', label: 'General', hint: 'Profile and email', icon: User },
+        { id: 'security', label: 'Security', hint: 'Password and 2FA', icon: Lock },
       ],
     },
     ...(!isSuperAdmin ? [{
       label: 'Workspace',
-      items: [{ id: 'webhooks' as TabType, label: 'Developer API', icon: Code2 }],
+      items: [{ id: 'webhooks' as TabType, label: 'Developer API', hint: 'Webhook endpoint', icon: Code2 }],
     }] : []),
   ];
 
@@ -442,42 +449,73 @@ const Settings: React.FC = () => {
         </div>
       </div>
 
-      <div className="grid gap-8 md:grid-cols-[208px_minmax(0,1fr)]">
-        {/* Section navigation. A row of pills on small screens, a list beside the content on wide ones. */}
-        <nav aria-label="Settings sections" className="flex gap-1 overflow-x-auto md:flex-col md:gap-0.5 md:overflow-visible">
-          {navGroups.map((group) => (
-            <div key={group.label} className="contents md:block">
-              <p className="hidden px-3 pb-1.5 pt-4 text-[12px] font-medium text-ink-faint first:pt-0 md:block">
-                {group.label}
+      <div className="grid items-start gap-6 lg:grid-cols-[300px_minmax(0,1fr)]">
+        <aside className="space-y-5 lg:sticky lg:top-0">
+          {/* Who is signed in: a Horizon-style profile card. */}
+          <div className="settings-profile surface overflow-hidden">
+            <div className="settings-profile-banner" aria-hidden="true" />
+            <div className="-mt-10 flex flex-col items-center px-5 pb-5 text-center">
+              <span className="settings-profile-avatar">{(user?.email?.[0] || '?').toUpperCase()}</span>
+              <p className="mt-3 max-w-full truncate font-[family-name:var(--fz-font-heading)] text-[17px] font-bold text-ink">
+                {user?.email ? user.email.split('@')[0] : 'Your account'}
               </p>
-              {group.items.map(({ id, label, icon: Icon }) => {
-                const isActive = activeTab === id;
-                return (
-                  <button
-                    key={id}
-                    type="button"
-                    onClick={() => selectTab(id)}
-                    aria-current={isActive ? 'page' : undefined}
-                    className={`flex shrink-0 items-center gap-2.5 rounded-[10px] px-3 py-2 text-left text-[14px] transition-colors md:w-full ${
-                      isActive
-                        ? 'bg-viridian-tint font-semibold text-viridian'
-                        : 'font-medium text-ink-soft hover:bg-porcelain-deep hover:text-ink'
-                    }`}
-                  >
-                    <Icon size={17} className={isActive ? 'text-viridian' : 'text-ink-faint'} />
-                    {label}
-                  </button>
-                );
-              })}
+              <p className="flex max-w-full items-center gap-1.5 truncate text-[13px] text-ink-soft">
+                <Mail size={13} className="shrink-0" /> {user?.email}
+              </p>
+              <div className="mt-4 grid w-full grid-cols-3 gap-2 border-t border-hairline pt-4 text-center">
+                <div>
+                  <p className="text-[12px] text-ink-soft">Role</p>
+                  <p className="mt-0.5 truncate text-[13px] font-semibold text-ink">{user?.role || '—'}</p>
+                </div>
+                <div>
+                  <p className="text-[12px] text-ink-soft">Plan</p>
+                  <p className="mt-0.5 truncate text-[13px] font-semibold text-ink">{isSuperAdmin ? 'Admin' : user?.company?.plan || 'Free'}</p>
+                </div>
+                <div>
+                  <p className="text-[12px] text-ink-soft">2FA</p>
+                  <p className={`mt-0.5 text-[13px] font-semibold ${user?.twoFactorEnabled ? 'text-signal-go' : 'text-ink'}`}>
+                    {user?.twoFactorEnabled ? 'On' : 'Off'}
+                  </p>
+                </div>
+              </div>
             </div>
-          ))}
-        </nav>
+          </div>
 
-        <div className="min-w-0 max-w-3xl space-y-6">
+          {/* Section navigation: a card list on wide screens, a scrolling row on small ones. */}
+          <nav aria-label="Settings sections" className="settings-nav surface">
+            {navGroups.map((group) => (
+              <div key={group.label} className="contents lg:block">
+                <p className="settings-nav-label">{group.label}</p>
+                {group.items.map(({ id, label, hint, icon: Icon }) => {
+                  const isActive = activeTab === id;
+                  return (
+                    <button
+                      key={id}
+                      type="button"
+                      onClick={() => selectTab(id)}
+                      aria-current={isActive ? 'page' : undefined}
+                      className={`settings-nav-item ${isActive ? 'is-active' : ''}`}
+                    >
+                      <span className="settings-nav-icon"><Icon size={17} /></span>
+                      <span className="min-w-0 flex-1 text-left">
+                        <span className="block text-[14px]">{label}</span>
+                        <span className="settings-nav-hint">{hint}</span>
+                      </span>
+                      <ChevronRight size={16} className="settings-nav-chevron" aria-hidden="true" />
+                    </button>
+                  );
+                })}
+              </div>
+            ))}
+          </nav>
+        </aside>
+
+        <div className="min-w-0 max-w-[880px] space-y-6">
           {activeTab === 'profile' && (
             <>
               <SettingsSection
                 title="Profile"
+                icon={User}
                 description="Your sign-in identity on Flazly."
                 footer={
                   <>
@@ -501,11 +539,6 @@ const Settings: React.FC = () => {
                   </>
                 }
               >
-                <SettingRow label="Avatar" description="Generated from your email address.">
-                  <span className="avatar-initial" style={{ width: 44, height: 44, fontSize: 17 }}>
-                    {(user?.email?.[0] || '?').toUpperCase()}
-                  </span>
-                </SettingRow>
                 <SettingRow label="Email address" htmlFor="profile-email">
                   <input
                     id="profile-email"
@@ -516,12 +549,9 @@ const Settings: React.FC = () => {
                     className="field"
                   />
                 </SettingRow>
-                <SettingRow label="Role" description="Set by your workspace owner.">
-                  <span className="chip">{user?.role || '—'}</span>
-                </SettingRow>
               </SettingsSection>
 
-              <SettingsSection title="Danger zone" description="Irreversible actions on this workspace." tone="danger">
+              <SettingsSection title="Danger zone" icon={Trash2} description="Irreversible actions on this workspace." tone="danger">
                 <div className="flex flex-col gap-4 py-5 sm:flex-row sm:items-center sm:justify-between">
                   <div className="min-w-0">
                     <p className="text-[14px] font-medium text-ink">Delete account and purge data</p>
@@ -541,6 +571,7 @@ const Settings: React.FC = () => {
             <>
               <SettingsSection
                 title="Password"
+                icon={KeyRound}
                 description="Change the password you use to sign in."
                 footer={
                   <>
@@ -614,6 +645,7 @@ const Settings: React.FC = () => {
 
               <SettingsSection
                 title="Two-factor authentication"
+                icon={ShieldCheck}
                 description="Require a code from an authenticator app when you sign in."
                 badge={
                   user?.twoFactorEnabled
@@ -720,6 +752,7 @@ const Settings: React.FC = () => {
           {activeTab === 'webhooks' && !isSuperAdmin && (
             <SettingsSection
               title="Webhook"
+              icon={Webhook}
               description="Where Meta delivers Instagram messages, comments and story replies."
               footer={
                 <p className="text-[13px] text-ink-soft">
