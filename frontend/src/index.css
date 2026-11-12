@@ -1,5 +1,6 @@
 /* Inter is loaded from index.html (preconnect + stylesheet link), not from here. */
 @import "tailwindcss";
+@import "./theme/flazly-theme.css";
 
 @variant dark (&:where(.dark, .dark *));
 
@@ -118,30 +119,32 @@
 
 @layer base {
   :root {
-    --porcelain: #f3f6fb;
-    --porcelain-deep: #eef1f6;
-    --surface: #ffffff;
-    --ink: #0f172a;
-    --ink-soft: #64748b;
-    --ink-faint: #7b8699;
-    --hairline: #e2e8f0;
-    --hairline-strong: #cfd8e3;
+    /* Flazly Indigo (theme/flazly-theme.css): these legacy names alias the
+       semantic tokens, so every rule that reads them follows the theme. */
+    --porcelain: var(--fz-color-bg-page);
+    --porcelain-deep: var(--fz-color-bg-subtle);
+    --surface: var(--fz-color-bg-surface);
+    --ink: var(--fz-color-text-primary);
+    --ink-soft: var(--fz-color-text-secondary);
+    --ink-faint: var(--fz-color-text-muted);
+    --hairline: var(--fz-color-border);
+    --hairline-strong: var(--fz-color-border-strong);
 
-    --viridian: #2563eb;
-    --viridian-deep: #1d4ed8;
-    --viridian-soft: #3b82f6;
-    --viridian-tint: #e5f0fc;
+    --viridian: var(--fz-color-action-primary);
+    --viridian-deep: var(--fz-color-action-primary-hover);
+    --viridian-soft: var(--fz-brand-500);
+    --viridian-tint: var(--fz-color-action-primary-subtle);
 
-    --signal-warn: #8a5a00;
-    --signal-warn-tint: #fff7e6;
-    --signal-stop: #9b2c2c;
-    --signal-stop-tint: #fce8e5;
-    --signal-go: #1f6b3a;
-    --signal-go-tint: #e6f3ec;
+    --signal-warn: var(--fz-color-warning);
+    --signal-warn-tint: var(--fz-color-warning-subtle);
+    --signal-stop: var(--fz-color-danger);
+    --signal-stop-tint: var(--fz-color-danger-subtle);
+    --signal-go: var(--fz-color-success);
+    --signal-go-tint: var(--fz-color-success-subtle);
 
     /* What sits on top of a filled accent or signal. These invert with the
        theme, because the fills themselves lighten in the dark palette. */
-    --on-accent: #ffffff;
+    --on-accent: var(--fz-color-text-on-action);
     --on-signal: #ffffff;
 
     /* Pastel metric palette. Each tone is a soft fill plus the ink that reads on
@@ -149,12 +152,12 @@
        the accent and signal tints; peach and lavender exist only here. */
     --pastel-peach: #fff0e2;
     --peach-ink: #9a4710;
-    --pastel-lavender: #f0eafe;
-    --lavender-ink: #6a3fc0;
+    --pastel-lavender: var(--fz-color-accent-ai-subtle);
+    --lavender-ink: var(--fz-color-accent-ai);
 
-    /* Cards rest on a soft, airy shadow; things that float get --lift. */
-    --shadow-card: 0 1px 2px rgba(15, 23, 42, 0.04), 0 6px 20px -8px rgba(15, 23, 42, 0.08);
-    --lift: 0 16px 40px -20px rgba(15, 23, 42, 0.28), 0 2px 6px -2px rgba(15, 23, 42, 0.12);
+    /* Cards rest on a soft, navy-tinted shadow; things that float get --lift. */
+    --shadow-card: var(--fz-shadow-md);
+    --lift: var(--fz-shadow-lg);
 
     /* Kept so landing-page rules that still read these keep resolving. */
     --brand-purple: var(--viridian);
@@ -173,37 +176,37 @@
   }
 
   :root.dark {
-    --porcelain: #0b0f17;
-    --porcelain-deep: #10161f;
-    --surface: #141b27;
-    --ink: #e5e9f0;
-    --ink-soft: #94a0b4;
-    --ink-faint: #6f7b90;
-    --hairline: #232c3b;
-    --hairline-strong: #2f3a4c;
+    --porcelain: var(--fz-color-bg-page);
+    --porcelain-deep: var(--fz-color-bg-subtle);
+    --surface: var(--fz-color-bg-surface);
+    --ink: var(--fz-color-text-primary);
+    --ink-soft: var(--fz-color-text-secondary);
+    --ink-faint: var(--fz-color-text-muted);
+    --hairline: var(--fz-color-border);
+    --hairline-strong: var(--fz-color-border-strong);
 
-    --viridian: #60a5fa;
-    --viridian-deep: #93c5fd;
-    --viridian-soft: #3b82f6;
-    --viridian-tint: #15233d;
+    --viridian: var(--fz-color-text-brand);
+    --viridian-deep: var(--fz-color-text-brand);
+    --viridian-soft: var(--fz-color-action-primary-hover);
+    --viridian-tint: var(--fz-color-action-primary-subtle);
 
-    --signal-warn: #d9a02a;
-    --signal-warn-tint: #2c2310;
-    --signal-stop: #e07070;
-    --signal-stop-tint: #2e1616;
-    --signal-go: #5fbd82;
-    --signal-go-tint: #14271a;
+    --signal-warn: var(--fz-color-warning);
+    --signal-warn-tint: var(--fz-color-warning-subtle);
+    --signal-stop: var(--fz-color-danger);
+    --signal-stop-tint: var(--fz-color-danger-subtle);
+    --signal-go: var(--fz-color-success);
+    --signal-go-tint: var(--fz-color-success-subtle);
 
-    --on-accent: #0b1210;
+    --on-accent: var(--fz-neutral-950);
     --on-signal: #0b1210;
 
     --pastel-peach: #2e2115;
     --peach-ink: #f2ae74;
-    --pastel-lavender: #241d3b;
-    --lavender-ink: #b9a0f6;
+    --pastel-lavender: var(--fz-color-accent-ai-subtle);
+    --lavender-ink: var(--fz-color-accent-ai);
 
-    --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.3), 0 6px 20px -8px rgba(0, 0, 0, 0.45);
-    --lift: 0 18px 44px -20px rgba(0, 0, 0, 0.7), 0 2px 8px -2px rgba(0, 0, 0, 0.5);
+    --shadow-card: var(--fz-shadow-md);
+    --lift: var(--fz-shadow-lg);
 
     --background: 220 35% 7%;
     --foreground: 216 25% 92%;
@@ -828,6 +831,13 @@
   :root.dark .btn-primary:hover:not(:disabled) {
     background: var(--viridian-soft);
     border-color: var(--viridian-soft);
+  }
+
+  :root.dark .btn-primary,
+  :root.dark .btn-accent {
+    background: var(--fz-color-action-primary);
+    border-color: var(--fz-color-action-primary);
+    color: var(--fz-color-text-on-action);
   }
 
   /* Reserved for actions that hand work to the automation. */
@@ -1942,35 +1952,35 @@
 
 .crm-layout,
 .auth-surface {
-  /* Neutral ramp: slate, so it sits with the blue accent. */
+  /* Neutral ramp: the theme's indigo-tinted neutrals. */
   --n-0: #ffffff;
-  --n-50: #f8fafc;
-  --n-100: #f1f5f9;
-  --n-200: #e2e8f0;
-  --n-300: #cbd5e1;
-  --n-400: #8a94a6;
-  --n-500: #64748b;
-  --n-600: #475569;
-  --n-700: #334155;
-  --n-800: #1e293b;
-  --n-900: #0f172a;
-  --n-950: #020617;
+  --n-50: var(--fz-neutral-50);
+  --n-100: var(--fz-neutral-100);
+  --n-200: var(--fz-neutral-200);
+  --n-300: var(--fz-neutral-300);
+  --n-400: var(--fz-neutral-400);
+  --n-500: var(--fz-neutral-500);
+  --n-600: var(--fz-neutral-600);
+  --n-700: var(--fz-neutral-700);
+  --n-800: var(--fz-neutral-800);
+  --n-900: var(--fz-neutral-900);
+  --n-950: var(--fz-neutral-950);
 }
 
 :root.dark .crm-layout,
 :root.dark .auth-surface {
-  --n-0: #141b27;
-  --n-50: #10161f;
-  --n-100: #182131;
-  --n-200: #232c3b;
-  --n-300: #2f3a4c;
-  --n-400: #6f7b90;
-  --n-500: #94a0b4;
-  --n-600: #aab4c5;
-  --n-700: #c4ccd8;
-  --n-800: #dde2ea;
-  --n-900: #e5e9f0;
-  --n-950: #f1f4f8;
+  --n-0: #131624;
+  --n-50: #080d25;
+  --n-100: #1a1e2f;
+  --n-200: #252a3d;
+  --n-300: #363c50;
+  --n-400: #747a8d;
+  --n-500: #9298a9;
+  --n-600: #a6aab9;
+  --n-700: #c0c4d0;
+  --n-800: #dbdee6;
+  --n-900: #e9ebf1;
+  --n-950: #f5f7fa;
 }
 
 .crm-layout,
@@ -2691,8 +2701,17 @@ html.lenis {
 }
 
 /* Premium Enterprise SaaS Visual System */
+/* The highlighted words carry the logo's blue-to-violet. */
 .text-headline-gradient {
   color: var(--lp-blue, #1463ff);
+}
+
+.text-headline-gradient:not(.lp-dark-panel *),
+.text-logo-gradient:not(.lp-dark-panel *) {
+  background-image: linear-gradient(100deg, var(--fz-brand-600) 10%, var(--fz-violet-600) 95%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .btn-premium-cta {
@@ -2700,7 +2719,7 @@ html.lenis {
   border-radius: 999px;
   font-weight: 600;
   transition: background-color 150ms ease, box-shadow 150ms ease, transform 150ms ease;
-  box-shadow: 0 8px 20px -8px rgba(20, 99, 255, 0.55);
+  box-shadow: var(--fz-shadow-primary);
   border: 1px solid transparent;
   color: #ffffff !important;
   cursor: pointer;
@@ -2712,8 +2731,8 @@ html.lenis {
 }
 
 .btn-premium-cta:hover {
-  background: #0f52e0;
-  box-shadow: 0 12px 24px -10px rgba(20, 99, 255, 0.6);
+  background: var(--fz-brand-700);
+  box-shadow: 0 12px 24px -10px rgb(29 83 225 / 0.6);
 }
 
 .btn-premium-cta:active {
@@ -2941,17 +2960,17 @@ html.lenis {
    ============================================================================ */
 
 :root {
-  --lp-navy: #0e0b3d;        /* headings and figures */
-  --lp-ink: #535479;         /* body copy */
-  --lp-muted: #6c6f93;       /* captions, secondary labels */
-  --lp-blue: #1463ff;        /* the accent: links, primary action, emphasis */
-  --lp-blue-tint: #eef4ff;
-  --lp-violet: #7214ff;      /* second eyebrow colour */
+  --lp-navy: var(--fz-neutral-900);   /* headings and figures */
+  --lp-ink: var(--fz-neutral-600);    /* body copy */
+  --lp-muted: var(--fz-neutral-500);  /* captions, secondary labels */
+  --lp-blue: var(--fz-brand-600);     /* the accent: links, primary action, emphasis */
+  --lp-blue-tint: var(--fz-brand-50);
+  --lp-violet: var(--fz-violet-600);  /* second eyebrow colour; AI moments */
   --lp-teal-ink: #1d7f86;    /* teal eyebrows, darkened to clear 4.5:1 */
   --lp-orange-ink: #c2410c;  /* orange eyebrows, darkened to clear 4.5:1 */
-  --lp-panel: #f7f9fc;
-  --lp-panel-2: #f3f5fb;
-  --lp-line: #e8ebf4;
+  --lp-panel: var(--fz-neutral-50);
+  --lp-panel-2: var(--fz-neutral-100);
+  --lp-line: var(--fz-neutral-200);
   --lp-shadow-card: 0 1px 2px rgba(113, 116, 152, 0.08), 0 8px 16px rgba(113, 116, 152, 0.06), 0 18px 32px rgba(113, 116, 152, 0.08);
   --lp-shadow-card-hover: 0 1px 2px rgba(113, 116, 152, 0.08), 0 12px 24px rgba(113, 116, 152, 0.10), 0 28px 48px rgba(113, 116, 152, 0.12);
   --lp-font-display: "Plus Jakarta Sans", "Inter", system-ui, -apple-system, sans-serif;
@@ -3644,17 +3663,17 @@ html.lenis {
    ============================================================================ */
 
 .auth-split {
-  --cobalt: #315bff;
-  --cobalt-deep: #2346e6;
+  --cobalt: var(--fz-color-action-primary);
+  --cobalt-deep: var(--fz-color-action-primary-hover);
   --cobalt-navy: #172554;
   --viridian: var(--cobalt);
   --viridian-deep: var(--cobalt-deep);
   --viridian-soft: #5b7cff;
   --viridian-tint: #eef2ff;
-  --ink: #111827;
-  --ink-soft: #667085;
-  --ink-faint: #98a2b3;
-  --hairline: #e5e7eb;
+  --ink: var(--fz-neutral-900);
+  --ink-soft: var(--fz-neutral-600);
+  --ink-faint: var(--fz-neutral-500);
+  --hairline: var(--fz-neutral-200);
 
   display: grid;
   min-height: 100vh;
@@ -4589,4 +4608,22 @@ html.lenis {
 
 @media (prefers-reduced-motion: reduce) {
   .lp-flow-path.is-moving { animation: none; }
+}
+
+/* ============================================================================
+   Flazly Indigo: landing markup that still names the pre-theme hexes. Outside
+   the product mockups, they resolve to the theme like everything else.
+   ============================================================================ */
+.landing-page :is(.text-\[\#1463FF\], .text-\[\#1463ff\]):not(.mockup-dark *) { color: var(--lp-blue); }
+.landing-page :is(.bg-\[\#1463FF\], .bg-\[\#1463ff\]):not(.mockup-dark *) { background-color: var(--lp-blue); }
+.landing-page .text-\[\#0E0B3D\]:not(.mockup-dark *) { color: var(--lp-navy); }
+.landing-page .text-\[\#535479\]:not(.mockup-dark *) { color: var(--lp-ink); }
+.landing-page .text-\[\#6c6f93\]:not(.mockup-dark *) { color: var(--lp-muted); }
+.landing-page .bg-\[\#F7F9FC\]:not(.mockup-dark *) { background-color: var(--lp-panel); }
+
+/* Flazly Indigo typography: app headings in the display face the landing page
+   already uses (Plus Jakarta Sans); body, tables and controls stay Inter. */
+.crm-layout :is(.page-title, .section-title, .surface-head h2, .surface-head h3, .modal-head h2) {
+  font-family: var(--fz-font-heading);
+  letter-spacing: var(--fz-letter-spacing-heading);
 }

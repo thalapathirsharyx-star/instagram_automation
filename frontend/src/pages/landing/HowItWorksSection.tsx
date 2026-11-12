@@ -299,7 +299,7 @@ export const HowItWorksSection: React.FC = () => {
                 >
                   <div className={`w-12 h-12 rounded-2xl flex items-center justify-center font-bold tabular-nums shrink-0 transition-all duration-300 ${
                     activeStep === idx
-                      ? "bg-[#4F39F6] text-white shadow-md shadow-[#4F39F6]/20"
+                      ? "bg-[#4F39F6] text-[#FFFFFF] shadow-md shadow-[#4F39F6]/20"
                       : "bg-[#3B82F6]/10 text-[#38BDF8]"
                   }`}>
                     {step.step}

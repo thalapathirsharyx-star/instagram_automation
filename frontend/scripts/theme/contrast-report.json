@@ -1,0 +1,451 @@
+{
+  "primitives": {
+    "brand": {
+      "50": "#eff7ff",
+      "100": "#dbedff",
+      "200": "#b6d9ff",
+      "300": "#87baff",
+      "400": "#5895ff",
+      "500": "#2f6bff",
+      "600": "#1d53e1",
+      "700": "#113fbb",
+      "800": "#092d92",
+      "900": "#051f6c"
+    },
+    "violet": {
+      "50": "#f7f4ff",
+      "100": "#ede7ff",
+      "200": "#daccff",
+      "300": "#c1a7ff",
+      "400": "#a57cff",
+      "500": "#854efa",
+      "600": "#6e36d8",
+      "700": "#5925b3",
+      "800": "#43188c",
+      "900": "#300e67"
+    },
+    "neutral": {
+      "50": "#f9fafd",
+      "100": "#f2f3f8",
+      "200": "#e4e6ed",
+      "300": "#cdd1da",
+      "400": "#9fa4b3",
+      "500": "#6e7487",
+      "600": "#4e546b",
+      "700": "#373e58",
+      "800": "#1f2744",
+      "900": "#101635",
+      "950": "#070b26"
+    },
+    "green": {
+      "50": "#effaf1",
+      "100": "#dbf5e1",
+      "200": "#b4e8c1",
+      "300": "#80d498",
+      "400": "#42b96d",
+      "500": "#009744",
+      "600": "#007d30",
+      "700": "#006422",
+      "800": "#004c16",
+      "900": "#00370d"
+    },
+    "amber": {
+      "50": "#fff5eb",
+      "100": "#fee9d3",
+      "200": "#fad1a2",
+      "300": "#efb063",
+      "400": "#da8a00",
+      "500": "#b96300",
+      "600": "#9c4d00",
+      "700": "#7f3b00",
+      "800": "#622b00",
+      "900": "#471d00"
+    },
+    "red": {
+      "50": "#fff2f0",
+      "100": "#ffe2dd",
+      "200": "#ffc1ba",
+      "300": "#ff958d",
+      "400": "#fe645f",
+      "500": "#dd2d34",
+      "600": "#bc0d20",
+      "700": "#9a0013",
+      "800": "#78000a",
+      "900": "#580005"
+    },
+    "sky": {
+      "50": "#eef9ff",
+      "100": "#d9f1fe",
+      "200": "#b0e1fc",
+      "300": "#79c9f2",
+      "400": "#36abdf",
+      "500": "#0088c0",
+      "600": "#006fa3",
+      "700": "#005985",
+      "800": "#004367",
+      "900": "#002f4b"
+    }
+  },
+  "light": {
+    "color-bg-page": "#f9fafd",
+    "color-bg-surface": "#ffffff",
+    "color-bg-subtle": "#f2f3f8",
+    "color-bg-muted": "#e4e6ed",
+    "color-border": "#e4e6ed",
+    "color-border-strong": "#cdd1da",
+    "color-text-primary": "#101635",
+    "color-text-secondary": "#4e546b",
+    "color-text-muted": "#5f6579",
+    "color-text-on-action": "#ffffff",
+    "color-action-primary": "#1d53e1",
+    "color-action-primary-hover": "#113fbb",
+    "color-action-primary-subtle": "#eff7ff",
+    "color-link": "#1d53e1",
+    "color-text-brand": "#1d53e1",
+    "color-accent-ai": "#6e36d8",
+    "color-accent-ai-subtle": "#f7f4ff",
+    "color-success": "#006422",
+    "color-success-subtle": "#effaf1",
+    "color-warning": "#622b00",
+    "color-warning-subtle": "#fff5eb",
+    "color-danger": "#bc0d20",
+    "color-danger-subtle": "#fff2f0",
+    "color-info": "#005985",
+    "color-info-subtle": "#eef9ff",
+    "color-focus-ring": "#2f6bff"
+  },
+  "dark": {
+    "color-bg-page": "#070b26",
+    "color-bg-surface": "#131624",
+    "color-bg-subtle": "#1a1e2f",
+    "color-bg-muted": "#252a3d",
+    "color-border": "#2a2f42",
+    "color-border-strong": "#41475c",
+    "color-text-primary": "#f9fafd",
+    "color-text-secondary": "#b8bdcc",
+    "color-text-muted": "#9298a9",
+    "color-text-on-action": "#ffffff",
+    "color-action-primary": "#2c5fdd",
+    "color-action-primary-hover": "#2251c6",
+    "color-action-primary-subtle": "#17274b",
+    "color-link": "#81a9fd",
+    "color-text-brand": "#81a9fd",
+    "color-accent-ai": "#ae97ff",
+    "color-accent-ai-subtle": "#2a2148",
+    "color-success": "#6ad18a",
+    "color-success-subtle": "#112d1a",
+    "color-warning": "#f9b64f",
+    "color-warning-subtle": "#372508",
+    "color-danger": "#fb817a",
+    "color-danger-subtle": "#421c19",
+    "color-info": "#67c4f2",
+    "color-info-subtle": "#082d3d",
+    "color-focus-ring": "#6e9bfb"
+  },
+  "report": [
+    {
+      "mode": "light",
+      "pair": "text-primary on surface",
+      "fg": "#101635",
+      "bg": "#ffffff",
+      "ratio": 17.67,
+      "need": 4.5
+    },
+    {
+      "mode": "light",
+      "pair": "text-primary on page",
+      "fg": "#101635",
+      "bg": "#f9fafd",
+      "ratio": 16.93,
+      "need": 4.5
+    },
+    {
+      "mode": "light",
+      "pair": "text-secondary on surface",
+      "fg": "#4e546b",
+      "bg": "#ffffff",
+      "ratio": 7.49,
+      "need": 4.5
+    },
+    {
+      "mode": "light",
+      "pair": "text-secondary on page",
+      "fg": "#4e546b",
+      "bg": "#f9fafd",
+      "ratio": 7.17,
+      "need": 4.5
+    },
+    {
+      "mode": "light",
+      "pair": "text-muted on surface",
+      "fg": "#5f6579",
+      "bg": "#ffffff",
+      "ratio": 5.79,
+      "need": 4.5
+    },
+    {
+      "mode": "light",
+      "pair": "text-muted on subtle",
+      "fg": "#5f6579",
+      "bg": "#f2f3f8",
+      "ratio": 5.23,
+      "need": 4.5
+    },
+    {
+      "mode": "light",
+      "pair": "text-muted on muted",
+      "fg": "#5f6579",
+      "bg": "#e4e6ed",
+      "ratio": 4.65,
+      "need": 4.5
+    },
+    {
+      "mode": "light",
+      "pair": "link on surface",
+      "fg": "#1d53e1",
+      "bg": "#ffffff",
+      "ratio": 6.22,
+      "need": 4.5
+    },
+    {
+      "mode": "light",
+      "pair": "button text on primary",
+      "fg": "#ffffff",
+      "bg": "#1d53e1",
+      "ratio": 6.22,
+      "need": 4.5
+    },
+    {
+      "mode": "light",
+      "pair": "button text on primary hover",
+      "fg": "#ffffff",
+      "bg": "#113fbb",
+      "ratio": 8.56,
+      "need": 4.5
+    },
+    {
+      "mode": "light",
+      "pair": "brand text on primary-subtle (chip)",
+      "fg": "#1d53e1",
+      "bg": "#eff7ff",
+      "ratio": 5.75,
+      "need": 4.5
+    },
+    {
+      "mode": "light",
+      "pair": "brand text on page",
+      "fg": "#1d53e1",
+      "bg": "#f9fafd",
+      "ratio": 5.96,
+      "need": 4.5
+    },
+    {
+      "mode": "light",
+      "pair": "AI accent on AI subtle",
+      "fg": "#6e36d8",
+      "bg": "#f7f4ff",
+      "ratio": 6.08,
+      "need": 4.5
+    },
+    {
+      "mode": "light",
+      "pair": "success on success-subtle",
+      "fg": "#006422",
+      "bg": "#effaf1",
+      "ratio": 6.89,
+      "need": 4.5
+    },
+    {
+      "mode": "light",
+      "pair": "warning on warning-subtle",
+      "fg": "#622b00",
+      "bg": "#fff5eb",
+      "ratio": 10.46,
+      "need": 4.5
+    },
+    {
+      "mode": "light",
+      "pair": "danger on danger-subtle",
+      "fg": "#bc0d20",
+      "bg": "#fff2f0",
+      "ratio": 5.97,
+      "need": 4.5
+    },
+    {
+      "mode": "light",
+      "pair": "info on info-subtle",
+      "fg": "#005985",
+      "bg": "#eef9ff",
+      "ratio": 7.09,
+      "need": 4.5
+    },
+    {
+      "mode": "light",
+      "pair": "border-strong on surface (UI)",
+      "fg": "#cdd1da",
+      "bg": "#ffffff",
+      "ratio": 1.53,
+      "need": 1.5
+    },
+    {
+      "mode": "light",
+      "pair": "focus ring on surface (UI)",
+      "fg": "#2f6bff",
+      "bg": "#ffffff",
+      "ratio": 4.5,
+      "need": 3.0
+    },
+    {
+      "mode": "dark",
+      "pair": "text-primary on surface",
+      "fg": "#f9fafd",
+      "bg": "#131624",
+      "ratio": 17.23,
+      "need": 4.5
+    },
+    {
+      "mode": "dark",
+      "pair": "text-primary on page",
+      "fg": "#f9fafd",
+      "bg": "#070b26",
+      "ratio": 18.55,
+      "need": 4.5
+    },
+    {
+      "mode": "dark",
+      "pair": "text-secondary on surface",
+      "fg": "#b8bdcc",
+      "bg": "#131624",
+      "ratio": 9.58,
+      "need": 4.5
+    },
+    {
+      "mode": "dark",
+      "pair": "text-secondary on page",
+      "fg": "#b8bdcc",
+      "bg": "#070b26",
+      "ratio": 10.31,
+      "need": 4.5
+    },
+    {
+      "mode": "dark",
+      "pair": "text-muted on surface",
+      "fg": "#9298a9",
+      "bg": "#131624",
+      "ratio": 6.24,
+      "need": 4.5
+    },
+    {
+      "mode": "dark",
+      "pair": "text-muted on subtle",
+      "fg": "#9298a9",
+      "bg": "#1a1e2f",
+      "ratio": 5.73,
+      "need": 4.5
+    },
+    {
+      "mode": "dark",
+      "pair": "text-muted on muted",
+      "fg": "#9298a9",
+      "bg": "#252a3d",
+      "ratio": 4.93,
+      "need": 4.5
+    },
+    {
+      "mode": "dark",
+      "pair": "link on surface",
+      "fg": "#81a9fd",
+      "bg": "#131624",
+      "ratio": 7.73,
+      "need": 4.5
+    },
+    {
+      "mode": "dark",
+      "pair": "button text on primary",
+      "fg": "#ffffff",
+      "bg": "#2c5fdd",
+      "ratio": 5.54,
+      "need": 4.5
+    },
+    {
+      "mode": "dark",
+      "pair": "button text on primary hover",
+      "fg": "#ffffff",
+      "bg": "#2251c6",
+      "ratio": 6.86,
+      "need": 4.5
+    },
+    {
+      "mode": "dark",
+      "pair": "brand text on primary-subtle (chip)",
+      "fg": "#81a9fd",
+      "bg": "#17274b",
+      "ratio": 6.32,
+      "need": 4.5
+    },
+    {
+      "mode": "dark",
+      "pair": "brand text on page",
+      "fg": "#81a9fd",
+      "bg": "#070b26",
+      "ratio": 8.32,
+      "need": 4.5
+    },
+    {
+      "mode": "dark",
+      "pair": "AI accent on AI subtle",
+      "fg": "#ae97ff",
+      "bg": "#2a2148",
+      "ratio": 6.15,
+      "need": 4.5
+    },
+    {
+      "mode": "dark",
+      "pair": "success on success-subtle",
+      "fg": "#6ad18a",
+      "bg": "#112d1a",
+      "ratio": 7.85,
+      "need": 4.5
+    },
+    {
+      "mode": "dark",
+      "pair": "warning on warning-subtle",
+      "fg": "#f9b64f",
+      "bg": "#372508",
+      "ratio": 8.27,
+      "need": 4.5
+    },
+    {
+      "mode": "dark",
+      "pair": "danger on danger-subtle",
+      "fg": "#fb817a",
+      "bg": "#421c19",
+      "ratio": 6.04,
+      "need": 4.5
+    },
+    {
+      "mode": "dark",
+      "pair": "info on info-subtle",
+      "fg": "#67c4f2",
+      "bg": "#082d3d",
+      "ratio": 7.4,
+      "need": 4.5
+    },
+    {
+      "mode": "dark",
+      "pair": "border-strong on surface (UI)",
+      "fg": "#41475c",
+      "bg": "#131624",
+      "ratio": 1.95,
+      "need": 1.5
+    },
+    {
+      "mode": "dark",
+      "pair": "focus ring on surface (UI)",
+      "fg": "#6e9bfb",
+      "bg": "#131624",
+      "ratio": 6.63,
+      "need": 3.0
+    }
+  ]
+}
