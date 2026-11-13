@@ -197,8 +197,9 @@ describe('InstagramService.linkInstagramAccount', () => {
       expect(call![2]).toMatchObject({
         params: expect.objectContaining({ subscribed_fields: WEBHOOK_FIELDS.join(',') })
       });
-      // Must include comments, or the comment automation never receives events.
-      expect(call![2].params.subscribed_fields).toContain('comments');
+      // Must include messages and messaging_postbacks for DM delivery.
+      expect(call![2].params.subscribed_fields).toContain('messages');
+      expect(call![2].params.subscribed_fields).toContain('messaging_postbacks');
     });
 
     it('warns when Meta rejects the subscription instead of swallowing it', async () => {

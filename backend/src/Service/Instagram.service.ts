@@ -36,9 +36,10 @@ export const GRAPH_VERSION = process.env.META_GRAPH_VERSION || 'v21.0';
 
 /**
  * Webhook fields this integration depends on, for POST /{page-id}/subscribed_apps.
- * `comments` additionally requires Advanced Access to instagram_manage_comments.
+ * Note: Instagram `comments` is an Instagram Webhooks object subscription configured
+ * in the Meta App Dashboard, not a valid field on the Facebook Page edge.
  */
-export const WEBHOOK_FIELDS = ['messages', 'messaging_postbacks', 'comments'];
+export const WEBHOOK_FIELDS = ['messages', 'messaging_postbacks'];
 
 /**
  * Permissions the Instagram-API-with-Facebook-Login integration actually calls.
