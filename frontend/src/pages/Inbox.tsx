@@ -4,6 +4,7 @@ import type { Lead, Message, ConversationHandoffResult } from '../models/crm.mod
 import { Link, useLocation } from 'react-router-dom';
 import { Send, Loader2, Search, SearchX, Inbox as InboxIcon, MessageCircle, MessagesSquare, ArrowLeft, Sparkles } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
+import { ThreadListSkeleton, ChatSkeleton } from '../components/Skeleton';
 import { io } from 'socket.io-client';
 
 /** Pulls the API's error message off an axios failure without resorting to `any`. */
@@ -38,6 +39,11 @@ const THREAD_FILTERS: Record<ThreadFilter, { label: string; test: (lead: Lead) =
 const Inbox: React.FC = () => {
   const { toast } = useToast();
   const [leads, setLeads] = useState<Lead[]>([]);
+  // The first fetch shows skeletons; later refreshes update in place.
+  const [isLoadingLeads, setIsLoadingLeads] = useState(true);
+  const [isLoadingMessages, setIsLoadingMessages] = useState(false);
+  // "Reconnecting" only after a live connection has dropped, not on first load.
+  const [hasConnected, setHasConnected] = useState(false);
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   // Manual mode is server state, not a local toggle. Previously this was local-only, so
@@ -69,6 +75,7 @@ const Inbox: React.FC = () => {
     socket.on('connect', () => {
       console.log('Connected to WebSocket server:', socket.id);
       setIsConnected(true);
+      setHasConnected(true);
     });
 
     socket.on('connect_error', (err) => {
@@ -131,6 +138,8 @@ const Inbox: React.FC = () => {
     } catch (error) {
       console.error('Error fetching leads:', error);
       setLeads([]);
+    } finally {
+      setIsLoadingLeads(false);
     }
   };
 
@@ -140,6 +149,7 @@ const Inbox: React.FC = () => {
     // between would otherwise see nothing selected and jump to the first lead.
     selectedLeadRef.current = lead;
     setSelectedLead(lead);
+    setIsLoadingMessages(true);
     try {
       const res = await getMessages(lead.id);
       setMessages(res?.Data || []);
@@ -149,6 +159,8 @@ const Inbox: React.FC = () => {
     } catch (error) {
       console.error('Error fetching messages:', error);
       setMessages([]);
+    } finally {
+      setIsLoadingMessages(false);
     }
   };
 
@@ -244,7 +256,7 @@ const Inbox: React.FC = () => {
                 className={isConnected ? 'chip chip-dot chip-go' : 'chip chip-dot chip-warn is-pulsing'}
                 role="status"
               >
-                {isConnected ? 'Live' : 'Reconnecting'}
+                {isConnected ? 'Live' : hasConnected ? 'Reconnecting' : 'Connecting'}
               </span>
             </div>
 
@@ -276,7 +288,9 @@ const Inbox: React.FC = () => {
           </div>
 
           <div className="premium-scroll flex-grow overflow-y-auto">
-            {visibleLeads.length === 0 ? (
+            {isLoadingLeads ? (
+              <ThreadListSkeleton />
+            ) : visibleLeads.length === 0 ? (
               leads.length === 0 ? (
                 <div className="empty px-6 py-12">
                   <span className="empty-mark"><InboxIcon /></span>
@@ -387,7 +401,8 @@ const Inbox: React.FC = () => {
                 className="chat-thread premium-scroll flex flex-grow flex-col gap-4 overflow-y-auto px-5 py-6 sm:px-8"
                 ref={chatHistoryRef}
               >
-                {messages.length === 0 && (
+                {isLoadingMessages && <ChatSkeleton />}
+                {!isLoadingMessages && messages.length === 0 && (
                   <div className="empty my-auto py-10">
                     <span className="empty-mark"><MessageCircle /></span>
                     <p className="empty-title">No messages yet</p>
@@ -395,7 +410,7 @@ const Inbox: React.FC = () => {
                   </div>
                 )}
 
-                {messages.map((msg) => {
+                {!isLoadingMessages && messages.map((msg) => {
                   const isOutbound = msg.direction === 'Outbound';
                   // Outbound traffic is the assistant unless a person has the
                   // thread, in which case it is the person on your team.
@@ -490,6 +505,11 @@ const Inbox: React.FC = () => {
                 )}
               </div>
             </>
+          ) : isLoadingLeads ? (
+            // While the list loads, the conversation pane loads too, not "pick one".
+            <div className="chat-thread flex flex-grow flex-col px-5 py-6 sm:px-8">
+              <ChatSkeleton />
+            </div>
           ) : (
             <div className="empty flex-grow bg-porcelain">
               <span className="empty-mark"><MessagesSquare /></span>

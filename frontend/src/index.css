@@ -5622,3 +5622,38 @@ body:has(.crm-layout),
   border-radius: 12px;
   background: var(--fz-color-action-primary-subtle);
 }
+
+/* --- Skeleton loaders (components/Skeleton.tsx) ------------------------------- */
+
+.skeleton {
+  display: block;
+}
+
+/* A shape class on the placeholder (rounded-full for avatars, …) wins. */
+.skeleton:not([class*="rounded"]) {
+  border-radius: 8px;
+}
+
+.skeleton {
+  background:
+    linear-gradient(90deg, transparent 0%, rgb(255 255 255 / 0.65) 50%, transparent 100%) no-repeat,
+    color-mix(in oklab, var(--hairline) 75%, var(--porcelain));
+  background-size: 200% 100%, 100% 100%;
+  background-position: -150% 0, 0 0;
+  animation: skeleton-shimmer 1.4s ease-in-out infinite;
+}
+
+:root.dark .skeleton {
+  background:
+    linear-gradient(90deg, transparent 0%, rgb(255 255 255 / 0.06) 50%, transparent 100%) no-repeat,
+    var(--fz-color-bg-muted);
+  background-size: 200% 100%, 100% 100%;
+}
+
+@keyframes skeleton-shimmer {
+  to { background-position: 250% 0, 0 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton { animation: none; }
+}

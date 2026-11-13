@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { getTeamMembers, removeTeamMember } from '../api/team.api';
-import { Users, Trash2, UserPlus, Loader2 } from 'lucide-react';
+import { Users, Trash2, UserPlus } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
 import { ConfirmModal } from '../components/ConfirmModal';
 import { Link } from 'react-router-dom';
+import { TableRowsSkeleton } from '../components/Skeleton';
 import { useAuth } from '../context/AuthContext';
 import { teamSeatsFor } from '../lib/planLimits';
 
@@ -104,9 +105,9 @@ const Team: React.FC = () => {
         </div>
 
         {isLoading ? (
-          <div className="empty py-12">
-            <Loader2 size={20} className="animate-spin text-ink-faint" />
-            <p className="empty-body">Loading members…</p>
+          <div role="status" className="table-wrap">
+            <span className="sr-only">Loading members</span>
+            <table className="data-table"><tbody><TableRowsSkeleton cols={4} rows={3} /></tbody></table>
           </div>
         ) : members.length === 0 ? (
           <div className="empty py-12">

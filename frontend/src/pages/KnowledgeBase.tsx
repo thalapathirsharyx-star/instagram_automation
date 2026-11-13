@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Plus, Trash2, FileText, UploadCloud, Loader2, MessageSquareQuote, HelpCircle, File, BrainCircuit, X, Edit2 } from 'lucide-react';
+import { CardGridSkeleton } from '../components/Skeleton';
 import { useNavigate } from 'react-router-dom';
 import api from '../lib/axios';
 import { useToast } from '../context/ToastContext';
@@ -266,10 +267,7 @@ const KnowledgeBase: React.FC = () => {
       </div>
 
       {isLoading ? (
-        <div className="surface empty">
-          <Loader2 size={22} className="animate-spin text-ink-faint" />
-          <p className="empty-body">Loading your brain base…</p>
-        </div>
+        <CardGridSkeleton />
       ) : filteredItems.length === 0 ? (
         <div className="surface empty">
           <span className="empty-mark"><BrainCircuit /></span>

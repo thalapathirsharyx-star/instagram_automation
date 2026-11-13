@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { getLeads } from '../api/crm.api';
 import type { Lead } from '../models/crm.models';
-import { Search, ExternalLink, Loader2, X, RefreshCw, Users } from 'lucide-react';
+import { Search, ExternalLink, X, RefreshCw, Users } from 'lucide-react';
 import { formatScore, scorePercent, leadStatusLabel } from '../lib/leadStatus';
 import { LeadStatusChip, HandlerChip } from '../components/LeadStatusChip';
+import { TableRowsSkeleton } from '../components/Skeleton';
 
 // Every status the backend sets, so no lead is reachable only through "All".
 const STATUS_FILTERS = ['All', 'New', 'Hot', 'Needs_Human', 'Handoff', 'Buyer', 'Lost'] as const;
@@ -112,7 +113,7 @@ const Leads: React.FC = () => {
 
       <div className="surface overflow-hidden">
         <div className="table-wrap">
-          <table className="data-table is-stacked">
+          <table className="data-table is-stacked" aria-busy={isLoading || undefined}>
             <thead>
               <tr>
                 <th>Customer</th>
@@ -125,14 +126,7 @@ const Leads: React.FC = () => {
             </thead>
             <tbody>
               {isLoading ? (
-                <tr>
-                  <td colSpan={6}>
-                    <div className="flex items-center justify-center gap-2.5 py-16 text-ink-soft">
-                      <Loader2 size={16} className="animate-spin" />
-                      <span>Loading leads</span>
-                    </div>
-                  </td>
-                </tr>
+                <TableRowsSkeleton cols={6} />
               ) : filteredLeads.length === 0 ? (
                 <tr>
                   <td colSpan={6}>

@@ -5,10 +5,11 @@ import {
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   AreaChart, Area, PieChart, Pie, Cell
 } from 'recharts';
-import { Loader2, ArrowRight, Users, MessageCircle, UserCheck, BadgeCheck, TrendingUp, PieChart as PieChartIcon, CheckCircle2 } from 'lucide-react';
+import { ArrowRight, Users, MessageCircle, UserCheck, BadgeCheck, TrendingUp, PieChart as PieChartIcon, CheckCircle2 } from 'lucide-react';
 import type { Lead } from '../models/crm.models';
 import { formatScore, leadStatusLabel, leadStatusColorVar } from '../lib/leadStatus';
 import { LeadStatusChip, HandlerChip } from '../components/LeadStatusChip';
+import { DashboardSkeleton } from '../components/Skeleton';
 
 /**
  * Chart series read in the app's own palette: the accent for anything the
@@ -122,12 +123,7 @@ const Dashboard: React.FC = () => {
   };
 
   if (isLoading) {
-    return (
-      <div className="flex h-[70vh] items-center justify-center gap-2.5 text-ink-soft">
-        <Loader2 size={16} className="animate-spin" />
-        <span className="text-[15px]">Loading your workspace</span>
-      </div>
-    );
+    return <DashboardSkeleton />;
   }
 
   const activeLeads = leads.filter((l) => l.lead_status !== 'Lost');
