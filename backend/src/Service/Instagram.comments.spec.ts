@@ -131,15 +131,43 @@ describe('InstagramService comment webhook handling', () => {
     expect(mockedAxios.post).not.toHaveBeenCalled();
   });
 
-  it('falls back to a public reply when the private reply is rejected', async () => {
-    mockedAxios.post
-      .mockRejectedValueOnce(new Error('private replies unavailable'))
-      .mockResolvedValueOnce({ data: { id: 'public-reply' } } as any);
+  it('never posts the DM text publicly when the private reply is rejected', async () => {
+    mockedAxios.post.mockRejectedValueOnce(new Error('private replies unavailable'));
+    const saveSpy = instagram_message.prototype.save as jest.Mock;
 
     await service.processIncomingComment(comment(), 'IG_BIZ_1');
 
     const calledUrls = mockedAxios.post.mock.calls.map(c => String(c[0]));
-    expect(calledUrls.some(u => u.includes('/COMMENT_1/replies'))).toBe(true);
+    expect(calledUrls).toHaveLength(1);
+    expect(calledUrls[0]).toContain('/COMMENT_1/private_replies');
+    expect(calledUrls.some(u => u.includes('/replies') && !u.includes('private'))).toBe(false);
+    // Nothing was delivered, so nothing is logged to the inbox as a sent DM.
+    expect(saveSpy).not.toHaveBeenCalled();
+  });
+
+  it('does not reply when the workspace has auto-reply switched off', async () => {
+    (CompanyTable.findOne as jest.Mock).mockResolvedValue({ ...CONNECTED_COMPANY, auto_reply_enabled: false });
+    await service.processIncomingComment(comment(), 'IG_BIZ_1');
+    expect(mockedAxios.post).not.toHaveBeenCalled();
+  });
+
+  it('only fires a post-specific trigger on that post', async () => {
+    (comment_trigger.find as jest.Mock).mockResolvedValue([
+      { id: 't2', keyword: 'PRICE', reply_message: 'Reel price', is_active: true, media_id: 'MEDIA_9' }
+    ]);
+    await service.processIncomingComment(comment(), 'IG_BIZ_1');
+    expect(mockedAxios.post).not.toHaveBeenCalled();
+
+    await service.processIncomingComment(comment({ id: 'COMMENT_2', media: { id: 'MEDIA_9' } }), 'IG_BIZ_1');
+    expect(mockedAxios.post).toHaveBeenCalledTimes(1);
+    expect(mockedAxios.post.mock.calls[0][1]).toEqual({ message: 'Reel price' });
+  });
+
+  it('does not log the customer comment text', async () => {
+    const logSpy = console.log as jest.Mock;
+    await service.processIncomingComment(comment({ text: 'secret phone 98765 please' }), 'IG_BIZ_1');
+    const logged = logSpy.mock.calls.flat().map(String).join('\n');
+    expect(logged).not.toContain('98765');
   });
 
   it('survives a comment event with no text', async () => {

@@ -449,8 +449,11 @@ export class InstagramController extends AuthBaseController {
   @Get('CommentTriggers')
   async getCommentTriggers(@Req() req: any) {
     const companyId = req.user.company_id;
-    const result = await this._InstagramService.getCommentTriggers(companyId);
-    return { Success: true, Data: result };
+    const [result, limit] = await Promise.all([
+      this._InstagramService.getCommentTriggers(companyId),
+      this._InstagramService.getCommentTriggerLimit(companyId),
+    ]);
+    return { Success: true, Data: result, Limit: limit };
   }
 
   @UseGuards(JwtAuthGuard)
@@ -458,6 +461,14 @@ export class InstagramController extends AuthBaseController {
   async createCommentTrigger(@Req() req: any, @Body() body: any) {
     const companyId = req.user.company_id;
     const result = await this._InstagramService.createCommentTrigger(companyId, body);
+    return { Success: true, Data: result.Data };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Put('CommentTriggers/:id')
+  async updateCommentTrigger(@Req() req: any, @Param('id') id: string, @Body() body: any) {
+    const companyId = req.user.company_id;
+    const result = await this._InstagramService.updateCommentTrigger(companyId, id, body);
     return { Success: true, Data: result.Data };
   }
 

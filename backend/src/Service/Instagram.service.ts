@@ -10,6 +10,13 @@ import { AIService } from './AI.service';
 import { KnowledgeBaseService } from './KnowledgeBase.service';
 import axios from 'axios';
 import { PLAN_LIMITS } from '@Config/PlanLimits';
+import { BadRequestException, ConflictException, ForbiddenException, NotFoundException } from '@nestjs/common';
+import { matchCommentTrigger, parseTriggerKeywords } from './CommentTrigger.matcher';
+
+const MAX_TRIGGER_KEYWORDS = 10;
+const MAX_TRIGGER_KEYWORD_LENGTH = 50;
+// Instagram rejects messages longer than 1000 characters.
+const MAX_TRIGGER_MESSAGE_LENGTH = 1000;
 import { MoreThan } from 'typeorm';
 import { MailerService } from './Mailer.service';
 import { Redis } from 'ioredis';
@@ -1397,12 +1404,72 @@ export class InstagramService {
     });
   }
 
+  /**
+   * Checks and normalises a comment trigger before it is stored. Keywords are
+   * comma-separated and stored uppercase; a trigger is either scoped to one post
+   * (media_id) or to every post (media_id null).
+   */
+  private async validateCommentTrigger(companyId: string, data: any, excludeId?: string) {
+    const keywords = parseTriggerKeywords(data?.keyword);
+    if (keywords.length === 0) throw new BadRequestException('Enter at least one keyword.');
+    if (keywords.length > MAX_TRIGGER_KEYWORDS) {
+      throw new BadRequestException(`Use at most ${MAX_TRIGGER_KEYWORDS} keywords per trigger.`);
+    }
+    const tooLong = keywords.find(k => k.length > MAX_TRIGGER_KEYWORD_LENGTH);
+    if (tooLong) {
+      throw new BadRequestException(`Keywords can be at most ${MAX_TRIGGER_KEYWORD_LENGTH} characters.`);
+    }
+
+    const replyMessage = typeof data?.replyMessage === 'string' ? data.replyMessage.trim() : '';
+    if (!replyMessage) throw new BadRequestException('Enter the message to send.');
+    if (replyMessage.length > MAX_TRIGGER_MESSAGE_LENGTH) {
+      throw new BadRequestException(`Instagram messages can be at most ${MAX_TRIGGER_MESSAGE_LENGTH} characters.`);
+    }
+
+    const rawMediaId = data?.mediaId ? String(data.mediaId).trim() : '';
+    if (rawMediaId && !/^\d{1,40}$/.test(rawMediaId)) throw new BadRequestException('Choose a valid post.');
+    const mediaId = rawMediaId || null;
+    const postTitle = mediaId
+      ? String(data?.postTitle || '').trim().slice(0, 200) || 'Selected post'
+      : 'All Posts & Reels';
+
+    // The same keyword on overlapping posts would make the winner arbitrary.
+    const existing = await comment_trigger.find({ where: { company_id: companyId } });
+    for (const other of existing) {
+      if (other.id === excludeId) continue;
+      const overlapsPost = !mediaId || !other.media_id || other.media_id === mediaId;
+      if (!overlapsPost) continue;
+      const clash = parseTriggerKeywords(other.keyword).find(k => keywords.includes(k));
+      if (clash) {
+        throw new ConflictException(`"${clash}" is already used by another trigger on the same post.`);
+      }
+    }
+
+    return { keyword: keywords.join(', '), replyMessage, mediaId, postTitle, existingCount: existing.length };
+  }
+
+  /** How many comment triggers the workspace's plan allows. */
+  async getCommentTriggerLimit(companyId: string): Promise<number> {
+    const company = await CompanyTable.findOne({ where: { id: companyId as any } });
+    return (PLAN_LIMITS[company?.plan || 'Free'] || PLAN_LIMITS.Free).maxAutomationsLimit;
+  }
+
   async createCommentTrigger(companyId: string, data: any) {
+    const valid = await this.validateCommentTrigger(companyId, data);
+
+    const limit = await this.getCommentTriggerLimit(companyId);
+    if (valid.existingCount >= limit) {
+      throw new ForbiddenException(
+        `Your plan allows ${limit} comment triggers. Delete one or upgrade to add more.`
+      );
+    }
+
     const trigger = new comment_trigger();
     trigger.company_id = companyId;
-    trigger.post_title = data.postTitle || 'All Posts & Reels';
-    trigger.keyword = data.keyword.toUpperCase().trim();
-    trigger.reply_message = data.replyMessage;
+    trigger.media_id = valid.mediaId;
+    trigger.post_title = valid.postTitle;
+    trigger.keyword = valid.keyword;
+    trigger.reply_message = valid.replyMessage;
     trigger.is_active = true;
     trigger.created_by_id = '00000000-0000-0000-0000-000000000000';
     trigger.created_on = new Date();
@@ -1410,16 +1477,29 @@ export class InstagramService {
     return { Success: true, Data: trigger };
   }
 
+  async updateCommentTrigger(companyId: string, id: string, data: any) {
+    const trigger = await comment_trigger.findOne({ where: { id, company_id: companyId } });
+    if (!trigger) throw new NotFoundException('Trigger not found');
+    const valid = await this.validateCommentTrigger(companyId, data, id);
+    trigger.media_id = valid.mediaId;
+    trigger.post_title = valid.postTitle;
+    trigger.keyword = valid.keyword;
+    trigger.reply_message = valid.replyMessage;
+    trigger.updated_on = new Date();
+    await trigger.save();
+    return { Success: true, Data: trigger };
+  }
+
   async deleteCommentTrigger(companyId: string, id: string) {
     const trigger = await comment_trigger.findOne({ where: { id, company_id: companyId } });
-    if (!trigger) throw new Error('Trigger not found');
+    if (!trigger) throw new NotFoundException('Trigger not found');
     await trigger.remove();
     return { Success: true };
   }
 
   async toggleCommentTrigger(companyId: string, id: string) {
     const trigger = await comment_trigger.findOne({ where: { id, company_id: companyId } });
-    if (!trigger) throw new Error('Trigger not found');
+    if (!trigger) throw new NotFoundException('Trigger not found');
     trigger.is_active = !trigger.is_active;
     await trigger.save();
     return { Success: true, Data: trigger };
@@ -1429,9 +1509,8 @@ export class InstagramService {
     const commenterId = changeValue.from?.id;
     const commentId = changeValue.id;
 
-    // The public fallback reply below is itself a comment, so Meta delivers a `comments`
-    // event for it. Without this guard a reply containing its own trigger keyword would
-    // make the app reply to itself indefinitely.
+    // Replies the account posts itself (from Instagram, or from the Comments page) come
+    // back as `comments` events. Acting on them could make the app reply to itself.
     if (commenterId && igBusinessId && String(commenterId) === String(igBusinessId)) {
       console.log(`[COMMENT WEBHOOK] Skipping our own comment (${commentId}).`);
       return;
@@ -1464,62 +1543,38 @@ export class InstagramService {
       }
     }
 
-    const triggers = await comment_trigger.find({ where: { company_id: company.id, is_active: true } });
-    const commentText = String(changeValue.text || '').toUpperCase();
-
-    const matchedTrigger = triggers.find(t => {
-      const keywords = t.keyword.split(',').map(k => k.trim().toUpperCase()).filter(k => k.length > 0);
-      return keywords.some(kw => {
-        // Safe regex matching to prevent false positives inside words
-        const regex = new RegExp(`\\b${kw}\\b`, 'i');
-        return regex.test(commentText);
-      });
-    });
-
-    if (!matchedTrigger) {
-      console.log(`[COMMENT WEBHOOK] Comment text "${changeValue.text}" did not match any active keywords.`);
+    // The workspace-wide "auto-reply" switch covers comment triggers as well as DMs.
+    if (company.auto_reply_enabled === false) {
+      console.log(`[AUTOMATION OFF] Company ${company.id} has auto-reply disabled; skipping comment trigger.`);
       return;
     }
 
-    console.log(`[COMMENT WEBHOOK] Matched trigger keyword: "${matchedTrigger.keyword}" for comment ID: ${changeValue.id}`);
+    const triggers = await comment_trigger.find({ where: { company_id: company.id, is_active: true } });
+    const matchedTrigger = matchCommentTrigger(triggers, changeValue.text, changeValue.media?.id);
 
-    const mediaId = changeValue.media?.id;
+    // Comment text is customer content: log the event shape only.
+    if (!matchedTrigger) {
+      console.log(`[COMMENT WEBHOOK] Comment ${commentId} matched no active trigger.`);
+      return;
+    }
 
-    // Strategy 1: Try private_replies (works in Live mode)
-    // Strategy 2: Fall back to public comment reply on the post (works in Dev mode too)
-    let replySent = false;
+    console.log(`[COMMENT WEBHOOK] Trigger ${matchedTrigger.id} matched comment ${commentId}.`);
 
-    // Try private reply first
+    // The trigger promises a private DM. If Meta refuses it (app in Dev mode, comment
+    // older than 7 days, missing permission) we stop: posting the message as a public
+    // reply instead would publish whatever the business meant to send privately.
     try {
       const url = `https://graph.facebook.com/${GRAPH_VERSION}/${commentId}/private_replies`;
       await axios.post(url, { message: matchedTrigger.reply_message }, {
         headers: { 'Authorization': `Bearer ${company.instagram_access_token}` }
       });
-      console.log(`[COMMENT WEBHOOK] ✅ Private reply sent to comment: ${commentId}`);
-      replySent = true;
+      console.log(`[COMMENT WEBHOOK] Private reply sent for comment ${commentId}.`);
     } catch (err: any) {
-      console.warn(`[COMMENT WEBHOOK] Private reply blocked (likely Dev Mode), falling back to public comment reply...`);
-    }
-
-    // Fallback: Post a public comment reply directly on the comment thread
-    if (!replySent) {
-      try {
-        const url = `https://graph.facebook.com/${GRAPH_VERSION}/${commentId}/replies`;
-        await axios.post(url, {
-          message: `@${changeValue.from?.username || 'there'} ${matchedTrigger.reply_message}`
-        }, {
-          params: { access_token: company.instagram_access_token }
-        });
-        console.log(`[COMMENT WEBHOOK] ✅ Public comment reply sent on comment: ${commentId}`);
-        replySent = true;
-      } catch (error: any) {
-        console.error('[COMMENT WEBHOOK ERROR] Public comment reply also failed:', error.response?.data || error.message);
-        return;
-      }
-    }
-
-    if (!replySent) {
-      console.error('[COMMENT WEBHOOK ERROR] All reply strategies failed.');
+      const metaError = err.response?.data?.error;
+      console.error(
+        `[COMMENT WEBHOOK ERROR] Private reply failed for comment ${commentId}:`,
+        metaError ? `${metaError.code}/${metaError.error_subcode ?? '-'} ${metaError.message}` : err.message
+      );
       return;
     }
 

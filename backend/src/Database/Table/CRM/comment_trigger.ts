@@ -12,6 +12,12 @@ export class comment_trigger extends BaseTable {
   @JoinColumn({ name: 'company_id' })
   company: company;
 
+  // Instagram media id the trigger is limited to; null = every post and reel.
+  // Added by deployment/migrations/002_comment_trigger_media.sql.
+  @Column({ type: 'varchar', length: 64, nullable: true })
+  media_id: string | null;
+
+  // Caption shown in the trigger list; display only, never used for matching.
   @Column({ type: 'text' })
   post_title: string;
 
