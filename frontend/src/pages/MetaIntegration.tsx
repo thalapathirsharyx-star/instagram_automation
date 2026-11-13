@@ -159,9 +159,9 @@ const MetaIntegration: React.FC = () => {
           'pages_show_list',
           'pages_read_engagement',
           'pages_manage_metadata',
-          'pages_messaging',
           'public_profile'
-        ].join(',')
+        ].join(','),
+        auth_type: 'rerequest'
       });
     } catch (error) {
       console.error('FB Logic Error:', error);

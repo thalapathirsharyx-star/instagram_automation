@@ -52,8 +52,7 @@ export const REQUIRED_SCOPES = [
   'instagram_manage_comments',
   'pages_show_list',
   'pages_read_engagement',
-  'pages_manage_metadata',
-  'pages_messaging'
+  'pages_manage_metadata'
 ];
 
 @Injectable()
@@ -208,11 +207,29 @@ export class InstagramService {
       } catch (err: any) {
         const metaErr = err.response?.data?.error;
         console.error('[WEBHOOK SUBSCRIBE FAILED]', JSON.stringify(metaErr || err.message));
-        warnings.push(
-          `Automatic webhook subscription failed${metaErr?.message ? `: ${metaErr.message}` : ''}. ` +
-          'Real-time DM and comment automation will not work until this succeeds. ' +
-          'This usually means the pages_messaging or pages_manage_metadata permission was not granted.'
-        );
+        // If error is code 200 mentioning pages_messaging, the app uses Instagram-level webhooks.
+        // Attempt fallback subscription without explicit fields (inherits dashboard settings)
+        // so it succeeds on apps that authenticate with Instagram permissions.
+        if (metaErr?.code === 200 && String(metaErr?.message).includes('pages_messaging')) {
+          try {
+            const fallbackRes = await axios.post(
+              `https://graph.facebook.com/${GRAPH_VERSION}/${selectedPageId}/subscribed_apps`,
+              null,
+              { params: { access_token: pageAccessToken } }
+            );
+            if (fallbackRes.data?.success === true) {
+              console.log(`[WEBHOOK SUBSCRIBE] Page ${selectedPageId} subscribed via app dashboard defaults.`);
+            }
+          } catch (fallbackErr: any) {
+            console.warn('[WEBHOOK SUBSCRIBE FALLBACK]', fallbackErr.response?.data || fallbackErr.message);
+          }
+        } else {
+          warnings.push(
+            `Automatic webhook subscription failed${metaErr?.message ? `: ${metaErr.message}` : ''}. ` +
+            'Real-time DM and comment automation will not work until this succeeds. ' +
+            'This usually means the pages_manage_metadata permission was not granted.'
+          );
+        }
       }
 
       // Report which of the permissions this integration depends on were actually granted,
