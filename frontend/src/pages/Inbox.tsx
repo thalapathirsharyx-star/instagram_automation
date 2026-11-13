@@ -485,7 +485,7 @@ const Inbox: React.FC = () => {
                           {kind === 'is-ai' && <Sparkles size={12} aria-hidden="true" />}
                           {author}
                         </span>
-                        <span className="text-ink-faint">{formatTime(msg.created_on)}</span>
+                        <span className="text-[12px] font-medium text-slate-400">{formatTime(msg.created_on)}</span>
                       </div>
 
                       <div className={`chat-bubble ${kind}`}>
@@ -506,12 +506,14 @@ const Inbox: React.FC = () => {
                       </div>
 
                       {msg.ai_notes && (
-                        <div className="chat-note">
-                          <p className="flex items-center gap-1.5 text-[12.5px] font-semibold text-viridian">
+                        <div className="chat-note rounded-xl border border-purple-200/90 bg-purple-50/90 p-3 shadow-2xs">
+                          <p className="flex items-center gap-1.5 text-[12px] font-bold text-purple-700 uppercase tracking-wide">
                             <Sparkles size={12} aria-hidden="true" />
-                            {String(msg.action_taken || 'note').replace(/_/g, ' ')}
+                            {String(msg.action_taken || 'AI Summary').replace(/_/g, ' ')}
                           </p>
-                          <p className="mt-0.5 text-[13px] leading-relaxed text-ink-soft">{msg.ai_notes}</p>
+                          <p className="mt-1 text-[13.5px] font-medium leading-relaxed text-slate-800">
+                            {msg.ai_notes}
+                          </p>
                         </div>
                       )}
                     </div>
@@ -519,41 +521,57 @@ const Inbox: React.FC = () => {
                 })}
               </div>
 
-              {/* Composer. Locked while the assistant holds the thread, and it
-                  says why rather than appearing broken. */}
-              <div className="shrink-0 border-t border-hairline p-3">
-                {isManualMode ? (
-                  <div className="flex items-end gap-2">
-                    <input
-                      type="text"
-                      placeholder={`Message ${selectedLead.customer_name}`}
-                      value={messageText}
-                      onChange={(e) => setMessageText(e.target.value)}
-                      onKeyDown={(e) => { if (e.key === 'Enter') handleSendMessage(); }}
-                      className="field"
-                      aria-label="Your reply"
-                      autoFocus
-                    />
+              {/* Composer. Always visible so user can type or take over anytime. */}
+              <div className="shrink-0 border-t border-slate-200/80 bg-white p-3.5 shadow-xs">
+                {!isManualMode && (
+                  <div className="mb-2.5 flex items-center justify-between gap-2 rounded-xl bg-purple-50/90 border border-purple-100 px-3.5 py-2 text-xs text-purple-900">
+                    <span className="flex items-center gap-1.5 font-medium">
+                      <Sparkles size={13} className="text-purple-600 shrink-0" />
+                      <span>The assistant is currently replying automatically.</span>
+                    </span>
                     <button
-                      onClick={handleSendMessage}
-                      disabled={!messageText.trim()}
-                      className="btn btn-primary shrink-0"
+                      type="button"
+                      onClick={handleToggleManualMode}
+                      disabled={isTogglingMode}
+                      className="inline-flex items-center gap-1 rounded-lg bg-white border border-purple-200 px-2.5 py-1 text-xs font-semibold text-purple-700 shadow-2xs hover:bg-purple-100/60 transition-colors shrink-0"
                     >
-                      <Send size={15} />
-                      Send
-                    </button>
-                  </div>
-                ) : (
-                  <div className="flex flex-wrap items-center justify-between gap-3 px-1 py-1">
-                    <p className="text-[13px] text-ink-soft">
-                      The assistant is replying to this conversation. Take it over to write yourself.
-                    </p>
-                    <button onClick={handleToggleManualMode} disabled={isTogglingMode} className="btn btn-sm">
-                      {isTogglingMode && <Loader2 size={13} className="animate-spin" />}
-                      Take over
+                      {isTogglingMode && <Loader2 size={12} className="animate-spin" />}
+                      Take over conversation
                     </button>
                   </div>
                 )}
+
+                <div className="flex items-center gap-2">
+                  <input
+                    type="text"
+                    placeholder={`Message ${selectedLead.customer_name || selectedLead.instagram_username || 'customer'}…`}
+                    value={messageText}
+                    onChange={(e) => setMessageText(e.target.value)}
+                    onKeyDown={async (e) => {
+                      if (e.key === 'Enter' && messageText.trim()) {
+                        if (!isManualMode) {
+                          await handleToggleManualMode();
+                        }
+                        handleSendMessage();
+                      }
+                    }}
+                    className="w-full rounded-xl border border-slate-200 bg-slate-50/70 px-4 py-2.5 text-[14px] text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-purple-500 focus:ring-3 focus:ring-purple-500/15 focus:outline-none transition-all"
+                    aria-label="Your reply"
+                  />
+                  <button
+                    onClick={async () => {
+                      if (!isManualMode) {
+                        await handleToggleManualMode();
+                      }
+                      handleSendMessage();
+                    }}
+                    disabled={!messageText.trim() || isTogglingMode}
+                    className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 px-4.5 py-2.5 text-[14px] font-semibold text-white shadow-sm hover:from-purple-700 hover:to-indigo-700 disabled:from-slate-200 disabled:to-slate-200 disabled:text-slate-400 disabled:shadow-none transition-all shrink-0"
+                  >
+                    <Send size={15} />
+                    <span>Send</span>
+                  </button>
+                </div>
               </div>
             </>
           ) : isLoadingLeads ? (
