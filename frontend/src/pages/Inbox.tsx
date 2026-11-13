@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { getLeads, getMessages, sendMessage, claimConversation, releaseConversation } from '../api/crm.api';
 import type { Lead, Message, ConversationHandoffResult } from '../models/crm.models';
 import { Link, useLocation } from 'react-router-dom';
-import { Send, Loader2, Search, SearchX, Inbox as InboxIcon, MessageCircle, MessagesSquare, ArrowLeft } from 'lucide-react';
+import { Send, Loader2, Search, SearchX, Inbox as InboxIcon, MessageCircle, MessagesSquare, ArrowLeft, Sparkles } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
 import { io } from 'socket.io-client';
 
@@ -384,7 +384,7 @@ const Inbox: React.FC = () => {
               {/* Message history. Each message carries a rail in its actor's
                   colour, so who said what is legible without reading labels. */}
               <div
-                className="premium-scroll flex flex-grow flex-col gap-5 overflow-y-auto bg-porcelain px-5 py-6 sm:px-8"
+                className="chat-thread premium-scroll flex flex-grow flex-col gap-4 overflow-y-auto px-5 py-6 sm:px-8"
                 ref={chatHistoryRef}
               >
                 {messages.length === 0 && (
@@ -403,39 +403,47 @@ const Inbox: React.FC = () => {
                   const author = !isOutbound
                     ? (selectedLead?.customer_name || selectedLead?.instagram_handle || 'Customer')
                     : fromHuman ? 'You' : 'Assistant';
+                  // Comments the webhook relays into the thread arrive with this prefix.
+                  const COMMENT_PREFIX = '[COMMENT ON REEL/POST]';
+                  const isComment = !isOutbound && !!msg.message_text?.startsWith(COMMENT_PREFIX);
+                  const text = isComment ? msg.message_text.slice(COMMENT_PREFIX.length).trim() : msg.message_text;
+                  const kind = !isOutbound ? 'is-in' : fromHuman ? 'is-human' : 'is-ai';
 
                   return (
                     <div
                       key={msg.id}
                       className={`flex max-w-[78%] flex-col gap-1.5 ${isOutbound ? 'self-end items-end' : 'self-start'}`}
                     >
-                      <div className={`flex items-baseline gap-2 text-[13px] ${isOutbound ? 'flex-row-reverse' : ''}`}>
-                        <span className="font-medium text-ink">{author}</span>
+                      <div className={`flex items-center gap-2 text-[12.5px] ${isOutbound ? 'flex-row-reverse' : ''}`}>
+                        <span className={`chat-author ${kind}`}>
+                          {kind === 'is-ai' && <Sparkles size={12} aria-hidden="true" />}
+                          {author}
+                        </span>
                         <span className="text-ink-faint">{formatTime(msg.created_on)}</span>
                       </div>
 
-                      <div
-                        className={`bg-surface px-4 py-3 text-[15px] leading-relaxed text-ink ${
-                          isOutbound
-                            ? `${fromHuman ? 'rail-human' : 'rail-machine'} rounded-l-[10px] rounded-r-[2px] border-y border-r border-hairline`
-                            : 'rounded-r-[10px] rounded-l-[2px] border-y border-l border-hairline border-l-[2px] border-l-[color:var(--hairline-strong)]'
-                        }`}
-                      >
-                        {msg.message_text?.startsWith('[IMAGE]') ? (
+                      <div className={`chat-bubble ${kind}`}>
+                        {isComment && (
+                          <span className="chat-comment-tag">
+                            <MessageCircle size={12} aria-hidden="true" /> Comment on a reel or post
+                          </span>
+                        )}
+                        {text?.startsWith('[IMAGE]') ? (
                           <img
-                            src={msg.message_text.replace('[IMAGE] ', '')}
+                            src={text.replace('[IMAGE] ', '')}
                             alt="Shared by the customer"
-                            className="max-w-full rounded-[6px]"
+                            className="max-w-full rounded-[10px]"
                           />
                         ) : (
-                          <p className="whitespace-pre-wrap">{msg.message_text}</p>
+                          <p className="whitespace-pre-wrap">{text}</p>
                         )}
                       </div>
 
                       {msg.ai_notes && (
-                        <div className="rail-machine max-w-[52ch] self-start border-y border-r border-hairline bg-porcelain-deep px-3 py-2">
-                          <p className="text-[13px] font-medium text-viridian">
-                            Assistant: {String(msg.action_taken || 'note').replace(/_/g, ' ')}
+                        <div className="chat-note">
+                          <p className="flex items-center gap-1.5 text-[12.5px] font-semibold text-viridian">
+                            <Sparkles size={12} aria-hidden="true" />
+                            {String(msg.action_taken || 'note').replace(/_/g, ' ')}
                           </p>
                           <p className="mt-0.5 text-[13px] leading-relaxed text-ink-soft">{msg.ai_notes}</p>
                         </div>

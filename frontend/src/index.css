@@ -5545,3 +5545,80 @@ body:has(.crm-layout),
   background: var(--fz-color-success-subtle);
   color: var(--fz-color-success);
 }
+
+/* --- Inbox conversation: three kinds of message, told apart at a glance ------
+   customer   light bubble on the left
+   assistant  brand indigo bubble on the right, sparkle on the name
+   your team  dark ink bubble on the right                                   */
+
+.chat-thread {
+  background:
+    radial-gradient(60% 40% at 100% 0%, color-mix(in oklab, var(--fz-color-action-primary-subtle) 70%, transparent), transparent 70%),
+    var(--porcelain);
+}
+
+.chat-bubble {
+  padding: 10px 14px;
+  font-size: 14.5px;
+  line-height: 1.55;
+  border-radius: 18px;
+  word-break: break-word;
+}
+
+.chat-bubble.is-in {
+  background: var(--surface);
+  color: var(--ink);
+  border-bottom-left-radius: 6px;
+  box-shadow: 0 0 0 1px color-mix(in oklab, var(--hairline) 80%, transparent), 0 2px 6px -3px rgb(30 27 75 / 0.12);
+}
+
+.chat-bubble.is-ai {
+  background: linear-gradient(135deg, var(--fz-indigo-500) 0%, var(--fz-color-action-primary) 100%);
+  color: #ffffff;
+  border-bottom-right-radius: 6px;
+  box-shadow: 0 8px 18px -10px color-mix(in oklab, var(--fz-color-action-primary) 80%, transparent);
+}
+
+.chat-bubble.is-human {
+  background: var(--fz-neutral-900);
+  color: #ffffff;
+  border-bottom-right-radius: 6px;
+}
+
+:root.dark .chat-bubble.is-human {
+  background: var(--fz-neutral-200);
+  color: var(--fz-neutral-900);
+}
+
+.chat-author {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.chat-author.is-ai {
+  color: var(--fz-color-text-brand);
+}
+
+.chat-comment-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 6px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--pastel-peach);
+  color: var(--peach-ink);
+  font-size: 11.5px;
+  font-weight: 600;
+}
+
+/* What the assistant did with a message: a quiet note under its reply. */
+.chat-note {
+  max-width: 52ch;
+  padding: 8px 12px;
+  border-radius: 12px;
+  background: var(--fz-color-action-primary-subtle);
+}
