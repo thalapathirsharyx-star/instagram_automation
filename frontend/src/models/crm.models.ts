@@ -9,6 +9,8 @@ export interface Lead {
   id: string;
   customer_name: string;
   instagram_handle: string;
+  instagram_username?: string;
+  profile_pic_url?: string;
   lead_status: 'New' | 'Hot' | 'Buyer' | 'Lost' | 'Needs_Human' | 'Handoff';
   last_message_time: string;
   created_on: string;

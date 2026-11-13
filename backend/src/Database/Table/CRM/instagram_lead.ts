@@ -20,6 +20,12 @@ export class instagram_lead extends BaseTable {
   @Index()
   instagram_handle: string;
 
+  @Column({ type: 'text', nullable: true })
+  instagram_username: string;
+
+  @Column({ type: 'text', nullable: true })
+  profile_pic_url: string;
+
   @Column({ default: 'New' })
   lead_status: string; // New | Hot | Buyer | Lost | Needs_Human
 

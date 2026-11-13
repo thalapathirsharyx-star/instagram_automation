@@ -151,7 +151,24 @@ const Leads: React.FC = () => {
                 >
                   <td>
                     <div className="flex items-center gap-3">
-                      <span className="avatar-initial">{lead.customer_name[0]}</span>
+                      {lead.profile_pic_url ? (
+                        <img
+                          src={lead.profile_pic_url}
+                          alt={lead.customer_name}
+                          className="h-8 w-8 shrink-0 rounded-full object-cover"
+                          onError={(e) => {
+                            (e.currentTarget as HTMLElement).style.display = 'none';
+                            const fallback = e.currentTarget.nextElementSibling as HTMLElement;
+                            if (fallback) fallback.style.display = 'inline-flex';
+                          }}
+                        />
+                      ) : null}
+                      <span
+                        className="avatar-initial"
+                        style={{ display: lead.profile_pic_url ? 'none' : 'inline-flex' }}
+                      >
+                        {lead.customer_name?.[0] || 'U'}
+                      </span>
                       <div className="min-w-0">
                         {/* The row is clickable for the mouse; this button is the keyboard's way in. */}
                         <button
@@ -161,7 +178,7 @@ const Leads: React.FC = () => {
                         >
                           {lead.customer_name}
                         </button>
-                        <div className="truncate text-[13px] text-ink-soft">@{lead.instagram_handle}</div>
+                        <div className="truncate text-[13px] text-ink-soft">@{lead.instagram_username || lead.instagram_handle}</div>
                       </div>
                     </div>
                   </td>
@@ -205,12 +222,32 @@ const Leads: React.FC = () => {
           >
             <div className="modal-head">
               <div className="flex min-w-0 items-center gap-3">
-                <span className="avatar-initial" style={{ width: 42, height: 42, fontSize: 17 }}>
-                  {selectedLead.customer_name[0]}
+                {selectedLead.profile_pic_url ? (
+                  <img
+                    src={selectedLead.profile_pic_url}
+                    alt={selectedLead.customer_name}
+                    className="h-10 w-10 shrink-0 rounded-full object-cover"
+                    onError={(e) => {
+                      (e.currentTarget as HTMLElement).style.display = 'none';
+                      const fallback = e.currentTarget.nextElementSibling as HTMLElement;
+                      if (fallback) fallback.style.display = 'inline-flex';
+                    }}
+                  />
+                ) : null}
+                <span
+                  className="avatar-initial"
+                  style={{
+                    width: 42,
+                    height: 42,
+                    fontSize: 17,
+                    display: selectedLead.profile_pic_url ? 'none' : 'inline-flex'
+                  }}
+                >
+                  {selectedLead.customer_name?.[0] || 'U'}
                 </span>
                 <div className="min-w-0">
                   <h2 id="lead-name" className="truncate">{selectedLead.customer_name}</h2>
-                  <p className="truncate text-[13px] text-ink-soft">@{selectedLead.instagram_handle}</p>
+                  <p className="truncate text-[13px] text-ink-soft">@{selectedLead.instagram_username || selectedLead.instagram_handle}</p>
                 </div>
               </div>
               <button onClick={() => setSelectedLead(null)} className="btn btn-ghost btn-icon btn-sm" aria-label="Close" autoFocus>
@@ -264,7 +301,7 @@ const Leads: React.FC = () => {
               <div className="flex gap-2">
                 <button onClick={() => setSelectedLead(null)} className="btn">Close</button>
                 <button
-                  onClick={() => window.open(`https://instagram.com/${selectedLead.instagram_handle}`, '_blank', 'noopener')}
+                  onClick={() => window.open(`https://instagram.com/${selectedLead.instagram_username || selectedLead.instagram_handle}`, '_blank', 'noopener')}
                   className="btn btn-primary"
                 >
                   <ExternalLink size={15} />

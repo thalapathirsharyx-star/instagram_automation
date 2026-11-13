@@ -634,8 +634,14 @@ export class InstagramService {
       lead.lead_status = 'New';
 
       try {
-        const profileRes = await axios.get(`https://graph.facebook.com/${GRAPH_VERSION}/${context.instagram_handle}?fields=name&access_token=${company?.instagram_access_token}`);
-        if (profileRes.data.name) lead.customer_name = profileRes.data.name;
+        if (company?.instagram_access_token) {
+          const profileData = await this.fetchUserProfile(context.instagram_handle, company.instagram_access_token);
+          if (profileData) {
+            if (profileData.name) lead.customer_name = profileData.name;
+            if (profileData.username) lead.instagram_username = profileData.username;
+            if (profileData.profile_pic) lead.profile_pic_url = profileData.profile_pic;
+          }
+        }
       } catch (e: any) {
         console.error('[IG PROFILE ERROR] Could not fetch profile details:', e.message);
       }
@@ -655,6 +661,31 @@ export class InstagramService {
         await this.logOutboundMessage(lead, { reply: textToSend, action: 'welcome' } as any);
       }
     } else {
+      // If existing lead is missing username or profile pic, refresh in background
+      if ((!lead.profile_pic_url || !lead.instagram_username) && company?.instagram_access_token) {
+        this.fetchUserProfile(lead.instagram_handle, company.instagram_access_token).then(async (profileData) => {
+          if (profileData) {
+            let updated = false;
+            if (profileData.name && profileData.name !== lead.customer_name) {
+              lead.customer_name = profileData.name;
+              updated = true;
+            }
+            if (profileData.username && profileData.username !== lead.instagram_username) {
+              lead.instagram_username = profileData.username;
+              updated = true;
+            }
+            if (profileData.profile_pic && profileData.profile_pic !== lead.profile_pic_url) {
+              lead.profile_pic_url = profileData.profile_pic;
+              updated = true;
+            }
+            if (updated) {
+              await lead.save();
+              this.instagramGateway.emitNewMessage({ lead });
+            }
+          }
+        }).catch(() => undefined);
+      }
+
       // Reset follow-up status when user replies so they can be followed up again if they go cold later
       if (lead.follow_up_sent) {
         lead.follow_up_sent = false;
@@ -1049,14 +1080,22 @@ export class InstagramService {
 
 
 
-  private async fetchUserProfile(instagramId: string, token: string) {
+  private async fetchUserProfile(instagramId: string, token: string): Promise<{ name?: string; username?: string; profile_pic?: string } | null> {
     try {
       const res = await axios.get(`https://graph.facebook.com/${GRAPH_VERSION}/${instagramId}`, {
-        params: { fields: 'name', access_token: token }
+        params: { fields: 'name,username,profile_pic', access_token: token }
       });
       return res.data;
     } catch (e) {
-      return null;
+      // If full fields fail (e.g. permission limits in dev mode), fallback to name
+      try {
+        const fallbackRes = await axios.get(`https://graph.facebook.com/${GRAPH_VERSION}/${instagramId}`, {
+          params: { fields: 'name', access_token: token }
+        });
+        return fallbackRes.data;
+      } catch (err) {
+        return null;
+      }
     }
   }
 
@@ -1106,10 +1145,33 @@ export class InstagramService {
     if (isQualified === false) where.is_qualified = false;
     // If undefined, we don't add the filter, showing all leads.
 
-    return await instagram_lead.find({
+    const leads = await instagram_lead.find({
       where,
       order: { last_message_time: 'DESC' }
     });
+
+    // Asynchronously backfill missing profile pic or username for active leads
+    const missing = leads.filter(l => !l.profile_pic_url || !l.instagram_username).slice(0, 5);
+    if (missing.length > 0) {
+      CompanyTable.findOne({ where: { id: companyId as any } }).then(async (company) => {
+        if (!company?.instagram_access_token) return;
+        for (const ml of missing) {
+          const profile = await this.fetchUserProfile(ml.instagram_handle, company.instagram_access_token);
+          if (profile) {
+            let changed = false;
+            if (profile.name && profile.name !== ml.customer_name) { ml.customer_name = profile.name; changed = true; }
+            if (profile.username && profile.username !== ml.instagram_username) { ml.instagram_username = profile.username; changed = true; }
+            if (profile.profile_pic && profile.profile_pic !== ml.profile_pic_url) { ml.profile_pic_url = profile.profile_pic; changed = true; }
+            if (changed) {
+              await ml.save();
+              this.instagramGateway.emitNewMessage({ lead: ml });
+            }
+          }
+        }
+      }).catch(() => undefined);
+    }
+
+    return leads;
   }
 
   async getMessagesByLead(leadId: string, companyId?: string) {

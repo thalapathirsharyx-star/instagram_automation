@@ -213,20 +213,34 @@ const Inbox: React.FC = () => {
 
   const handleSendMessage = async () => {
     if (!selectedLead || !messageText.trim()) return;
-    try {
-      const res = await sendMessage(selectedLead.id, messageText);
-      setMessageText('');
+    const textToSend = messageText.trim();
+    const tempId = `temp_${Date.now()}`;
+    const optimisticMessage: Message = {
+      id: tempId,
+      lead_id: selectedLead.id,
+      message_text: textToSend,
+      direction: 'Outbound',
+      action_taken: 'HUMAN_AGENT_REPLY',
+      created_on: new Date().toISOString(),
+    };
 
-      // Update the UI immediately with the newly sent message
+    // Instant optimistic update
+    setMessageText('');
+    setMessages(prev => [...prev, optimisticMessage]);
+    setTimeout(() => {
+      if (chatHistoryRef.current) chatHistoryRef.current.scrollTop = chatHistoryRef.current.scrollHeight;
+    }, 50);
+
+    try {
+      const res = await sendMessage(selectedLead.id, textToSend);
       if (res?.Data) {
-        setMessages(prev => [...prev, res.Data]);
-        setTimeout(() => {
-          if (chatHistoryRef.current) chatHistoryRef.current.scrollTop = chatHistoryRef.current.scrollHeight;
-        }, 100);
+        setMessages(prev => prev.map(m => (m.id === tempId ? res.Data : m)));
       }
     } catch (error) {
       console.error('Error sending message:', error);
-      // The backend now reports Meta rejections rather than logging a phantom send.
+      // Rollback optimistic message and restore text so the user doesn't lose it
+      setMessages(prev => prev.filter(m => m.id !== tempId));
+      setMessageText(textToSend);
       toast.error(extractApiMessage(error, 'Instagram did not accept the message.'));
     }
   };
@@ -326,8 +340,28 @@ const Inbox: React.FC = () => {
                     isSelected ? 'bg-surface' : 'hover:bg-porcelain-deep'
                   }`}
                 >
-                  <span className="avatar-initial" style={{ width: 32, height: 32, fontSize: 13 }}>
-                    {lead.customer_name[0]}
+                  {lead.profile_pic_url ? (
+                    <img
+                      src={lead.profile_pic_url}
+                      alt={lead.customer_name}
+                      className="h-8 w-8 shrink-0 rounded-full object-cover"
+                      onError={(e) => {
+                        (e.currentTarget as HTMLElement).style.display = 'none';
+                        const fallback = e.currentTarget.nextElementSibling as HTMLElement;
+                        if (fallback) fallback.style.display = 'inline-flex';
+                      }}
+                    />
+                  ) : null}
+                  <span
+                    className="avatar-initial"
+                    style={{
+                      width: 32,
+                      height: 32,
+                      fontSize: 13,
+                      display: lead.profile_pic_url ? 'none' : 'inline-flex'
+                    }}
+                  >
+                    {lead.customer_name?.[0] || 'U'}
                   </span>
                   <span className="min-w-0 flex-grow">
                     <span className="flex items-baseline justify-between gap-2">
@@ -339,7 +373,7 @@ const Inbox: React.FC = () => {
                       </span>
                     </span>
                     <span className="flex items-center justify-between gap-2">
-                      <span className="truncate text-[13px] text-ink-soft">@{lead.instagram_handle}</span>
+                      <span className="truncate text-[13px] text-ink-soft">@{lead.instagram_username || lead.instagram_handle}</span>
                       {lead.lead_status === 'Needs_Human' && (
                         <span className="chip chip-dot chip-stop shrink-0 px-1.5 py-0 text-[12px]">Needs you</span>
                       )}
@@ -365,12 +399,29 @@ const Inbox: React.FC = () => {
                   >
                     <ArrowLeft size={18} />
                   </button>
-                  <span className="avatar-initial">{selectedLead.customer_name[0]}</span>
+                  {selectedLead.profile_pic_url ? (
+                    <img
+                      src={selectedLead.profile_pic_url}
+                      alt={selectedLead.customer_name}
+                      className="h-9 w-9 shrink-0 rounded-full object-cover"
+                      onError={(e) => {
+                        (e.currentTarget as HTMLElement).style.display = 'none';
+                        const fallback = e.currentTarget.nextElementSibling as HTMLElement;
+                        if (fallback) fallback.style.display = 'inline-flex';
+                      }}
+                    />
+                  ) : null}
+                  <span
+                    className="avatar-initial"
+                    style={{ display: selectedLead.profile_pic_url ? 'none' : 'inline-flex' }}
+                  >
+                    {selectedLead.customer_name?.[0] || 'U'}
+                  </span>
                   <div className="min-w-0">
                     <h2 className="title-display truncate font-display text-[17px] font-semibold leading-tight text-ink">
                       {selectedLead.customer_name}
                     </h2>
-                    <p className="truncate text-[13px] text-ink-soft">@{selectedLead.instagram_handle}</p>
+                    <p className="truncate text-[13px] text-ink-soft">@{selectedLead.instagram_username || selectedLead.instagram_handle}</p>
                   </div>
                 </div>
 

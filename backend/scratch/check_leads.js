@@ -3,23 +3,22 @@ require('dotenv').config();
 
 async function checkLeads() {
   const client = new Client({
-    connectionString: process.env.DATABASE_URL || 'postgres://postgres:postgres@localhost:5432/instagram_automation'
+    host: process.env.DB_HOST || '127.0.0.1',
+    port: Number(process.env.DB_PORT || 5432),
+    user: process.env.DB_USER || 'postgres',
+    password: (process.env.DB_PASS || 'postgres').trim(),
+    database: process.env.DB_NAME || 'postgres'
   });
 
   try {
     await client.connect();
     console.log('Connected to DB');
 
-    const companyRes = await client.query('SELECT id, name FROM company LIMIT 5');
-    console.log('Companies:', companyRes.rows);
+    const res = await client.query("SELECT column_name, data_type FROM information_schema.columns WHERE table_name = 'instagram_lead'");
+    console.log('COLUMNS:', res.rows.map(r => r.column_name));
 
-    if (companyRes.rows.length > 0) {
-      const companyId = companyRes.rows[0].id;
-      const leadsRes = await client.query('SELECT id, instagram_handle, is_qualified FROM instagram_lead WHERE company_id = $1', [companyId]);
-      console.log(`Leads for company ${companyId}:`, leadsRes.rows.length);
-      console.log('Sample Leads:', leadsRes.rows);
-    }
-
+    const sample = await client.query('SELECT * FROM instagram_lead LIMIT 1');
+    console.log('SAMPLE_LEAD:', sample.rows[0]);
   } catch (err) {
     console.error('Error:', err);
   } finally {
@@ -28,3 +27,4 @@ async function checkLeads() {
 }
 
 checkLeads();
+
