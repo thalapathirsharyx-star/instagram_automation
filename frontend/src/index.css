@@ -4396,9 +4396,8 @@ html.lenis {
   border-radius: 999px;
   background: var(--lp-panel);
   box-shadow: inset 0 0 0 1px var(--lp-line);
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 11px;
-  font-weight: 500;
+  font-size: 11.5px;
+  font-weight: 600;
   letter-spacing: 0;
   text-transform: none;
   color: var(--lp-ink);

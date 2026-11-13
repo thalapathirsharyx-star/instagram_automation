@@ -8,7 +8,6 @@ import {
   Trash2, 
   ExternalLink, 
   Heart, 
-  ShieldCheck, 
   AlertCircle, 
   CornerDownRight
 } from 'lucide-react';
@@ -256,13 +255,7 @@ const CommentsManager: React.FC = () => {
     <div className="page">
       <div className="page-head">
         <div>
-          <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-            <h1 className="page-title">Comments</h1>
-            <span className="chip chip-info hidden sm:inline-flex" title="Meta permission this page uses">
-              <ShieldCheck size={13} />
-              instagram_business_manage_comments
-            </span>
-          </div>
+          <h1 className="page-title">Comments</h1>
           <p className="page-sub">
             Moderate, reply publicly, hide, and manage comments across your connected Instagram posts in real time.
           </p>
@@ -450,7 +443,8 @@ const CommentsManager: React.FC = () => {
               comments.map(c => {
                 const isHidden = !!c.hidden;
                 const isTargetReply = replyTargetComment?.id === c.id;
-                const handle = c.username || 'instagram_user';
+                // @username, or plain words when Meta returns a commenter without one.
+                const handle = c.username ? `@${c.username}` : 'Instagram user';
                 return (
                   <article
                     key={c.id}
@@ -470,7 +464,7 @@ const CommentsManager: React.FC = () => {
                         {/* Name and time stack, so a long handle truncates instead of
                             running under the action buttons on a phone. */}
                         <div className="min-w-0">
-                          <span className="block truncate text-[14px] font-medium text-ink">@{handle}</span>
+                          <span className="block truncate text-[14px] font-medium text-ink">{handle}</span>
                           <span className="flex items-center gap-2 whitespace-nowrap text-[12px] text-ink-faint">
                             {new Date(c.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} · {new Date(c.timestamp).toLocaleDateString([], { month: 'short', day: 'numeric' })}
                             {isHidden && <span className="chip px-1.5 py-0 text-[11px]">Hidden</span>}
@@ -482,7 +476,7 @@ const CommentsManager: React.FC = () => {
                         <button
                           onClick={() => setReplyTargetComment(isTargetReply ? null : c)}
                           aria-pressed={isTargetReply}
-                          aria-label={`Reply to @${handle}`}
+                          aria-label={`Reply to ${handle}`}
                           className={`btn btn-sm ${isTargetReply ? 'btn-primary' : 'btn-ghost'}`}
                         >
                           <Send size={13} /> <span className="hidden sm:inline">Reply</span>
@@ -491,7 +485,7 @@ const CommentsManager: React.FC = () => {
                           onClick={() => handleToggleHide(c)}
                           disabled={actionLoadingId === c.id}
                           aria-busy={actionLoadingId === c.id || undefined}
-                          aria-label={isHidden ? `Unhide comment by @${handle}` : `Hide comment by @${handle}`}
+                          aria-label={isHidden ? `Unhide comment by ${handle}` : `Hide comment by ${handle}`}
                           title={isHidden ? 'Unhide comment' : 'Hide comment'}
                           className="btn btn-ghost btn-icon btn-sm"
                         >
@@ -499,7 +493,7 @@ const CommentsManager: React.FC = () => {
                         </button>
                         <button
                           onClick={() => setCommentToDelete(c)}
-                          aria-label={`Delete comment by @${handle}`}
+                          aria-label={`Delete comment by ${handle}`}
                           title="Delete comment"
                           className="btn btn-ghost btn-icon btn-sm is-danger"
                         >

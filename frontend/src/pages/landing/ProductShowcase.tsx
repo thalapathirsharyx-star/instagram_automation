@@ -87,7 +87,7 @@ export const ProductShowcase: React.FC = () => {
               <div className="w-3 h-3 rounded-full bg-zinc-700" />
             </div>
             <span className="text-[10px] text-zinc-400 font-bold uppercase tracking-wider">
-              flazly_cloud_v1.0.8 // {activeTab.toUpperCase()}
+              Flazly · {tabs.find((t) => t.id === activeTab)?.label}
             </span>
             <div className="w-12" />
           </div>

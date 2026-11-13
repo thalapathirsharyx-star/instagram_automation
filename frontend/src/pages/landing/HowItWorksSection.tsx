@@ -5,9 +5,9 @@ import { Database, Workflow, Send, Shield } from 'lucide-react';
 import { Reveal, RevealText } from '../../components/motion/Reveal';
 
 const STEP_META = [
-  { label: 'Step 1: Secure Integration', tag: 'oauth.meta.api' },
-  { label: 'Step 2: Intent Engine', tag: 'flazly.ai.engine' },
-  { label: 'Step 3: Webhook Pipeline', tag: 'webhook.delivery' },
+  { label: 'Step 1: Secure Integration', tag: 'Meta login' },
+  { label: 'Step 2: Intent Engine', tag: 'Flazly AI' },
+  { label: 'Step 3: Webhook Pipeline', tag: 'Webhooks' },
 ];
 
 // Step 3 is laid out in pixels from the stage's measured width, and the SVG

@@ -3,7 +3,7 @@
 ## 1. Product Overview
 
 ### What the SaaS Does
-Flazly (formerly ReplyZens) is an advanced Instagram Automation and AI Sales Agent platform. It transforms standard Instagram Direct Messages (DMs), comments, and story replies into an automated, AI-driven sales funnel and CRM system.
+Flazly is an advanced Instagram Automation and AI Sales Agent platform. It transforms standard Instagram Direct Messages (DMs), comments, and story replies into an automated, AI-driven sales funnel and CRM system.
 
 ### Core Business Problem It Solves
 Direct-to-Consumer (D2C) brands and creators lose thousands of potential sales because they cannot manually reply to every Instagram comment, story reaction, or DM instantly. Flazly solves this by deploying a specialized AI that acts as a 24/7 sales representative, handling inquiries, pitching products, and capturing leads natively within Instagram.
