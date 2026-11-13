@@ -52,7 +52,8 @@ export const REQUIRED_SCOPES = [
   'instagram_manage_comments',
   'pages_show_list',
   'pages_read_engagement',
-  'pages_manage_metadata'
+  'pages_manage_metadata',
+  'pages_messaging'
 ];
 
 @Injectable()
@@ -210,7 +211,7 @@ export class InstagramService {
         warnings.push(
           `Automatic webhook subscription failed${metaErr?.message ? `: ${metaErr.message}` : ''}. ` +
           'Real-time DM and comment automation will not work until this succeeds. ' +
-          'This usually means the pages_manage_metadata permission was not granted.'
+          'This usually means the pages_messaging or pages_manage_metadata permission was not granted.'
         );
       }
 
