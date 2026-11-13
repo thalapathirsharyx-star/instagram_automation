@@ -171,12 +171,25 @@ import { SubscriptionCronService } from '@Service/Admin/SubscriptionCron.service
     {
       provide: "REDIS_CLIENT",
       useFactory: () => {
-        if (process.env.REDIS_URL) {
-          return new Redis(process.env.REDIS_URL);
+        let redisUrl = process.env.REDIS_URL;
+        if (redisUrl) {
+          // Upstash requires SSL/TLS. If the URL starts with redis://, upgrade it to rediss://
+          if (redisUrl.includes('upstash.io') && redisUrl.startsWith('redis://')) {
+            redisUrl = redisUrl.replace(/^redis:\/\//, 'rediss://');
+          }
+          return new Redis(redisUrl, {
+            maxRetriesPerRequest: null,
+            enableReadyCheck: false,
+          });
         }
+        const isUpstash = (process.env.REDIS_HOST || '').includes('upstash.io');
         return new Redis({
           host: process.env.REDIS_HOST,
-          port: Number(process.env.REDIS_PORT),
+          port: Number(process.env.REDIS_PORT || 6379),
+          password: process.env.REDIS_PASSWORD,
+          tls: isUpstash ? { rejectUnauthorized: false } : undefined,
+          maxRetriesPerRequest: null,
+          enableReadyCheck: false,
         });
       },
     },
