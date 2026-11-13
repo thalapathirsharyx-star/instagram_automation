@@ -9,7 +9,8 @@ import {
   ExternalLink, 
   Heart, 
   AlertCircle, 
-  CornerDownRight
+  CornerDownRight,
+  X
 } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
 import { 
@@ -22,6 +23,30 @@ import {
 } from '../api/crm.api';
 import type { InstagramMediaItem, InstagramCommentItem } from '../models/crm.models';
 import { Link } from 'react-router-dom';
+
+const renderFormattedText = (text: string) => {
+  if (!text) return null;
+  const urlRegex = /(https?:\/\/[^\s]+)/g;
+  const parts = text.split(urlRegex);
+  return parts.map((part, index) => {
+    if (part.match(urlRegex)) {
+      return (
+        <a
+          key={index}
+          href={part}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-0.5 text-purple-600 hover:text-purple-700 underline font-medium break-all"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <span>{part}</span>
+          <ExternalLink size={11} className="inline ml-0.5 opacity-70" />
+        </a>
+      );
+    }
+    return <span key={index}>{part}</span>;
+  });
+};
 
 const InstagramIcon: React.FC<{ size?: number; className?: string }> = ({ size = 18, className = "" }) => (
   <svg 
@@ -336,10 +361,10 @@ const CommentsManager: React.FC = () => {
                     type="button"
                     onClick={() => handleSelectMedia(item)}
                     aria-pressed={isSelected}
-                    className={`flex w-full gap-3 rounded-[10px] border p-2.5 text-left transition-colors ${
+                    className={`flex w-full gap-3 rounded-xl border p-2.5 text-left transition-all duration-150 ${
                       isSelected
-                        ? 'border-viridian bg-viridian-tint'
-                        : 'border-hairline hover:bg-porcelain'
+                        ? 'border-purple-500 bg-purple-50/50 shadow-xs ring-1 ring-purple-500/20'
+                        : 'border-slate-200/80 hover:border-slate-300 hover:bg-slate-50/70'
                     }`}
                   >
                     <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-[8px] bg-porcelain-deep">
@@ -391,12 +416,20 @@ const CommentsManager: React.FC = () => {
         </section>
 
         {/* Comment thread */}
-        <section className="surface flex min-h-[480px] flex-col overflow-hidden lg:col-span-7 lg:h-[calc(100dvh-240px)] lg:min-h-[560px]">
+        <section className="surface flex min-h-[480px] flex-col overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-xs lg:col-span-7 lg:h-[calc(100dvh-240px)] lg:min-h-[560px]">
           {selectedMedia ? (
-            <div className="surface-head py-3">
-              <div className="min-w-0">
-                <p className="text-[13px] font-medium text-ink-soft">Selected post</p>
-                <p className="mt-0.5 truncate text-[14px] text-ink">
+            <div className="flex items-center justify-between border-b border-slate-200/80 bg-slate-50/60 px-4 py-3 sm:px-5">
+              <div className="min-w-0 pr-3">
+                <div className="flex items-center gap-2">
+                  <span className="inline-flex items-center gap-1 rounded-md bg-purple-50 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wider text-purple-700 border border-purple-200/50">
+                    <InstagramIcon size={12} />
+                    Selected Post
+                  </span>
+                  <span className="text-[12px] font-medium text-slate-400">
+                    {comments.length} comment{comments.length === 1 ? '' : 's'}
+                  </span>
+                </div>
+                <p className="mt-1 truncate text-[14px] font-medium text-slate-800" title={selectedMedia.caption}>
                   {selectedMedia.caption || `Post ID: ${selectedMedia.id}`}
                 </p>
               </div>
@@ -405,25 +438,32 @@ const CommentsManager: React.FC = () => {
                   href={selectedMedia.permalink}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="btn btn-ghost btn-sm shrink-0"
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-[12px] font-medium text-slate-600 shadow-2xs hover:bg-slate-50 hover:text-purple-600 hover:border-purple-200 transition-all shrink-0"
                 >
-                  View on Instagram <ExternalLink size={13} />
+                  <span>View on Instagram</span>
+                  <ExternalLink size={13} />
                 </a>
               )}
             </div>
           ) : (
-            <div className="surface-head py-3">
-              <h2 className="text-[15px]">Comments</h2>
+            <div className="flex items-center border-b border-slate-200/80 bg-slate-50/60 px-4 py-3 sm:px-5">
+              <h2 className="text-[15px] font-semibold text-slate-800">Comments</h2>
             </div>
           )}
 
-          <div className="premium-scroll flex-1 space-y-3 overflow-y-auto p-4">
+          <div className="premium-scroll flex-1 space-y-3.5 overflow-y-auto p-4 sm:p-5 bg-slate-50/30">
             {isLoadingComments ? (
               <div className="space-y-4 py-4" aria-busy="true" aria-label="Loading comments">
                 {[1, 2, 3].map(i => (
-                  <div key={i} className="animate-pulse space-y-2">
-                    <div className="h-4 w-1/4 rounded bg-porcelain-deep"></div>
-                    <div className="h-10 rounded-[10px] bg-porcelain"></div>
+                  <div key={i} className="animate-pulse space-y-2 rounded-2xl border border-slate-100 bg-white p-4">
+                    <div className="flex items-center gap-3">
+                      <div className="h-9 w-9 rounded-full bg-slate-200"></div>
+                      <div className="space-y-1.5 flex-1">
+                        <div className="h-3.5 w-1/4 rounded bg-slate-200"></div>
+                        <div className="h-3 w-1/6 rounded bg-slate-100"></div>
+                      </div>
+                    </div>
+                    <div className="h-4 w-3/4 rounded bg-slate-100 mt-2 sm:pl-[48px]"></div>
                   </div>
                 ))}
               </div>
@@ -445,29 +485,39 @@ const CommentsManager: React.FC = () => {
                 const isTargetReply = replyTargetComment?.id === c.id;
                 // @username, or plain words when Meta returns a commenter without one.
                 const handle = c.username ? `@${c.username}` : 'Instagram user';
+                const initial = (c.username ? c.username.charAt(0) : 'U').toUpperCase();
+
                 return (
                   <article
                     key={c.id}
-                    className={`rounded-[10px] border p-3.5 transition-colors ${
+                    className={`group relative rounded-2xl border transition-all duration-200 p-4 sm:p-4.5 ${
                       isTargetReply
-                        ? 'border-viridian bg-viridian-tint'
+                        ? 'border-purple-400 bg-purple-50/30 ring-2 ring-purple-500/20 shadow-sm'
                         : isHidden
-                          ? 'border-dashed border-hairline-strong bg-porcelain'
-                          : 'border-hairline bg-surface'
+                          ? 'border-dashed border-slate-300 bg-slate-50/70 opacity-80'
+                          : 'border-slate-200/90 bg-white hover:border-slate-300 hover:shadow-xs'
                     }`}
                   >
-                    <div className="flex items-start justify-between gap-2">
-                      <div className="flex min-w-0 items-center gap-2.5">
-                        <span className="avatar-initial" style={{ width: 28, height: 28, fontSize: 12 }}>
-                          {c.username ? c.username.charAt(0) : 'U'}
-                        </span>
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex min-w-0 items-center gap-3">
+                        <div className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-tr from-purple-500/15 via-pink-500/15 to-amber-500/15 border border-purple-200/60 text-[13px] font-bold text-purple-700 shadow-2xs">
+                          {initial}
+                        </div>
                         {/* Name and time stack, so a long handle truncates instead of
                             running under the action buttons on a phone. */}
                         <div className="min-w-0">
-                          <span className="block truncate text-[14px] font-medium text-ink">{handle}</span>
-                          <span className="flex items-center gap-2 whitespace-nowrap text-[12px] text-ink-faint">
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            <span className="font-semibold text-[14px] text-slate-900 tracking-tight truncate">
+                              {handle}
+                            </span>
+                            {isHidden && (
+                              <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.2 text-[10px] font-semibold text-amber-700 border border-amber-200/60">
+                                Hidden
+                              </span>
+                            )}
+                          </div>
+                          <span className="block text-[12px] font-normal text-slate-400 mt-0.5">
                             {new Date(c.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} · {new Date(c.timestamp).toLocaleDateString([], { month: 'short', day: 'numeric' })}
-                            {isHidden && <span className="chip px-1.5 py-0 text-[11px]">Hidden</span>}
                           </span>
                         </div>
                       </div>
@@ -477,9 +527,14 @@ const CommentsManager: React.FC = () => {
                           onClick={() => setReplyTargetComment(isTargetReply ? null : c)}
                           aria-pressed={isTargetReply}
                           aria-label={`Reply to ${handle}`}
-                          className={`btn btn-sm ${isTargetReply ? 'btn-primary' : 'btn-ghost'}`}
+                          className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold transition-all shadow-2xs ${
+                            isTargetReply
+                              ? 'bg-purple-600 text-white shadow-purple-500/20'
+                              : 'bg-slate-100 text-slate-700 hover:bg-purple-50 hover:text-purple-700 hover:border-purple-200 border border-transparent'
+                          }`}
                         >
-                          <Send size={13} /> <span className="hidden sm:inline">Reply</span>
+                          <Send size={12} className={isTargetReply ? 'rotate-45' : ''} />
+                          <span>{isTargetReply ? 'Replying' : 'Reply'}</span>
                         </button>
                         <button
                           onClick={() => handleToggleHide(c)}
@@ -487,7 +542,7 @@ const CommentsManager: React.FC = () => {
                           aria-busy={actionLoadingId === c.id || undefined}
                           aria-label={isHidden ? `Unhide comment by ${handle}` : `Hide comment by ${handle}`}
                           title={isHidden ? 'Unhide comment' : 'Hide comment'}
-                          className="btn btn-ghost btn-icon btn-sm"
+                          className="flex h-7 w-7 items-center justify-center rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition-colors"
                         >
                           {isHidden ? <Eye size={15} /> : <EyeOff size={15} />}
                         </button>
@@ -495,29 +550,41 @@ const CommentsManager: React.FC = () => {
                           onClick={() => setCommentToDelete(c)}
                           aria-label={`Delete comment by ${handle}`}
                           title="Delete comment"
-                          className="btn btn-ghost btn-icon btn-sm is-danger"
+                          className="flex h-7 w-7 items-center justify-center rounded-full text-slate-400 hover:bg-rose-50 hover:text-rose-600 transition-colors"
                         >
                           <Trash2 size={15} />
                         </button>
                       </div>
                     </div>
 
-                    <p className={`mt-2 text-[14px] leading-relaxed sm:pl-[38px] ${isHidden ? 'text-ink-soft' : 'text-ink'}`}>
-                      {c.text}
+                    <p className={`mt-2.5 text-[14px] leading-relaxed break-words sm:pl-[48px] ${
+                      isHidden ? 'italic text-slate-400' : 'text-slate-700'
+                    }`}>
+                      {renderFormattedText(c.text)}
                     </p>
 
                     {c.replies?.data && c.replies.data.length > 0 && (
-                      <div className="mt-3 space-y-2 border-l-2 border-hairline-strong pl-3 sm:ml-[38px]">
+                      <div className="mt-3.5 space-y-2 border-l-2 border-purple-200/80 pl-3.5 sm:ml-[48px]">
                         {c.replies.data.map(reply => (
-                          <div key={reply.id} className="rounded-[8px] bg-porcelain p-2.5">
-                            <div className="mb-0.5 flex items-center gap-1.5 text-[13px] font-medium text-ink">
-                              <CornerDownRight size={12} className="text-ink-faint" />
-                              @{reply.username || connectedAccount?.name || 'Reply'}
-                              <span className="font-normal text-ink-faint">
+                          <div
+                            key={reply.id}
+                            className="rounded-xl border border-slate-200/70 bg-slate-50/80 p-3 shadow-2xs transition-colors hover:bg-slate-50"
+                          >
+                            <div className="mb-1 flex items-center justify-between gap-2">
+                              <div className="flex items-center gap-1.5 text-[13px] font-semibold text-slate-800">
+                                <CornerDownRight size={13} className="text-purple-600 shrink-0" />
+                                <span>@{reply.username || connectedAccount?.name || 'Reply'}</span>
+                                <span className="rounded bg-purple-100 px-1.5 py-0.2 text-[10px] font-semibold uppercase tracking-wider text-purple-700">
+                                  Account
+                                </span>
+                              </div>
+                              <span className="text-[11px] font-normal text-slate-400">
                                 {new Date(reply.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                               </span>
                             </div>
-                            <p className="pl-[18px] text-[14px] text-ink-soft">{reply.text}</p>
+                            <p className="pl-4 text-[13.5px] leading-relaxed text-slate-600 font-normal">
+                              {renderFormattedText(reply.text)}
+                            </p>
                           </div>
                         ))}
                       </div>
@@ -541,50 +608,69 @@ const CommentsManager: React.FC = () => {
           </div>
 
           {selectedMedia && (
-            <div className="border-t border-hairline bg-porcelain p-3">
+            <div className="border-t border-slate-200/80 bg-white/95 p-3.5 sm:p-4 backdrop-blur-sm shadow-[0_-4px_12px_rgba(0,0,0,0.03)]">
               {replyTargetComment ? (
-                <div className="mb-2 flex items-center justify-between gap-3 px-1 text-[13px]">
-                  <span className="flex min-w-0 items-center gap-1.5 font-medium text-ink">
-                    <CornerDownRight size={13} className="shrink-0 text-ink-faint" />
-                    <span className="truncate">
-                      Replying to @{replyTargetComment.username || 'user'}: “{replyTargetComment.text.slice(0, 50)}{replyTargetComment.text.length > 50 ? '…' : ''}”
+                <div className="mb-2.5 flex items-center justify-between gap-3 rounded-xl border border-purple-200/80 bg-gradient-to-r from-purple-50/90 via-purple-50/50 to-white px-3.5 py-2 text-[13px] shadow-2xs">
+                  <div className="flex min-w-0 items-center gap-2">
+                    <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-purple-600 text-white shadow-2xs">
+                      <CornerDownRight size={11} />
                     </span>
-                  </span>
+                    <span className="truncate text-slate-700 font-normal">
+                      Replying publicly to <strong className="font-semibold text-purple-700">@{replyTargetComment.username || 'user'}</strong>:
+                      <span className="ml-1 text-slate-500 italic">“{replyTargetComment.text.slice(0, 48)}{replyTargetComment.text.length > 48 ? '…' : ''}”</span>
+                    </span>
+                  </div>
                   <button
                     onClick={() => setReplyTargetComment(null)}
-                    className="btn btn-ghost btn-sm shrink-0"
+                    className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium text-slate-500 hover:bg-slate-200/60 hover:text-slate-800 transition-colors shrink-0"
                   >
-                    Cancel
+                    <X size={13} />
+                    <span>Cancel</span>
                   </button>
                 </div>
               ) : (
-                <p className="mb-2 px-1 text-[13px] text-ink-soft">
-                  Pick Reply on a comment to answer publicly as @{connectedAccount?.name || 'your account'}.
-                </p>
+                <div className="mb-2.5 flex items-center justify-between gap-2 px-1 text-[12.5px] text-slate-500">
+                  <div className="flex items-center gap-1.5">
+                    <span className="flex h-2 w-2 rounded-full bg-purple-500"></span>
+                    <span>Click <strong>Reply</strong> on any comment above to answer publicly.</span>
+                  </div>
+                  <div className="hidden sm:flex items-center gap-1 text-slate-400">
+                    <span>Posting as</span>
+                    <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-700 border border-slate-200/60">
+                      @{connectedAccount?.name || 'account'}
+                    </span>
+                  </div>
+                </div>
               )}
 
-              <form onSubmit={handleSendReply} className="flex gap-2">
-                <input
-                  type="text"
-                  value={replyText}
-                  onChange={(e) => setReplyText(e.target.value)}
-                  placeholder={
-                    replyTargetComment
-                      ? `Write a public reply to @${replyTargetComment.username}…`
-                      : 'Choose a comment to reply to'
-                  }
-                  aria-label="Public reply"
-                  disabled={!replyTargetComment || isSubmittingReply}
-                  className="field bg-surface"
-                />
+              <form onSubmit={handleSendReply} className="flex items-center gap-2.5">
+                <div className="relative flex-1">
+                  <input
+                    type="text"
+                    value={replyText}
+                    onChange={(e) => setReplyText(e.target.value)}
+                    placeholder={
+                      replyTargetComment
+                        ? `Write a public reply to @${replyTargetComment.username}…`
+                        : 'Choose a comment above to write a reply'
+                    }
+                    aria-label="Public reply"
+                    disabled={!replyTargetComment || isSubmittingReply}
+                    className="w-full rounded-xl border border-slate-200 bg-slate-50/70 px-4 py-2.5 text-[14px] text-slate-800 placeholder:text-slate-400 transition-all duration-200 focus:border-purple-500 focus:bg-white focus:outline-none focus:ring-3 focus:ring-purple-500/15 disabled:cursor-not-allowed disabled:bg-slate-100/60 disabled:text-slate-400"
+                  />
+                </div>
                 <button
                   type="submit"
                   disabled={!replyTargetComment || !replyText.trim() || isSubmittingReply}
                   aria-busy={isSubmittingReply || undefined}
-                  className="btn btn-primary shrink-0"
+                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 px-4.5 py-2.5 text-[14px] font-semibold text-white shadow-sm transition-all duration-150 hover:from-purple-700 hover:to-indigo-700 hover:shadow active:scale-[0.98] disabled:cursor-not-allowed disabled:from-slate-200 disabled:to-slate-200 disabled:text-slate-400 disabled:shadow-none shrink-0"
                 >
-                  <Send size={15} className={isSubmittingReply ? 'animate-pulse' : ''} />
-                  Reply
+                  {isSubmittingReply ? (
+                    <RefreshCw size={14} className="animate-spin" />
+                  ) : (
+                    <Send size={14} />
+                  )}
+                  <span>Reply</span>
                 </button>
               </form>
             </div>
@@ -594,29 +680,29 @@ const CommentsManager: React.FC = () => {
 
       {commentToDelete && (
         <div className="modal-backdrop" onClick={(e) => { if (e.target === e.currentTarget && !isDeleting) setCommentToDelete(null); }}>
-          <div role="alertdialog" aria-modal="true" aria-labelledby="delete-comment-title" className="modal max-w-md">
-            <div className="modal-head border-b-0 pb-2">
-              <div className="flex items-start gap-3">
-                <span className="icon-tile is-sm is-stop"><Trash2 size={16} /></span>
-                <div>
-                  <h3 id="delete-comment-title">Delete this comment?</h3>
-                  <p className="mt-1.5 text-[15px] leading-relaxed text-ink-soft">
-                    The comment by <strong className="font-medium text-ink">@{commentToDelete.username}</strong> will be removed from Instagram. This cannot be undone.
-                  </p>
-                </div>
+          <div role="alertdialog" aria-modal="true" aria-labelledby="delete-comment-title" className="modal max-w-md rounded-2xl p-6 shadow-xl border border-slate-200">
+            <div className="flex items-start gap-3.5">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-rose-50 text-rose-600 border border-rose-200/60 shadow-2xs">
+                <Trash2 size={18} />
+              </span>
+              <div>
+                <h3 id="delete-comment-title" className="text-base font-semibold text-slate-900">Delete this comment?</h3>
+                <p className="mt-1 text-[14px] leading-relaxed text-slate-500">
+                  The comment by <strong className="font-semibold text-slate-800">@{commentToDelete.username}</strong> will be permanently removed from Instagram. This action cannot be undone.
+                </p>
               </div>
             </div>
-            <div className="px-6">
-              <blockquote className="line-clamp-3 rounded-[8px] border-l-2 border-hairline-strong bg-porcelain px-3 py-2 text-[14px] italic text-ink-soft">
+            <div className="mt-4">
+              <blockquote className="line-clamp-3 rounded-xl border-l-3 border-rose-400 bg-slate-50 px-3.5 py-2.5 text-[13.5px] italic text-slate-600">
                 “{commentToDelete.text}”
               </blockquote>
             </div>
-            <div className="modal-foot mt-4">
+            <div className="mt-6 flex items-center justify-end gap-2.5">
               <button
                 autoFocus
                 onClick={() => setCommentToDelete(null)}
                 disabled={isDeleting}
-                className="btn"
+                className="btn btn-ghost btn-sm"
               >
                 Cancel
               </button>
@@ -624,8 +710,9 @@ const CommentsManager: React.FC = () => {
                 onClick={confirmDeleteComment}
                 disabled={isDeleting}
                 aria-busy={isDeleting || undefined}
-                className="btn btn-danger"
+                className="btn btn-sm btn-danger inline-flex items-center gap-1.5"
               >
+                {isDeleting ? <RefreshCw size={13} className="animate-spin" /> : <Trash2 size={13} />}
                 {isDeleting ? 'Deleting…' : 'Delete comment'}
               </button>
             </div>
